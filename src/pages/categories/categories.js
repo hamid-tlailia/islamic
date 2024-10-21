@@ -189,7 +189,7 @@ const Categories = ({
       <div className="categories">
         <div className="card content" ref={contentRef} onScroll={handleScroll}>
           <div className="card-header p-0">
-            <p className="w-100 text-center mt-3 p-0">
+            <p className="w-100 text-center  p-2">
               {translations.prayerKnowledge}
             </p>
           </div>
