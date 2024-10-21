@@ -1,0 +1,166 @@
+/* Tajweed.css */
+
+/* Tajweed Rules with corresponding colors */
+.ham_wasl,
+.silent,
+.laam_shamsiyah {
+  color: #767272;
+}
+
+.madda_normal {
+  color: #537fff;
+}
+
+.madda_permissible {
+  color: #4050ff;
+}
+
+.madda_necessary {
+  color: #000ebc;
+}
+
+.qalaqah {
+  color: #dd0008;
+}
+
+.madda_obligatory {
+  color: #2144c1;
+}
+
+.ikhafa_shafawi {
+  color: #d500b7;
+}
+
+.ikhafa {
+  color: #9400a8;
+}
+
+.idgham_shafawi {
+  color: #58b800;
+}
+
+.iqlab {
+  color: #26bffd;
+}
+
+.idgh_ghn {
+  color: #169777;
+}
+
+.idgh_w_ghn {
+  color: #169200;
+}
+
+.idgh_mus {
+  color: #a1a1a1;
+}
+
+.ghunnah {
+  color: #ff7e1e;
+}
+
+/* Additional styling for highlights */
+.tajweed-rule {
+  font-weight: bold;
+  padding: 0.2em;
+  border-radius: 0.25em;
+  display: inline-block;
+  margin-bottom: 0.5em;
+}
+.tajweed-parent {
+  position: relative;
+}
+/* Increased font size for Ayahs */
+.tajweed-text {
+  font-size: 1.5rem; /* Adjust as needed */
+  color: var(--text-color);
+  padding-inline: 3px !important;
+  border-radius: 8px !important;
+  margin-bottom: 25px !important;
+  text-align: right;
+}
+.tajweed-text:hover {
+  opacity: 1;
+  background-color: #4a2c61fc;
+  color: white;
+}
+.tajweed-parent:has(.tajweed-text:hover) .tajweed-text:not(:hover) {
+  opacity: 0.6;
+}
+.end {
+  display: inline-block;
+  position: relative;
+  width: 30px;
+  height: 30px;
+  line-height: 1.9em;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 0.6em;
+  font-weight: bold;
+  vertical-align: middle;
+  background-color: #b0d206;
+  color: #fffdfd;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset,
+    rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+}
+/* Modal content styling */
+.modal-content {
+  max-width: 95%;
+  padding: 2em;
+  overflow-y: auto;
+  max-height: 90vh;
+  background-color: var(--card-color);
+  color: var(--text-color);
+}
+.idgham_ghunnah {
+  color: #ff7e1e;
+}
+.idgham_wo_ghunnah {
+  color: rgb(142, 121, 5);
+}
+
+/* tajweed.css */
+.flip-left {
+  animation: flipLeft 0.6s forwards;
+}
+
+.flip-right {
+  animation: flipRight 0.6s forwards;
+}
+
+@keyframes flipLeft {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes flipRight {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.surahs-select {
+  background-color: var(--card-color) !important;
+  color: var(--text-color) !important;
+}
+.surahs-select:hover {
+  background-color: var(--card-color) !important;
+  color: var(--text-color) !important;
+}
+.surah_name {
+  display: flex;
+  padding: 6px;
+  border-radius: 6px;
+  font-size: 22px;
+  font-family: "Cairo", sans-serif !important;
+  width: max-content !important;
+  justify-content: center;
+  align-items: center;
+  color: #169777;
+}

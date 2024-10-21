@@ -1,0 +1,12 @@
+.cards {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+  text-align: center;
+}
+@media screen and (max-width: 600px) {
+  .cards {
+    width: 100%;
+  }
+}

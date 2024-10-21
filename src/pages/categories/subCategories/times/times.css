@@ -1,0 +1,14 @@
+.times {
+  background-color: var(--card-color);
+  color: var(--text-color);
+}
+.times div {
+  background-color: var(--card-color) !important;
+  color: var(--text-color);
+}
+.loader-manager {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}

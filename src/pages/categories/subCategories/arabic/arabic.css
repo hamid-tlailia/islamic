@@ -1,0 +1,52 @@
+.text-coral {
+  color: var(--main-color);
+  font-size: x-large !important;
+}
+.file {
+  box-shadow: rgba(50, 50, 93, 0.616) 0px 30px 60px -12px inset,
+    rgba(0, 0, 0, 0.595) 0px 18px 36px -18px inset;
+  padding: 8px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.arabic-component ul {
+  list-style: none; /* Remove default list styling */
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.arabic-component li {
+  border: 1px solid #1866da; /* Softer, more subtle blue for the border */
+  border-radius: 8px; /* Rounded corners for a modern look */
+  padding: 10px; /* Increase padding for better spacing */
+  width: 100%;
+  background-color: #f9f9f9; /* Light background for contrast */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+.arabic-component li:hover {
+  background-color: #e8f1ff; /* Subtle hover background */
+}
+
+.arabic-component li::marker {
+  content: ""; /* Keep custom marker */
+}
+
+.arabic-component a {
+  color: #1866da; /* Blue color for the link */
+  width: 100%;
+  text-decoration: none;
+  padding-left: 10px; /* Align text with the marker */
+  transition: color 0.3s ease; /* Smooth color change on hover */
+}
+
+.arabic-component a:hover {
+  color: #003c8f; /* Darker blue on hover */
+}

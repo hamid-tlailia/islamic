@@ -1,0 +1,306 @@
+[
+  {
+    "id": 1,
+    "book_name": {
+      "ar": "أذكار الصباح و المساء",
+      "en": "Morning and Evening Supplications"
+    },
+    "book_category": "Adhkar",
+    "book_lang": "both",
+    "book_image_ar": "/library_images/adhkar_ar_pdf.png",
+    "book_image_en": "/library_images/adhkar_en_pdf.png",
+    "book_size_ar": "8.41 MB",
+    "book_size_en": "1,612 KB",
+    "book_type": "PDF",
+    "book_url_ar": "https://d1.islamhouse.com/data/ar/ih_articles/single2/ar-azkar-new.pdf",
+    "book_url_en": "https://uwt.org/wp-content/uploads/2018/10/Morning_Evening.pdf"
+  },
+  {
+    "id": 2,
+    "book_name": {
+      "ar": "المصحف برواية قالون",
+      "en": "The Quran"
+    },
+    "book_category": "Quran",
+    "book_lang": "both",
+    "book_image_ar": "/library_images/mishaf_ar_pdf.png",
+    "book_image_en": "/library_images/mishaf_en_pdf.png",
+    "book_size_ar": "152.9 MB",
+    "book_size_en": "1,316 KB",
+    "book_type": "PDF",
+    "book_url_ar": "https://d1.islamhouse.com/data/ar/ih_books/single_01/ar_Mushaf_qalon_madinah.pdf",
+    "book_url_en": "https://www.clearquran.com/downloads/quran-in-modern-english.pdf"
+  },
+  {
+    "id": 3,
+    "book_name": {
+      "ar": "الدلالات العقدية للآيات الكونية",
+      "en": "The Quran ,a Book You Can Believe in"
+    },
+    "book_category": "Dalalat",
+    "book_lang": "both",
+    "book_image_ar": "/library_images/dalalat_ar_pdf.png",
+    "book_image_en": "/library_images/dalalat_en_pdf.png",
+    "book_size_ar": "8.21 MB",
+    "book_size_en": "6.7 MB",
+    "book_type": "PDF",
+    "book_url_ar": "https://d1.islamhouse.com/data/ar/ih_books/single8/ar-aldallat-al3akadeah-ayat-kaonia.pdf",
+    "book_url_en": "https://d1.islamhouse.com/data/en/ih_articles/single2/en_A_Book_You_Can_Believe_in.pdf"
+  },
+  {
+    "id": 4,
+    "book_name": {
+      "ar": "الموجز في أحكام التلاوة",
+      "en": "Summary of Recitation Rules"
+    },
+    "book_category": "Quran",
+    "book_lang": "ar",
+    "book_image_ar": "/library_images/mujaz_ar_pdf.png",
+    "book_image_en": "",
+    "book_size_ar": "1,667 KB",
+    "book_size_en": "",
+    "book_type": "PDF",
+    "book_url_ar": "https://d1.islamhouse.com/data/ar/ih_books/single_010/ar-tajwied.pdf",
+    "book_url_en": ""
+  },
+  {
+    "id": 5,
+    "book_name": {
+      "ar": "التسديد لفهم التوحيد",
+      "en": "God, the Creator"
+    },
+    "book_category": "Tawhid",
+    "book_lang": "both",
+    "book_image_ar": "/library_images/tasdid_ar_pdf.png",
+    "book_image_en": "/library_images/tasdid_en_pdf.png",
+    "book_size_ar": "4.15 MB",
+    "book_size_en": "862 KB",
+    "book_type": "PDF",
+    "book_url_ar": "https://d1.islamhouse.com/data/ar/ih_books/single_09/ar-kitab-altasted.pdf",
+    "book_url_en": "https://d1.islamhouse.com/data/en/ih_books/single2/en_God_the_Creator.pdf"
+  },
+  {
+    "id": 6,
+    "book_name": {
+      "ar": "الدين الخالص",
+      "en": "Concept of God in Islam"
+    },
+    "book_category": "Tawhid",
+    "book_lang": "both",
+    "book_image_ar": "/library_images/din_ar_pdf.png",
+    "book_image_en": "/library_images/din_en_pdf.png",
+    "book_size_ar": "8.1 MB",
+    "book_size_en": "401 KB",
+    "book_type": "PDF",
+    "book_url_ar": "https://d1.islamhouse.com/data/ar/ih_books/single_010/ar_aldeen_alkhales.pdf",
+    "book_url_en": "https://d1.islamhouse.com/data/en/ih_poster/single/en_Concept_of_God_in_Islam_poster.pdf"
+  },
+  {
+    "id": 7,
+    "book_name": {
+      "ar": "المنتقى من موسوعة الأحاديث النبوية",
+      "en": "Selections from the Encyclopedia of Prophetic Hadiths"
+    },
+    "book_category": "Sunnah",
+    "book_lang": "ar",
+    "book_image_ar": "/library_images/muntaqa_ar_pdf.png",
+    "book_image_en": "",
+    "book_size_ar": "2.48 MB",
+    "book_size_en": "",
+    "book_type": "PDF",
+    "book_url_ar": "https://d1.islamhouse.com/data/ar/ih_books/single_010/ar-almontka-mn-alhadeth.pdf",
+    "book_url_en": ""
+  },
+  {
+    "id": 8,
+    "book_name": {
+      "ar": "الكبائر والمحرمات",
+      "en": "Major Sins and Forbidden Acts"
+    },
+    "book_category": "Sunnah",
+    "book_lang": "both",
+    "book_image_ar": "/library_images/haram_ar_pdf.png",
+    "book_image_en": "/library_images/haram_en_pdf.png",
+    "book_size_ar": "18.1 MB",
+    "book_size_en": "1,023 KB",
+    "book_type": "PDF",
+    "book_url_ar": "https://ia600202.us.archive.org/20/items/abuarialkurdy_gmail_20150305/%D8%AC%D8%A7%D9%85%D8%B9%20%D8%A7%D9%84%D9%85%D9%87%D9%84%D9%83%D8%A7%D8%AA%20%D9%85%D9%86%20%D8%A7%D9%84%D9%83%D8%A8%D8%A7%D8%A6%D8%B1%20%D9%88%20%D8%A7%D9%84%D9%85%D8%AD%D8%B1%D9%85%D8%A7%D8%AA.pdf",
+    "book_url_en": "https://www.muslim-library.com/dl/books/English_Major_sins.pdf"
+  },
+  {
+    "id": 9,
+    "book_name": {
+      "ar": "أشراط الساعة",
+      "en": "Signs of the Hour"
+    },
+    "book_category": "Signs",
+    "book_lang": "both",
+    "book_image_ar": "/library_images/saa_ar_pdf.png",
+    "book_image_en": "/library_images/saa_en_pdf.png",
+    "book_size_ar": "5.4 MB",
+    "book_size_en": "1,216 KB",
+    "book_type": "PDF",
+    "book_url_ar": "/PDFs/hour_signs.pdf",
+    "book_url_en": "http://www.islamicbook.ws/english/english-006.pdf"
+  },
+  {
+    "id": 10,
+    "book_name": {
+      "ar": "المختصر في السيرة",
+      "en": "Abridged Seerah of the Prophet ﷺ"
+    },
+    "book_category": "Sira",
+    "book_lang": "both",
+    "book_image_ar": "/library_images/sira_ar_pdf.png",
+    "book_image_en": "/library_images/sira_en_pdf.png",
+    "book_size_ar": "81.68 MB",
+    "book_size_en": "307 KB",
+    "book_type": "PDF",
+    "book_url_ar": "https://d1.islamhouse.com/data/ar/ih_books/single5/ar-emktasr-fi-elsira.pdf",
+    "book_url_en": "https://d1.islamhouse.com/data/en/ih_books/single/en-abridged-seerah-of-the-prophet.pdf"
+  },
+  {
+    "id": 11,
+    "book_name": {
+      "ar": "صحيح البخاري",
+      "en": "Sahih al-Bukhari"
+    },
+    "book_category": "Sunnah",
+    "book_lang": "both",
+    "book_image_ar": "/library_images/bukhari_ar_pdf.png",
+    "book_image_en": "/library_images/bukhari_en_pdf.png",
+    "book_size_ar": "148.13 MB",
+    "book_size_en": "5.8 MB",
+    "book_type": "PDF",
+    "book_url_ar": "/PDFs/sahih_bukhari.pdf",
+    "book_url_en": "https://d1.islamhouse.com/data/en/ih_books/single/en_Sahih_Al-Bukhari.pdf"
+  },
+  {
+    "id": 12,
+    "book_name": {
+      "ar": "تفسير ابن عباس",
+      "en": "Quran Explanation of Ibn Abbas"
+    },
+    "book_category": "Quran",
+    "book_lang": "both",
+    "book_image_ar": "/library_images/ibn_abbas_ar_pdf.png",
+    "book_image_en": "/library_images/ibn_abbas_en_pdf.png",
+    "book_size_ar": "12.5 MB",
+    "book_size_en": "14.4 MB",
+    "book_type": "PDF",
+    "book_url_ar": "https://ia803402.us.archive.org/6/items/tigtig/tabas.pdf",
+    "book_url_en": "/PDFs/Tafsir_ibn_abbas.pdf"
+  },
+  {
+    "id": 13,
+    "book_name": {
+      "ar": "صحيح مسلم",
+      "en": "Sahih Muslim"
+    },
+    "book_category": "Sunnah",
+    "book_lang": "both",
+    "book_image_ar": "/library_images/muslim_ar_pdf.png",
+    "book_image_en": "/library_images/muslim_en_pdf.png",
+    "book_size_ar": "83.2 MB",
+    "book_size_en": "9.7 MB",
+    "book_type": "PDF",
+    "book_url_ar": "https://ia801304.us.archive.org/0/items/sahih-muslim-arabic/sahih-muslim-arabic.pdf",
+    "book_url_en": "https://islamlab.com/wp-content/uploads/2016/06/SahihMuslimVol.1-ahadith0001-1160.pdf"
+  },
+  {
+    "id": 14,
+    "book_name": {
+      "ar": "تفسير ابن كثير",
+      "en": "Quran Explanation of Ibn Kathir"
+    },
+    "book_category": "Quran",
+    "book_lang": "both",
+    "book_image_ar": "/library_images/ibn_kathir_ar_pdf.png",
+    "book_image_en": "/library_images/ibn_kathir_en_pdf.png",
+    "book_size_ar": "27.4 MB",
+    "book_size_en": "228 MB",
+    "book_type": "PDF",
+    "book_url_ar": "/PDFs/ibn_kathir_ar.pdf",
+    "book_url_en": "https://kalamullah.com/Books/Tafsir%20Ibn%20Kathir%20-%20Volume%2001-10%20-%20English.pdf"
+  },
+  {
+    "id": 15,
+    "book_name": {
+      "ar": "زاد المعاد - ابن القيم",
+      "en": " Zad al-Ma'ad - Ibn al-Qayyim"
+    },
+    "book_category": "Others",
+    "book_lang": "both",
+    "book_image_ar": "/library_images/zad_al_maad_ar_pdf.png",
+    "book_image_en": "/library_images/zad_al_maad_en_pdf.png",
+    "book_size_ar": "29.8 MB",
+    "book_size_en": "14.8 MB",
+    "book_type": "PDF",
+    "book_url_ar": "/PDFs/zed_al_maad_ibn_Qayym.pdf",
+    "book_url_en": "https://ia804709.us.archive.org/8/items/en_Complete_Zaad_al_Maad_201702/en_Complete_Zaad_al_Maad.pdf"
+  },
+  {
+    "id": 16,
+    "book_name": {
+      "ar": "الفقه الميسر في ضوء الكتاب والسنة",
+      "en": "Islamic Fiqh"
+    },
+    "book_category": "Fiqh",
+    "book_lang": "both",
+    "book_image_ar": "/library_images/fiqh_ar_pdf.png",
+    "book_image_en": "/library_images/fiqh_en_pdf.png",
+    "book_size_ar": "6.8 MB",
+    "book_size_en": "8.5 MB",
+    "book_type": "PDF",
+    "book_url_ar": "https://ia600203.us.archive.org/4/items/waq93430/93430.pdf",
+    "book_url_en": "/PDFs/fiqh_en.pdf"
+  },
+  {
+    "id": 17,
+    "book_name": {
+      "ar": "الغزوات و المعارك",
+      "en": ""
+    },
+    "book_category": "Others",
+    "book_lang": "ar",
+    "book_image_ar": "/library_images/ghazawat_ar_pdf.png",
+    "book_image_en": "",
+    "book_size_ar": "8 MB",
+    "book_size_en": "",
+    "book_type": "PDF",
+    "book_url_ar": "/PDFs/ghazawat_ar.pdf",
+    "book_url_en": ""
+  },
+  {
+    "id": 18,
+    "book_name": {
+      "ar": "مكارم الأخلاق في شريعة الإسلام",
+      "en": "Islamic Manners"
+    },
+    "book_category": "Others",
+    "book_lang": "both",
+    "book_image_ar": "/library_images/akhlaq_ar_pdf.png",
+    "book_image_en": "/library_images/akhlaq_en_pdf.png",
+    "book_size_ar": "733.81 KB",
+    "book_size_en": "1,246 KB",
+    "book_type": "PDF",
+    "book_url_ar": "https://d1.islamhouse.com/data/ar/ih_books/single_010/ar-mkarem-al-a5laq-pdf.pdf",
+    "book_url_en": "/PDFs/akhlaq_en.pdf"
+  },
+  {
+    "id": 19,
+    "book_name": {
+      "ar": "صفة الحج والعمرة",
+      "en": "Hajj & Umrah "
+    },
+    "book_category": "Others",
+    "book_lang": "both",
+    "book_image_ar": "/library_images/omra_ar_pdf.png",
+    "book_image_en": "/library_images/omra_en_pdf.png",
+    "book_size_ar": "1.77 MB",
+    "book_size_en": "258 KB",
+    "book_type": "PDF",
+    "book_url_ar": "https://d1.islamhouse.com/data/ar/ih_khotab/single/ar-alhaj-wa-al3umra.pdf",
+    "book_url_en": "https://www.muslim-library.com/dl/books/english_The_Book_of_Hajj_and_Umrah.pdf"
+  }
+]

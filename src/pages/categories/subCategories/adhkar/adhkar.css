@@ -1,0 +1,11 @@
+.tabs:hover {
+  background-color: transparent !important;
+  color: green !important;
+}
+button.Mui-selected {
+  background-color: transparent !important;
+  color: green !important;
+  box-shadow: rgb(119, 174, 201) 3px 3px 6px 0px inset,
+    rgba(159, 204, 227, 0.5) -3px -3px 6px 1px inset;
+  border-radius: 8px 8px 0 0;
+}

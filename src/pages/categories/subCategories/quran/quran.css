@@ -1,0 +1,445 @@
+@import "https://unpkg.com/jolty-ui/dist/jolty-ui.min.css";
+
+.quran {
+  display: flex;
+  flex-direction: column;
+  padding: 8px !important;
+  margin-bottom: 50px;
+  height: 100% !important;
+  overflow: auto;
+}
+
+.quran .surahs {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, auto));
+  flex-direction: column-reverse;
+  gap: 10px;
+  padding: 1px !important;
+  opacity: 1;
+  transition: 0.5s ease;
+}
+
+.reversed {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap-reverse; /* This is fine if you intend to reverse wrapping */
+  gap: 10px;
+  padding: 1px;
+  opacity: 1;
+  transition: 0.5s ease;
+}
+
+.reversed .surah {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  background-color: var(--outlets-bg-color);
+  border-radius: 5px;
+  color: var(--text-color);
+  border: var(--surah-border);
+  cursor: pointer;
+  flex-grow: 1; /* Removed !important to avoid potential conflicts */
+  flex-basis: auto;
+  max-width: 100%;
+}
+
+.quran .surahs.hidden {
+  opacity: 0;
+}
+
+.quran .surahs .surah {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  background-color: var(--outlets-bg-color);
+  padding: 1px;
+  border-radius: 5px;
+  color: var(--text-color);
+  border: var(--surah-border);
+  cursor: pointer;
+}
+
+.surah .surah-arabic-name {
+  color: var(--text-color);
+  margin-bottom: 10px;
+}
+
+.surah .surah-english-name {
+  color: var(--text-color);
+  font-size: 12px;
+}
+
+.surah .surah-number {
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  background-color: gray;
+  padding: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  color: white;
+  border-radius: 5px;
+  margin-inline: 10px;
+}
+
+.surah:hover {
+  border: 1px solid var(--surah-hover-color) !important;
+}
+
+.surah:hover .surah-english-name,
+.surah:hover .surah-infos {
+  color: var(--surah-hover-color);
+}
+
+.surah:hover .surah-number {
+  background-color: var(--surah-hover-color);
+}
+
+.quran .ayahs {
+  position: absolute; /* Changed from absolute to fixed to make it relative to the viewport */
+  top: 0;
+  left: 0;
+  width: 100%; /* Ensure it covers the full width */
+  height: max-content; /* Ensure it covers the full height */
+  background-color: var(--outlets-bg-color);
+  transition: 0.3s ease;
+  transform: scale(0);
+  opacity: 0;
+  z-index: 12; /* High z-index to make sure it covers other content */
+}
+
+.quran .ayahs.active {
+  transform: scale(1);
+  opacity: 2;
+}
+
+.ayah {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(auto, auto));
+  gap: 10px;
+  padding: 8px;
+}
+.modal-text {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, auto));
+  gap: 10px;
+  padding: 8px;
+  color: var(--ayah-text-color);
+  border-radius: 6px;
+}
+@media screen and (max-width: 566px) {
+  .modal-text {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, auto));
+    gap: 10px;
+    padding: 8px;
+    color: var(--ayah-text-color);
+    border-radius: 6px;
+  }
+}
+@media screen and (max-width: 349px) {
+  .modal-text {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, auto));
+    gap: 10px;
+    padding: 8px;
+    color: var(--ayah-text-color);
+    border-radius: 6px;
+  }
+}
+.ayah-text {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: start;
+  align-items: center;
+  min-width: 100% !important;
+  gap: 6px;
+  color: var(--ayah-text-color);
+  border: var(--surah-border);
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.ayah-text.scrolled-ayah {
+  animation: selected 12s ease;
+}
+
+@keyframes selected {
+  from {
+    background-color: var(--scrolled-ayah-bg);
+    color: var(--scolled-ayah-color);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+.ayah-number {
+  clip-path: polygon(25% 20%, 98% 20%, 98% 81%, 20% 81%, 0% 50%);
+  padding: 10px;
+  background-color: navy;
+  width: max-content;
+  height: max-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  transition: 0.5s ease;
+}
+.ayah-number.ltr {
+  clip-path: polygon(0 20%, 74% 20%, 100% 50%, 75% 80%, 0 80%);
+  transition: 0.5s ease;
+}
+.back {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 6px;
+  color: rgb(231, 18, 18) !important;
+  font-size: 25px;
+  border-radius: 0 0 10px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.data-container {
+  background-color: var(--outlets-bg-color);
+  border: var(--border);
+  height: max-content;
+  box-shadow: rgb(137 21 21 / 20%) 0px 0px 0px 1px inset,
+    rgb(216 201 201 / 90%) 0px 0px 0px 1px !important;
+  transition: 0.5s;
+}
+.metaData {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, auto));
+  gap: 15px;
+  text-align: left;
+  margin-bottom: 5px;
+}
+.data-container p {
+  background-color: var(--search-card-bg);
+  border-radius: 5px;
+  padding: 4px 20px;
+  transition: 0.4s;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid white;
+  font-weight: bold;
+}
+.data-container p:hover {
+  color: chocolate;
+}
+.additional-infos {
+  width: 100%;
+  height: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, auto));
+  gap: 15px;
+  padding: 0;
+  overflow: hidden;
+  transition: 0.5s ease;
+}
+.additional-infos.show {
+  height: max-content;
+  padding: 0;
+}
+.btn-coral {
+  background-color: coral !important;
+  border-radius: 18px;
+}
+.btn-filter {
+  background-color: black;
+  color: white;
+  padding: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader-container {
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+  min-width: 100%;
+}
+
+.loader {
+  position: relative;
+  width: 50px; /* Set the size of the loader */
+  height: 50px;
+  display: flex;
+  background-color: transparent;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 5px solid #ada2a2fb; /* Light grey border */
+  border-top: 5px solid #3498db; /* Blue color for the loader part */
+  border-radius: 50%; /* Makes the loader round */
+  animation: spin 1s linear infinite; /* Animation to spin the loader */
+}
+
+.loader img {
+  width: 30px; /* Adjusts the size of the image inside the loader */
+  border-radius: 50%; /* Makes the image round */
+  position: relative; /* Ensures the image is positioned relative to its container */
+  z-index: 1; /* Keeps the image above the spinning border */
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.navs {
+  background-color: var(--nav-color);
+  box-shadow: rgba(149, 158, 165, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+  border-radius: 10px !important;
+}
+
+.tafseer {
+  min-width: 100%;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: start;
+  gap: 10px;
+}
+.tafseer .ayah-text {
+  border: none !important;
+  color: var(--ayah-text-color);
+}
+.tafseer-controls {
+  margin: 5px;
+  position: relative;
+  padding: 8px;
+}
+
+.form-select {
+  background-color: var(--dropdown-bg-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  font-size: 16px; /* Slightly larger font size for better readability */
+  color: mediumvioletred; /* Dark gray text color */
+  cursor: pointer; /* Cursor indicates the element is interactive */
+}
+
+.form-select:hover {
+  border-color: #004494; /* Darker blue on hover for a subtle interaction feedback */
+}
+
+.form-select:focus {
+  border-color: #00275c; /* Even darker blue when focused */
+  border: 1px solid #0056b3;
+  box-shadow: 0 0 8px rgba(0, 85, 255, 0.5); /* More prominent shadow when focused */
+}
+.langs {
+  direction: ltr !important;
+}
+.dr-ltr {
+  min-width: 100%;
+  direction: ltr !important;
+  display: flex;
+  justify-content: flex-end;
+}
+.dr-rtl {
+  direction: rtl !important;
+}
+.quran-listen-btn {
+  border: 1px solid white; /* Blue border */
+  border-radius: 8px; /* Rounded corners */
+  background-color: var(--dropdown-bg-color);
+  color: mediumvioletred;
+  padding: 6px;
+}
+.text-white {
+  color: white !important;
+}
+.close-modal {
+  color: red !important;
+  border: 1px solid red !important;
+  background-color: var(--card-color) !important;
+}
+.surah-title {
+  color: rgb(5, 95, 36);
+  -webkit-text-stroke: 0.5px rgb(15, 54, 31);
+  font-size: 20px;
+}
+
+.ayah-symbol {
+  position: relative;
+  display: flex;
+  font-size: 2em; /* Adjust size as needed */
+  color: gold; /* Adjust color */
+  margin-inline: 5px;
+  margin-top: 0 !important;
+}
+
+.ayah-symbol .ayah-num {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.5em; /* Adjust font size to fit inside the symbol */
+  color: var(--text-color); /* Color of the number inside */
+}
+
+.flex-equal {
+  display: flex;
+  flex-direction: row !important;
+  justify-content: start;
+  align-items: center;
+}
+
+.css-ymaf6v-MuiButtonBase-root-MuiTab-root.Mui-selected {
+  color: mediumvioletred !important;
+  font-weight: bold;
+}
+.css-1aquho2-MuiTabs-indicator {
+  position: absolute;
+  height: 2px !important;
+  bottom: 0;
+  width: 100%;
+  -webkit-transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  background-color: mediumvioletred !important;
+}
+.css-ymaf6v-MuiButtonBase-root-MuiTab-root {
+  font-family: "Cairo", sans-serif !important;
+}
+.w-m-c {
+  width: max-content !important;
+}
+.modal-ayah {
+  color: var(--ayah-text-color);
+  padding: 5px;
+}
+.modal-ayah:hover {
+  background-color: #00275c;
+  color: white !important;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.text-align-justify {
+  text-align: justify !important;
+}

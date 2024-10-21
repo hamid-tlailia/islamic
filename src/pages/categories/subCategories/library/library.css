@@ -1,0 +1,29 @@
+.select {
+  background-color: var(--card-color);
+  color: var(--text-color);
+  min-width: 300px !important;
+}
+.select:hover {
+  background-color: var(--card-color) !important;
+  color: var(--text-color);
+}
+@media screen and (max-width: 669px) {
+  .select {
+    background-color: var(--card-color);
+    color: var(--text-color);
+    min-width: 160px !important;
+  }
+}
+@media screen and (max-width: 400px) {
+  .select {
+    background-color: var(--card-color);
+    color: var(--text-color);
+    min-width: 50px !important;
+    max-width: 100px;
+  }
+}
+.box {
+  box-shadow: rgba(190, 166, 166, 0.189) 0px 1px 3px 0px,
+    rgba(79, 92, 105, 0.15) 0px 0px 0px 1px;
+  border-radius: 8px;
+}

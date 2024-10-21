@@ -1,0 +1,127 @@
+.container-fluid {
+  position: relative !important;
+}
+.categories {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin-top: 1vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  overflow-y: auto;
+}
+
+.categories .content {
+  position: relative;
+  margin-top: auto;
+  width: 90%;
+  border: var(--search-border);
+  padding: 0;
+  overflow-y: auto;
+  height: 100%;
+}
+
+@media screen and (max-width: 754px) {
+  .categories .content {
+    width: 100%;
+  }
+}
+
+.card-header {
+  background-color: var(--search-card-bg);
+}
+
+.hr {
+  width: 100%;
+  background-color: gray;
+  height: 1px;
+}
+.divisions {
+  margin-top: 10px;
+  padding: 8px;
+  display: grid;
+  width: 100%; /* Full width of the container */
+  height: max-content; /* Height based on the content */
+  grid-template-columns: repeat(auto-fit, minmax(160px, auto));
+  gap: 15px; /* Reduced gap between items */
+  place-items: center; /* Center items within their cells */
+  justify-items: center; /* Center items horizontally in their grid cells */
+}
+.divisions.hide {
+  height: 680px !important;
+  overflow: clip;
+}
+.divisions .div {
+  padding: 10px;
+  border-radius: 5px;
+  border: var(--search-border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  height: 270px;
+  width: 100%;
+  text-decoration: none;
+}
+.divisions .div img {
+  width: 80%;
+  height: 80%;
+  pointer-events: none;
+}
+.divisions .div span {
+  pointer-events: none;
+}
+/* outlet aria */
+.outlets {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  min-height: 100% !important;
+  background-color: var(--outlets-bg-color);
+  transition: 0.3s ease;
+  transform: scale(0);
+  opacity: 0;
+}
+.outlets.active {
+  transform: scale(1);
+  margin-bottom: 50px;
+  opacity: 1;
+}
+
+.outlets-top {
+  direction: rtl;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+}
+.outlets-top p:nth-child(1) {
+  color: rgb(70, 17, 182);
+  font-size: 25px;
+  letter-spacing: 2px;
+}
+.outlets-top p:nth-child(2) {
+  color: red;
+  cursor: pointer;
+  margin-inline: 6px;
+}
+
+.back {
+  position: relative;
+  left: 0;
+  top: 0;
+  padding: 6px;
+  color: rgb(252, 11, 72) !important;
+  font-size: 25px;
+  border-radius: 0 0 10px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}

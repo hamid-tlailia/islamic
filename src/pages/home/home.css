@@ -1,0 +1,162 @@
+.home {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: flex-start;
+  text-align: right !important;
+  gap: 20px;
+  padding: 0;
+  margin-bottom: 50px;
+}
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 5px;
+  margin-top: 0 !important;
+}
+
+.carousel-item img {
+  width: 100%;
+  height: 70vh;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.carousel-caption {
+  position: absolute;
+  bottom: 80px;
+  right: 15%;
+  background: rgba(0, 0, 0, 0.615);
+  color: #fff;
+  padding: 5px;
+  border-radius: 8px;
+  text-align: right;
+  width: 70%;
+  max-height: 80%;
+  overflow: auto;
+}
+.carousel-caption.en {
+  position: absolute;
+  bottom: 80px;
+  left: 15%;
+  background: rgba(0, 0, 0, 0.759);
+  color: #fff;
+  padding: 5px;
+  border-radius: 8px;
+  text-align: left;
+  width: 70%;
+}
+.slick-prev {
+  position: relative;
+  z-index: 100;
+  position: relative;
+  margin-left: 20px;
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 0 50% 50% 0;
+  padding: 15px;
+  background-color: var(--bg-color) !important;
+}
+.slick-prev::before {
+  content: "<";
+  position: absolute;
+  color: var(--text-color) !important;
+  left: 5px;
+  top: 10px;
+  padding: 8px;
+  background-color: transparent;
+  width: 30px;
+  height: 30px;
+}
+.slick-next {
+  position: relative;
+  z-index: 100;
+  position: relative;
+  margin-right: 20px;
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 50% 0 0 50%;
+  padding: 15px;
+  background-color: var(--bg-color) !important;
+}
+.slick-next::before {
+  content: ">";
+  position: absolute;
+  color: var(--text-color) !important;
+  right: 5px;
+  top: 10px;
+  padding: 8px;
+  background-color: transparent;
+  width: 30px;
+  height: 30px;
+}
+.hadith-intro {
+  color: #08cf5e; /* Blue color for the introduction phrase */
+  font-weight: bold;
+}
+.container .card,
+.row {
+  color: var(--text-color);
+  width: 100%;
+}
+.site-name {
+  color: rgb(85, 18, 187);
+}
+.feature h2 {
+  color: #169777;
+  margin-bottom: 15px;
+}
+.home-btns {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  height: 80vh;
+}
+.content {
+  margin-top: -8vh;
+  width: 70%;
+  border: var(--border);
+  background-color: var(--card-color);
+}
+@media screen and (max-width: 754px) {
+  .home-btns {
+    margin-bottom: 8px;
+    padding-top: 8px;
+    height: max-content;
+  }
+  .content {
+    width: 95%;
+  }
+}
+.home-btns button {
+  width: 180px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-size: 30px;
+}
+.icons {
+  width: 50px;
+  height: 50px;
+}
+.home-short-icon {
+  font-size: 40px !important;
+}
+.home-shortcut-href {
+  text-decoration: none;
+}
+
+.site-map.en div {
+  text-align: left !important;
+}
+.site-map.en div p {
+  text-align: left !important;
+}
