@@ -154,10 +154,24 @@ const Qiblah = () => {
     return (radians * 180) / Math.PI;
   };
 
-  const getRotation = () => {
-    if (deviceOrientation !== null && qiblahDirection !== null) {
-      const rotation = qiblahDirection - deviceOrientation;
-      return rotation % 360;
+  const dotWidth = 10;
+  const dotHeight = 10;
+
+  const calculateRedDotPosition = () => {
+    const radius = 125;
+    const centerX = 125;
+    const centerY = 125;
+    const angleInRadians = (qiblahDirection * Math.PI) / 180;
+
+    const x = centerX + radius * Math.sin(angleInRadians) - dotWidth / 2;
+    const y = centerY - radius * Math.cos(angleInRadians) - dotHeight / 2;
+
+    return { x, y };
+  };
+
+  const getArrowRotation = () => {
+    if (deviceOrientation !== null) {
+      return -deviceOrientation;
     }
     return 0;
   };
@@ -245,6 +259,7 @@ const Qiblah = () => {
     >
       <Typography variant="h5">{t("qiblahDirection")}</Typography>
       <Box position="relative" width={250} height={250} marginTop={4}>
+        {/* Compass circle */}
         <Box
           position="absolute"
           top={0}
@@ -253,18 +268,36 @@ const Qiblah = () => {
           height={250}
           borderRadius="50%"
           border="2px solid #000"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          style={{ transform: `rotate(${getRotation()}deg)` }}
         >
-          <Typography
-            variant="h1"
-            style={{ transform: `rotate(-${getRotation()}deg)` }}
-          >
-            🕋
-          </Typography>
+          {/* Fixed red dot representing the Qiblah direction */}
+          <Box
+            position="absolute"
+            width={10}
+            height={10}
+            borderRadius="50%"
+            bgcolor="red"
+            style={{
+              top: `${calculateRedDotPosition().y}px`,
+              left: `${calculateRedDotPosition().x}px`,
+            }}
+          />
         </Box>
+        {/* Arrow indicating the user's facing direction */}
+        <Box
+          position="absolute"
+          top="50%"
+          left="50%"
+          width={0}
+          height={0}
+          borderLeft="10px solid transparent"
+          borderRight="10px solid transparent"
+          borderBottom="20px solid blue"
+          style={{
+            transform: `translate(-50%, -100%) rotate(${getArrowRotation()}deg)`,
+            transformOrigin: "center bottom",
+            transition: "transform 0.5s ease-in-out",
+          }}
+        />
       </Box>
       <Typography variant="body1" style={{ marginTop: 16 }}>
         {t("rotateDevice")}
