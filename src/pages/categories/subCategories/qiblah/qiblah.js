@@ -1,6 +1,7 @@
 // Qiblah.js
 import React, { useEffect, useState } from "react";
 import { Box, Typography, CircularProgress, Button } from "@mui/material";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward"; // Importing Arrow Icon
 import { useTranslation } from "../../../../components/languages/provider";
 
 const translations = {
@@ -154,24 +155,11 @@ const Qiblah = () => {
     return (radians * 180) / Math.PI;
   };
 
-  const dotWidth = 10;
-  const dotHeight = 10;
-
-  const calculateRedDotPosition = () => {
-    const radius = 125;
-    const centerX = 125;
-    const centerY = 125;
-    const angleInRadians = (qiblahDirection * Math.PI) / 180;
-
-    const x = centerX + radius * Math.sin(angleInRadians) - dotWidth / 2;
-    const y = centerY - radius * Math.cos(angleInRadians) - dotHeight / 2;
-
-    return { x, y };
-  };
-
   const getArrowRotation = () => {
-    if (deviceOrientation !== null) {
-      return -deviceOrientation;
+    if (deviceOrientation !== null && qiblahDirection !== null) {
+      // Calculate the rotation needed to point the arrow towards Qiblah
+      const rotation = qiblahDirection - deviceOrientation;
+      return rotation % 360;
     }
     return 0;
   };
@@ -259,7 +247,7 @@ const Qiblah = () => {
     >
       <Typography variant="h5">{t("qiblahDirection")}</Typography>
       <Box position="relative" width={250} height={250} marginTop={4}>
-        {/* Compass circle */}
+        {/* Compass Circle */}
         <Box
           position="absolute"
           top={0}
@@ -269,34 +257,41 @@ const Qiblah = () => {
           borderRadius="50%"
           border="2px solid #000"
         >
-          {/* Fixed red dot representing the Qiblah direction */}
+          {/* Fixed Red Dot at the Top (Qiblah) */}
           <Box
             position="absolute"
-            width={10}
-            height={10}
+            width={12}
+            height={12}
             borderRadius="50%"
             bgcolor="red"
-            style={{
-              top: `${calculateRedDotPosition().y}px`,
-              left: `${calculateRedDotPosition().x}px`,
-            }}
+            top={-6} // Half of the dot's height to center it
+            left="50%"
+            transform="translateX(-50%)"
           />
         </Box>
-        {/* Arrow indicating the user's facing direction */}
-        <Box
-          position="absolute"
-          top="50%"
-          left="50%"
-          width={0}
-          height={0}
-          borderLeft="10px solid transparent"
-          borderRight="10px solid transparent"
-          borderBottom="20px solid blue"
-          style={{
+        {/* Rotating Arrow Icon */}
+        <ArrowUpwardIcon
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            fontSize: 100, // Adjust size for a longer arrow
+            color: "blue",
             transform: `translate(-50%, -100%) rotate(${getArrowRotation()}deg)`,
-            transformOrigin: "center bottom",
+            transformOrigin: "bottom center",
             transition: "transform 0.5s ease-in-out",
           }}
+        />
+        {/* Center Dot */}
+        <Box
+          position="absolute"
+          width={10}
+          height={10}
+          borderRadius="50%"
+          bgcolor="black"
+          top="50%"
+          left="50%"
+          transform="translate(-50%, -50%)"
         />
       </Box>
       <Typography variant="body1" style={{ marginTop: 16 }}>
