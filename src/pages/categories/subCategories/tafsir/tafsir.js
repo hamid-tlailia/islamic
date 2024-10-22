@@ -305,6 +305,7 @@ const Tafsir = () => {
     setTafsir("");
     setOptionsVisible(true); // Show options again
     setLoading(false);
+    setCurrentExplainedAyah(null);
   };
 
   // Helper function to get the display value based on the current language
@@ -525,7 +526,7 @@ const Tafsir = () => {
       {!tafsir && (
         <Alert
           variant="outlined"
-          severity="info"
+          severity="success"
           sx={{
             fontSize: "17px",
             width: "90%",
@@ -535,7 +536,8 @@ const Tafsir = () => {
             flexDirection: "row",
             gap: "5px",
             padding: "5px",
-            color: "#03a9f4",
+            color: "#169777",
+            border: "1px solid #169777",
             direction: language === "ar" ? "rtl" : "ltr",
           }}
         >
@@ -560,15 +562,23 @@ const Tafsir = () => {
           {/* Explained ayah text */}
           {!optionsVisible && (
             <p className="w-100 text-center my-2 explained-ayah">
-              ✦ {currentExplainedAyah?.text} ✦
-              <span className="text-info mx-2">
-                [{" "}
-                {langs === "arabic"
-                  ? currentExplainedAyah?.surah.name
-                  : currentExplainedAyah?.surah.englishName}
-                {" : "}
-                {currentExplainedAyah?.numberInSurah} ]
-              </span>
+              ✦{" "}
+              {currentExplainedAyah !== null
+                ? currentExplainedAyah?.text
+                : langs === "arabic"
+                ? "السورة كاملة"
+                : "Complet Surah"}{" "}
+              ✦
+              {currentExplainedAyah !== null && (
+                <span className="mx-2" style={{ color: "#169777" }}>
+                  [
+                  {langs === "arabic"
+                    ? currentExplainedAyah?.surah.name
+                    : currentExplainedAyah?.surah.englishName}
+                  {" : "}
+                  {currentExplainedAyah?.numberInSurah}]
+                </span>
+              )}
             </p>
           )}
           <TafsirContent

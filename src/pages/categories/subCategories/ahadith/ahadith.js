@@ -1017,6 +1017,7 @@ const Ahadith = () => {
                   color: "white",
                   fontWeight: "bold",
                   width: "max-content",
+                  border: "1px solid rgba(11,107,203,1)",
                 }}
                 onClick={handleSearch} // Close the modal when the search button is clicked
               >
@@ -1028,6 +1029,7 @@ const Ahadith = () => {
                 variant="solid"
                 color="danger"
                 onClick={() => setOpen(false)}
+                sx={{ border: "1px solid red" }}
               >
                 <CloseOutlinedIcon className="mt-1" />{" "}
                 {language === "ar" ? "خروج" : "Exit"}

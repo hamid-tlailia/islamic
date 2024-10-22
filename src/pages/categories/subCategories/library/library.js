@@ -307,7 +307,7 @@ const Library = () => {
                   backgroundColor: "var(--card-color)",
                   color: "var(--text-color)",
                 }}
-              > 
+              >
                 <img
                   className="img-fluid w-100"
                   src={

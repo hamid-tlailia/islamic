@@ -177,7 +177,14 @@ const Prophets = ({ scrollUp }) => {
       >
         <div className="modal-content-fullscreen">
           <div className="modal-header">
-            <button onClick={handleCloseModal} className="close-btn">
+            <button
+              onClick={handleCloseModal}
+              className="close-btn"
+              style={{
+                backgroundColor: "#1b87a5 !important",
+                border: "1px solid #1b87a5 !important",
+              }}
+            >
               <CloseOutlinedIcon />
             </button>
             <h2 className="modal-title">

@@ -1175,7 +1175,11 @@ const BeMuslim = () => {
           <Box className="d-flex flex-row justify-content-between align-items-center gap-2">
             <Button
               onClick={handleClose}
-              sx={{ mb: 2, backgroundColor: "#1b87a5" }}
+              sx={{
+                mb: 2,
+                backgroundColor: "#1b87a5",
+                border: "1px solid #1b87a5",
+              }}
             >
               X
             </Button>
