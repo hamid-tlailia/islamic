@@ -659,7 +659,7 @@ const Tajweed = ({ audioName, documentName }) => {
           variant="outlined"
           sx={{ fontSize: "17px" }}
           onClick={handleSave}
-          color={saved ? "success" : "primary"}
+          color={saved || !savedPageChanged ? "success" : "primary"}
         >
           {saved || !savedPageChanged ? (
             <>
