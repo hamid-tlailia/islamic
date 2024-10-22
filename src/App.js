@@ -132,6 +132,7 @@ function App() {
   const pausePlayer = () => {
     setIsNowPlaying(false);
     setNewSRC(null);
+    setPlayingSurah("");
   };
 
   const audioSRC = (e) => {
@@ -309,6 +310,7 @@ function App() {
                         displayButton={() => setShow(true)}
                         hideButton={() => setShow(false)}
                         backTop={backToTop}
+                        scrollTop={() => setBackToTop(true)}
                       />
                     }
                   >

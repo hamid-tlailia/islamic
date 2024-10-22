@@ -27,7 +27,92 @@ import { useNavigate, useLocation } from "react-router-dom";
 import throttle from "lodash.throttle";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 
-// import Search from "./subCategories/search/search";
+const navLinks = [
+  {
+    path: "islam",
+    title: "whatIsIslam",
+  },
+  {
+    path: "beMuslim",
+    title: "beAMuslim",
+  },
+  {
+    path: "quran",
+    title: "quran",
+  },
+  {
+    path: "tafsir",
+    title: "quranInterpretationCat",
+  },
+  {
+    path: "ahadith",
+    title: "hadiths",
+  },
+  {
+    path: "times",
+    title: "prayerTimes",
+  },
+  {
+    path: "adhkar",
+    title: "azkar",
+  },
+  {
+    path: "names",
+    title: "asmaaHusna",
+  },
+  {
+    path: "tasbih",
+    title: "tasbeeh",
+  },
+  {
+    path: "prophets",
+    title: "prophetsStories",
+  },
+  {
+    path: "animals",
+    title: "animalsStories",
+  },
+  {
+    path: "fatawa",
+    title: "contemporaryFatwas",
+  },
+  {
+    path: "library",
+    title: "wisdomAndAdmonitions",
+  },
+  {
+    path: "qiblah",
+    title: "qiblahDirection",
+  },
+  {
+    path: "fiqh",
+    title: "fiqhIslam",
+  },
+  {
+    path: "historic",
+    title: "islamicHistory",
+  },
+  {
+    path: "arabic",
+    title: "arabicLanguage",
+  },
+  {
+    path: "knowledge",
+    title: "OtherTopics",
+  },
+  {
+    path: "sira",
+    title: "alSira",
+  },
+  {
+    path: "tajweed",
+    title: "alTajweed",
+  },
+  {
+    path: "questions",
+    title: "askAQuestion",
+  },
+];
 
 const Categories = ({
   showHeader,
@@ -36,11 +121,13 @@ const Categories = ({
   displayButton,
   hideButton,
   backTop,
+  scrollTop,
 }) => {
   // Define sub component title
   const [subTitle, setSubTitle] = useState("");
   // Handle scrolling state
   const [currentScroll, setCurrentScroll] = useState(0);
+  const [checkTitle, setCheckTitle] = useState(false);
   // State to store the selected category position
   const [selectedCategoryPosition, setSelectedCategoryPosition] = useState(0);
   const { language, translations } = useTranslation();
@@ -60,7 +147,11 @@ const Categories = ({
     const currentComponentTitle = localStorage.getItem("component-title");
     if (currentComponentTitle) setSubTitle(currentComponentTitle);
     else setSubTitle("الأقسام");
-  }, [location.pathname]);
+    const savedPosition = localStorage.getItem("last-category-position");
+    setSelectedCategoryPosition(savedPosition);
+    if (location.pathname.startsWith("/categories/")) scrollTop();
+    // eslint-disable-next-line
+  }, [location.pathname, checkTitle]);
   // Event handler for clicks on categories
   const handleCategoryClick = (event) => {
     const target = event.target.closest(".div");
@@ -75,7 +166,7 @@ const Categories = ({
         // Save the clicked category's position relative to the scrollable content
         if (contentRef.current) {
           const categoryPosition = target.offsetTop;
-          setSelectedCategoryPosition(categoryPosition);
+          localStorage.setItem("last-category-position", categoryPosition);
         }
 
         if (outletsRef.current) {
@@ -125,13 +216,39 @@ const Categories = ({
   // Updated useEffect to handle pathname changes
   useEffect(() => {
     if (location.pathname.startsWith("/categories/")) {
-      outletsRef.current.classList.add("active");
-      categoriesRef.current.classList.add("hide");
+      outletsRef.current?.classList.add("active");
+      categoriesRef.current?.classList.add("hide");
+      // Extract the category segment after "/categories/"
+      const categoryPath = location.pathname
+        .replace("/categories/", "")
+        .split("/")[0]
+        .toLowerCase(); // Optional: normalize to lowercase if needed
+
+      // Find the matching navigation link based on the categoryPath
+      const matchedLink = navLinks.find(
+        (link) => link.path.toLowerCase() === categoryPath
+      );
+
+      if (matchedLink) {
+        // Save the title to localStorage
+        localStorage.setItem("component-title", matchedLink.title);
+        console.log(`Category Title Saved: ${matchedLink.title}`);
+      } else {
+        console.warn(`No matching category found for path: ${categoryPath}`);
+        // Optionally, handle the case where no matching category is found
+      }
+      setCheckTitle(true);
+      scrollTop();
     } else {
       outletsRef.current.classList.remove("active");
       categoriesRef.current.classList.remove("hide");
+      document.body.scrollTo({
+        top: selectedCategoryPosition,
+      });
+      setCheckTitle(false);
     }
-  }, [location.pathname]); // Depend on location.pathname to run the effect when the path changes
+    // eslint-disable-next-line
+  }, [location.pathname, selectedCategoryPosition]); // Depend on location.pathname to run the effect when the path changes
 
   // Function to handle scrolling and show/hide button
   // eslint-disable-next-line
@@ -173,7 +290,7 @@ const Categories = ({
         behavior: "smooth",
       });
     }
-  }, [backTop]);
+  }, [backTop, checkTitle]);
 
   useEffect(() => {
     if (contentRef.current) {
@@ -194,8 +311,6 @@ const Categories = ({
             </p>
           </div>
           <div className="card-body p-0">
-            {/* search component placement */}
-            <div className="hr"></div>
             {/* Categories */}
             <div className="divisions" ref={categoriesRef}>
               <NavLink className="div" to="islam">

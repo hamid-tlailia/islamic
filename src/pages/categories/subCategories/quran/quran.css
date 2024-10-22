@@ -426,6 +426,7 @@
 }
 .css-ymaf6v-MuiButtonBase-root-MuiTab-root {
   font-family: "Cairo", sans-serif !important;
+  color: var(--text-color) !important;
 }
 .w-m-c {
   width: max-content !important;

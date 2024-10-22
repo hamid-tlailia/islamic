@@ -307,7 +307,7 @@ const Library = () => {
                   backgroundColor: "var(--card-color)",
                   color: "var(--text-color)",
                 }}
-              >
+              > 
                 <img
                   className="img-fluid w-100"
                   src={
@@ -413,10 +413,10 @@ const Library = () => {
                 flexDirection: "row",
                 gap: "5px",
                 padding: "5px",
-                color: "#03a9f4",
+                color: "#169777",
                 direction: language === "ar" ? "rtl" : "ltr",
                 backgroundColor: "transparent",
-                border: "1px solid #03a9f4",
+                border: "1px solid #169777",
               }}
             >
               {language === "ar"
@@ -436,10 +436,10 @@ const Library = () => {
                 flexDirection: "row",
                 gap: "5px",
                 padding: "5px",
-                color: "#03a9f4",
+                color: "#169777",
                 direction: language === "ar" ? "rtl" : "ltr",
                 backgroundColor: "transparent",
-                border: "1px solid #03a9f4",
+                border: "1px solid #169777",
               }}
             >
               {language === "ar"

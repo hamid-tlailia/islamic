@@ -79,8 +79,8 @@ const Contact = () => {
       (response) => {
         toast.success(
           language === "ar"
-            ? "تم إرسال الرسالة بنجاح!"
-            : "Your message has been sent successfully!"
+            ? "شكرا لك على تواصلك معنا  , سنعمل جاهدا للرد قريبا"
+            : "Thank you for contact us , we will respond as soon as possible"
         );
         setFormData({ name: "", email: "", message: "" });
         setLoading(false); // Stop loading

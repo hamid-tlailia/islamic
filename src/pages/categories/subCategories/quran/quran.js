@@ -181,6 +181,7 @@ const Quran = ({ src }) => {
 
       // Update prevAyahIndex
       setPrevAyahIndex(index);
+      setCurrentAyahIndex(null);
     }
   };
 
@@ -455,14 +456,28 @@ const Quran = ({ src }) => {
                     className="navs shadow-1-strong rounded-2 mx-2"
                     variant="fullWidth"
                   >
+                    {/* First Tab: Reading */}
                     <Tab
                       label={language === "ar" ? "القراءة" : "Reading"}
-                      sx={{ color: "var(--text-color)" }}
+                      sx={{
+                        color:
+                          tabValue === 0
+                            ? "mediumvioletred !important"
+                            : "var(--text-color)",
+                        fontWeight: tabValue === 0 ? "bold" : "normal",
+                      }}
                       className="quranTabs"
                     />
+                    {/* Second Tab: Explanation */}
                     <Tab
                       label={language === "ar" ? "التفسير" : "Explanation"}
-                      sx={{ color: "var(--text-color)" }}
+                      sx={{
+                        color:
+                          tabValue === 1
+                            ? "mediumvioletred !important"
+                            : "var(--text-color)",
+                        fontWeight: tabValue === 1 ? "bold" : "normal",
+                      }}
                       className="quranTabs"
                     />
                   </Tabs>

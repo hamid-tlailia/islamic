@@ -382,6 +382,7 @@ const Tajweed = ({ audioName, documentName }) => {
           : "You are in the first page"
       );
     }
+    checkSavedPage();
   };
 
   const handleNext = () => {
@@ -394,6 +395,7 @@ const Tajweed = ({ audioName, documentName }) => {
         language === "ar" ? "لقد وصلت الى اخر صفحة" : "You are in the last page"
       );
     }
+    checkSavedPage();
   };
 
   const updateSurahBasedOnPage = (page) => {
@@ -564,6 +566,7 @@ const Tajweed = ({ audioName, documentName }) => {
     }
   }, [currentPage, currentSurah]);
 
+  // Function to detect if page changed
   const checkSavedPage = () => {
     if (
       parseInt(localStorage.getItem("savedPage")) === currentPage &&

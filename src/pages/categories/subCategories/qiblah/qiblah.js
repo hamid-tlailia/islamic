@@ -1,4 +1,3 @@
-// Qiblah.js
 import React, { useEffect, useState } from "react";
 import { Box, Typography, CircularProgress, Button } from "@mui/material";
 import { useTranslation } from "../../../../components/languages/provider";
@@ -154,17 +153,17 @@ const Qiblah = () => {
     return (radians * 180) / Math.PI;
   };
 
-  const dotWidth = 10;
-  const dotHeight = 10;
+  const symbolWidth = 30;
+  const symbolHeight = 30;
 
-  const calculateRedDotPosition = () => {
+  const calculateSymbolPosition = () => {
     const radius = 125;
     const centerX = 125;
     const centerY = 125;
     const angleInRadians = (qiblahDirection * Math.PI) / 180;
 
-    const x = centerX + radius * Math.sin(angleInRadians) - dotWidth / 2;
-    const y = centerY - radius * Math.cos(angleInRadians) - dotHeight / 2;
+    const x = centerX + radius * Math.sin(angleInRadians) - symbolWidth / 2;
+    const y = centerY - radius * Math.cos(angleInRadians) - symbolHeight / 2;
 
     return { x, y };
   };
@@ -269,18 +268,18 @@ const Qiblah = () => {
           borderRadius="50%"
           border="2px solid #000"
         >
-          {/* Fixed red dot representing the Qiblah direction */}
+          {/* Makkah symbol representing the Qiblah direction */}
           <Box
+            component="p"
             position="absolute"
-            width={10}
-            height={10}
-            borderRadius="50%"
-            bgcolor="red"
+            width={symbolWidth}
+            height={symbolHeight}
             style={{
-              top: `${calculateRedDotPosition().y}px`,
-              left: `${calculateRedDotPosition().x}px`,
+              top: `${calculateSymbolPosition().y}px`,
+              left: `${calculateSymbolPosition().x}px`,
             }}
           />
+          🕋
         </Box>
         {/* Arrow indicating the user's facing direction */}
         <Box
