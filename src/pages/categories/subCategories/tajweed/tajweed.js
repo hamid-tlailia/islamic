@@ -661,7 +661,7 @@ const Tajweed = ({ audioName, documentName }) => {
           onClick={handleSave}
           color={saved ? "success" : "primary"}
         >
-          {saved ? (
+          {saved || !savedPageChanged ? (
             <>
               <DoneOutlinedIcon className="fs-5 mt-1 mx-1" />
               {language === "ar" ? "محفوظة" : "Saved"}
