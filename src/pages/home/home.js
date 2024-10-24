@@ -22,6 +22,9 @@ const Home = ({ onNavClick }) => {
   const [selectedHadiths, setSelectedHadiths] = useState([]);
   const [hadithsLoading, setHadithsLoading] = useState(true);
   const [error, setError] = useState(null);
+  useEffect(() => {
+    localStorage.removeItem("last-category-position");
+  }, []);
 
   useEffect(() => {
     const fetchHadiths = async () => {

@@ -102,7 +102,10 @@ const Footer = ({ onFooterClick }) => {
               className={language === "en" ? "ltr text-start" : "rtl text-end"}
             >
               <PhoneEnabledOutlinedIcon />
-              <a href="tel:+97450445182">+974 50 445 182 </a>
+              <a href="tel:+97450445182" className="d-ltr">
+                {" "}
+                <span className="d-ltr">+974 50 445 182</span>{" "}
+              </a>
             </p>
           </div>
         </div>

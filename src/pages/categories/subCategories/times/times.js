@@ -188,7 +188,7 @@ const Times = () => {
     <div className="container-fluid text-center position-relative py-4">
       <Typography level="h4" sx={{ mb: 2, color: "crimson" }}>
         {language === "ar" ? "مواقيت الصلاة اليوم :" : "Today's Prayer Times:"}{" "}
-        {todayDate ? todayDate : ""}
+        {todayDate ? todayDate : "--/--/----"}
       </Typography>
       {currentLocation && (
         <Typography level="h5" sx={{ mb: 2, color: "green" }}>
@@ -203,16 +203,6 @@ const Times = () => {
       ) : prayerTimes ? (
         <div className="times">
           <div className="d-flex flex-column flex-lg-row flex-md-row justify-content-center align-items-center gap-2 mb-4">
-            <Typography
-              className="badge border border-secondary text-secondary text-center"
-              level="h5"
-              sx={{ mt: 2, px: 3, py: 1 }}
-            >
-              <CalendarToday />{" "}
-              {`${
-                language === "ar" ? "التاريخ الميلادي" : "Gregorian Date"
-              }: ${new Date().toLocaleDateString(language)}`}
-            </Typography>
             <Typography
               className="badge border border-secondary text-secondary text-center"
               level="h6"

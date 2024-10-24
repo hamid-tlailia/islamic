@@ -133,7 +133,7 @@ const tajweedRules = {
     description_ar:
       "إدغام الميم الساكنة في الميم التالية مع الغنة، مما يساعد في الحفاظ على سلاسة التلاوة.",
     letters: "م",
-    color: "#58B800",
+    color: "green",
   },
   iqlab: {
     en: "Iqlāb",
@@ -232,7 +232,7 @@ const Tajweed = ({ audioName, documentName }) => {
   }, [isErrorFetching]);
   // Detect if user change saved page to not saved one
   useEffect(() => {
-    const savedSurah = localStorage.getItem("savedSurah");
+    const savedSurah = localStorage.getItem("savedTajweedSurah");
     const savedPage = localStorage.getItem("savedPage");
     const currentSavedSurah = parseInt(savedSurah, 10);
     const currentSavedPage = parseInt(savedPage, 10);
@@ -252,7 +252,7 @@ const Tajweed = ({ audioName, documentName }) => {
   // Restore saved page and surah
 
   const restoreSavedInfos = () => {
-    const savedSurah = localStorage.getItem("savedSurah");
+    const savedSurah = localStorage.getItem("savedTajweedSurah");
     const savedPage = localStorage.getItem("savedPage");
     if (savedSurah && savedPage) {
       setCurrentSurah(parseInt(savedSurah, 10));
@@ -277,7 +277,7 @@ const Tajweed = ({ audioName, documentName }) => {
   });
 
   useEffect(() => {
-    const savedSurah = localStorage.getItem("savedSurah");
+    const savedSurah = localStorage.getItem("savedTajweedSurah");
     const savedPage = localStorage.getItem("savedPage");
     if (savedSurah && savedPage) {
       setCurrentSurah(parseInt(savedSurah, 10));
@@ -455,7 +455,7 @@ const Tajweed = ({ audioName, documentName }) => {
 
   const handleSave = () => {
     if (currentSurah && currentPage && !saved) {
-      localStorage.setItem("savedSurah", currentSurah);
+      localStorage.setItem("savedTajweedSurah", currentSurah);
       localStorage.setItem("savedPage", currentPage);
       toast.success(
         language === "ar" ? "تم حفظ السورة والصفحة!" : "Surah and Page saved!"
@@ -558,7 +558,7 @@ const Tajweed = ({ audioName, documentName }) => {
   useEffect(() => {
     if (
       parseInt(localStorage.getItem("savedPage")) === currentPage &&
-      parseInt(localStorage.getItem("savedSurah")) === currentSurah
+      parseInt(localStorage.getItem("savedTajweedSurah")) === currentSurah
     ) {
       setSaved(true);
     } else {
@@ -570,7 +570,7 @@ const Tajweed = ({ audioName, documentName }) => {
   const checkSavedPage = () => {
     if (
       parseInt(localStorage.getItem("savedPage")) === currentPage &&
-      parseInt(localStorage.getItem("savedSurah")) === currentSurah
+      parseInt(localStorage.getItem("savedTajweedSurah")) === currentSurah
     ) {
       setSaved(true);
     } else {
@@ -790,7 +790,7 @@ const Tajweed = ({ audioName, documentName }) => {
           className="modal-content"
           sx={{
             maxWidth: "90%",
-            maxHeight: "90%",
+            maxHeight: "72%",
             overflowY: "auto",
             position: "relative",
             backgroundColor: "var(--card-color)",

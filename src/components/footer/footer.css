@@ -18,3 +18,7 @@
   text-decoration: none;
   color: burlywood;
 }
+.d-ltr {
+  direction: ltr;
+  unicode-bidi: embed;
+}

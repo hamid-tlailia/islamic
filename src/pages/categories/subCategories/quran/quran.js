@@ -40,6 +40,7 @@ const Quran = ({ src }) => {
   const [currentAyahIndex, setCurrentAyahIndex] = useState(null);
   const [prevAyahIndex, setPrevAyahIndex] = useState(null); // New state variable
   const [tabValue, setTabValue] = useState(0);
+  const [allSurahTafseer, setAllSurahTafseer] = useState([]);
   const reciterNameMap = {
     // ... (Include your reciterNameMap object here)
   };
@@ -119,7 +120,6 @@ const Quran = ({ src }) => {
           );
           const translationData = await translationResponse.json();
           setApiTranslation(translationData.data.ayahs);
-          console.log(translationData.data.ayahs);
         } catch (error) {
           console.log("Error fetching surah data:", error);
           setIsErrorFetching(true);
@@ -135,12 +135,12 @@ const Quran = ({ src }) => {
       try {
         if (selectedSurah > 0) {
           const tafseerResponse = await fetch(
-            `http://api.quran-tafseer.com/tafseer/${
-              tafseerLangs === "arabe" ? "1" : "10"
-            }/${selectedSurah}/1/${allAyahs?.ayahs.length}`
+            `https://api.alquran.cloud/v1/surah/${selectedSurah}/editions/${
+              tafseerLangs === "arabe" ? "ar.muyassar" : "en.asad"
+            }`
           );
           const tafseerData = await tafseerResponse.json();
-          setApiTafseer(tafseerData);
+          setApiTafseer(tafseerData.data[0]);
           setTafsirLoader(false);
         }
       } catch (error) {
@@ -210,6 +210,14 @@ const Quran = ({ src }) => {
       setOpenAyahTafsirModal(true);
     }
   };
+  // Set arabic tafsir for Explanation Tab
+  useEffect(() => {
+    const surahNumber = allAyahs?.number;
+    const ayahTfasir = Quran_Tafsir.Surahs?.find(
+      (tafsir) => tafsir.number === Number(surahNumber)
+    );
+    setAllSurahTafseer(ayahTfasir);
+  }, [allAyahs]);
 
   useEffect(() => {
     const fetchReciters = async () => {
@@ -685,20 +693,24 @@ const Quran = ({ src }) => {
                                 }
                               >
                                 {tafseerLangs === "arabe"
-                                  ? selectedSurah < 5
-                                    ? ayah.tafsir
-                                    : apiTafseer?.find(
-                                        (tafseerAyah) =>
-                                          tafseerAyah.ayah_number ===
-                                          ayah.number
-                                      )?.text || "ألتفسير غير متاح"
-                                  : selectedSurah < 5
-                                  ? ayah.english_tafsir || ayah.tafsir
-                                  : apiTafseer?.find(
-                                      (tafseerAyah) =>
-                                        tafseerAyah?.ayah_number === ayah.number
-                                    )?.text ||
-                                    "English Explanation not available"}
+                                  ? allSurahTafseer
+                                    ? allSurahTafseer?.ayahs?.map((t) => (
+                                        <span>
+                                          {" "}
+                                          {t.number === index + 1 &&
+                                            t.tafsir}{" "}
+                                        </span>
+                                      ))
+                                    : "التفسير غير متاح"
+                                  : apiTafseer
+                                  ? apiTafseer?.ayahs.map((t) => (
+                                      <span>
+                                        {" "}
+                                        {t.numberInSurah === ayah.number &&
+                                          t.text}{" "}
+                                      </span>
+                                    ))
+                                  : "English explanation not available"}
                               </p>
                             )}
                           </div>

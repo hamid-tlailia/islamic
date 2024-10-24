@@ -152,6 +152,7 @@ const Categories = ({
     if (location.pathname.startsWith("/categories/")) scrollTop();
     // eslint-disable-next-line
   }, [location.pathname, checkTitle]);
+
   // Event handler for clicks on categories
   const handleCategoryClick = (event) => {
     const target = event.target.closest(".div");
@@ -232,10 +233,10 @@ const Categories = ({
       if (matchedLink) {
         // Save the title to localStorage
         localStorage.setItem("component-title", matchedLink.title);
-        console.log(`Category Title Saved: ${matchedLink.title}`);
       } else {
-        console.warn(`No matching category found for path: ${categoryPath}`);
         // Optionally, handle the case where no matching category is found
+        const defaultTitle = language === "ar" ? "الأقسام" : "Categories";
+        localStorage.setItem("component-title", defaultTitle);
       }
       setCheckTitle(true);
       scrollTop();

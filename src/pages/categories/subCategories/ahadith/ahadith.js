@@ -34,11 +34,18 @@ const Ahadith = () => {
   const [books, setBooks] = useState([]);
   const [chapters, setChapters] = useState([]);
   const [ahadith, setAhadith] = useState([]);
-  const [selectedBook, setSelectedBook] = useState(null);
-  const [selectedChapter, setSelectedChapter] = useState(null);
+  const [selectedBook, setSelectedBook] = useState(() => {
+    return localStorage.getItem("selectedBook") || null;
+  });
+  const [selectedChapter, setSelectedChapter] = useState(() => {
+    return localStorage.getItem("selectedChapter") || null;
+  });
   // eslint-disable-next-line
   const [loader, setLoader] = useState(false);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(() => {
+    const savedPage = localStorage.getItem("page");
+    return savedPage ? parseInt(savedPage, 10) : 1;
+  });
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const { language } = useTranslation();
@@ -97,35 +104,19 @@ const Ahadith = () => {
 
   useEffect(() => {
     fetchBooks();
+    // eslint-disable-next-line
   }, []);
-
-  useEffect(() => {
-    if (selectedBook) {
-      fetchChapters(selectedBook);
-      setPage(1);
-      setSelectedChapter(null);
-      setAhadith([]);
-      setTotalPages(1);
-    }
-  }, [selectedBook]);
 
   useEffect(() => {
     if (isErrorFetching) {
       toast.error(
         language === "ar"
           ? "هناك خطأ ما سيتم معالجة الأمر قريبا "
-          : "Something happend , w'll fix it soon"
+          : "Something happened, we'll fix it soon"
       );
     }
     // eslint-disable-next-line
   }, [isErrorFetching]);
-
-  useEffect(() => {
-    if (selectedChapter) {
-      fetchAhadith();
-    }
-    // eslint-disable-next-line
-  }, [selectedChapter, page]);
 
   const fetchBooks = async () => {
     try {
@@ -139,6 +130,17 @@ const Ahadith = () => {
             book.bookName !== "Al-Silsila Sahiha"
         );
         setBooks(booksArray);
+
+        // Validate selectedBook from localStorage
+        if (selectedBook) {
+          const isBookValid = booksArray.find(
+            (book) => book.bookSlug === selectedBook
+          );
+          if (!isBookValid) {
+            setSelectedBook(null);
+            localStorage.removeItem("selectedBook");
+          }
+        }
       } else {
         console.error("Books data is not in the expected format:", data);
         setBooks([]);
@@ -149,6 +151,21 @@ const Ahadith = () => {
     }
   };
 
+  useEffect(() => {
+    if (selectedBook) {
+      fetchChapters(selectedBook);
+      // Do not reset page here, as we want to restore last page
+      setAhadith([]);
+      setTotalPages(1);
+      // Save selectedBook to localStorage
+      localStorage.setItem("selectedBook", selectedBook);
+    } else {
+      // If no selectedBook, remove from localStorage
+      localStorage.removeItem("selectedBook");
+    }
+    // eslint-disable-next-line
+  }, [selectedBook]);
+
   const fetchChapters = async (bookSlug) => {
     try {
       const response = await fetch(
@@ -158,6 +175,17 @@ const Ahadith = () => {
 
       if (data.chapters && Array.isArray(data.chapters)) {
         setChapters(data.chapters);
+
+        // Validate selectedChapter from localStorage
+        if (selectedChapter) {
+          const isChapterValid = data.chapters.find(
+            (chapter) => chapter.chapterNumber.toString() === selectedChapter
+          );
+          if (!isChapterValid) {
+            setSelectedChapter(null);
+            localStorage.removeItem("selectedChapter");
+          }
+        }
       } else {
         console.error("Chapters data is not in the expected format:", data);
         setChapters([]);
@@ -167,6 +195,23 @@ const Ahadith = () => {
       setIsErrorFetching(true);
     }
   };
+
+  useEffect(() => {
+    if (selectedChapter) {
+      fetchAhadith();
+      // Save selectedChapter to localStorage
+      localStorage.setItem("selectedChapter", selectedChapter);
+    } else {
+      // If no selectedChapter, remove from localStorage
+      localStorage.removeItem("selectedChapter");
+    }
+    // eslint-disable-next-line
+  }, [selectedChapter, page]); // Include 'page' here
+
+  useEffect(() => {
+    // Save page to localStorage
+    localStorage.setItem("page", page);
+  }, [page]);
 
   const fetchAhadith = async () => {
     setLoading(true);
@@ -184,6 +229,11 @@ const Ahadith = () => {
         setAhadith(data.hadiths.data);
         setTotalPages(data.hadiths.last_page || 1);
         setSearchResult(null);
+
+        // If page is not selected, default to 1 if multiple pages exist
+        if (!page && data.hadiths.last_page > 1) {
+          setPage(1);
+        }
       } else {
         console.error("Ahadith data is not in the expected format");
         setAhadith([]);
@@ -348,7 +398,7 @@ const Ahadith = () => {
         if (language === "ar") {
           respAria.innerHTML = `رقم الحديث غير موجود , اخر حديث رقم : ${hadithsCounts}`;
         } else {
-          respAria.innerHTML = "Hadith number is not exists in book";
+          respAria.innerHTML = "Hadith number does not exist in book";
         }
       }
     } else {
@@ -369,7 +419,7 @@ const Ahadith = () => {
             if (language === "ar") {
               result.innerHTML = "رقم الحديث غير موجود في الكتاب";
             } else {
-              result.innerHTML = "Hadith number is not exists in book";
+              result.innerHTML = "Hadith number does not exist in book";
             }
           }
           setIsErrorFetching(true);
@@ -421,7 +471,7 @@ const Ahadith = () => {
       setHadithExplanation(
         language === "ar"
           ? "لا تتوفر معلومات عن الحديث"
-          : "Hadith Summary not avilable"
+          : "Hadith Summary not available"
       );
       setIsErrorFetching(true);
     }
@@ -584,6 +634,9 @@ const Ahadith = () => {
                   setSelectedChapter(null);
                   setChapters([]);
                   setAhadith([]);
+                  setPage(1);
+                  localStorage.removeItem("selectedChapter");
+                  localStorage.removeItem("page");
                 }}
                 value={
                   selectedBook
@@ -640,6 +693,8 @@ const Ahadith = () => {
                       newValue ? newValue.chapterNumber : null
                     );
                     setPage(1);
+                    setAhadith([]);
+                    localStorage.removeItem("page");
                   }}
                   isOptionEqualToValue={(option, value) =>
                     option.chapterNumber === value?.chapterNumber
@@ -658,7 +713,16 @@ const Ahadith = () => {
             variant="outlined"
             color="primary"
             className="w-50"
-            onClick={() => setAhadith([])}
+            onClick={() => {
+              setAhadith([]);
+              setSelectedBook(null);
+              setSelectedChapter(null);
+              setChapters([]);
+              setPage(1);
+              localStorage.removeItem("selectedBook");
+              localStorage.removeItem("selectedChapter");
+              localStorage.removeItem("page");
+            }}
           >
             {language === "ar" ? "اعادة تعيين" : "Reset"}
           </Button>
@@ -1011,17 +1075,17 @@ const Ahadith = () => {
                 variant="solid"
                 color="primary"
                 fullWidth
-                className="d-flex justify-content-center pe-1 gap-2 align-items-center"
-                startDecorator={<i className="fas fa-search"></i>}
+                className="d-flex flex-row justify-content-center  gap-2 align-items-center"
                 sx={{
                   color: "white",
                   fontWeight: "bold",
                   width: "max-content",
                   border: "1px solid rgba(11,107,203,1)",
+                  textAlign: "center",
                 }}
                 onClick={handleSearch} // Close the modal when the search button is clicked
               >
-                <SearchOutlinedIcon className="mt-1 me-0" />{" "}
+                <SearchOutlinedIcon className="mt-1 " />{" "}
                 {language === "ar" ? "بحث" : "Search"}
               </Button>
               <Button
@@ -1096,7 +1160,7 @@ const Ahadith = () => {
                   dangerouslySetInnerHTML={{
                     __html:
                       language === "en" || hadithLangs === "en"
-                        ? "Sorry , Hadith Summary is only available in arabic version"
+                        ? "Sorry , Hadith Summary is only available in Arabic version"
                         : hadithExplanation,
                   }}
                   // Make content inside the modal scrollable

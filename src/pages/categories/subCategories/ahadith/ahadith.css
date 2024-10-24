@@ -18,7 +18,7 @@
 .close-loader {
   position: absolute;
   left: 10px;
-  top: -80px;
+  top: -60px;
   color: red;
   z-index: 99999 !important;
   font-size: 30px;

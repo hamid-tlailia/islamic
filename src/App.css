@@ -63,7 +63,7 @@ body.light-filter {
   --header-bg-color: rgb(81, 85, 27);
   --header-text-color: rgb(235, 202, 202);
   --bg-color: rgb(178, 174, 159);
-  --text-color: rgb(3, 2, 1);
+  --text-color: rgb(3, 2, 1) !important;
   --card-color: rgb(178, 174, 159);
   --border: 1px solid gold;
   --nav-link-color: rgb(126, 101, 11);
@@ -97,6 +97,7 @@ body.image {
   --player-bg-color: rgb(8, 27, 42);
   --tabs-bg-color: rgba(180, 154, 154, 0.5);
   --main-color: coral;
+  --api-card: #021602;
   background: url(./components//images/bg4.avif);
   background-size: cover;
   background-repeat: no-repeat;

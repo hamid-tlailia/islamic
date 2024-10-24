@@ -14,6 +14,9 @@ import { NavLink } from "react-router-dom";
 const About = ({ onAboutClick }) => {
   const { language } = useTranslation();
   const [isReady, setIsReady] = useState(false);
+  useEffect(() => {
+    localStorage.removeItem("last-category-position");
+  }, []);
 
   useEffect(() => {
     // Set a new title and store it in localStorage

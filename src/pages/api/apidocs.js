@@ -341,6 +341,9 @@ const apiList = [
 const Api = ({ showScrillBtn, hideScrollBtn, back }) => {
   const { language } = useTranslation();
   const [isReady, setIsReady] = useState(false);
+  useEffect(() => {
+    localStorage.removeItem("last-category-position");
+  }, []);
 
   useEffect(() => {
     // Set a new title and store it in localStorage

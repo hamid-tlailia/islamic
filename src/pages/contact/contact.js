@@ -43,6 +43,10 @@ const Contact = () => {
   }, [isReady, language]); // Keep the empty dependency array
 
   useEffect(() => {
+    localStorage.removeItem("last-category-position");
+  }, []);
+  
+  useEffect(() => {
     setIsReady(true);
   }, []);
   const isArabicText = (text) => {
