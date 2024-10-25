@@ -556,11 +556,14 @@ const Tajweed = ({ audioName, documentName }) => {
   };
 
   useEffect(() => {
-    if (
-      parseInt(localStorage.getItem("savedPage")) === currentPage &&
-      parseInt(localStorage.getItem("savedTajweedSurah")) === currentSurah
-    ) {
-      setSaved(true);
+    const storedPage = parseInt(localStorage.getItem("savedPage"));
+    const storedSurah = parseInt(localStorage.getItem("savedTajweedSurah"));
+    if (storedPage && storedSurah) {
+      if (storedPage === currentPage && storedSurah === currentSurah) {
+        setSaved(true);
+      } else {
+        setSaved(false);
+      }
     } else {
       setSaved(false);
     }
@@ -568,11 +571,14 @@ const Tajweed = ({ audioName, documentName }) => {
 
   // Function to detect if page changed
   const checkSavedPage = () => {
-    if (
-      parseInt(localStorage.getItem("savedPage")) === currentPage &&
-      parseInt(localStorage.getItem("savedTajweedSurah")) === currentSurah
-    ) {
-      setSaved(true);
+    const storedPage = parseInt(localStorage.getItem("savedPage"));
+    const storedSurah = parseInt(localStorage.getItem("savedTajweedSurah"));
+    if (storedPage && storedSurah) {
+      if (storedPage === currentPage && storedSurah === currentSurah) {
+        setSaved(true);
+      } else {
+        setSaved(false);
+      }
     } else {
       setSaved(false);
     }
@@ -659,9 +665,9 @@ const Tajweed = ({ audioName, documentName }) => {
           variant="outlined"
           sx={{ fontSize: "17px" }}
           onClick={handleSave}
-          color={saved || !savedPageChanged ? "success" : "primary"}
+          color={saved && !savedPageChanged ? "success" : "primary"}
         >
-          {saved || !savedPageChanged ? (
+          {saved && !savedPageChanged ? (
             <>
               <DoneOutlinedIcon className="fs-5 mt-1 mx-1" />
               {language === "ar" ? "محفوظة" : "Saved"}

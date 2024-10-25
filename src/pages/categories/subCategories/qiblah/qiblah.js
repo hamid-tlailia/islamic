@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, CircularProgress, Button } from "@mui/material";
+import { ArrowUpward } from "@mui/icons-material";
 import { useTranslation } from "../../../../components/languages/provider";
 
 const translations = {
@@ -153,24 +154,10 @@ const Qiblah = () => {
     return (radians * 180) / Math.PI;
   };
 
-  const symbolWidth = 30;
-  const symbolHeight = 30;
-
-  const calculateSymbolPosition = () => {
-    const radius = 125;
-    const centerX = 125;
-    const centerY = 125;
-    const angleInRadians = (qiblahDirection * Math.PI) / 180;
-
-    const x = centerX + radius * Math.sin(angleInRadians) - symbolWidth / 2;
-    const y = centerY - radius * Math.cos(angleInRadians) - symbolHeight / 2;
-
-    return { x, y };
-  };
-
   const getArrowRotation = () => {
-    if (deviceOrientation !== null) {
-      return -deviceOrientation;
+    if (deviceOrientation !== null && qiblahDirection !== null) {
+      const rotation = (qiblahDirection - deviceOrientation + 360) % 360;
+      return rotation;
     }
     return 0;
   };
@@ -268,35 +255,30 @@ const Qiblah = () => {
           borderRadius="50%"
           border="2px solid #000"
         >
-          {/* Makkah symbol representing the Qiblah direction */}
+          {/* Makkah symbol fixed at the top */}
           <Box
-            component="p"
             position="absolute"
-            width={symbolWidth}
-            height={symbolHeight}
-            style={{
-              top: `${calculateSymbolPosition().y}px`,
-              left: `${calculateSymbolPosition().x}px`,
-            }}
-          />
-          🕋
+            top="10px"
+            left="50%"
+            transform="translateX(-50%)"
+            fontSize="34px"
+          >
+            🕋
+          </Box>
         </Box>
-        {/* Arrow indicating the user's facing direction */}
+        {/* Arrow indicating the Qiblah direction relative to user's orientation */}
         <Box
           position="absolute"
           top="50%"
           left="50%"
-          width={0}
-          height={0}
-          borderLeft="10px solid transparent"
-          borderRight="10px solid transparent"
-          borderBottom="20px solid blue"
           style={{
-            transform: `translate(-50%, -100%) rotate(${getArrowRotation()}deg)`,
-            transformOrigin: "center bottom",
+            transform: `translate(-50%, -50%) rotate(${getArrowRotation()}deg)`,
+            transformOrigin: "center center",
             transition: "transform 0.5s ease-in-out",
           }}
-        />
+        >
+          <ArrowUpward style={{ fontSize: 100, color: "blue" }} />
+        </Box>
       </Box>
       <Typography variant="body1" style={{ marginTop: 16 }}>
         {t("rotateDevice")}
