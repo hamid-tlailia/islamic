@@ -118,10 +118,30 @@ const Qiblah = () => {
   }, [permissionGranted]);
 
   const handleOrientation = (event) => {
-    const alpha = event.alpha; // 0 to 360 degrees
-    if (alpha !== null) {
-      setDeviceOrientation(alpha);
+    let alpha = event.alpha; // 0 to 360 degrees
+    const absolute = event.absolute;
+    const webkitCompassHeading = event.webkitCompassHeading;
+
+    console.log("Device Orientation Event:", event);
+
+    if (typeof webkitCompassHeading !== "undefined") {
+      // For iOS devices
+      alpha = webkitCompassHeading;
+    } else if (absolute === true && alpha !== null) {
+      // For devices that provide absolute alpha
+      alpha = alpha;
+    } else if (alpha !== null) {
+      // For devices that provide relative alpha
+      alpha = 360 - alpha; // Adjust to match compass heading
+    } else {
+      setErrorMessage(t("deviceOrientationNotSupported"));
+      return;
     }
+
+    // Normalize alpha to [0, 360)
+    alpha = (alpha + 360) % 360;
+
+    setDeviceOrientation(alpha);
   };
 
   const calculateQiblahDirection = (lat, lon) => {
@@ -157,6 +177,9 @@ const Qiblah = () => {
   const getArrowRotation = () => {
     if (deviceOrientation !== null && qiblahDirection !== null) {
       const rotation = (qiblahDirection - deviceOrientation + 360) % 360;
+      console.log("Qiblah Direction:", qiblahDirection);
+      console.log("Device Orientation:", deviceOrientation);
+      console.log("Arrow Rotation:", rotation);
       return rotation;
     }
     return 0;
@@ -261,7 +284,7 @@ const Qiblah = () => {
             top="10px"
             left="50%"
             transform="translateX(-50%)"
-            fontSize="34px"
+            fontSize="24px"
           >
             🕋
           </Box>
