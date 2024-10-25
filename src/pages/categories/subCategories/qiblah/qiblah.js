@@ -16,9 +16,7 @@ const translations = {
     deviceOrientationNotSupported: "Device orientation not supported.",
     allowDeviceOrientationButton: "Allow Device Orientation",
     qiblahDirection: "Qiblah Direction",
-    rotateDevice: "Rotate your device to find the Qiblah direction.",
-    placeOnStraightSurface:
-      "Place the phone on a straight surface and rotate your phone to get qiblah direction.",
+    rotateDevice: "Place the phone on a straight surface and rotate your device to find the Qiblah direction.",
   },
   ar: {
     errorGettingLocation: "خطأ في الحصول على الموقع.",
@@ -31,9 +29,7 @@ const translations = {
     deviceOrientationNotSupported: "اتجاه الجهاز غير مدعوم.",
     allowDeviceOrientationButton: "السماح باتجاه الجهاز",
     qiblahDirection: "اتجاه القبلة",
-    rotateDevice: "قم بتدوير جهازك للعثور على اتجاه القبلة.",
-    placeOnStraightSurface:
-      "ضع الهاتف على سطح مستقيم ثم قم بتدويره للحصول على اتجاه القبلة.",
+    rotateDevice: "ضع الهاتف على سطح مستقيم ثم قم بتدوير جهازك للعثور على اتجاه القبلة.",
   },
 };
 
@@ -95,11 +91,7 @@ const Qiblah = () => {
     if (permissionGranted) {
       window.addEventListener("deviceorientation", handleOrientation, true);
       return () => {
-        window.removeEventListener(
-          "deviceorientation",
-          handleOrientation,
-          true
-        );
+        window.removeEventListener("deviceorientation", handleOrientation, true);
       };
     }
   }, [permissionGranted]);
@@ -153,14 +145,12 @@ const Qiblah = () => {
     return 0;
   };
 
-  const getMakkahSymbolPosition = () => {
-    const radius = 100; // Radius of the compass circle
-    const angleInRadians = (qiblahDirection * Math.PI) / 180;
-
-    const x = radius * Math.sin(angleInRadians);
-    const y = -radius * Math.cos(angleInRadians);
-
-    return { x, y };
+  const isFacingQiblah = () => {
+    if (deviceOrientation !== null && qiblahDirection !== null) {
+      const difference = Math.abs(qiblahDirection - deviceOrientation);
+      return difference <= 5 || difference >= 355; // Tolerance of ±5 degrees
+    }
+    return false;
   };
 
   if (errorMessage) {
@@ -246,6 +236,7 @@ const Qiblah = () => {
     >
       <Typography variant="h5">{t("qiblahDirection")}</Typography>
       <Box position="relative" width={250} height={250} marginTop={4}>
+        {/* Compass circle */}
         <Box
           position="absolute"
           top={0}
@@ -255,41 +246,34 @@ const Qiblah = () => {
           borderRadius="50%"
           border="2px solid #000"
         >
-          {/* Makkah symbol positioned based on Qiblah direction */}
-          <Box
-            position="absolute"
-            top="50%"
-            left="50%"
-            style={{
-              transform: `translate(${getMakkahSymbolPosition().x}px, ${
-                getMakkahSymbolPosition().y
-              }px)`,
-              transition: "transform 0.5s ease-in-out",
-            }}
-            fontSize="24px"
-          >
-            🕋
-          </Box>
         </Box>
-        {/* Arrow pointing towards Qiblah direction */}
+        {/* Arrow and Makkah symbol stacked in the center */}
         <Box
           position="absolute"
           top="50%"
           left="50%"
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
           style={{
             transform: `translate(-50%, -50%) rotate(${getArrowRotation()}deg)`,
             transformOrigin: "center center",
             transition: "transform 0.5s ease-in-out",
           }}
         >
-          <ArrowDownwardOutlinedIcon style={{ fontSize: 100, color: "blue" }} />
+          <ArrowDownwardOutlinedIcon
+            style={{
+              fontSize: 100,
+              color: isFacingQiblah() ? "green" : "red",
+            }}
+          />
+          <Typography variant="h6" component="span">
+            🕋
+          </Typography>
         </Box>
       </Box>
       <Typography variant="body1" style={{ marginTop: 16 }}>
         {t("rotateDevice")}
-      </Typography>
-      <Typography variant="body2" style={{ marginTop: 8 }}>
-        {t("placeOnStraightSurface")}
       </Typography>
     </Box>
   );
