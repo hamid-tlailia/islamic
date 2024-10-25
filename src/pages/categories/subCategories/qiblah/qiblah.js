@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, CircularProgress, Button } from "@mui/material";
-import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
+import ArrowDownwardOutlinedIcon from "@mui/icons-material/ArrowDownwardOutlined";
 import { useTranslation } from "../../../../components/languages/provider";
 
 const translations = {
@@ -44,18 +44,16 @@ const Qiblah = () => {
   const t = (key) => translations[language][key] || key;
 
   useEffect(() => {
-    // Get the user's current location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const userLat = position.coords.latitude;
           const userLon = position.coords.longitude;
-          // Calculate the Qiblah direction
           const qiblahBearing = calculateQiblahDirection(userLat, userLon);
           setQiblahDirection(qiblahBearing);
           setLocationLoading(false);
         },
-        (error) => {
+        () => {
           setErrorMessage(t("errorGettingLocation"));
           setLocationLoading(false);
         }
@@ -64,17 +62,14 @@ const Qiblah = () => {
       setErrorMessage(t("geolocationNotSupported"));
       setLocationLoading(false);
     }
-    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     if (qiblahDirection !== null) {
-      // Request permission for device orientation
       if (
         typeof DeviceOrientationEvent !== "undefined" &&
         typeof DeviceOrientationEvent.requestPermission === "function"
       ) {
-        // iOS 13+ requires permission
         DeviceOrientationEvent.requestPermission()
           .then((response) => {
             if (response === "granted") {
@@ -83,69 +78,42 @@ const Qiblah = () => {
               setErrorMessage(t("permissionDenied"));
             }
           })
-          .catch((e) => {
+          .catch(() => {
             setErrorMessage(t("errorRequestingPermission"));
           });
       } else {
-        // Non iOS 13+ devices
         setPermissionGranted(true);
       }
     }
-    // eslint-disable-next-line
   }, [qiblahDirection]);
 
   useEffect(() => {
     if (permissionGranted) {
-      window.addEventListener(
-        "deviceorientationabsolute",
-        handleOrientation,
-        true
-      );
       window.addEventListener("deviceorientation", handleOrientation, true);
       return () => {
-        window.removeEventListener(
-          "deviceorientationabsolute",
-          handleOrientation,
-          true
-        );
-        window.removeEventListener(
-          "deviceorientation",
-          handleOrientation,
-          true
-        );
+        window.removeEventListener("deviceorientation", handleOrientation, true);
       };
     }
-    // eslint-disable-next-line
   }, [permissionGranted]);
 
   const handleOrientation = (event) => {
-    let alpha = event.alpha; // 0 to 360 degrees
-    const absolute = event.absolute;
+    let alpha = event.alpha;
     const webkitCompassHeading = event.webkitCompassHeading;
 
-    console.log("Device Orientation Event:", event);
-
     if (typeof webkitCompassHeading !== "undefined") {
-      // For iOS devices
       alpha = webkitCompassHeading;
-    } else if (absolute === true && alpha !== null) {
-      // For devices that provide absolute alpha
     } else if (alpha !== null) {
-      // For devices that provide relative alpha
-      alpha = 360 - alpha; // Adjust to match compass heading
+      alpha = 360 - alpha;
     } else {
       setErrorMessage(t("deviceOrientationNotSupported"));
       return;
     }
 
-    // Normalize alpha to [0, 360)
     alpha = (alpha + 360) % 360;
-
     setDeviceOrientation(alpha);
   };
 
   const calculateQiblahDirection = (lat, lon) => {
-    // Coordinates of Kaaba
     const kaabaLat = 21.4225;
     const kaabaLon = 39.8262;
 
@@ -163,23 +131,15 @@ const Qiblah = () => {
       )
     );
 
-    return (qiblahBearing + 360) % 360; // Normalize to 0-360 degrees
+    return (qiblahBearing + 360) % 360;
   };
 
-  const degreesToRadians = (degrees) => {
-    return (degrees * Math.PI) / 180;
-  };
-
-  const radiansToDegrees = (radians) => {
-    return (radians * 180) / Math.PI;
-  };
+  const degreesToRadians = (degrees) => (degrees * Math.PI) / 180;
+  const radiansToDegrees = (radians) => (radians * 180) / Math.PI;
 
   const getArrowRotation = () => {
     if (deviceOrientation !== null && qiblahDirection !== null) {
       const rotation = (qiblahDirection - deviceOrientation + 360) % 360;
-      console.log("Qiblah Direction:", qiblahDirection);
-      console.log("Device Orientation:", deviceOrientation);
-      console.log("Arrow Rotation:", rotation);
       return rotation;
     }
     return 0;
@@ -243,7 +203,7 @@ const Qiblah = () => {
                     setErrorMessage(t("permissionDenied"));
                   }
                 })
-                .catch((e) => {
+                .catch(() => {
                   setErrorMessage(t("errorRequestingPermission"));
                 });
             } else {
@@ -278,22 +238,18 @@ const Qiblah = () => {
           borderRadius="50%"
           border="2px solid #000"
         >
-          {/* Makkah symbol fixed at the top */}
+          {/* Makkah symbol fixed in Qiblah direction */}
           <Box
             position="absolute"
             top="10px"
             left="50%"
+            transform="translateX(-50%)"
             fontSize="24px"
-            style={{
-              transform: `translate(-50%, -50%) rotate(${getArrowRotation()}deg)`,
-              transformOrigin: "center center",
-              transition: "transform 0.5s ease-in-out",
-            }}
           >
             🕋
           </Box>
         </Box>
-        {/* Arrow indicating the Qiblah direction relative to user's orientation */}
+        {/* Arrow pointing towards Qiblah direction */}
         <Box
           position="absolute"
           top="50%"
