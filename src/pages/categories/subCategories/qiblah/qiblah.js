@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, CircularProgress, Button } from "@mui/material";
-import ArrowUpwardOutlinedIcon from "@mui/icons-material/ArrowUpwardOutlined";
+import ArrowDownwardOutlinedIcon from "@mui/icons-material/ArrowDownwardOutlined";
 import { useTranslation } from "../../../../components/languages/provider";
 
 const translations = {
@@ -62,6 +62,7 @@ const Qiblah = () => {
       setErrorMessage(t("geolocationNotSupported"));
       setLocationLoading(false);
     }
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -85,6 +86,7 @@ const Qiblah = () => {
         setPermissionGranted(true);
       }
     }
+    // eslint-disable-next-line
   }, [qiblahDirection]);
 
   useEffect(() => {
@@ -94,6 +96,7 @@ const Qiblah = () => {
         window.removeEventListener("deviceorientation", handleOrientation, true);
       };
     }
+    // eslint-disable-next-line
   }, [permissionGranted]);
 
   const handleOrientation = (event) => {
@@ -143,14 +146,6 @@ const Qiblah = () => {
       return rotation;
     }
     return 0;
-  };
-
-  const isFacingQiblah = () => {
-    if (deviceOrientation !== null && qiblahDirection !== null) {
-      const difference = Math.abs(qiblahDirection - deviceOrientation);
-      return difference <= 5 || difference >= 355; // Tolerance of ±5 degrees
-    }
-    return false;
   };
 
   if (errorMessage) {
@@ -245,30 +240,21 @@ const Qiblah = () => {
           height={250}
           borderRadius="50%"
           border="2px solid #000"
-        />
+        >
+        </Box>
         {/* Arrow pointing towards Qiblah direction */}
         <Box
           position="absolute"
           top="50%"
           left="50%"
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
           style={{
             transform: `translate(-50%, -50%) rotate(${getArrowRotation()}deg)`,
             transformOrigin: "center center",
             transition: "transform 0.5s ease-in-out",
           }}
         >
-          <ArrowUpwardOutlinedIcon
-            style={{
-              fontSize: 100,
-              color: isFacingQiblah() ? "green" : "red",
-            }}
-          />
-          <Typography variant="h6" component="span">
-            🕋
-          </Typography>
+          <ArrowDownwardOutlinedIcon style={{ fontSize: 100, color: "blue" }} />
+          🕋
         </Box>
       </Box>
       <Typography variant="body1" style={{ marginTop: 16 }}>
