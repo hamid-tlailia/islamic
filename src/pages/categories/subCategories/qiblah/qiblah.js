@@ -283,8 +283,12 @@ const Qiblah = () => {
             position="absolute"
             top="10px"
             left="50%"
-            transform="translateX(-50%)"
             fontSize="24px"
+            style={{
+              transform: `translate(-50%, -50%) rotate(${getArrowRotation()}deg)`,
+              transformOrigin: "center center",
+              transition: "transform 0.5s ease-in-out",
+            }}
           >
             🕋
           </Box>
