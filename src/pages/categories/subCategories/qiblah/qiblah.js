@@ -260,7 +260,7 @@ const Qiblah = () => {
           top="50%"
           left="50%"
           display="flex"
-          flexDirection="column"
+          flexDirection="column-reverse"
           alignItems="center"
           style={{
             transform: `translate(-50%, -50%) rotate(${getArrowRotation()}deg)`,
