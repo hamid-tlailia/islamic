@@ -440,27 +440,25 @@ const Ahadith = () => {
     const apiUrl = `https://dorar.net/dorar_api.json?skey=${encodeURIComponent(
       hadith
     )}`;
-    const fullUrl =  apiUrl;
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(
+      apiUrl
+    )}`;
+
     setLoader(true);
     setHadithExplanation(null);
     setOpenHadithModal(true);
-    try {
-      const response = await fetch(fullUrl, {
-        method: "GET",
-        headers: {
-          Origin: "https://myislam-steel.vercel.app/", // Replace with your actual domain if different
-          "X-Requested-With": "XMLHttpRequest",
-        },
-      });
 
+    try {
+      const response = await fetch(proxyUrl);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
+      // Parse the contents of the response
       const data = await response.json();
-      const explanation = data.ahadith?.result || "No explanation found.";
+      const parsedData = JSON.parse(data.contents); // Since data comes as a string
+      const explanation = parsedData.ahadith?.result || "No explanation found.";
 
-      // Sanitize the explanation content before setting it
       const cleanContent = DOMPurify.sanitize(explanation);
       setHadithExplanation(cleanContent);
       setLoader(false);

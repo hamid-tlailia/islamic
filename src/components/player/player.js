@@ -128,26 +128,41 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     const audioUrl = audioRef?.current?.src;
     if (!audioUrl) return; // Ensure the audio URL exists
 
-    // Create a new anchor element
-    const link = document.createElement("a");
-    link.href = audioUrl;
-    link.setAttribute("target", "_blank");
+    // Wrap the audio URL with All Origins to avoid CORS issues
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(
+      audioUrl
+    )}`;
 
-    // For modern browsers, try to set the download attribute
-    link.setAttribute("download", `${surah_name || "audio"}.mp3`);
+    try {
+      const response = await fetch(proxyUrl);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
-    // Append the link to the body
-    document.body.appendChild(link);
+      // Parse the response content as text and convert it to a Blob
+      const data = await response.json();
+      const blob = new Blob([data.contents], { type: "audio/mp3" });
 
-    // Programmatically click the link to trigger the download
-    link.click();
+      // Create a temporary URL for the Blob
+      const blobUrl = window.URL.createObjectURL(blob);
 
-    // Clean up by removing the link
-    document.body.removeChild(link);
+      // Create a new anchor element and trigger a download
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `${surah_name || "audio"}.mp3`;
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up by removing the link and revoking the object URL
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Failed to download the audio file:", error);
+    }
   };
 
   return (
