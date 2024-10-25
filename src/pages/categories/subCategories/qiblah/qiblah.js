@@ -156,11 +156,13 @@ const Qiblah = () => {
 
   const isFacingQiblah = () => {
     if (deviceOrientation !== null && qiblahDirection !== null) {
-      const difference = Math.abs(qiblahDirection - deviceOrientation);
-      return difference <= 5 || difference >= 355; // Tolerance of ±5 degrees
+      let difference = Math.abs(qiblahDirection - deviceOrientation) % 360;
+      if (difference > 180) difference = 360 - difference;
+      return difference <= 5; // Tolerance of ±5 degrees
     }
     return false;
   };
+
   if (errorMessage) {
     return (
       <Box
