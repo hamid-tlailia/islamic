@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, CircularProgress, Button } from "@mui/material";
-import { ArrowUpward } from "@mui/icons-material";
+import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
 import { useTranslation } from "../../../../components/languages/provider";
 
 const translations = {
@@ -115,6 +115,7 @@ const Qiblah = () => {
         );
       };
     }
+    // eslint-disable-next-line
   }, [permissionGranted]);
 
   const handleOrientation = (event) => {
@@ -129,7 +130,6 @@ const Qiblah = () => {
       alpha = webkitCompassHeading;
     } else if (absolute === true && alpha !== null) {
       // For devices that provide absolute alpha
-      alpha = alpha;
     } else if (alpha !== null) {
       // For devices that provide relative alpha
       alpha = 360 - alpha; // Adjust to match compass heading
@@ -285,7 +285,7 @@ const Qiblah = () => {
             left="50%"
             fontSize="24px"
             style={{
-              transform: `translate(-50%, -50%) rotate(-${getArrowRotation()}deg)`,
+              transform: `translate(-50%, -50%) rotate(${getArrowRotation()}deg)`,
               transformOrigin: "center center",
               transition: "transform 0.5s ease-in-out",
             }}
@@ -299,12 +299,12 @@ const Qiblah = () => {
           top="50%"
           left="50%"
           style={{
-            transform: `translate(-50%, -50%) rotate(-${getArrowRotation()}deg)`,
+            transform: `translate(-50%, -50%) rotate(${getArrowRotation()}deg)`,
             transformOrigin: "center center",
             transition: "transform 0.5s ease-in-out",
           }}
         >
-          <ArrowUpward style={{ fontSize: 100, color: "blue" }} />
+          <ArrowDownwardOutlinedIcon style={{ fontSize: 100, color: "blue" }} />
         </Box>
       </Box>
       <Typography variant="body1" style={{ marginTop: 16 }}>
