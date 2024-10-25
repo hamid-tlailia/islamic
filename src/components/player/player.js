@@ -128,30 +128,26 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
-  const handleDownload = async () => {
+  const handleDownload = () => {
     const audioUrl = audioRef?.current?.src;
     if (!audioUrl) return; // Ensure the audio URL exists
 
-    try {
-      const response = await fetch(audioUrl); // Fetch the audio file
-      const blob = await response.blob(); // Convert the response to a Blob
+    // Create a new anchor element
+    const link = document.createElement("a");
+    link.href = audioUrl;
+    link.setAttribute("target", "_blank");
 
-      // Create a temporary URL for the Blob
-      const blobUrl = window.URL.createObjectURL(blob);
+    // For modern browsers, try to set the download attribute
+    link.setAttribute("download", `${surah_name || "audio"}.mp3`);
 
-      // Create a new anchor element and trigger a download
-      const link = document.createElement("a");
-      link.href = blobUrl;
-      link.download = `${surah_name || "audio"}.mp3`;
-      document.body.appendChild(link);
-      link.click();
+    // Append the link to the body
+    document.body.appendChild(link);
 
-      // Clean up by removing the link and revoking the object URL
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(blobUrl);
-    } catch (error) {
-      console.error("Failed to download the audio file:", error);
-    }
+    // Programmatically click the link to trigger the download
+    link.click();
+
+    // Clean up by removing the link
+    document.body.removeChild(link);
   };
 
   return (
