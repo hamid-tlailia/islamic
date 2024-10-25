@@ -6,6 +6,8 @@ import VolumeUpOutlinedIcon from "@mui/icons-material/VolumeUpOutlined";
 import VolumeOffOutlinedIcon from "@mui/icons-material/VolumeOffOutlined";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
+import { toast } from "react-toastify";
+import { useTranslation } from "../languages/provider";
 
 const Player = ({ show, hidePlayer, src, surah_name, title }) => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -15,7 +17,7 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
   const [loaded, setLoaded] = useState(false);
   const audioRef = useRef(null);
   const progressRef = useRef(null);
-
+  const { language } = useTranslation();
   // Update the document title with the current Surah name when playing
   useEffect(() => {
     if (isPlaying && surah_name) {
@@ -131,21 +133,9 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
   const handleDownload = async () => {
     const audioUrl = audioRef?.current?.src;
     if (!audioUrl) return; // Ensure the audio URL exists
-
-    // Wrap the audio URL with All Origins to avoid CORS issues
-    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(
-      audioUrl
-    )}`;
-
     try {
-      const response = await fetch(proxyUrl);
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      // Parse the response content as text and convert it to a Blob
-      const data = await response.json();
-      const blob = new Blob([data.contents], { type: "audio/mp3" });
+      const response = await fetch(audioUrl); // Fetch the audio file
+      const blob = await response.blob(); // Convert the response to a Blob
 
       // Create a temporary URL for the Blob
       const blobUrl = window.URL.createObjectURL(blob);
@@ -161,7 +151,11 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(blobUrl);
     } catch (error) {
-      console.error("Failed to download the audio file:", error);
+      toast.info(
+        language === "ar"
+          ? "الملف غير متوفر للتحميل"
+          : "File not available for download"
+      );
     }
   };
 
