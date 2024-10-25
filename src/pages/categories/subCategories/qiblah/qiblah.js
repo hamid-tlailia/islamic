@@ -285,7 +285,7 @@ const Qiblah = () => {
             left="50%"
             fontSize="24px"
             style={{
-              transform: `translate(-50%, -50%) rotate(${getArrowRotation()}deg)`,
+              transform: `translate(-50%, -50%) rotate(-${getArrowRotation()}deg)`,
               transformOrigin: "center center",
               transition: "transform 0.5s ease-in-out",
             }}
@@ -299,7 +299,7 @@ const Qiblah = () => {
           top="50%"
           left="50%"
           style={{
-            transform: `translate(-50%, -50%) rotate(${getArrowRotation()}deg)`,
+            transform: `translate(-50%, -50%) rotate(-${getArrowRotation()}deg)`,
             transformOrigin: "center center",
             transition: "transform 0.5s ease-in-out",
           }}
