@@ -446,7 +446,6 @@ const Header = ({ onNavClick, visibility, size }) => {
           </Sheet>
         </Modal>
       )}
-
       {/* Settings modal */}
       <React.Fragment>
         <Modal

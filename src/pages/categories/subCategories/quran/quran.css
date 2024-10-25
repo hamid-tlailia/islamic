@@ -371,6 +371,8 @@
   background-color: var(--dropdown-bg-color);
   color: mediumvioletred;
   padding: 6px;
+  display: flex;
+  flex-direction: row;
 }
 .text-white {
   color: white !important;
@@ -415,7 +417,8 @@
   color: mediumvioletred !important;
   font-weight: bold;
 }
-.css-1aquho2-MuiTabs-indicator {
+.css-1aquho2-MuiTabs-indicator,
+.MuiTabs-indicator {
   position: absolute;
   height: 2px !important;
   bottom: 0;

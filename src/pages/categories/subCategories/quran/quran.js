@@ -11,11 +11,12 @@ import ModalClose from "@mui/joy/ModalClose";
 import Typography from "@mui/joy/Typography";
 import Sheet from "@mui/joy/Sheet";
 import ModalDialog from "@mui/joy/ModalDialog";
-import DialogContent from "@mui/joy/DialogContent";
+import DialogContent from "@mui/material/DialogContent";
 import ZoomOutMapOutlinedIcon from "@mui/icons-material/ZoomOutMapOutlined";
 import { useTranslation } from "../../../../components/languages/provider";
 import DOMPurify from "dompurify";
 import { toast } from "react-toastify";
+import en_al_jalalayn from "./en-al-jalalayn.json";
 
 const Quran = ({ src }) => {
   const [surahs, setSurahs] = useState([]);
@@ -27,22 +28,247 @@ const Quran = ({ src }) => {
   const [selectedSurah, setSelectedSurah] = useState(null);
   const [refs, setRefs] = useState([]);
   const [tafseerLangs, setTafseerLangs] = useState("arabe");
-  const [apiTafseer, setApiTafseer] = useState([]);
   const [apiTranslation, setApiTranslation] = useState([]);
   const [quranLangs, setQuranLangs] = useState("Arabe");
   const [openAyahTafsirModal, setOpenAyahTafsirModal] = useState(false);
   const [signleAyahTafsirText, setSignleAyahTafsirText] = useState("");
   const [layout, setLayout] = useState(undefined);
-  const [tafsirLoader, setTafsirLoader] = useState(false);
-  const [selectedAyah, setSelectedAyah] = useState();
-  const [englishTafsir, setEnglishTafsir] = useState([]);
+  const [tafsirLoader, setTafsirLoader] = useState(true);
+  const [englishTafsir, setEnglishTafsir] = useState({});
   const [isErrorFetching, setIsErrorFetching] = useState(false);
   const [currentAyahIndex, setCurrentAyahIndex] = useState(null);
-  const [prevAyahIndex, setPrevAyahIndex] = useState(null); // New state variable
+  const [prevAyahIndex, setPrevAyahIndex] = useState(null);
   const [tabValue, setTabValue] = useState(0);
   const [allSurahTafseer, setAllSurahTafseer] = useState([]);
   const reciterNameMap = {
-    // ... (Include your reciterNameMap object here)
+    "إبراهيم الأخضر": "Ibrahim Al-Akhdar",
+    "أكرم العلاقمي": "Akram Al-Alaqmi",
+    "ماجد العنزي": "Majed Al-Anzi",
+    "مالك شيبة الحمد": "Malik Shebah Al-Hamd",
+    "ماهر المعيقلي": "Maher Al-Muaiqly",
+    "محمد الأيراوي": "Mohammad Al-Irawi",
+    "محمد البراك": "Mohammad Al-Barrak",
+    "محمد الطبلاوي": "Mohammad Al-Tablawi",
+    "محمد اللحيدان": "Mohammad Al-Luhaidan",
+    "محمد المحيسني": "Mohammad Al-Mohaisany",
+    "محمد أيوب": "Mohammad Ayyoub",
+    "الحسيني العزازي": "Al-Hussaini Al-Azzazi",
+    "محمد صالح عالم شاه": "Mohammad Saleh Alam Shah",
+    "محمد جبريل": "Mohammad Jibril",
+    "محمد صديق المنشاوي": "Mohammad Siddiq Al-Minshawi",
+    "محمد عبدالكريم": "Mohammad Abdulkarim",
+    "محمد عبدالحكيم سعيد العبدالله": "Mohammad Abdulhakim Saeed Al-Abdullah",
+    "محمود خليل الحصري": "Mahmoud Khalil Al-Husary",
+    "إدريس أبكر": "Idrees Abkar",
+    "محمود علي البنا": "Mahmoud Ali Al-Banna",
+    "مشاري العفاسي": "Mishary Al-Afasy",
+    "مصطفى إسماعيل": "Mustafa Ismail",
+    "مصطفى اللاهوني": "Mustafa Al-Lahouni",
+    "مصطفى رعد العزاوي": "Mustafa Raad Al-Azzawi",
+    "معمر الأندونيسي": "Muammar Al-Indonesi",
+    "مفتاح السلطني": "Miftah Al-Saltany",
+    "الزين محمد أحمد": "Al-Zain Mohammad Ahmed",
+    "محمد سايد": "Mohammad Said",
+    "عبدالرحمن السويّد": "Abdulrahman Al-Suwaid",
+    "عبدالإله بن عون": "Abdulilah Bin Awn",
+    "أحمد طالب بن حميد": "Ahmed Talib Bin Humaid",
+    "نورين محمد صديق": "Noreen Mohammad Siddiq",
+    "ماجد الزامل": "Majed Al-Zamil",
+    "القارئ ياسين": "Al-Qari Yasin",
+    "ماهر شخاشيرو": "Maher Shakhashero",
+    "العشري عمران": "Al-Ashri Omran",
+    "محمد المنشد": "Mohammad Al-Munshid",
+    "محمود الشيمي": "Mahmoud Al-Shimi",
+    "ياسر سلامة": "Yasser Salamah",
+    "أخيل عبدالحي روا": "Akheel Abdulhay Rawa",
+    "أستاذ زامري": "Ustaz Zamri",
+    "خالد المهنا": "Khalid Al-Muhana",
+    "العيون الكوشي": "Al-Ayoun Al-Kushi",
+    "عادل الكلباني": "Adel Al-Kalbani",
+    "موسى بلال": "Musa Bilal",
+    "حسين آل الشيخ": "Hussein Al-Sheikh",
+    "حاتم فريد الواعر": "Hatem Farid Al-Waer",
+    "إبراهيم الجرمي": "Ibrahim Al-Jurmi",
+    "محمود الرفاعي": "Mahmoud Al-Rifaie",
+    "ناصر العبيد": "Nasser Al-Obaid",
+    "واصل المذن": "Wasil Al-Muthen",
+    "توفيق الصايغ": "Tawfeeq Al-Sayegh",
+    "إبراهيم الدوسري": "Ibrahim Al-Dosari",
+    "جمال شاكر عبدالله": "Jamal Shaker Abdullah",
+    "جمعان العصيمي": "Jamaan Al-Asimi",
+    "رضية عبدالرحمن": "Radiyah Abdulrahman",
+    "رقية سولونق": "Ruqayya Sulong",
+    "سابينة مامات": "Sabina Mamat",
+    "سيدين عبدالرحمن": "Saideen Abdulrahman",
+    "عبدالغني عبدالله": "Abdulghani Abdullah",
+    "عبدالله فهمي": "Abdullah Fahmi",
+    "حمد الدغريري": "Hamad Al-Dughairiri",
+    "محمد الحافظ": "Mohammad Al-Hafiz",
+    "محمد حفص علي": "Mohammad Hafs Ali",
+    "محمد خير النور": "Mohammad Khair Al-Noor",
+    "يوسف بن نوح أحمد": "Yusuf Bin Nuh Ahmed",
+    "جمال الدين الزيلعي": "Jamaluddin Al-Zailai",
+    "معيض الحارثي": "Muidh Al-Harithi",
+    "محمد رشاد الشريف": "Mohammad Rashad Al-Sharif",
+    "إبراهيم الجبرين": "Ibrahim Al-Jebreen",
+    "خالد الجليل": "Khalid Al-Jaleel",
+    "أحمد الطرابلسي": "Ahmed Al-Trablsi",
+    "عبدالله الكندري": "Abdullah Al-Kandari",
+    "أحمد عامر": "Ahmed Amer",
+    "إبراهيم السعدان": "Ibrahim Al-Saadan",
+    "أحمد الحذيفي": "Ahmed Al-Hudhaifi",
+    "محمد عثمان خان": "Mohammad Othman Khan",
+    "يوسف الدغوش": "Yusuf Al-Daghoush",
+    "الدوكالي محمد العالم": "Al-Dokali Mohammad Al-Alam",
+    "وشيار حيدر اربيلي": "Washi’ar Haidar Arbili",
+    "خالد القحطاني": "Khalid Al-Qahtani",
+    "الفاتح محمد الزبير": "Al-Fatih Mohammad Al-Zubair",
+    "محمد برهجي": "Mohammad Barhaji",
+    "يوسف العيدروس": "Yusuf Al-Aidaroos",
+    "طارق عبدالغني دعوب": "Tariq Abdulghani Doob",
+    "عثمان الأنصاري": "Othman Al-Ansari",
+    "بندر بليله": "Bandar Baleelah",
+    "خالد الشريمي": "Khalid Al-Shuraimi",
+    "وديع اليمني": "Wadih Al-Yamani",
+    "خالد عبدالكافي": "Khalid Abdulkafi",
+    "رعد محمد الكردي": "Raad Mohammad Al-Kurdi",
+    "عبدالرحمن العوسي": "Abdulrahman Al-Ausi",
+    "خالد الغامدي": "Khalid Al-Ghamdi",
+    "رمضان شكور": "Ramadan Shakoor",
+    "عبدالمجيد الأركاني": "Abdulmajid Al-Arkani",
+    "محمد خليل القارئ": "Mohammad Khalil Al-Qari",
+    "خالد الوهيبي": "Khalid Al-Wuhaibi",
+    "رامي الدعيس": "Rami Al-Duais",
+    "هزاع البلوشي": "Hazaa Al-Balushi",
+    "عبدالرحمن الماجد": "Abdulrahman Al-Majed",
+    "مروان العكري": "Marwan Al-Ukri",
+    "خليفة الطنيجي": "Khalifa Al-Tunaiji",
+    "سلمان العتيبي": "Salman Al-Otaibi",
+    "محمد رفعت": "Mohammad Rifaat",
+    "عبدالله الموسى": "Abdullah Al-Mousa",
+    "عبدالله الخلف": "Abdullah Al-Khalaf",
+    "منصور السالمي": "Mansour Al-Salmi",
+    "صلاح مصلي": "Salah Musalli",
+    "خالد الشارخ": "Khalid Al-Sharikh",
+    "ناصر العصفور": "Nasser Al-Asfour",
+    "داود حمزة": "Dawood Hamza",
+    "محمد البخيت": "Mohammad Al-Bukheet",
+    "ناصر الماجد": "Nasser Al-Majed",
+    "أحمد السويلم": "Ahmed Al-Suwailim",
+    "إسلام صبحي": "Islam Sobhi",
+    "بدر التركي": "Badr Al-Turki",
+    "هيثم الجدعاني": "Haitham Al-Jadani",
+    "أحمد خليل شاهين": "Ahmed Khalil Shaheen",
+    "سعد المقرن": "Saad Al-Mogren",
+    "أحمد النفيس": "Ahmed Al-Nafees",
+    "رشيد إفراد": "Rachid Ifraad",
+    "عمر الدريويز": "Omar Al-Derwaiz",
+    "عبدالعزيز العسيري": "Abdulaziz Al-Aseeri",
+    "يونس اسويلص": "Younes Asweils",
+    "أحمد ديبان": "Ahmed Deeban",
+    "عبدالله كامل": "Abdullah Kamel",
+    "بيشه وا قادر الكردي": "Peshawa Qader Al-Kurdi",
+    "رشيد بلعالية": "Rachid Belalia",
+    "نذير المالكي": "Natheer Al-Maliki",
+    "عكاشة كميني": "Okasha Kameny",
+    "هيثم الدخين": "Haitham Al-Dukhin",
+    "محمد أبو سنينة": "Mohammad Abu Sunaineh",
+    "محمد الأمين قنيوة": "Mohammad Al-Amin Qaniwa",
+    "محمود عبدالحكم": "Mahmoud Abdulhakam",
+    "أحمد عيسى المعصراوي": "Ahmed Issa Al-Maasrawi",
+    "إبراهيم كشيدان": "Ibrahim Kishidan",
+    "زكريا حمامة": "Zakaria Hamama",
+    "هاشم أبو دلال": "Hashem Abu Dalal",
+    "فؤاد الخامري": "Fuad Al-Khamri",
+    "سيد أحمد هاشمي": "Sayed Ahmed Hashemi",
+    "خالد كريم محمدي": "Khalid Karim Mohammadi",
+    "مال الله عبدالرحمن الجابر": "Malallah Abdulrahman Al-Jaber",
+    "سلمان الصديق": "Salman Al-Siddiq",
+    "حسن صالح": "Hassan Saleh",
+    "عبدالرحمن الشحات": "Abdulrahman Al-Shahat",
+    "عيسى عمر سناكو": "Isa Omar Sanako",
+    "هارون بقائي": "Haroon Baqai",
+    "عبدالله بخاري": "Abdullah Bukhari",
+    "صالح القريشي": "Saleh Al-Quraishi",
+    "إبراهيم العسيري": "Ibrahim Al-Aseeri",
+    "سعد الغامدي": "Saad Al-Ghamdi",
+    "صالح الشمراني": "Saleh Al-Shamrani",
+    "فيصل الهاجري": "Faisal Al-Hajri",
+    "أنس العمادي": "Anas Al-Emadi",
+    "عبدالملك العسكر": "Abdulmalik Al-Askir",
+    "عبدالكريم الحازمي": "Abdulkarim Al-Hazmi",
+    "هشام الهراز": "Hisham Al-Harraz",
+    "عبدالله المشعل": "Abdullah Al-Meshaal",
+    "عبدالعزيز سحيم": "Abdulaziz Suhaim",
+    "سعود الشريم": "Saud Al-Shuraim",
+    "سهل ياسين": "Sahl Yasin",
+    "زكي داغستاني": "Zaki Dagestani",
+    "سامي الحسن": "Sami Al-Hassan",
+    "سامي الدوسري": "Sami Al-Dosari",
+    "سيد رمضان": "Sayed Ramadan",
+    "شعبان الصياد": "Shabaan Al-Sayyad",
+    "شيرزاد عبدالرحمن طاهر": "Shirzad Abdulrahman Taher",
+    "صابر عبدالحكم": "Saber Abdulhakam",
+    "شيخ أبو بكر الشاطري": "Sheikh Abu Bakr Al-Shatri",
+    "صالح الصاهود": "Saleh Al-Sahood",
+    "صالح آل طالب": "Saleh Al-Taleb",
+    "صالح الهبدان": "Saleh Al-Habdan",
+    "صلاح البدير": "Salah Al-Budair",
+    "صلاح الهاشم": "Salah Al-Hashim",
+    "صلاح بو خاطر": "Salah Bukhatir",
+    "مختار الحاج": "Mukhtar Al-Hajj",
+    "عادل ريان": "Adel Ryan",
+    "عبدالبارئ الثبيتي": "Abdulbaree Al-Thubaity",
+    "أحمد بن علي العجمي": "Ahmed Bin Ali Al-Ajmi",
+    "عبدالبارئ محمد": "Abdulbaree Mohammad",
+    "عبدالباسط عبدالصمد": "Abdulbasit Abdulsamad",
+    "عبدالرحمن السديس": "Abdulrahman Al-Sudais",
+    "عبدالعزيز الأحمد": "Abdulaziz Al-Ahmad",
+    "عبدالعزيز الزهراني": "Abdulaziz Al-Zahrani",
+    "عبدالله البريمي": "Abdullah Al-Buraimi",
+    "عبدالله البعيجان": "Abdullah Al-Buaijan",
+    "عبدالله المطرود": "Abdullah Al-Matrood",
+    "أحمد الحواشي": "Ahmed Al-Hawashi",
+    "عبدالله بصفر": "Abdullah Basfar",
+    "عبدالله خياط": "Abdullah Khayyat",
+    "عبدالله عواد الجهني": "Abdullah Awad Al-Juhani",
+    "عبدالله غيلان": "Abdullah Gheelan",
+    "عبدالرشيد صوفي": "Abdulrasheed Soufi",
+    "عبدالمحسن الحارثي": "Abdulmohsen Al-Harthi",
+    "عبدالمحسن القاسم": "Abdulmohsen Al-Qasim",
+    "عبدالمحسن العسكر": "Abdulmohsen Al-Askar",
+    "عبدالمحسن العبيكان": "Abdulmohsen Al-Obaikan",
+    "أحمد سعود": "Ahmed Saud",
+    "عبدالهادي أحمد كناكري": "Abdulhadi Ahmed Kanakri",
+    "عبدالودود حنيف": "Abdulwadud Haneef",
+    "عبدالولي الأركاني": "Abdulwali Al-Arkani",
+    "علي أبو هاشم": "Ali Abu Hashim",
+    "علي بن عبدالرحمن الحذيفي": "Ali Bin Abdulrahman Al-Hudhaifi",
+    "علي جابر": "Ali Jaber",
+    "علي حجاج السويسي": "Ali Hajjaj Al-Suisi",
+    "عماد زهير حافظ": "Imad Zuhair Hafiz",
+    "عبدالعزيز التركي": "Abdulaziz Al-Turki",
+    "أحمد صابر": "Ahmed Saber",
+    "عمر القزابري": "Omar Al-Qazabri",
+    "فارس عباد": "Fares Abbad",
+    "فهد العتيبي": "Fahad Al-Otaibi",
+    "فهد الكندري": "Fahad Al-Kandari",
+    "فواز الكعبي": "Fawaz Al-Kaabi",
+    "لافي العوني": "Lafi Al-Awni",
+    "ناصر القطامي": "Nasser Al-Qatami",
+    "نبيل الرفاعي": "Nabil Al-Rifaie",
+    "نعمة الحسان": "Neamah Al-Hassan",
+    "هاني الرفاعي": "Hani Al-Rifaie",
+    "أحمد نعينع": "Ahmed Nuaina",
+    "وليد الدليمي": "Walid Al-Dulaimi",
+    "وليد النائحي": "Walid Al-Naahi",
+    "ياسر الدوسري": "Yasser Al-Dosari",
+    "ياسر القرشي": "Yasser Al-Qurashi",
+    "ياسر الفيلكاوي": "Yasser Al-Failakawi",
+    "ياسر المزروعي": "Yasser Al-Mazrouei",
+    "يحيى حوا": "Yahya Hawwa",
+    "يوسف الشويعي": "Yusuf Al-Shwehy",
+    "عبدالله عبدل": "Abdullah Abdul",
   };
   const [reciters, setReciters] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -93,6 +319,16 @@ const Quran = ({ src }) => {
     if (selectReciter.current) selectReciter.current.value = "default";
   };
 
+  useEffect(() => {
+    // Load English tafsir from JSON file when Surah is selected
+    const surahNumber = allAyahs?.number;
+    const surahTafsir = en_al_jalalayn[surahNumber - 1];
+    if (surahTafsir) {
+      setEnglishTafsir(surahTafsir?.ayahs);
+      setTafsirLoader(false);
+    }
+    // eslint-disable-next-line
+  }, [selectedSurah]);
   const goBack = () => {
     ayahsRef.current.classList.remove("active");
     surahsRef.current.classList.remove("d-none");
@@ -128,31 +364,6 @@ const Quran = ({ src }) => {
       getSurahData();
     }
   }, [selectedSurah]);
-
-  useEffect(() => {
-    setTafsirLoader(true);
-    const getSurahData = async () => {
-      try {
-        if (selectedSurah > 0) {
-          const tafseerResponse = await fetch(
-            `https://api.alquran.cloud/v1/surah/${selectedSurah}/editions/${
-              tafseerLangs === "arabe" ? "ar.muyassar" : "en.asad"
-            }`
-          );
-          const tafseerData = await tafseerResponse.json();
-          setApiTafseer(tafseerData.data[0]);
-          setTafsirLoader(false);
-        }
-      } catch (error) {
-        console.log("Error fetching surah tafseer data:", error);
-        setIsErrorFetching(true);
-      }
-    };
-
-    if (selectedSurah > 0 && allAyahs?.ayahs.length > 0) {
-      getSurahData();
-    }
-  }, [selectedSurah, allAyahs?.ayahs.length, tafseerLangs]);
 
   useEffect(() => {
     setRefs(allAyahs?.ayahs.map(() => React.createRef()));
@@ -196,21 +407,41 @@ const Quran = ({ src }) => {
     const ayahTfasir = Quran_Tafsir.Surahs?.find(
       (tafsir) => tafsir.number === Number(surahNumber)
     );
-    setSelectedAyah(ayahNumber);
 
     if (ayahTfasir) {
-      if (quranLangs === "Arabe" || quranLangs === "Together") {
-        const ayahArabicTafsir = ayahTfasir.ayahs[ayahNumber]?.tafsir || "";
-        const englishTafsir = `<p className='dr-rtl'>${
-          selectedSurah ? ayahArabicTafsir : ""
-        } </p>`;
-        const cleanContent = DOMPurify.sanitize(englishTafsir);
-        setSignleAyahTafsirText(cleanContent);
+      let tafsirContent = "";
+      const ayahArabicTafsir = ayahTfasir.ayahs[ayahNumber]?.tafsir || "";
+      const surahTafsir = englishTafsir;
+      let ayahEnglishTafsir = "";
+      if (surahTafsir) {
+        ayahEnglishTafsir =
+          surahTafsir.find(
+            (ayah) => ayah.ayah_number === (ayahNumber + 1).toString()
+          )?.text || "";
       }
+
+      if (quranLangs === "Arabe") {
+        tafsirContent = `<p class='dr-rtl'>${ayahArabicTafsir}</p>`;
+      } else if (quranLangs === "English") {
+        tafsirContent = `<p class='dr-ltr my-2'>${ayahEnglishTafsir}</p>`;
+      } else if (quranLangs === "Together") {
+        tafsirContent = `<div>
+          <p class='dr-rtl my-2'>${ayahArabicTafsir}</p>
+          <hr />
+          <p class='dr-ltr my-2'>${ayahEnglishTafsir}</p>
+        </div>`;
+      } else {
+        // Default to Arabic tafsir if quranLangs is neither "Arabe" nor "English" nor "Together"
+        tafsirContent = `<p class='dr-rtl'>${ayahArabicTafsir}</p>`;
+      }
+
+      const cleanContent = DOMPurify.sanitize(tafsirContent);
+      setSignleAyahTafsirText(cleanContent);
       setOpenAyahTafsirModal(true);
     }
   };
-  // Set arabic tafsir for Explanation Tab
+
+  // Set Arabic tafsir for Explanation Tab
   useEffect(() => {
     const surahNumber = allAyahs?.number;
     const ayahTfasir = Quran_Tafsir.Surahs?.find(
@@ -231,6 +462,7 @@ const Quran = ({ src }) => {
         }
         const data = await response.json();
         setReciters(data.reciters);
+        console.log(data);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching reciters:", error);
@@ -249,30 +481,6 @@ const Quran = ({ src }) => {
     }
   }, [language]);
 
-  useEffect(() => {
-    setTafsirLoader(true);
-    const getSurahData = async () => {
-      try {
-        if (selectedSurah > 0) {
-          const tafseerResponse = await fetch(
-            `http://api.quran-tafseer.com/tafseer/9/${selectedSurah}/1/${allAyahs?.ayahs.length}`
-          );
-          const tafseerData = await tafseerResponse.json();
-          setEnglishTafsir(tafseerData);
-          setTafsirLoader(false);
-        }
-      } catch (error) {
-        console.log("Error fetching surah english tafseer data:", error);
-        setIsErrorFetching(true);
-      }
-    };
-
-    if (selectedSurah > 0 && allAyahs?.ayahs.length > 0) {
-      getSurahData();
-    }
-    // eslint-disable-next-line
-  }, [selectedSurah, allAyahs?.ayahs.length, quranLangs]);
-
   // Handle tab change
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -289,6 +497,7 @@ const Quran = ({ src }) => {
         </div>
       ) : (
         <React.Fragment>
+          {/* Data Container */}
           <div className="data-container shadow-4 card mb-5 p-2">
             <div className="metaData" style={{ position: "relative" }}>
               <p>{translations.numberOfAyahs}</p>
@@ -342,6 +551,8 @@ const Quran = ({ src }) => {
               )}
             </button>
           </div>
+
+          {/* Surahs List */}
           <div
             className={isReversed ? "reversed 114-1" : "surahs 1-114"}
             ref={surahsRef}
@@ -386,6 +597,8 @@ const Quran = ({ src }) => {
               </span>
             )}
           </div>
+
+          {/* Ayahs */}
           <div className="ayahs p-0" ref={ayahsRef}>
             <div className="back" onClick={goBack}>
               X
@@ -399,7 +612,7 @@ const Quran = ({ src }) => {
                   <div className="d-flex flex-row gap-3 justify-content-start align-items-center d-none d-lg-flex d-md-flex">
                     <p className="quran-listen-btn">
                       <SlowMotionVideoOutlinedIcon className="mx-2" />
-                      <span>
+                      <span style={{ textWrap: "nowrap" }}>
                         {language === "ar"
                           ? "سيتم تشغيل التلاوة بمجرد اختيار القارئ"
                           : "The recitation will start as soon as the reciter is selected"}
@@ -435,7 +648,7 @@ const Quran = ({ src }) => {
                             const reciterName =
                               language === "en"
                                 ? reciterNameMap[reciter.name] || reciter.name
-                                : reciter.name;
+                                : `${reciter.name} - ${reciter.moshaf[0].name}`;
 
                             return (
                               <option
@@ -475,6 +688,7 @@ const Quran = ({ src }) => {
                         fontWeight: tabValue === 0 ? "bold" : "normal",
                       }}
                       className="quranTabs"
+                      value={0}
                     />
                     {/* Second Tab: Explanation */}
                     <Tab
@@ -487,6 +701,7 @@ const Quran = ({ src }) => {
                         fontWeight: tabValue === 1 ? "bold" : "normal",
                       }}
                       className="quranTabs"
+                      value={1}
                     />
                   </Tabs>
 
@@ -639,82 +854,88 @@ const Quran = ({ src }) => {
                           direction: tafseerLangs === "arabe" ? "rtl" : "ltr",
                         }}
                       >
-                        {surahData.ayahs.map((ayah, index) => (
-                          <div key={ayah.number}>
-                            <div
-                              className="ayah-text mb-3"
-                              style={{
-                                textAlign:
-                                  tafseerLangs === "arabe" ? "right" : "left",
-                              }}
-                            >
-                              <p
-                                className="w-100 ayah-in-tafseer"
-                                ref={refs[index]}
-                              >
-                                ۞{" "}
-                                {tafseerLangs === "arabe" &&
-                                allAyahs.name !== "سُورَةُ ٱلْفَاتِحَةِ"
-                                  ? allAyahs?.ayahs[
-                                      ayah.number - 1
-                                    ]?.text.replace(
-                                      "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
-                                      ""
-                                    )
-                                  : tafseerLangs === "arabe"
-                                  ? allAyahs?.ayahs[ayah.number - 1]?.text
-                                  : apiTranslation[index]?.text.replace(
-                                      /^[;:!]/,
-                                      ""
-                                    )}
-                                ۞
-                              </p>
-                              <p
-                                className={`ayah-number ${
-                                  tafseerLangs === "english" && "ltr"
-                                } ${language === "en" && "ltr"}`}
-                              >
-                                {index + 1}
-                              </p>
-                            </div>
+                        {surahData.ayahs.map((ayah, index) => {
+                          // Get Arabic tafsir
+                          let arabicTafsir = "";
+                          if (tafseerLangs === "arabe") {
+                            const currentTafsir = allSurahTafseer?.ayahs?.find(
+                              (t) => t.number === index + 1
+                            );
+                            arabicTafsir =
+                              currentTafsir?.tafsir || "التفسير غير متاح";
+                          }
 
-                            {tafsirLoader ? (
-                              <span>
-                                {language === "ar"
-                                  ? "جاري العمل..."
-                                  : "Working..."}
-                              </span>
-                            ) : (
-                              <p
-                                className={
-                                  tafseerLangs === "english"
-                                    ? "mb-3 ltr"
-                                    : "mb-3"
-                                }
+                          // Get English tafsir
+                          let englishTafsirText = "";
+                          if (tafseerLangs === "english") {
+                            const ayahNumber = (index + 1).toString();
+                            const englishText = englishTafsir?.find(
+                              (a) => a.ayah_number === ayahNumber
+                            );
+                            englishTafsirText =
+                              englishText?.text || "التفسير غير متاح";
+                          }
+
+                          return (
+                            <div key={ayah.number}>
+                              <div
+                                className="ayah-text mb-3"
+                                style={{
+                                  textAlign:
+                                    tafseerLangs === "arabe" ? "right" : "left",
+                                }}
                               >
-                                {tafseerLangs === "arabe"
-                                  ? allSurahTafseer
-                                    ? allSurahTafseer?.ayahs?.map((t) => (
-                                        <span>
-                                          {" "}
-                                          {t.number === index + 1 &&
-                                            t.tafsir}{" "}
-                                        </span>
-                                      ))
-                                    : "التفسير غير متاح"
-                                  : apiTafseer
-                                  ? apiTafseer?.ayahs.map((t) => (
-                                      <span>
-                                        {" "}
-                                        {t.numberInSurah === ayah.number &&
-                                          t.text}{" "}
-                                      </span>
-                                    ))
-                                  : "English explanation not available"}
-                              </p>
-                            )}
-                          </div>
-                        ))}
+                                <p
+                                  className="w-100 ayah-in-tafseer"
+                                  ref={refs[index]}
+                                >
+                                  ۞{" "}
+                                  {tafseerLangs === "arabe" &&
+                                  allAyahs.name !== "سُورَةُ ٱلْفَاتِحَةِ"
+                                    ? allAyahs?.ayahs[
+                                        ayah.number - 1
+                                      ]?.text.replace(
+                                        "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+                                        ""
+                                      )
+                                    : tafseerLangs === "arabe"
+                                    ? allAyahs?.ayahs[ayah.number - 1]?.text
+                                    : apiTranslation[index]?.text.replace(
+                                        /^[;:!]/,
+                                        ""
+                                      )}
+                                  ۞
+                                </p>
+                                <p
+                                  className={`ayah-number ${
+                                    tafseerLangs === "english" && "ltr"
+                                  } ${language === "en" && "ltr"}`}
+                                >
+                                  {index + 1}
+                                </p>
+                              </div>
+
+                              {tafsirLoader ? (
+                                <span>
+                                  {language === "ar"
+                                    ? "جاري العمل..."
+                                    : "Working..."}
+                                </span>
+                              ) : (
+                                <div>
+                                  {tafseerLangs === "arabe" && (
+                                    <p className="mb-3">{arabicTafsir}</p>
+                                  )}
+                                  {tafseerLangs === "english" && (
+                                    <p className="mb-3 ltr">
+                                      {englishTafsirText}
+                                    </p>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
                   </TabPanel>
@@ -739,14 +960,13 @@ const Quran = ({ src }) => {
         <Sheet
           variant="outlined"
           sx={{
-            maxWidth: 500,
-            minWidth: 250,
+            maxWidth: "95%",
+            maxHeight: "90%",
             borderRadius: "md",
             p: 3,
             boxShadow: "lg",
             backgroundColor: "var(--card-color)",
             overflowY: "auto",
-            maxHeight: "100%",
           }}
         >
           <div className="d-flex flex-row justify-content-between align-items-center dr-ltr">
@@ -758,9 +978,9 @@ const Quran = ({ src }) => {
               textColor="inherit"
               fontWeight="lg"
               mb={1}
-              sx={{ color: "var(--main-color)" }}
+              sx={{ color: "var(--main-color)", border: "none" }}
             >
-              {language === "ar" || quranLangs === "Arabe"
+              {language === "ar" && quranLangs === "Arabe"
                 ? "التفسير الميسر"
                 : "The Easy Explanation"}
             </Typography>
@@ -770,35 +990,17 @@ const Quran = ({ src }) => {
             textColor="text.tertiary"
             sx={{ color: "var(--text-color)", textAlign: "justify" }}
           >
-            {quranLangs !== "English" && (
-              <span
-                className="alert  mb-4 p-0 d-flex flex-column gap-2 text-align-justify"
-                dangerouslySetInnerHTML={{ __html: signleAyahTafsirText }}
-              ></span>
-            )}
-
             {tafsirLoader ? (
               language === "ar" ? (
                 "جاري العمل..."
               ) : (
                 "Working..."
               )
-            ) : englishTafsir.length > 0 ? (
-              quranLangs !== "Arabe" &&
-              englishTafsir.map(
-                (ayah, index) =>
-                  ayah.ayah_number - 1 === selectedAyah && (
-                    <div
-                      className="alert  p-0 ltr text-align-justify"
-                      key={index}
-                    >
-                      <span className="ltr w-100  mt-2 text-align-justify">
-                        {" "}
-                        {ayah.text}
-                      </span>
-                    </div>
-                  )
-              )
+            ) : signleAyahTafsirText ? (
+              <span
+                className="alert  mb-4 p-0 d-flex flex-column gap-2 text-align-justify"
+                dangerouslySetInnerHTML={{ __html: signleAyahTafsirText }}
+              ></span>
             ) : (
               <span>{language === "ar" ? "جاري العمل..." : "Working..."}</span>
             )}
