@@ -143,7 +143,7 @@ const tajweedRules = {
     description_ar:
       "قلب النون الساكنة أو التنوين إلى ميم عند ملاقاتها بحرف الباء (ب) مع الغنة، مما يسمح بانتقال أكثر سلاسة بين هذه الحروف.",
     letters: "ب",
-    color: "#26BFFD",
+    color: "#1b87a5",
   },
   idgham_ghunnah: {
     en: "Idghām with Ghunnah",
