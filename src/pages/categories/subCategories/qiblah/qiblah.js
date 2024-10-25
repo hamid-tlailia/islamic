@@ -261,7 +261,10 @@ const Qiblah = () => {
           <ArrowDownwardOutlinedIcon style={{ fontSize: 100, color: "blue" }} />
         </Box>
       </Box>
-      <Typography variant="body1" style={{ marginTop: 16 }}>
+      <Typography
+        variant="body1"
+        style={{ marginTop: 16, textAlign: "center", width: "100%" }}
+      >
         {t("rotateDevice")}
       </Typography>
     </Box>

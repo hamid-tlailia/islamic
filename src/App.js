@@ -119,13 +119,14 @@ function App() {
     setIsLoaded(true);
   }, []);
 
-  // Add loader when load page
+  // Add loader 1s when load page
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme) {
+    const timer = setTimeout(() => {
       setIsLoading(false);
-    }
+    }, 500);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const pausePlayer = () => {
