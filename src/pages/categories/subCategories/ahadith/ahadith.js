@@ -437,11 +437,10 @@ const Ahadith = () => {
   };
 
   const fetchHadithExplanation = async (hadith) => {
-    const proxyUrl = "https://cors-anywhere.herokuapp.com/"; // Use a CORS proxy server
     const apiUrl = `https://dorar.net/dorar_api.json?skey=${encodeURIComponent(
       hadith
     )}`;
-    const fullUrl = proxyUrl + apiUrl;
+    const fullUrl =  apiUrl;
     setLoader(true);
     setHadithExplanation(null);
     setOpenHadithModal(true);
@@ -449,7 +448,7 @@ const Ahadith = () => {
       const response = await fetch(fullUrl, {
         method: "GET",
         headers: {
-          Origin: "http://localhost:3000", // Replace with your actual domain if different
+          Origin: "https://myislam-steel.vercel.app/", // Replace with your actual domain if different
           "X-Requested-With": "XMLHttpRequest",
         },
       });
