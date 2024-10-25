@@ -154,6 +154,13 @@ const Qiblah = () => {
     return 0;
   };
 
+  const isFacingQiblah = () => {
+    if (deviceOrientation !== null && qiblahDirection !== null) {
+      const difference = Math.abs(qiblahDirection - deviceOrientation);
+      return difference <= 5 || difference >= 355; // Tolerance of ±5 degrees
+    }
+    return false;
+  };
   if (errorMessage) {
     return (
       <Box
@@ -252,14 +259,21 @@ const Qiblah = () => {
           position="absolute"
           top="50%"
           left="50%"
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
           style={{
             transform: `translate(-50%, -50%) rotate(${getArrowRotation()}deg)`,
             transformOrigin: "center center",
             transition: "transform 0.5s ease-in-out",
           }}
         >
-          <ArrowDownwardOutlinedIcon style={{ fontSize: 100, color: "blue" }} />
-          🕋
+          <Typography variant="h6" component="span">
+            🕋
+          </Typography>
+          <ArrowDownwardOutlinedIcon
+            style={{ fontSize: 100, color: isFacingQiblah() ? "green" : "red" }}
+          />
         </Box>
       </Box>
       <Typography variant="body1" style={{ marginTop: 16 }}>
