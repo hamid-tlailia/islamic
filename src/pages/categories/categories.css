@@ -50,7 +50,7 @@
   justify-items: center; /* Center items horizontally in their grid cells */
 }
 .divisions.hide {
-  height: 730px !important;
+  height: 745px !important;
   overflow: clip;
 }
 .divisions .div {
