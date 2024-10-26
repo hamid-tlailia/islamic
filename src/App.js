@@ -337,7 +337,10 @@ function App() {
                     />
                     <Route path="questions" element={<Questions />} />
                     <Route path="quran" element={<Quran src={audioSRC} />} />
-                    <Route path="tafsir" element={<Tafsir />} />
+                    <Route
+                      path="tafsir"
+                      element={<Tafsir toTop={() => setBackToTop(true)} />}
+                    />
                     <Route path="tasbih" element={<Tasbih />} />
                     <Route path="times" element={<Times />} />
                     <Route path="qiblah" element={<Qiblah />} />

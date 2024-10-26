@@ -245,7 +245,7 @@ const Qiblah = () => {
           width={250}
           height={250}
           borderRadius="50%"
-          border="2px solid primary"
+          border="2px solid rgba(11, 107, 203, 1)"
         ></Box>
         {/* Arrow pointing towards Qiblah direction */}
         <Box

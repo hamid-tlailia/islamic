@@ -208,9 +208,7 @@ const Home = ({ onNavClick }) => {
                         {item.data.grade}
                       </small>
                       <hr />
-                      <p className="text-light">
-                        {item.data.explanation}
-                      </p>
+                      <p className="text-light">{item.data.explanation}</p>
                     </div>
                   </div>
                 </div>

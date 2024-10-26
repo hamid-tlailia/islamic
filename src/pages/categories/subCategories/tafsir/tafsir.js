@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@mui/material";
 import { Autocomplete, FormControl, FormLabel } from "@mui/joy";
 import "./tafsir.css";
@@ -32,7 +32,7 @@ const TafsirContent = styled.div`
   margin-bottom: 35px;
 `;
 
-const Tafsir = () => {
+const Tafsir = ({ toTop }) => {
   const [langs, setLangs] = useState("arabic");
   const [surahs, setSurahs] = useState([]);
   const [selectedSurah, setSelectedSurah] = useState(null);
@@ -41,12 +41,15 @@ const Tafsir = () => {
   const [tafsirList, setTafsirList] = useState([]);
   const [ayahList, setAyahList] = useState([]);
   const [warning, setWarning] = useState("");
-  const [tafsir, setTafsir] = useState("");
+  const [tafsir, setTafsir] = useState([]); // Initialize as an array
   const [optionsVisible, setOptionsVisible] = useState(true);
   const [loading, setLoading] = useState(false);
   const [alignmentClass, setAlignmentClass] = useState("w-100 my-3 text-end");
   const [isErrorFetching, setIsErrorFetching] = useState(false);
   const [currentExplainedAyah, setCurrentExplainedAyah] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1); // For pagination
+  const itemsPerPage = 1; // Number of tafsir items per page
+  const parentRef = useRef(null);
 
   const { language } = useTranslation();
 
@@ -152,6 +155,7 @@ const Tafsir = () => {
     const savedSurah = localStorage.getItem("savedSurah");
     const savedAyah = localStorage.getItem("savedAyah");
     const savedTafsir = localStorage.getItem("savedTafsir");
+    const savedCurrentPage = localStorage.getItem("savedCurrentPage");
 
     if (savedLang) {
       setLangs(savedLang);
@@ -193,12 +197,18 @@ const Tafsir = () => {
         });
       }
 
+      // Set currentPage if saved and viewing entire surah
+      if (!savedAyah && savedCurrentPage) {
+        setCurrentPage(parseInt(savedCurrentPage, 10));
+      }
+
       // Fetch the Tafsir automatically
       handleSubmit(
         savedLang,
         surahNumber,
         savedAyah ? parseInt(savedAyah, 10) : null,
-        savedTafsir
+        savedTafsir,
+        true
       );
     }
     // eslint-disable-next-line
@@ -235,6 +245,7 @@ const Tafsir = () => {
     localStorage.setItem("savedSurah", surahToUse);
     if (ayahToUse) {
       localStorage.setItem("savedAyah", ayahToUse);
+      localStorage.removeItem("savedCurrentPage"); // Remove saved page when specific ayah is selected
     } else {
       localStorage.removeItem("savedAyah");
     }
@@ -251,9 +262,9 @@ const Tafsir = () => {
         .then((response) => response.json())
         .then((data) => {
           const cleanContent = DOMPurify.sanitize(data.tafsir.text);
-          setTafsir(cleanContent); // Set Tafsir for the specific Ayah
+          setTafsir([cleanContent]); // Set Tafsir as an array
           setOptionsVisible(false); // Hide options after submission
-          // Make loader off
+          setCurrentPage(1); // Reset to first page
           setLoading(false);
         })
         .catch((error) => {
@@ -281,14 +292,23 @@ const Tafsir = () => {
       // Use Promise.all to fetch all Tafsir data concurrently
       Promise.all(fetchPromises)
         .then((responses) => {
-          // Combine all Tafsir texts
-          const allAyahsTafsir = responses
-            .map((response) => response.tafsir.text)
-            .join("\n");
-          const cleanContent = DOMPurify.sanitize(allAyahsTafsir);
-          setTafsir(cleanContent); // Set Tafsir for all Ayahs
+          // Map and sanitize all tafsir texts
+          const allAyahsTafsir = responses.map((response) => {
+            const sanitizedText = DOMPurify.sanitize(response.tafsir.text);
+            return sanitizedText;
+          });
+          setTafsir(allAyahsTafsir); // Set Tafsir as an array
           setOptionsVisible(false); // Hide options after submission
-          // Make loader off
+
+          // Set currentPage to saved page if available
+          if (fromLocalStorage && localStorage.getItem("savedCurrentPage")) {
+            setCurrentPage(
+              parseInt(localStorage.getItem("savedCurrentPage"), 10)
+            );
+          } else {
+            setCurrentPage(1); // Reset to first page
+          }
+
           setLoading(false);
         })
         .catch((error) => {
@@ -300,11 +320,19 @@ const Tafsir = () => {
 
   const handleReset = () => {
     setWarning("");
-    setTafsir("");
+    setTafsir([]);
     setOptionsVisible(true); // Show options again
     setLoading(false);
     setCurrentExplainedAyah(null);
+    setCurrentPage(1); // Reset to first page
   };
+
+  // Save currentPage to localStorage when it changes and viewing entire surah
+  useEffect(() => {
+    if (!selectedAyah && tafsir.length > 0) {
+      localStorage.setItem("savedCurrentPage", currentPage);
+    }
+  }, [currentPage, selectedAyah, tafsir]);
 
   // Helper function to get the display value based on the current language
   const getDisplayLangValue = (lang) => {
@@ -402,6 +430,9 @@ const Tafsir = () => {
               onChange={(event, newValue) => {
                 setSelectedAyah(newValue);
                 setWarning("");
+                if (newValue) {
+                  localStorage.removeItem("savedCurrentPage"); // Clear saved page when specific ayah is selected
+                }
               }}
               options={ayahList}
               getOptionLabel={(option) => option.label}
@@ -464,12 +495,14 @@ const Tafsir = () => {
           sx={{ maxWidth: "max-content" }}
           onClick={() => handleSubmit()}
         >
-          {language === "ar" ? "التفسير" : "Get Tafsir"}
+          {langs === "arabic" && language === "ar"
+            ? "الحصول على التفسير"
+            : "Get Tafsir"}
         </Button>
       )}
       {!optionsVisible && (
         <Button variant="outlined" color="secondary" onClick={handleReset}>
-          {language === "ar" ? "إعادة تعيين" : "Reset"}
+          {langs === "arabic" && language === "ar" ? "إعادة تعيين" : "Reset"}
         </Button>
       )}
     </div>
@@ -477,22 +510,24 @@ const Tafsir = () => {
 
   // Detect language
   useEffect(() => {
-    // Detect language using franc
-    const detectedLang = franc(tafsir);
+    if (tafsir.length > 0) {
+      // Combine some tafsir texts for language detection
+      const textForDetection = tafsir.slice(0, 3).join(" ");
+      const detectedLang = franc(textForDetection);
 
-    // Define languages that are typically right-to-left
-    const rtlLanguages = ["arb", "fas", "urd", "heb"]; // Arabic, Persian, Urdu, Hebrew, etc.
+      // Define languages that are typically right-to-left
+      const rtlLanguages = ["arb"]; // Arabic
 
-    // Set the class based on detected language
-    if (rtlLanguages.includes(detectedLang)) {
-      setAlignmentClass("w-100 my-3 text-end"); // Right-to-left (Arabic, etc.)
-    } else {
-      setAlignmentClass("w-100 my-3 text-start"); // Left-to-right for other languages
+      // Set the class based on detected language
+      if (rtlLanguages.includes(detectedLang)) {
+        setAlignmentClass("w-100 my-3 text-end"); // Right-to-left (Arabic, etc.)
+      } else {
+        setAlignmentClass("w-100 my-3 text-start"); // Left-to-right for other languages
+      }
     }
   }, [tafsir]);
 
   // Get the current selected ayah text
-
   const getExplainedAyahText = async (url) => {
     try {
       const ayahResponse = await fetch(url);
@@ -502,6 +537,7 @@ const Tafsir = () => {
       setIsErrorFetching(true);
     }
   };
+
   useEffect(() => {
     if (selectedAyah !== null && selectedSurah) {
       const ayahNumber = surahs[selectedSurah.value - 1].ayahs.find(
@@ -520,8 +556,8 @@ const Tafsir = () => {
   }, [selectedAyah, langs, surahs, selectedSurah]);
 
   return (
-    <div>
-      {!tafsir && (
+    <div ref={parentRef}>
+      {tafsir.length === 0 && (
         <Alert
           variant="outlined"
           severity="success"
@@ -554,39 +590,101 @@ const Tafsir = () => {
         </div>
       )}
       {loading ? (
-        <div> {<Loader />} </div>
+        <div>{<Loader />}</div>
+      ) : tafsir.length > 0 ? (
+        <>
+          <TafsirContainer>
+            {/* Explained ayah text */}
+            {!optionsVisible && (
+              <p className="w-100 text-center my-2 explained-ayah">
+                ✦{" "}
+                {currentExplainedAyah !== null
+                  ? currentExplainedAyah?.text
+                  : langs === "arabic"
+                  ? surahs.find((s) => s.number === selectedSurah?.value)?.name
+                  : surahs.find((s) => s.number === selectedSurah?.value)
+                      ?.englishName}
+                ✦
+                {currentExplainedAyah !== null && (
+                  <span className="mx-2" style={{ color: "#169777" }}>
+                    [
+                    {langs === "arabic"
+                      ? currentExplainedAyah?.surah.name
+                      : currentExplainedAyah?.surah.englishName}
+                    {" : "}
+                    {currentExplainedAyah?.numberInSurah}]
+                  </span>
+                )}
+              </p>
+            )}
+            {(() => {
+              const indexOfLastItem = currentPage * itemsPerPage;
+              const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+              const currentTafsirItems = tafsir.slice(
+                indexOfFirstItem,
+                indexOfLastItem
+              );
+              const totalPages = Math.ceil(tafsir.length / itemsPerPage);
+
+              return (
+                <>
+                  <div
+                    className={`w-100  text-primary fw-bold  my-3 ${
+                      langs === "arabic" && language === "ar"
+                        ? "ltr text-end"
+                        : "rtl text-start"
+                    }`}
+                  >
+                    <span>
+                      {totalPages} / {currentPage}{" "}
+                      {language === "ar" && langs === "arabic"
+                        ? "الصفحة"
+                        : "Page"}
+                    </span>
+                  </div>
+                  {currentTafsirItems.map((tafsirText, index) => (
+                    <TafsirContent
+                      key={index + indexOfFirstItem}
+                      className={alignmentClass}
+                      dangerouslySetInnerHTML={{ __html: tafsirText }}
+                    />
+                  ))}
+                  {/* Pagination buttons */}
+                  <div className="pagination-buttons w-100 text-center d-flex flex-row gap-3 justify-content-center align-items-center my-3">
+                    {currentPage > 1 && (
+                      <Button
+                        variant="outlined"
+                        onClick={() => {
+                          setCurrentPage(currentPage - 1);
+                          toTop();
+                        }}
+                        style={{ marginRight: "10px" }}
+                      >
+                        {langs === "arabic" && language === "ar"
+                          ? "السابق"
+                          : "Previous"}
+                      </Button>
+                    )}
+                    {currentPage < totalPages && (
+                      <Button
+                        variant="outlined"
+                        onClick={() => {
+                          setCurrentPage(currentPage + 1);
+                          toTop();
+                        }}
+                      >
+                        {langs === "arabic" && language === "ar"
+                          ? "التالي"
+                          : "Next"}
+                      </Button>
+                    )}
+                  </div>
+                </>
+              );
+            })()}
+          </TafsirContainer>
+        </>
       ) : (
-        <TafsirContainer>
-          {/* Explained ayah text */}
-          {!optionsVisible && (
-            <p className="w-100 text-center my-2 explained-ayah">
-              ✦{" "}
-              {currentExplainedAyah !== null
-                ? currentExplainedAyah?.text
-                : langs === "arabic"
-                ? surahs.find((s) => s.number === selectedSurah?.value)?.name
-                : surahs.find((s) => s.number === selectedSurah?.value)
-                    ?.englishName}
-              ✦
-              {currentExplainedAyah !== null && (
-                <span className="mx-2" style={{ color: "#169777" }}>
-                  [
-                  {langs === "arabic"
-                    ? currentExplainedAyah?.surah.name
-                    : currentExplainedAyah?.surah.englishName}
-                  {" : "}
-                  {currentExplainedAyah?.numberInSurah}]
-                </span>
-              )}
-            </p>
-          )}
-          <TafsirContent
-            className={alignmentClass}
-            dangerouslySetInnerHTML={{ __html: tafsir }}
-          />
-        </TafsirContainer>
-      )}
-      {!loading && !tafsir && (
         <div className="w-100 my-5 p-4 text-center  border rounded shadow">
           <p className="text-primary font-weight-bold">
             {language === "ar"
