@@ -211,14 +211,14 @@ a {
   direction: ltr;
   z-index: 10;
 }
-/* Keyframe for fade-in with scale-up */
-@keyframes fadeInScaleUp {
+/* Keyframe for scale-up with slight rotation */
+@keyframes scaleUpRotate {
   0% {
-    transform: scale(0.8);
+    transform: scale(0.5) rotate(-15deg);
     opacity: 0;
   }
   100% {
-    transform: scale(1);
+    transform: scale(1) rotate(0deg);
     opacity: 1;
   }
 }
@@ -226,12 +226,12 @@ a {
 /* Initial state */
 .lazy-component-wrapper {
   opacity: 0;
-  transform: scale(0.8);
+  transform: scale(0.5) rotate(-15deg);
 }
 
 /* Final state when loaded */
 .lazy-component-wrapper.loaded {
-  animation: fadeInScaleUp 0.8s ease-out forwards;
+  animation: scaleUpRotate 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .ltr {
@@ -242,6 +242,15 @@ a {
 }
 .custom-cursor {
   cursor: url("./components//images/logo.png") !important; /* Add your custom cursor image */
+}
+.primary {
+  color: rgba(11, 107, 203, 1) !important ;
+}
+.danger {
+  color: #c41c1c !important;
+}
+.error {
+  color: #c41c1c !;
 }
 .back-to-top {
   position: fixed !important;
