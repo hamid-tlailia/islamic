@@ -336,7 +336,7 @@ function App() {
                       element={<Prophets scrollUp={scrollContent} />}
                     />
                     <Route path="questions" element={<Questions />} />
-                    <Route path="quran" element={<Quran src={audioSRC} />} />
+                    <Route path="quran" element={<Quran src={audioSRC} toTop={() => setBackToTop(true)}/>} />
                     <Route
                       path="tafsir"
                       element={<Tafsir toTop={() => setBackToTop(true)} />}

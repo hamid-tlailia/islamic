@@ -529,23 +529,27 @@ const Tajweed = ({ audioName, documentName }) => {
         (surah) => surah.id === parseInt(surahNumber)
       );
       return (
-        <Typography
-          key={`surah-${surahNumber}`}
-          variant="h6"
-          sx={{
-            textAlign: "center",
-            margin: "20px 0",
-          }}
-          className="w-100 d-flex justify-content-center align-items-center mb-3"
-        >
-          <span className="surah_name">
-            {parseInt(currentAyahNumber) === 1
-              ? language === "ar"
-                ? `【 سورة ${surahName?.name_arabic} 】`
-                : `[ ${surahName?.name_simple} ]`
-              : ""}
-          </span>
-        </Typography>
+        <>
+          {parseInt(currentAyahNumber) === 1 && (
+            <Typography
+              key={`surah-${surahNumber}`}
+              variant="h6"
+              sx={{
+                textAlign: "center",
+                margin: "20px 0",
+              }}
+              className="w-100 d-flex justify-content-center align-items-center mb-3"
+            >
+              <span className="surah_name">
+                {parseInt(currentAyahNumber) === 1
+                  ? language === "ar"
+                    ? `【 سورة ${surahName?.name_arabic} 】`
+                    : `[ ${surahName?.name_simple} ]`
+                  : ""}
+              </span>
+            </Typography>
+          )}
+        </>
       );
     }
     return null;
@@ -629,7 +633,7 @@ const Tajweed = ({ audioName, documentName }) => {
 
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Typography sx={{ mr: 1, color: "var(--text-color)" }}>
-            {language === "ar" ? "اختر الصفحة" : "Choose page"} :
+            {language === "ar" ? "اختر الصفحة" : "Choose page"}:
           </Typography>
           <input
             type="number"

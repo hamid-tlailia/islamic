@@ -73,6 +73,7 @@ body.light-filter {
   --nav-color: rgba(34, 28, 6, 0.29);
   --ayah-text-color: #253987;
   --scrolled-ayah-bg: rgba(0, 128, 0, 0.436);
+  --scolled-ayah-color: gold;
   --dropdown-bg-color: rgb(178, 174, 159);
   --player-bg-color: rgb(81, 85, 27);
   --nav-link-color: rgb(27, 230, 24);
@@ -95,6 +96,8 @@ body.image {
   --ayah-text-color: #0aa4a4;
   --dropdown-bg-color: rgba(0, 0, 0, 0.6);
   --player-bg-color: rgb(8, 27, 42);
+  --scrolled-ayah-bg: rgba(15, 163, 213, 0.436);
+  --scolled-ayah-color: gold;
   --tabs-bg-color: rgba(180, 154, 154, 0.5);
   --main-color: coral;
   --api-card: #021602;

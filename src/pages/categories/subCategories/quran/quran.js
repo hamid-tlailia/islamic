@@ -19,7 +19,7 @@ import { toast } from "react-toastify";
 import en_al_jalalayn from "./tafsirs/en-al-jalalayn.json";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-const Quran = ({ src }) => {
+const Quran = ({ src, toTop }) => {
   const [surahs, setSurahs] = useState([]);
   const [allAyahs, setAllAyahs] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -282,12 +282,12 @@ const Quran = ({ src }) => {
 
   const handleNextPage = () => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-    window.scrollTo(0, 0); // Scroll to top when changing pages
+    toTop(); // Scroll to top when changing pages
   };
 
   const handlePrevPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
-    window.scrollTo(0, 0); // Scroll to top when changing pages
+    toTop(); // Scroll to top when changing pages
   };
 
   return (
