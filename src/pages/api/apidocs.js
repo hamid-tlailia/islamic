@@ -11,7 +11,7 @@ const apiList = [
     description_en: "Get details of a specific reciter.",
     description_ar: "الحصول على تفاصيل قارئ معين و يليها قائمة جمييع القراء.",
     // eslint-disable-next-line
-    url: "https://www.mp3quran.net/api/v3/reciters?reciter=${reciter_id}",
+    url: "https://www.mp3quran.net/api/v3/reciters?reciter={reciter_id}",
   },
   {
     id: 2,
@@ -25,8 +25,9 @@ const apiList = [
     id: 3,
     name_en: "Quran Tafsir APIs",
     name_ar: "واجهات برمجة تطبيقات تفسير القرآن",
-    description_en: "The Official Site for Tafsir",
-    description_ar: "الموقع الرسمي للتفاسير",
+    description_en:
+      "The Official Site for Tafsir (For development purpose only)",
+    description_ar: "الموقع الرسمي للتفاسير (لغرض التطوير فقط)",
     url: "http://api.quran-tafseer.com",
     additional_urls: [
       {
@@ -164,7 +165,7 @@ const apiList = [
     description_en: "Get all Hadiths in a specific chapter and specific book.",
     description_ar: "الحصول على جميع الأحاديث في كتاب محدد و باب محدد",
     // eslint-disable-next-line
-    url: "https://hadithapi.com/api/hadiths?&apiKey=${API_KEY}&book=${bookSlug}&chapter=${chapter_number}",
+    url: "https://hadithapi.com/api/hadiths?&apiKey={API_KEY}&book={bookSlug}&chapter={chapter_number}",
   },
   {
     id: 9,
@@ -173,7 +174,7 @@ const apiList = [
     description_en: "Get information about a Hadith.",
     description_ar: "الحصول على معلومات عن حديث.",
     // eslint-disable-next-line
-    url: "https://dorar.net/dorar_api.json?skey=${hadithText}",
+    url: "https://dorar.net/dorar_api.json?skey={hadithText}",
   },
   {
     id: 10,
@@ -182,7 +183,7 @@ const apiList = [
     description_en: "Get the text of a single Hadith.",
     description_ar: "الحصول على نص حديث مفرد.",
     // eslint-disable-next-line
-    url: "https://hadithapi.com/api/hadiths?apiKey=${API_KEY}&book=${bookSlug}&hadithNumber=${hadithNumber}",
+    url: "https://hadithapi.com/api/hadiths?apiKey={API_KEY}&book={bookSlug}&hadithNumber={hadithNumber}",
   },
   {
     id: 11,
@@ -191,7 +192,7 @@ const apiList = [
     description_en: "Get all Hadiths per page in a book and chapter.",
     description_ar: "الحصول على جميع الأحاديث لكل صفحة في كتاب وباب.",
     // eslint-disable-next-line
-    url: "https://hadithapi.com/api/hadiths?&apiKey=${API_KEY}&book=${bookSlug}&chapter=${chapter_number}&page=${page_number}",
+    url: "https://hadithapi.com/api/hadiths?&apiKey={API_KEY}&book={bookSlug}&chapter={chapter_number}&page={page_number}",
   },
   {
     id: 12,
@@ -200,7 +201,7 @@ const apiList = [
     description_en: "Get all chapters of a Hadith book.",
     description_ar: "الحصول على جميع الأبواب في كتاب حديث.",
     // eslint-disable-next-line
-    url: "https://hadithapi.com/api/${bookSlug}/chapters?&apiKey=${API_KEY}",
+    url: "https://hadithapi.com/api/{bookSlug}/chapters?&apiKey={API_KEY}",
   },
   {
     id: 13,
@@ -209,28 +210,37 @@ const apiList = [
     description_en: "Get all Hadith books.",
     description_ar: "الحصول على جميع كتب الأحاديث.",
     // eslint-disable-next-line
-    url: "https://hadithapi.com/api/books?apiKey=${API_KEY}",
+    url: "https://hadithapi.com/api/books?apiKey={API_KEY}",
   },
   {
     id: 14,
+    name_en: "Hadiths interpretation",
+    name_ar: "أحاديث مع الشرح",
+    description_en: "Get Hadiths with interpretation.",
+    description_ar: "الحصول على  أحاديث مع الشرح.",
+    // eslint-disable-next-line
+    url: "https://hadeethenc.com/api/v1/categories/list/?language={language}",
+  },
+  {
+    id: 15,
     name_en: "Get Ayahs of Surah",
     name_ar: "الحصول على آيات السورة",
     description_en: "Get Ayahs of a Surah with Tafsir.",
     description_ar: "الحصول على آيات سورة مع التفسير.",
     // eslint-disable-next-line
-    url: "http://api.quran-tafseer.com/tafseer/${tafsir_id}/${surah_number}/ayah_from/ayah_to",
+    url: "http://api.quran-tafseer.com/tafseer/{tafsir_id}/{surah_number}/ayah_from/ayah_to",
   },
   {
-    id: 15,
+    id: 16,
     name_en: "Get a Surah in English",
     name_ar: "الحصول على  سورة باللغة الإنجليزية",
     description_en: "Get a Surah text with English translation.",
     description_ar: "الحصول على نص سورة مع الترجمة الإنجليزية.",
     // eslint-disable-next-line
-    url: "https://api.alquran.cloud/v1/surah/${surah_number}/en.asad",
+    url: "https://api.alquran.cloud/v1/surah/{surah_number}/en.asad",
   },
   {
-    id: 16,
+    id: 17,
     name_en: "Get All Quran Arabic Version API",
     name_ar: "واجهة برمجة تطبيقات الحصول على جميع القرآن باللغة العربية",
     description_en: "Get the entire Quran in Arabic.",
@@ -238,7 +248,7 @@ const apiList = [
     url: "https://api.alquran.cloud/v1/quran/quran-uthmani",
   },
   {
-    id: 17,
+    id: 18,
     name_en: "Get All Quran English Version API",
     name_ar: "واجهة برمجة تطبيقات الحصول على جميع القرآن باللغة الإنجليزية",
     description_en: "Get the entire Quran in English.",
@@ -246,7 +256,7 @@ const apiList = [
     url: "https://api.alquran.cloud/v1/quran/en.asad",
   },
   {
-    id: 18,
+    id: 19,
     name_en: "Quran API",
     name_ar: "واجهة برمجة تطبيقات القرآن",
     description_en: "Access various Quran data.",
@@ -254,7 +264,7 @@ const apiList = [
     url: "https://alquran.cloud/api",
   },
   {
-    id: 19,
+    id: 20,
     name_en: "Quran single Ayah mp3 audio file API",
     name_ar: "واجهة برمجة تطبيقات الحصول على  آية مرتلة",
     description_en:
@@ -262,10 +272,20 @@ const apiList = [
     description_ar:
       "الوصول إلى ملف صوتي لآية معينة بصوت الشيخ مشاري راشد العفاسي.",
     // eslint-disable-next-line
-    url: "https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayah_Id}.mp3",
+    url: "https://cdn.islamic.network/quran/audio/128/ar.alafasy/{ayah_Id}.mp3",
   },
   {
-    id: 20,
+    id: 21,
+    name_en: "Simplified interpretation in Arabic.",
+    name_ar: "التفسير الميسر بالعربية",
+    description_en:
+      "Get the simplified interpretation of a specific Surah in Arabic.",
+    description_ar: "الحصول على التفسير الميسر لسورة معينة باللغة العربية",
+    // eslint-disable-next-line
+    url: "https://api.alquran.cloud/v1/surah/{surah_number}/editions/ar.muyassar",
+  },
+  {
+    id: 22,
     name_en: "Asmaa Al-Husna, Prayer Times, and More API",
     name_ar: "أسماء الله الحسنى، مواقيت الصلاة والمزيد",
     description_en: "Get Asmaa Al-Husna, prayer times, and more.",
@@ -273,7 +293,7 @@ const apiList = [
     url: "https://aladhan.com",
   },
   {
-    id: 21,
+    id: 23,
     name_en: "Fatawa API",
     name_ar: "واجهة برمجة تطبيقات الفتاوى",
     description_en: "Get Fatawa (Islamic rulings) content.",
@@ -281,7 +301,7 @@ const apiList = [
     url: "https://api3.islamhouse.com/v3/paV29H2gm56kvLPy/main/get-category-items/816379/showall/ar/ar/1/25/json",
   },
   {
-    id: 22,
+    id: 24,
     name_en: "Arabic Language Science API",
     name_ar: "واجهة برمجة تطبيقات علوم اللغة العربية",
     description_en: "Get content related to Arabic language sciences.",
@@ -289,7 +309,7 @@ const apiList = [
     url: "https://api3.islamhouse.com/v3/paV29H2gm56kvLPy/main/get-category-items/276190/showall/ar/ar/1/25/json",
   },
   {
-    id: 23,
+    id: 25,
     name_en: "Islamic Books and Audio Files",
     name_ar: "كتب إسلامية وملفات صوتية",
     description_en: "Get Islamic books and audio files.",
@@ -297,7 +317,7 @@ const apiList = [
     url: "https://api3.islamhouse.com/v3/paV29H2gm56kvLPy/main/get-author-items/6842/showall/ar/ar/1/50/json",
   },
   {
-    id: 24,
+    id: 26,
     name_en: "Animals Stories in Islam",
     name_ar: "قصص الحيوانات في الإسلام",
     description_en: "Get stories of animals in Islam.",
@@ -305,7 +325,7 @@ const apiList = [
     url: "/APIs/animals.json",
   },
   {
-    id: 25,
+    id: 27,
     name_en: "Prophets Stories",
     name_ar: "قصص الأنبياء",
     description_en: "Get stories of the Prophets.",
@@ -313,7 +333,7 @@ const apiList = [
     url: "/APIs/stories.json",
   },
   {
-    id: 26,
+    id: 28,
     name_en: "Books API",
     name_ar: "واجهة برمجة تطبيقات الكتب",
     description_en: "Access Islamic books data.",
@@ -321,7 +341,7 @@ const apiList = [
     url: "/APIs/books.json",
   },
   {
-    id: 27,
+    id: 29,
     name_en: "Quran Tafsir in Arabic",
     name_ar: "تفسير القرآن باللغة العربية",
     description_en: "Get Quran Tafsir in Arabic.",
@@ -329,7 +349,15 @@ const apiList = [
     url: "/APIs/Quran_Tafsir.json",
   },
   {
-    id: 28,
+    id: 30,
+    name_en: "Tafsir Al-Jalalayn in English",
+    name_ar: "تفسير الجلالين باللغة الانجليزية",
+    description_en: "Get Tafsir Al-Jalalayn in English.",
+    description_ar: "الحصول على تفسير الجلالين باللغة الانجليزية.",
+    url: "/APIs/en-al-jalalayn.json",
+  },
+  {
+    id: 31,
     name_en: "Access religious sciences API",
     name_ar: "الحصول على  علوم دينية",
     description_en: "Access a comprehensive encyclopedia of religious sciences",

@@ -443,6 +443,31 @@ const beMuslimContent = [
         ],
       },
     ],
+    // Added "Invalidators of Salah" section
+    thingsThatInvalidateSalah: {
+      en: [
+        "Nullifying ablution (breaking wudu)",
+        "Intentionally speaking during Salah",
+        "Laughing out loud during Salah",
+        "Eating or drinking during Salah",
+        "Excessive movement without necessity",
+        "Turning away from the Qibla",
+        "Uncovering the 'Awrah intentionally",
+        "Adding extra pillars intentionally",
+        "Missing obligatory parts intentionally",
+      ],
+      ar: [
+        "بطلان الوضوء (نقض الوضوء)",
+        "الكلام العمد أثناء الصلاة",
+        "الضحك بصوت عالٍ أثناء الصلاة",
+        "الأكل أو الشرب أثناء الصلاة",
+        "الحركة الكثيرة بلا ضرورة",
+        "الانحراف عن القبلة",
+        "كشف العورة عمدًا",
+        "زيادة ركن عمدًا",
+        "ترك واجب عمدًا",
+      ],
+    },
     videos: [
       {
         title: {
@@ -1305,7 +1330,27 @@ const BeMuslim = () => {
                   </ul>
                 </Box>
               )}
-
+              {/* Things That Invalidate Salah */}
+              {selectedContent.thingsThatInvalidateSalah && (
+                <Box sx={{ marginTop: 4 }}>
+                  <Typography level="h5" sx={{ marginBottom: 2, color: "red" }}>
+                    {language === "en"
+                      ? "Things That Invalidate Salah :"
+                      : "مبطلات الصلاة : "}
+                  </Typography>
+                  <ul className="list-unstyled">
+                    {selectedContent.thingsThatInvalidateSalah[language].map(
+                      (item, idx) => (
+                        <li key={idx}>
+                          <Typography level="body1">
+                            {idx + 1}. {item}
+                          </Typography>
+                        </li>
+                      )
+                    )}
+                  </ul>
+                </Box>
+              )}
               {/* Things Not Allowed While Fasting */}
               {selectedContent.thingsNotAllowedWhileFasting && (
                 <Box sx={{ marginTop: 4 }}>

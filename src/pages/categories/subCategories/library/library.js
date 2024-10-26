@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./library.css";
-// Import Json file of books
+// Import JSON file of books
 import booksData from "./json/books.json";
 // Import language provider
 import { useTranslation } from "../../../../components/languages/provider";
@@ -213,6 +213,12 @@ const Library = () => {
     }
   };
 
+  // Determine the books to display, reversing if the category is "Favorites"
+  const booksToDisplay =
+    categoryFilter === "Favorites"
+      ? filteredBooks.slice().reverse()
+      : filteredBooks;
+
   return (
     <Box sx={{ padding: 2 }}>
       {/* Filters */}
@@ -296,8 +302,8 @@ const Library = () => {
                 : "right",
           }}
         >
-          {filteredBooks.length > 0 ? (
-            filteredBooks.map((book, index) => (
+          {booksToDisplay.length > 0 ? (
+            booksToDisplay.map((book, index) => (
               <Card
                 key={index}
                 variant="outlined"

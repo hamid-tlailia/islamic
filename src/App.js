@@ -102,7 +102,7 @@ function App() {
     const savedLanguage = localStorage.getItem("language");
     if (savedLanguage) setLanguage(savedLanguage);
     else setLanguage("ar");
-  }, []);
+  }, [lastScroll]);
   //  Add animation for components
 
   const triggerAnimation = () => {
@@ -423,6 +423,10 @@ function App() {
                     path="/APIs/adhkar.json"
                     element={<Navigate to="/APIs/adhkar.json" />}
                   />
+                  <Route
+                    path="en-al-jalalayn.json"
+                    element={<Navigate to="en-al-jalalayn.json" />}
+                  />
                   {/* Add more routes as needed */}
                 </Routes>
               </div>
@@ -442,7 +446,7 @@ function App() {
           position="top-center"
           style={{
             zIndex: "99999",
-            direction: language === "ar" ? "rtl" : "ltr",
+            textAlign: language === "ar" ? "right" : "left",
           }}
         ></ToastContainer>
         {/* Back to top */}

@@ -291,7 +291,7 @@
     "id": 19,
     "book_name": {
       "ar": "صفة الحج والعمرة",
-      "en": "Hajj & Umrah "
+      "en": "Hajj & Umrah"
     },
     "book_category": "Others",
     "book_lang": "both",
@@ -302,5 +302,21 @@
     "book_type": "PDF",
     "book_url_ar": "https://d1.islamhouse.com/data/ar/ih_khotab/single/ar-alhaj-wa-al3umra.pdf",
     "book_url_en": "https://www.muslim-library.com/dl/books/english_The_Book_of_Hajj_and_Umrah.pdf"
+  },
+  {
+    "id": 20,
+    "book_name": {
+      "ar": "من خلقني؟ ولماذا؟ ",
+      "en": "who created me ? and why ?"
+    },
+    "book_category": "Others",
+    "book_lang": "both",
+    "book_image_ar": "/library_images/why_ar_pdf.png",
+    "book_image_en": "/library_images/why_en_pdf.png",
+    "book_size_ar": "17.9 MB",
+    "book_size_en": "43.7 MB",
+    "book_type": "PDF",
+    "book_url_ar": "https://d1.islamhouse.com/data/ar/ih_books/single_01/ar-man-khalaqni-wa-lemaza.pdf",
+    "book_url_en": "https://d1.islamhouse.com/data/en/ih_books/single3/en-who-created-me-and-why.pdf"
   }
 ]

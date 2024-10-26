@@ -570,7 +570,7 @@ const Quran = ({ src }) => {
                     <div className="surah-arabic-name"> {surah.name} </div>
                     <h5 className="surah-english-name">{surah.englishName}</h5>
                   </div>
-                  <div className="surah-infos p-2 pe-none">
+                  <div className="surah-infos  pe-none">
                     <p className="surah-ayahs mb-1">
                       <span> {surah.ayahs.length} </span>{" "}
                       {language === "ar" ? "ايه" : "Ayahs"}

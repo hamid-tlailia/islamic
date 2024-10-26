@@ -75,7 +75,7 @@ const Home = ({ onNavClick }) => {
         const shuffledIds = shuffleArray(allHadithIds);
 
         // Limit the number of Hadiths to fetch to 10
-        const limitedIds = shuffledIds.slice(0, 10);
+        const limitedIds = shuffledIds.slice(0, 100);
 
         // Fetch Hadith details for the limited IDs
         const hadithDetailsPromises = limitedIds.map((id) =>
