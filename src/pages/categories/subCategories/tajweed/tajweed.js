@@ -234,13 +234,9 @@ const Tajweed = ({ audioName, documentName }) => {
   useEffect(() => {
     const savedSurah = localStorage.getItem("savedTajweedSurah");
     const savedPage = localStorage.getItem("savedPage");
-    const currentSavedSurah = parseInt(savedSurah, 10);
     const currentSavedPage = parseInt(savedPage, 10);
     if (savedSurah && savedPage) {
-      if (
-        currentSavedPage !== currentPage &&
-        currentSavedSurah !== savedSurah
-      ) {
+      if (currentSavedPage !== currentPage) {
         // user change saved page
         setSavedPageChanged(true);
       } else {
@@ -559,7 +555,7 @@ const Tajweed = ({ audioName, documentName }) => {
     const storedPage = parseInt(localStorage.getItem("savedPage"));
     const storedSurah = parseInt(localStorage.getItem("savedTajweedSurah"));
     if (storedPage && storedSurah) {
-      if (storedPage === currentPage && storedSurah === currentSurah) {
+      if (storedPage === currentPage) {
         setSaved(true);
       } else {
         setSaved(false);
@@ -574,7 +570,7 @@ const Tajweed = ({ audioName, documentName }) => {
     const storedPage = parseInt(localStorage.getItem("savedPage"));
     const storedSurah = parseInt(localStorage.getItem("savedTajweedSurah"));
     if (storedPage && storedSurah) {
-      if (storedPage === currentPage && storedSurah === currentSurah) {
+      if (storedPage === currentPage) {
         setSaved(true);
       } else {
         setSaved(false);
@@ -633,7 +629,7 @@ const Tajweed = ({ audioName, documentName }) => {
 
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Typography sx={{ mr: 1, color: "var(--text-color)" }}>
-            {language === "ar" ? "الصفحة" : "Page"}:
+            {language === "ar" ? "اختر الصفحة" : "Choose page"} :
           </Typography>
           <input
             type="number"

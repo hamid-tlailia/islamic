@@ -17,11 +17,11 @@
 }
 .close-loader {
   position: absolute;
-  left: 10px;
-  top: -60px;
+  left: 0px;
+  top: -65px;
   color: red;
   z-index: 99999 !important;
-  font-size: 30px;
+  font-size: 25px;
   cursor: pointer;
 }
 .loader-aria {

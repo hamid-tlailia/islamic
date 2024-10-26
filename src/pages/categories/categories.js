@@ -139,9 +139,16 @@ const Categories = ({
   const contentRef = useRef(null);
   // Change page title
   useEffect(() => {
-    document.title =
-      language === "ar" ? "دين الله | الأقسام" : "God's religion | Categories";
-  }, [subTitle, language]);
+    if (location.pathname.startsWith("/categories/")) {
+      document.title = translations[subTitle];
+    } else {
+      document.title =
+        language === "ar"
+          ? "دين الله | الأقسام"
+          : "God's religion | Categories";
+    }
+    // eslint-disable-next-line
+  }, [subTitle, language, location]);
   // get component title from local storage
   useEffect(() => {
     const currentComponentTitle = localStorage.getItem("component-title");
@@ -379,7 +386,7 @@ const Categories = ({
                 </span>
               </NavLink>
               <NavLink className="div" to="qiblah">
-                <img src={qiblah} alt="divs" />
+                <img src={qiblah} className="w-100" alt="divs" />
                 <span id="qiblahDirection">
                   {" "}
                   {translations.qiblahDirection}

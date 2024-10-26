@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
 import { Autocomplete, FormControl, FormLabel } from "@mui/joy";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import "./tafsir.css";
 import { useTranslation } from "../../../../components/languages/provider";
 import Loader from "../../../../components/loader/loader";
@@ -48,8 +47,7 @@ const Tafsir = () => {
   const [alignmentClass, setAlignmentClass] = useState("w-100 my-3 text-end");
   const [isErrorFetching, setIsErrorFetching] = useState(false);
   const [currentExplainedAyah, setCurrentExplainedAyah] = useState(null);
-  // eslint-disable-next-line
-  const isSmallScreen = useMediaQuery("(max-width:500px)");
+
   const { language } = useTranslation();
 
   useEffect(() => {
@@ -566,8 +564,9 @@ const Tafsir = () => {
               {currentExplainedAyah !== null
                 ? currentExplainedAyah?.text
                 : langs === "arabic"
-                ? "السورة كاملة"
-                : "Complet Surah"}{" "}
+                ? surahs.find((s) => s.number === selectedSurah?.value)?.name
+                : surahs.find((s) => s.number === selectedSurah?.value)
+                    ?.englishName}
               ✦
               {currentExplainedAyah !== null && (
                 <span className="mx-2" style={{ color: "#169777" }}>

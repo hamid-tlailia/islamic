@@ -5,7 +5,7 @@ import { SyncAltOutlined as SyncIcon } from "@mui/icons-material";
 import SlowMotionVideoOutlinedIcon from "@mui/icons-material/SlowMotionVideoOutlined";
 import { Tabs, Tab, Box } from "@mui/material"; // Import Material UI Tabs components
 import logo from "../images/logo.png";
-import Quran_Tafsir from "./Quran_Tafsir.json";
+import Quran_Tafsir from "./tafsirs/Quran_Tafsir.json";
 import Modal from "@mui/joy/Modal";
 import ModalClose from "@mui/joy/ModalClose";
 import Typography from "@mui/joy/Typography";
@@ -16,7 +16,8 @@ import ZoomOutMapOutlinedIcon from "@mui/icons-material/ZoomOutMapOutlined";
 import { useTranslation } from "../../../../components/languages/provider";
 import DOMPurify from "dompurify";
 import { toast } from "react-toastify";
-import en_al_jalalayn from "./en-al-jalalayn.json";
+import en_al_jalalayn from "./tafsirs/en-al-jalalayn.json";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const Quran = ({ src }) => {
   const [surahs, setSurahs] = useState([]);
@@ -40,6 +41,7 @@ const Quran = ({ src }) => {
   const [prevAyahIndex, setPrevAyahIndex] = useState(null);
   const [tabValue, setTabValue] = useState(0);
   const [allSurahTafseer, setAllSurahTafseer] = useState([]);
+  const isSmallScreen = useMediaQuery("(max-width:500px)");
   const reciterNameMap = {
     "إبراهيم الأخضر": "Ibrahim Al-Akhdar",
     "أكرم العلاقمي": "Akram Al-Alaqmi",
@@ -383,7 +385,8 @@ const Quran = ({ src }) => {
       }
 
       // Scroll to the selected ayah
-      refs[index - 1].current.scrollIntoView({
+      refs[isSmallScreen ? index : index - 1].current.scrollIntoView({
+        behavior: "smooth",
         block: "start",
       });
 
@@ -1012,7 +1015,11 @@ const Quran = ({ src }) => {
       <Modal open={!!layout} onClose={() => setLayout(undefined)}>
         <ModalDialog
           layout={layout}
-          style={{ backgroundColor: "var(--card-color)" }}
+          style={{
+            backgroundColor: "var(--card-color)",
+            width: "100%",
+            padding: "1px",
+          }}
         >
           <ModalClose className="close-modal" sx={{ zIndex: "999" }} />
           <DialogContent>
@@ -1021,7 +1028,7 @@ const Quran = ({ src }) => {
                 backgroundColor: "var(--card-color)",
                 color: "var(--text-color)",
                 overflowX: "hidden",
-                padding: 2,
+                width: "100%",
               }}
             >
               <p className="mx-2 m-2 w-100 text-center surah-title  fs-3">
@@ -1063,6 +1070,7 @@ const Quran = ({ src }) => {
                       ? "ltr"
                       : "rtl", // Right-to-left for Arabic
                   unicodeBidi: "embed", // Correct bidi handling for Arabic script
+                  width: "100%",
                 }}
               >
                 <p style={{ margin: 0 }}>

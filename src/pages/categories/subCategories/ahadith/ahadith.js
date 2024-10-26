@@ -712,13 +712,6 @@ const Ahadith = () => {
             className="w-50"
             onClick={() => {
               setAhadith([]);
-              setSelectedBook(null);
-              setSelectedChapter(null);
-              setChapters([]);
-              setPage(1);
-              localStorage.removeItem("selectedBook");
-              localStorage.removeItem("selectedChapter");
-              localStorage.removeItem("page");
             }}
           >
             {language === "ar" ? "اعادة تعيين" : "Reset"}

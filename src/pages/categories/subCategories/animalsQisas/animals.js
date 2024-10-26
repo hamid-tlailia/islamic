@@ -3,7 +3,7 @@ import "./animals.css";
 import PlayCircleFilledWhiteOutlinedIcon from "@mui/icons-material/PlayCircleFilledWhiteOutlined";
 import { useTranslation } from "../../../../components/languages/provider";
 import Modal from "@mui/material/Modal";
-import stories from "./animals.json"; // Import stories.json
+import stories from "./json/animals.json"; // Import stories.json
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import CircularProgress from "@mui/joy/CircularProgress";
 import Stack from "@mui/material/Stack";

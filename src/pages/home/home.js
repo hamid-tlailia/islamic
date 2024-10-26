@@ -230,7 +230,7 @@ const Home = ({ onNavClick }) => {
           <div className="col-12 col-lg-6 col-md-6">
             <div className="description">
               <div className="card-body">
-                <h1 className="card-title text-center site-name">
+                <h1 className="card-title text-center site-name fs-1">
                   {translations.siteName}
                 </h1>
                 <p className="text-center">{translations.siteDescription}</p>

@@ -106,6 +106,7 @@
 .feature h2 {
   color: #169777;
   margin-bottom: 15px;
+  font-size: 25px !important;
 }
 .home-btns {
   display: flex;
@@ -114,6 +115,16 @@
   flex-direction: column;
   gap: 10px;
   height: 80vh;
+}
+.home-btns button {
+  width: 180px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-size: 30px;
 }
 .content {
   margin-top: -8vh;
@@ -130,17 +141,26 @@
   .content {
     width: 95%;
   }
+  .home-btns {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    gap: 10px;
+    height: 40vh;
+  }
+  .home-btns button {
+    width: 130px;
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-size: 30px;
+  }
 }
-.home-btns button {
-  width: 180px;
-  height: 120px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  font-size: 30px;
-}
+
 .icons {
   width: 50px;
   height: 50px;
