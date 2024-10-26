@@ -236,7 +236,7 @@ const Qiblah = () => {
       dir={language === "ar" ? "rtl" : "ltr"}
     >
       <Typography variant="h5">{t("qiblahDirection")}</Typography>
-      <Box position="relative" width={250} height={250} marginTop={4}>
+      <Box position="relative" width={250} height={250} marginTop={2}>
         {/* Compass circle */}
         <Box
           position="absolute"
@@ -245,7 +245,7 @@ const Qiblah = () => {
           width={250}
           height={250}
           borderRadius="50%"
-          border="2px solid #000"
+          border="2px solid primary"
         ></Box>
         {/* Arrow pointing towards Qiblah direction */}
         <Box

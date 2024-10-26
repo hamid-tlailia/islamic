@@ -37,6 +37,7 @@
   width: 70%;
   max-height: 80%;
   overflow: auto;
+  z-index: 1000;
 }
 .carousel-caption.en {
   position: absolute;

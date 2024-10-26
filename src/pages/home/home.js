@@ -128,7 +128,7 @@ const Home = ({ onNavClick }) => {
   };
 
   const settings = {
-    dots: true, // Enable dots for navigation
+    dots: false, // Enable dots for navigation
     infinite: false,
     speed: 500,
     slidesToShow: 1,
@@ -208,7 +208,7 @@ const Home = ({ onNavClick }) => {
                         {item.data.grade}
                       </small>
                       <hr />
-                      <p className="hadith-explanation">
+                      <p className="text-light">
                         {item.data.explanation}
                       </p>
                     </div>

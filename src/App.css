@@ -211,14 +211,18 @@ a {
   direction: ltr;
   z-index: 10;
 }
-/* Keyframe for scale-up with slight rotation */
-@keyframes scaleUpRotate {
+/* Keyframe for slide-in with overshoot */
+@keyframes slideInElastic {
   0% {
-    transform: scale(0.5) rotate(-15deg);
+    transform: translateX(100%);
     opacity: 0;
   }
+  80% {
+    transform: translateX(5%);
+    opacity: 1;
+  }
   100% {
-    transform: scale(1) rotate(0deg);
+    transform: translateX(0);
     opacity: 1;
   }
 }
@@ -226,12 +230,12 @@ a {
 /* Initial state */
 .lazy-component-wrapper {
   opacity: 0;
-  transform: scale(0.5) rotate(-15deg);
+  transform: translateX(100%);
 }
 
 /* Final state when loaded */
 .lazy-component-wrapper.loaded {
-  animation: scaleUpRotate 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: slideInElastic 1s cubic-bezier(0.68, -0.6, 0.32, 1.6) forwards;
 }
 
 .ltr {

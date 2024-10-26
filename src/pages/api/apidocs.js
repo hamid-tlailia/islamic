@@ -435,7 +435,8 @@ const Api = ({ showScrillBtn, hideScrollBtn, back }) => {
         p: 1,
         backgroundColor: "var(--card-color)",
         color: "var(--text-color)",
-        height : "max-content",
+        maxHeight: "100%",
+        overflowY: "auto",
         direction: language === "ar" ? "rtl" : "ltr",
       }}
     >

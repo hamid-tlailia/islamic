@@ -22,6 +22,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite"; // Import filled heart 
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share"; // Import ShareIcon
 import { toast } from "react-toastify";
+import Skeleton from "@mui/material/Skeleton";
 
 const Library = () => {
   const { language } = useTranslation();
@@ -303,109 +304,129 @@ const Library = () => {
           }}
         >
           {booksToDisplay.length > 0 ? (
-            booksToDisplay.map((book, index) => (
-              <Card
-                key={index}
-                variant="outlined"
-                sx={{
-                  maxHeight: 500,
-                  maxWidth: 300,
-                  backgroundColor: "var(--card-color)",
-                  color: "var(--text-color)",
-                }}
-              >
-                <img
-                  className="img-fluid w-100"
-                  src={
-                    languageFilter === "ar"
-                      ? book.book_image_ar
-                      : book.book_image_en || book.book_image_ar
-                  }
-                  alt={book.book_name[language]}
-                />
-
-                <CardContent>
-                  <Typography
-                    level="h6"
-                    component="div"
-                    sx={{ color: "var(--main-color)" }}
-                  >
-                    {book.book_name[languageFilter] || book.book_name["ar"]}
-                  </Typography>
-                  <Typography level="body2">
-                    {languageFilter === "ar" ? "الحجم :" : "Size:"}{" "}
-                    {languageFilter === "ar"
-                      ? book.book_size_ar
-                      : book.book_size_en}
-                  </Typography>
-                </CardContent>
-                <Box
+            booksToDisplay.map((book, index) =>
+              book ? (
+                <Card
+                  key={index}
+                  variant="outlined"
                   sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    padding: 1,
-                    boxShadow: 3,
+                    maxHeight: 500,
+                    maxWidth: 300,
+                    backgroundColor: "var(--card-color)",
+                    color: "var(--text-color)",
                   }}
-                  className="box"
                 >
-                  <IconButton
-                    component="a"
-                    href={
-                      languageFilter === "ar"
-                        ? book.book_url_ar
-                        : book.book_url_en || book.book_url_ar
-                    }
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{
-                      color: "blue",
-                      "&:hover": {
-                        border: "1px solid blue",
-                        color: "blue",
-                      },
-                    }}
-                  >
-                    <DownloadIcon />
-                  </IconButton>
+                  {book.book_image_ar ? (
+                    <img
+                      className="img-fluid w-100"
+                      src={
+                        languageFilter === "ar"
+                          ? book.book_image_ar
+                          : book.book_image_en || book.book_image_ar
+                      }
+                      alt={book.book_name[language]}
+                    />
+                  ) : (
+                    <Box sx={{ pt: 0.5 }}>
+                      <Skeleton
+                        variant="rectangular"
+                        width={210}
+                        height={118}
+                      />
+                    </Box>
+                  )}
 
-                  {/* Share Button */}
-                  <IconButton
-                    onClick={() => handleShare(book)}
+                  <CardContent>
+                    <Typography
+                      level="h6"
+                      component="div"
+                      sx={{ color: "var(--main-color)" }}
+                    >
+                      {book.book_name[languageFilter] || book.book_name["ar"]}
+                    </Typography>
+                    <Typography level="body2">
+                      {languageFilter === "ar" ? "الحجم :" : "Size:"}{" "}
+                      {languageFilter === "ar"
+                        ? book.book_size_ar
+                        : book.book_size_en}
+                    </Typography>
+                  </CardContent>
+                  <Box
                     sx={{
-                      color: "var(--text-color)",
-                      "&:hover": {
-                        color: "blue",
-                      },
+                      display: "flex",
+                      justifyContent: "space-between",
+                      padding: 1,
+                      boxShadow: 3,
                     }}
+                    className="box"
                   >
-                    <ShareIcon />
-                  </IconButton>
+                    <IconButton
+                      component="a"
+                      href={
+                        languageFilter === "ar"
+                          ? book.book_url_ar
+                          : book.book_url_en || book.book_url_ar
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      sx={{
+                        color: "blue",
+                        "&:hover": {
+                          border: "1px solid blue",
+                          color: "blue",
+                        },
+                      }}
+                    >
+                      <DownloadIcon />
+                    </IconButton>
 
-                  {/* Favorite Button */}
-                  <IconButton
-                    onClick={() => handleAddToFavorites(book)}
-                    sx={{
-                      color: favorites.some((favBook) => favBook.id === book.id)
-                        ? "red"
-                        : "var(--text-color)",
-                      "&:hover": {
+                    {/* Share Button */}
+                    <IconButton
+                      onClick={() => handleShare(book)}
+                      sx={{
+                        color: "var(--text-color)",
+                        "&:hover": {
+                          color: "blue",
+                        },
+                      }}
+                    >
+                      <ShareIcon />
+                    </IconButton>
+
+                    {/* Favorite Button */}
+                    <IconButton
+                      onClick={() => handleAddToFavorites(book)}
+                      sx={{
                         color: favorites.some(
                           (favBook) => favBook.id === book.id
                         )
-                          ? "darkred"
-                          : "gray",
-                      },
-                    }}
-                  >
-                    {favorites.some((favBook) => favBook.id === book.id) ? (
-                      <FavoriteIcon />
-                    ) : (
-                      <FavoriteBorderIcon />
-                    )}
-                  </IconButton>
+                          ? "red"
+                          : "var(--text-color)",
+                        "&:hover": {
+                          color: favorites.some(
+                            (favBook) => favBook.id === book.id
+                          )
+                            ? "darkred"
+                            : "gray",
+                        },
+                      }}
+                    >
+                      {favorites.some((favBook) => favBook.id === book.id) ? (
+                        <FavoriteIcon />
+                      ) : (
+                        <FavoriteBorderIcon />
+                      )}
+                    </IconButton>
+                  </Box>
+                </Card>
+              ) : (
+                <Box sx={{ pt: 0.5 }}>
+                  <Skeleton variant="rectangular" width={210} height={118} />
+                  <Skeleton />
+                  <Skeleton width="60%" />
                 </Box>
-              </Card>
-            ))
+              )
+            )
           ) : categoryFilter === "Favorites" ? (
             <Alert
               variant="outlined"

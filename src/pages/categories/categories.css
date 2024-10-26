@@ -76,6 +76,21 @@
   pointer-events: none;
 }
 /* outlet aria */
+
+@keyframes scaleUpRotate {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+    transition: 0.3s ease-out;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    transition: 0.3s ease-out;
+  }
+}
+
+/* Initial state */
 .outlets {
   position: absolute;
   top: 0;
@@ -83,14 +98,17 @@
   min-width: 100%;
   min-height: 100% !important;
   background-color: var(--outlets-bg-color);
-  transition: 0.3s ease;
   transform: scale(0);
+  transition: 0.3s ease-out;
   opacity: 0;
 }
+
+/* Final state when loaded */
 .outlets.active {
-  transform: scale(1);
+  animation: scaleUpRotate 0.3s ease-out forwards;
   margin-bottom: 50px;
   opacity: 1;
+  transition: 0.3s ease-out;
 }
 
 .outlets-top {
@@ -109,7 +127,7 @@
 .outlets-top p:nth-child(2) {
   color: red;
   cursor: pointer;
-  margin-inline: 6px;
+  margin-inline: 5px;
 }
 
 .back {
