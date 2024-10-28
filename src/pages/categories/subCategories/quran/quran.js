@@ -662,7 +662,7 @@ const Quran = ({ src, toTop }) => {
     });
     toTop(); // Scroll to top when changing pages
   };
-
+  const modalContainer = useRef(null);
   // Pagination handlers for Full-Screen Modal
   const handleNextPageModal = () => {
     setCurrentPageModal((prev) => {
@@ -670,6 +670,11 @@ const Quran = ({ src, toTop }) => {
       localStorage.setItem("quranModalPage", newPage);
       return newPage;
     });
+    if (modalContainer.current)
+      modalContainer.current.parentElement.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
   };
 
   const handlePrevPageModal = () => {
@@ -678,6 +683,11 @@ const Quran = ({ src, toTop }) => {
       localStorage.setItem("quranModalPage", newPage);
       return newPage;
     });
+    if (modalContainer.current)
+      modalContainer.current.parentElement.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
   };
 
   return (
@@ -1276,6 +1286,7 @@ const Quran = ({ src, toTop }) => {
                           overflowX: "hidden",
                           width: "100%",
                         }}
+                        ref={modalContainer}
                       >
                         <p className="mx-2 m-2 w-100 text-center surah-title fs-3">
                           ✧ {allAyahs?.name} ✧
