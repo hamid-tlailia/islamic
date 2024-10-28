@@ -1,9 +1,8 @@
 import React from "react";
 import "./islam.css";
 import { useTranslation } from "../../../../components/languages/provider";
-import { Card, CardContent, Typography, Divider, Box } from "@mui/joy";
+import { Card, CardContent, Typography, Divider } from "@mui/joy";
 import { Mosque, Public, People, Favorite } from "@mui/icons-material"; // Material UI Icons
-import makkah_image from "../images/makkah.png";
 
 const Islam = () => {
   const { language } = useTranslation();
@@ -85,25 +84,11 @@ const Islam = () => {
         backgroundColor: "var(--card-color)",
         color: "var(--text-color)",
         padding: "20px",
-        margin: "20px auto",
+        margin: "5px auto",
         borderRadius: "12px",
       }}
     >
       <CardContent>
-        <Box sx={{ textAlign: "center" }}>
-          <img
-            src={makkah_image}
-            alt="Kaaba in Mecca"
-            className="img-fluid "
-            style={{
-              width: "150px",
-              borderRadius: "12px",
-              marginTop: "-30px",
-              position: "relative",
-              marginLeft: "150px",
-            }}
-          />
-        </Box>
         {/* What is Islam */}
         <Typography
           level="h2"

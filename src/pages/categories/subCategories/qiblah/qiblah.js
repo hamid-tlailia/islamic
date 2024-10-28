@@ -231,7 +231,7 @@ const Qiblah = () => {
       display="flex"
       flexDirection="column"
       alignItems="center"
-      minHeight="100vh"
+      minHeight="80vh"
       justifyContent="center"
       dir={language === "ar" ? "rtl" : "ltr"}
     >

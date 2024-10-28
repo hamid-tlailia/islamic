@@ -460,7 +460,9 @@ const Names = () => {
             }}
           >
             {/* Display the name based on the selected language */}
-            <div className="name">{item.ar}</div>
+            <div className="name">
+              {index + 1} - {item.ar}
+            </div>
             {/* Display the meaning in English, which remains the same regardless of language */}
             <div className="meaning">{item.en}</div>
           </Card>

@@ -28,6 +28,7 @@ import EventIcon from "@mui/icons-material/Event";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import DOMPurify from "dompurify"; // Import DOMPurify for sanitization
 
 const Ahadith = () => {
@@ -835,6 +836,15 @@ const Ahadith = () => {
               >
                 <MenuBookOutlinedIcon />
               </Button>
+              <Button
+                variant="outlined"
+                color="warning"
+                component="a"
+                target="_blank"
+                href={`https://dorar.net/hadith/search?q=${searchResult?.hadithArabic}`}
+              >
+                <SearchRoundedIcon />
+              </Button>
             </div>
           </div>
         </div>
@@ -934,6 +944,15 @@ const Ahadith = () => {
                     onClick={() => fetchHadithExplanation(hadith?.hadithArabic)}
                   >
                     <MenuBookOutlinedIcon />
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="warning"
+                    component="a"
+                    target="_blank"
+                    href={`https://dorar.net/hadith/search?q=${hadith?.hadithArabic}`}
+                  >
+                    <SearchRoundedIcon />
                   </Button>
                 </div>
               </div>

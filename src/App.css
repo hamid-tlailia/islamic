@@ -110,7 +110,7 @@ body.image {
 /* Contrast mode styles */
 
 /* Optional: Add a semi-transparent overlay to increase brightness */
-body.contrast::before {
+body.brightness::before {
   content: "";
   position: fixed;
   top: 0;

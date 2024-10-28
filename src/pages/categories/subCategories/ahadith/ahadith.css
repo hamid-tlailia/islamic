@@ -18,7 +18,7 @@
 .close-loader {
   position: absolute;
   left: 0px;
-  top: -65px;
+  top: -80px !important;
   color: red;
   z-index: 99999 !important;
   font-size: 25px;
@@ -33,4 +33,14 @@
   height: 100%;
   background-color: var(--bg-color);
   z-index: 888;
+}
+
+.info-subtitle {
+  color: crimson;
+}
+.search-keys {
+  color: green;
+}
+.ahadith-container a {
+  color: blue !important;
 }

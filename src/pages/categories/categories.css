@@ -28,6 +28,11 @@
     width: 100%;
   }
 }
+@media screen and (max-width: 754px) and (orientation: landscape) {
+  .categories .content {
+    width: 100%;
+  }
+}
 
 .card-header {
   background-color: var(--search-card-bg);

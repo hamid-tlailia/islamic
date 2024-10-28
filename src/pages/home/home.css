@@ -104,10 +104,18 @@
 .site-name {
   color: rgb(85, 18, 187);
 }
+.feature {
+  margin-block: 5px;
+}
 .feature h2 {
   color: #169777;
   margin-bottom: 15px;
   font-size: 25px !important;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
 }
 .home-btns {
   display: flex;

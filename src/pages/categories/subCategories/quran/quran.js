@@ -279,9 +279,18 @@ const Quran = ({ src, toTop }) => {
   const ayahsRef = useRef(null);
 
   // Pagination state variables for Explanation Tab
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10; // Number of Ayahs per page
+  const [currentPageExplanation, setCurrentPageExplanation] = useState(1);
+  const itemsPerPageExplanation = 10; // Number of Ayahs per page
 
+  // Pagination state variables for Reading Tab
+  const [currentPageReading, setCurrentPageReading] = useState(1);
+  const itemsPerPageReading = 10; // Number of Ayahs per page in Reading Tab
+
+  // Pagination state variables for Full-Screen Modal
+  const [currentPageModal, setCurrentPageModal] = useState(1);
+  const itemsPerPageModal = 10; // Number of Ayahs per page in Modal
+
+  // Effect to handle errors
   useEffect(() => {
     if (isErrorFetching) {
       toast.error(
@@ -293,6 +302,7 @@ const Quran = ({ src, toTop }) => {
     // eslint-disable-next-line
   }, [isErrorFetching]);
 
+  // Fetch Quran data on mount
   useEffect(() => {
     const fetchQuran = async () => {
       try {
@@ -314,15 +324,78 @@ const Quran = ({ src, toTop }) => {
     fetchQuran();
   }, []);
 
+  // Effect to load saved Surah and pages from localStorage after surahs are fetched
+  useEffect(() => {
+    if (surahs.length > 0) {
+      // Check localStorage for saved Surah
+      const savedSurah = localStorage.getItem("quranSurah");
+      if (savedSurah) {
+        const parsedSurah = JSON.parse(savedSurah);
+        const foundSurah = surahs.find((s) => s.number === parsedSurah.number);
+        if (foundSurah) {
+          setAllAyahs(foundSurah);
+          setSelectedSurah(foundSurah.number);
+
+          // Load saved pages
+          const savedPageExplanation = parseInt(
+            localStorage.getItem("explainedPage"),
+            10
+          );
+          if (!isNaN(savedPageExplanation)) {
+            setCurrentPageExplanation(savedPageExplanation);
+          }
+
+          const savedPageModal = parseInt(
+            localStorage.getItem("quranModalPage"),
+            10
+          );
+          if (!isNaN(savedPageModal)) {
+            setCurrentPageModal(savedPageModal);
+          }
+
+          // Automatically show the Ayahs view
+          if (ayahsRef.current) {
+            ayahsRef.current.classList.add("active");
+          }
+          if (surahsRef.current) {
+            surahsRef.current.classList.add("d-none");
+          }
+        } else {
+          // If saved Surah is not found in fetched Surahs, remove from localStorage
+          localStorage.removeItem("quranSurah");
+          localStorage.removeItem("explainedPage");
+          localStorage.removeItem("quranModalPage");
+        }
+      }
+    }
+    // eslint-disable-next-line
+  }, [surahs]);
+
   const selectReciter = useRef(null);
 
   const handleSurahClick = (e, surah) => {
     setAllAyahs(surah);
-    ayahsRef.current.classList.add("active");
-    surahsRef.current.classList.add("d-none");
-    ayahsRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    if (ayahsRef.current) {
+      ayahsRef.current.classList.add("active");
+    }
+    if (surahsRef.current) {
+      surahsRef.current.classList.add("d-none");
+    }
+    if (ayahsRef.current) {
+      ayahsRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
     setSelectedSurah(surah.number);
     if (selectReciter.current) selectReciter.current.value = "default";
+
+    // Save selected Surah to localStorage
+    localStorage.setItem("quranSurah", JSON.stringify(surah));
+
+    // Reset pagination and save to localStorage
+    setCurrentPageReading(1);
+    setCurrentPageModal(1);
+    setCurrentPageExplanation(1);
+    localStorage.setItem("explainedPage", 1);
+    localStorage.setItem("quranModalPage", 1);
   };
 
   useEffect(() => {
@@ -332,14 +405,25 @@ const Quran = ({ src, toTop }) => {
     if (surahTafsir) {
       setEnglishTafsir(surahTafsir?.ayahs);
       setTafsirLoader(false);
+    } else {
+      setEnglishTafsir({});
+      setTafsirLoader(false);
     }
     // eslint-disable-next-line
   }, [selectedSurah]);
 
   const goBack = () => {
-    ayahsRef.current.classList.remove("active");
-    surahsRef.current.classList.remove("d-none");
-    setCurrentPage(1); // Reset pagination when going back
+    if (ayahsRef.current) {
+      ayahsRef.current.classList.remove("active");
+    }
+    if (surahsRef.current) {
+      surahsRef.current.classList.remove("d-none");
+    }
+    setCurrentPageReading(1); // Reset pagination when going back
+    setCurrentPageModal(1);
+    setCurrentPageExplanation(1);
+    localStorage.setItem("explainedPage", 1);
+    localStorage.setItem("quranModalPage", 1);
   };
 
   const toggleVisibility = () => setIsOpen(!isOpen);
@@ -363,7 +447,9 @@ const Quran = ({ src, toTop }) => {
             `https://api.alquran.cloud/v1/surah/${selectedSurah}/en.asad`
           );
           const translationData = await translationResponse.json();
-          setApiTranslation(translationData.data.ayahs);
+          if (translationData?.data?.ayahs) {
+            setApiTranslation(translationData.data.ayahs);
+          }
         } catch (error) {
           console.log("Error fetching surah data:", error);
           setIsErrorFetching(true);
@@ -372,23 +458,55 @@ const Quran = ({ src, toTop }) => {
       getSurahData();
     }
   }, [selectedSurah]);
-  // Pagination logic for Explanation Tab
-  const totalAyahs = surahData?.ayahs.length || 0;
-  const totalPages = Math.ceil(totalAyahs / itemsPerPage);
 
-  const indexOfLastAyah = currentPage * itemsPerPage;
-  const indexOfFirstAyah = indexOfLastAyah - itemsPerPage;
-  const currentAyahs = useMemo(
-    () => surahData?.ayahs.slice(indexOfFirstAyah, indexOfLastAyah) || [],
-    [surahData, indexOfFirstAyah, indexOfLastAyah]
+  // Pagination logic for Explanation Tab
+  const totalAyahsExplanation = surahData?.ayahs.length || 0;
+  const totalPagesExplanation = Math.ceil(
+    totalAyahsExplanation / itemsPerPageExplanation
   );
 
-  // Adjust refs to correspond to the currentAyahs
+  const indexOfLastAyahExplanation =
+    currentPageExplanation * itemsPerPageExplanation;
+  const indexOfFirstAyahExplanation =
+    indexOfLastAyahExplanation - itemsPerPageExplanation;
+  const currentAyahsExplanation = useMemo(
+    () =>
+      surahData?.ayahs.slice(
+        indexOfFirstAyahExplanation,
+        indexOfLastAyahExplanation
+      ) || [],
+    [surahData, indexOfFirstAyahExplanation, indexOfLastAyahExplanation]
+  );
+
+  // Pagination logic for Reading Tab
+  const totalAyahsReading = allAyahs?.ayahs.length || 0;
+  const totalPagesReading = Math.ceil(totalAyahsReading / itemsPerPageReading);
+
+  const indexOfLastAyahReading = currentPageReading * itemsPerPageReading;
+  const indexOfFirstAyahReading = indexOfLastAyahReading - itemsPerPageReading;
+  const currentAyahsReading = useMemo(
+    () =>
+      allAyahs?.ayahs.slice(indexOfFirstAyahReading, indexOfLastAyahReading) ||
+      [],
+    [allAyahs, indexOfFirstAyahReading, indexOfLastAyahReading]
+  );
+
+  // Pagination logic for Full-Screen Modal
+  const totalAyahsModal = allAyahs?.ayahs.length || 0;
+  const totalPagesModal = Math.ceil(totalAyahsModal / itemsPerPageModal);
+
+  const indexOfLastAyahModal = currentPageModal * itemsPerPageModal;
+  const indexOfFirstAyahModal = indexOfLastAyahModal - itemsPerPageModal;
+  const currentAyahsModal = useMemo(
+    () =>
+      allAyahs?.ayahs.slice(indexOfFirstAyahModal, indexOfLastAyahModal) || [],
+    [allAyahs, indexOfFirstAyahModal, indexOfLastAyahModal]
+  );
+
+  // Adjust refs to correspond to the currentAyahsExplanation
   useEffect(() => {
-    // eslint-disable-next-line
-    setRefs(currentAyahs?.map(() => React.createRef()));
-    // eslint-disable-next-line
-  }, [currentPage, currentAyahs]);
+    setRefs(currentAyahsExplanation.map(() => React.createRef()));
+  }, [currentPageExplanation, currentAyahsExplanation]);
 
   const scrollToRef = (index) => {
     if (refs[index] && refs[index].current) {
@@ -507,14 +625,59 @@ const Quran = ({ src, toTop }) => {
     setTabValue(newValue);
   };
 
-  const handleNextPage = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  // Pagination handlers for Explanation Tab
+  const handleNextPageExplanation = () => {
+    setCurrentPageExplanation((prev) => {
+      const newPage = Math.min(prev + 1, totalPagesExplanation);
+      localStorage.setItem("explainedPage", newPage);
+      return newPage;
+    });
     toTop(); // Scroll to top when changing pages
   };
 
-  const handlePrevPage = () => {
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  const handlePrevPageExplanation = () => {
+    setCurrentPageExplanation((prev) => {
+      const newPage = Math.max(prev - 1, 1);
+      localStorage.setItem("explainedPage", newPage);
+      return newPage;
+    });
     toTop(); // Scroll to top when changing pages
+  };
+
+  // Pagination handlers for Reading Tab
+  const handleNextPageReading = () => {
+    setCurrentPageReading((prev) => {
+      const newPage = Math.min(prev + 1, totalPagesReading);
+      // Optionally, save reading page if needed
+      return newPage;
+    });
+    toTop(); // Scroll to top when changing pages
+  };
+
+  const handlePrevPageReading = () => {
+    setCurrentPageReading((prev) => {
+      const newPage = Math.max(prev - 1, 1);
+      // Optionally, save reading page if needed
+      return newPage;
+    });
+    toTop(); // Scroll to top when changing pages
+  };
+
+  // Pagination handlers for Full-Screen Modal
+  const handleNextPageModal = () => {
+    setCurrentPageModal((prev) => {
+      const newPage = Math.min(prev + 1, totalPagesModal);
+      localStorage.setItem("quranModalPage", newPage);
+      return newPage;
+    });
+  };
+
+  const handlePrevPageModal = () => {
+    setCurrentPageModal((prev) => {
+      const newPage = Math.max(prev - 1, 1);
+      localStorage.setItem("quranModalPage", newPage);
+      return newPage;
+    });
   };
 
   return (
@@ -537,7 +700,7 @@ const Quran = ({ src, toTop }) => {
             </div>
             <div
               id="additional-info"
-              className={`additional-infos  mb-3 ${isOpen && "show"}`}
+              className={`additional-infos mb-3 ${isOpen && "show"}`}
             >
               <p>{translations.numberOfRukoos}</p>
               <p>{translations.numberOfPages}</p>
@@ -601,7 +764,7 @@ const Quran = ({ src, toTop }) => {
                     <div className="surah-arabic-name"> {surah.name} </div>
                     <h5 className="surah-english-name">{surah.englishName}</h5>
                   </div>
-                  <div className="surah-infos  pe-none">
+                  <div className="surah-infos pe-none">
                     <p className="surah-ayahs mb-1">
                       <span> {surah.ayahs.length} </span>{" "}
                       {language === "ar" ? "ايه" : "Ayahs"}
@@ -635,8 +798,8 @@ const Quran = ({ src, toTop }) => {
               X
             </div>
             {allAyahs && (
-              <div className="w-100">
-                <div className="surah-title mt-2 w-100 text-center  fs-3">
+              <Box className="w-100">
+                <div className="surah-title mt-2 w-100 text-center fs-3">
                   ✧ {language === "ar" ? allAyahs.name : allAyahs.englishName} ✧
                 </div>
                 <div className="d-flex flex-column flex-lg-row flex-md-row justify-content-between align-items-center gap-2 my-2 p-2">
@@ -700,7 +863,7 @@ const Quran = ({ src, toTop }) => {
                     </select>
                   </div>
                 </div>
-                <Box className=" my-2 w-100">
+                <Box className="my-2 w-100">
                   <Tabs
                     value={tabValue}
                     onChange={handleTabChange}
@@ -786,62 +949,149 @@ const Quran = ({ src, toTop }) => {
                       </div>
 
                       <div className="ayah w-100">
-                        {allAyahs.ayahs.map((ayah, index) => (
-                          <div
-                            className={
-                              ayah.text ===
-                                "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ" &&
-                              allAyahs.name !== "سُورَةُ ٱلْفَاتِحَةِ"
-                                ? "d-none"
-                                : quranLangs === "English"
-                                ? "ayah-text dr-ltr text-start"
-                                : "ayah-text"
-                            }
-                            key={index}
-                            onClick={() => getSingleAyahTafsir(index)}
-                          >
-                            <p className="pe-none">
-                              {quranLangs === "Arabe" ||
-                              quranLangs === "Together" ? (
-                                <>
-                                  {allAyahs.name !== "سُورَةُ ٱلْفَاتِحَةِ"
-                                    ? ayah.text.replace(
-                                        "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
-                                        ""
-                                      )
-                                    : ayah.text}
-                                  {quranLangs === "Together" && <br />}
-                                </>
-                              ) : null}
-                              {quranLangs === "English" ||
-                              quranLangs === "Together" ? (
-                                apiTranslation.length > 0 ? (
-                                  <span
-                                    style={{ color: "var(--text-color)" }}
-                                    className="dr-ltr"
-                                  >
-                                    {apiTranslation[index]?.text.replace(
-                                      /^[;:!]/,
-                                      ""
-                                    )}
-                                    {quranLangs === "Together" && <br />}
-                                  </span>
-                                ) : (
-                                  <span>Loading...</span>
-                                )
-                              ) : null}
-                            </p>
+                        {totalAyahsReading > itemsPerPageReading
+                          ? currentAyahsReading.map((ayah, index) => (
+                              <div
+                                className={
+                                  ayah.text ===
+                                    "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ" &&
+                                  allAyahs.name !== "سُورَةُ ٱلْفَاتِحَةِ"
+                                    ? "d-none"
+                                    : quranLangs === "English"
+                                    ? "ayah-text dr-ltr text-start"
+                                    : "ayah-text"
+                                }
+                                key={index}
+                                onClick={() =>
+                                  getSingleAyahTafsir(
+                                    index + indexOfFirstAyahReading
+                                  )
+                                }
+                              >
+                                <p className="pe-none">
+                                  {quranLangs === "Arabe" ||
+                                  quranLangs === "Together" ? (
+                                    <>
+                                      {allAyahs.name !== "سُورَةُ ٱلْفَاتِحَةِ"
+                                        ? ayah.text.replace(
+                                            "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+                                            ""
+                                          )
+                                        : ayah.text}
+                                      {quranLangs === "Together" && <br />}
+                                    </>
+                                  ) : null}
+                                  {quranLangs === "English" ||
+                                  quranLangs === "Together" ? (
+                                    apiTranslation.length > 0 ? (
+                                      <span
+                                        style={{ color: "var(--text-color)" }}
+                                        className="dr-ltr"
+                                      >
+                                        {apiTranslation[
+                                          index + indexOfFirstAyahReading
+                                        ]?.text.replace(/^[;:!]/, "")}
+                                        {quranLangs === "Together" && <br />}
+                                      </span>
+                                    ) : (
+                                      <span>Loading...</span>
+                                    )
+                                  ) : null}
+                                </p>
 
-                            <p
-                              className={`ayah-number ${
-                                quranLangs === "English" && "ltr"
-                              } ${language === "en" && "ltr"}`}
-                            >
-                              {index + 1}
-                            </p>
-                          </div>
-                        ))}
+                                <p
+                                  className={`ayah-number ${
+                                    quranLangs === "English" && "ltr"
+                                  } ${language === "en" && "ltr"}`}
+                                >
+                                  {index + 1 + indexOfFirstAyahReading}
+                                </p>
+                              </div>
+                            ))
+                          : currentAyahsReading.map((ayah, index) => (
+                              <div
+                                className={
+                                  ayah.text ===
+                                    "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ" &&
+                                  allAyahs.name !== "سُورَةُ ٱلْفَاتِحَةِ"
+                                    ? "d-none"
+                                    : quranLangs === "English"
+                                    ? "ayah-text dr-ltr text-start"
+                                    : "ayah-text"
+                                }
+                                key={index}
+                                onClick={() =>
+                                  getSingleAyahTafsir(
+                                    index + indexOfFirstAyahReading
+                                  )
+                                }
+                              >
+                                <p className="pe-none">
+                                  {quranLangs === "Arabe" ||
+                                  quranLangs === "Together" ? (
+                                    <>
+                                      {allAyahs.name !== "سُورَةُ ٱلْفَاتِحَةِ"
+                                        ? ayah.text.replace(
+                                            "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+                                            ""
+                                          )
+                                        : ayah.text}
+                                      {quranLangs === "Together" && <br />}
+                                    </>
+                                  ) : null}
+                                  {quranLangs === "English" ||
+                                  quranLangs === "Together" ? (
+                                    apiTranslation.length > 0 ? (
+                                      <span
+                                        style={{ color: "var(--text-color)" }}
+                                        className="dr-ltr"
+                                      >
+                                        {apiTranslation[
+                                          index + indexOfFirstAyahReading
+                                        ]?.text.replace(/^[;:!]/, "")}
+                                        {quranLangs === "Together" && <br />}
+                                      </span>
+                                    ) : (
+                                      <span>Loading...</span>
+                                    )
+                                  ) : null}
+                                </p>
+
+                                <p
+                                  className={`ayah-number ${
+                                    quranLangs === "English" && "ltr"
+                                  } ${language === "en" && "ltr"}`}
+                                >
+                                  {index + 1 + indexOfFirstAyahReading}
+                                </p>
+                              </div>
+                            ))}
                       </div>
+
+                      {/* Pagination Controls for Reading Tab */}
+                      {totalAyahsReading > itemsPerPageReading && (
+                        <div className="pagination-controls d-flex justify-content-between align-items-center mt-4">
+                          <Button
+                            variant="outlined"
+                            onClick={handlePrevPageReading}
+                            disabled={currentPageReading === 1}
+                          >
+                            {language === "ar" ? "السابق" : "Previous"}
+                          </Button>
+                          <span>
+                            {language === "ar"
+                              ? `صفحة ${currentPageReading} من ${totalPagesReading}`
+                              : `Page ${currentPageReading} of ${totalPagesReading}`}
+                          </span>
+                          <Button
+                            variant="outlined"
+                            onClick={handleNextPageReading}
+                            disabled={currentPageReading === totalPagesReading}
+                          >
+                            {language === "ar" ? "التالي" : "Next"}
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </TabPanel>
 
@@ -870,8 +1120,9 @@ const Quran = ({ src, toTop }) => {
                             ? "To Ayah"
                             : "الى الأية"}
                         </option>
-                        {currentAyahs.map((ayah, index) => {
-                          const globalIndex = indexOfFirstAyah + index;
+                        {currentAyahsExplanation.map((ayah, index) => {
+                          const globalIndex =
+                            indexOfFirstAyahExplanation + index;
                           return (
                             <option key={index} value={index}>
                               {globalIndex + 1}
@@ -888,8 +1139,9 @@ const Quran = ({ src, toTop }) => {
                           direction: tafseerLangs === "arabe" ? "rtl" : "ltr",
                         }}
                       >
-                        {currentAyahs.map((ayah, index) => {
-                          const globalIndex = indexOfFirstAyah + index;
+                        {currentAyahsExplanation.map((ayah, index) => {
+                          const globalIndex =
+                            indexOfFirstAyahExplanation + index;
                           // Get Arabic tafsir
                           let arabicTafsir = "";
                           if (tafseerLangs === "arabe") {
@@ -974,25 +1226,27 @@ const Quran = ({ src, toTop }) => {
                       </div>
                     )}
 
-                    {/* Pagination Controls */}
-                    {totalPages > 1 && (
+                    {/* Pagination Controls for Explanation Tab */}
+                    {totalPagesExplanation > 1 && (
                       <div className="pagination-controls d-flex justify-content-between align-items-center mt-4">
                         <Button
                           variant="outlined"
-                          onClick={handlePrevPage}
-                          disabled={currentPage === 1}
+                          onClick={handlePrevPageExplanation}
+                          disabled={currentPageExplanation === 1}
                         >
                           {language === "ar" ? "السابق" : "Previous"}
                         </Button>
                         <span>
                           {language === "ar"
-                            ? `صفحة ${currentPage} من ${totalPages}`
-                            : `Page ${currentPage} of ${totalPages}`}
+                            ? `صفحة ${currentPageExplanation} من ${totalPagesExplanation}`
+                            : `Page ${currentPageExplanation} of ${totalPagesExplanation}`}
                         </span>
                         <Button
                           variant="outlined"
-                          onClick={handleNextPage}
-                          disabled={currentPage === totalPages}
+                          onClick={handleNextPageExplanation}
+                          disabled={
+                            currentPageExplanation === totalPagesExplanation
+                          }
                         >
                           {language === "ar" ? "التالي" : "Next"}
                         </Button>
@@ -1000,7 +1254,261 @@ const Quran = ({ src, toTop }) => {
                     )}
                   </TabPanel>
                 </Box>
-              </div>
+                {/* Full-Screen Quran Reading Modal */}
+                <Modal open={!!layout} onClose={() => setLayout(undefined)}>
+                  <ModalDialog
+                    layout={layout}
+                    style={{
+                      backgroundColor: "var(--card-color)",
+                      width: "100%",
+                      padding: "1px",
+                    }}
+                  >
+                    <ModalClose
+                      className="close-modal"
+                      sx={{ zIndex: "999" }}
+                    />
+                    <DialogContent>
+                      <div
+                        style={{
+                          backgroundColor: "var(--card-color)",
+                          color: "var(--text-color)",
+                          overflowX: "hidden",
+                          width: "100%",
+                        }}
+                      >
+                        <p className="mx-2 m-2 w-100 text-center surah-title fs-3">
+                          ✧ {allAyahs?.name} ✧
+                        </p>
+                        <div
+                          className={
+                            allAyahs?.name === "سُورَةُ ٱلْفَاتِحَةِ" ||
+                            allAyahs?.name === "سُورَةُ التَّوۡبَةِ"
+                              ? "d-none"
+                              : "w-100 text-center me-3 my-3"
+                          }
+                        >
+                          {quranLangs === "English" ? (
+                            "In the name of God, The Most Gracious, The Dispenser of Grace"
+                          ) : quranLangs === "Arabe" ? (
+                            " بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ "
+                          ) : (
+                            <div className="d-flex flex-column gap-2">
+                              <p> بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ </p>
+                              <p>
+                                In the name of God, The Most Gracious, The
+                                Dispenser of Grace
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                        <section
+                          style={{
+                            borderRadius: "4px",
+                            fontSize: "1.5rem",
+                            textAlign: "justify",
+                            position: "relative",
+                            lineHeight: "2",
+                            direction:
+                              quranLangs === "Arabe"
+                                ? "rtl"
+                                : quranLangs === "English"
+                                ? "ltr"
+                                : "rtl",
+                            unicodeBidi: "embed",
+                            width: "100%",
+                          }}
+                        >
+                          <p style={{ margin: 0 }}>
+                            {totalAyahsModal > itemsPerPageModal
+                              ? currentAyahsModal.map((ayah, index) => (
+                                  <span
+                                    key={index}
+                                    id={index}
+                                    onClick={() =>
+                                      getSingleAyahTafsir(
+                                        index + indexOfFirstAyahModal
+                                      )
+                                    }
+                                    className="modal-ayah"
+                                  >
+                                    <span>
+                                      {/* Display the Ayah text */}
+                                      {quranLangs === "Arabe" ||
+                                      quranLangs === "Together" ? (
+                                        <>
+                                          {allAyahs.name !==
+                                          "سُورَةُ ٱلْفَاتِحَةِ"
+                                            ? ayah.text.replace(
+                                                "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+                                                ""
+                                              )
+                                            : ayah.text}
+                                          {quranLangs === "Together" && <br />}
+                                        </>
+                                      ) : null}
+
+                                      {/* Display the Ayah number inside the symbol */}
+                                      <span
+                                        style={{
+                                          marginLeft: "5px",
+                                          marginRight: "5px",
+                                        }}
+                                      >
+                                        <span
+                                          style={{
+                                            display: "inline-flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            fontSize: "1.5rem",
+                                            position: "relative",
+                                            width: "1.5rem",
+                                            height: "1.5rem",
+                                            borderRadius: "50%",
+                                            lineHeight: "1.5rem",
+                                            textAlign: "center",
+                                            color: "green",
+                                          }}
+                                        >
+                                          ۝
+                                          <span
+                                            style={{
+                                              position: "absolute",
+                                              fontSize: "0.75rem",
+                                              top: "50%",
+                                              left: "50%",
+                                              transform:
+                                                "translate(-50%, -50%)",
+                                            }}
+                                          >
+                                            {index + 1 + indexOfFirstAyahModal}
+                                          </span>
+                                        </span>
+                                      </span>
+
+                                      {/* For English or combined languages */}
+                                      {quranLangs === "English" ||
+                                      quranLangs === "Together" ? (
+                                        <span className="">
+                                          {apiTranslation[
+                                            index + indexOfFirstAyahModal
+                                          ]?.text.replace(/^[;:!]/, "")}
+                                          {quranLangs === "Together" && <hr />}
+                                        </span>
+                                      ) : null}
+                                    </span>
+                                  </span>
+                                ))
+                              : currentAyahsModal.map((ayah, index) => (
+                                  <span
+                                    key={index}
+                                    id={index}
+                                    onClick={() =>
+                                      getSingleAyahTafsir(
+                                        index + indexOfFirstAyahModal
+                                      )
+                                    }
+                                    className="modal-ayah"
+                                  >
+                                    <span>
+                                      {/* Display the Ayah text */}
+                                      {quranLangs === "Arabe" ||
+                                      quranLangs === "Together" ? (
+                                        <>
+                                          {allAyahs.name !==
+                                          "سُورَةُ ٱلْفَاتِحَةِ"
+                                            ? ayah.text.replace(
+                                                "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+                                                ""
+                                              )
+                                            : ayah.text}
+                                          {quranLangs === "Together" && <br />}
+                                        </>
+                                      ) : null}
+
+                                      {/* Display the Ayah number inside the symbol */}
+                                      <span
+                                        style={{
+                                          marginLeft: "5px",
+                                          marginRight: "5px",
+                                        }}
+                                      >
+                                        <span
+                                          style={{
+                                            display: "inline-flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            fontSize: "1.5rem",
+                                            position: "relative",
+                                            width: "1.5rem",
+                                            height: "1.5rem",
+                                            borderRadius: "50%",
+                                            lineHeight: "1.5rem",
+                                            textAlign: "center",
+                                            color: "green",
+                                          }}
+                                        >
+                                          ۝
+                                          <span
+                                            style={{
+                                              position: "absolute",
+                                              fontSize: "0.75rem",
+                                              top: "50%",
+                                              left: "50%",
+                                              transform:
+                                                "translate(-50%, -50%)",
+                                            }}
+                                          >
+                                            {index + 1 + indexOfFirstAyahModal}
+                                          </span>
+                                        </span>
+                                      </span>
+
+                                      {/* For English or combined languages */}
+                                      {quranLangs === "English" ||
+                                      quranLangs === "Together" ? (
+                                        <span className="">
+                                          {apiTranslation[
+                                            index + indexOfFirstAyahModal
+                                          ]?.text.replace(/^[;:!]/, "")}
+                                          {quranLangs === "Together" && <hr />}
+                                        </span>
+                                      ) : null}
+                                    </span>
+                                  </span>
+                                ))}
+                          </p>
+                        </section>
+
+                        {/* Pagination Controls for Full-Screen Modal */}
+                        {totalAyahsModal > itemsPerPageModal && (
+                          <div className="pagination-controls d-flex justify-content-between align-items-center mt-4">
+                            <Button
+                              variant="outlined"
+                              onClick={handlePrevPageModal}
+                              disabled={currentPageModal === 1}
+                            >
+                              {language === "ar" ? "السابق" : "Previous"}
+                            </Button>
+                            <span>
+                              {language === "ar"
+                                ? `صفحة ${currentPageModal} من ${totalPagesModal}`
+                                : `Page ${currentPageModal} of ${totalPagesModal}`}
+                            </span>
+                            <Button
+                              variant="outlined"
+                              onClick={handleNextPageModal}
+                              disabled={currentPageModal === totalPagesModal}
+                            >
+                              {language === "ar" ? "التالي" : "Next"}
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </DialogContent>
+                  </ModalDialog>
+                </Modal>
+              </Box>
             )}
           </div>
         </React.Fragment>
@@ -1058,7 +1566,7 @@ const Quran = ({ src, toTop }) => {
               )
             ) : signleAyahTafsirText ? (
               <span
-                className="alert  mb-4 p-0 d-flex flex-column gap-2 text-align-justify"
+                className="alert mb-4 p-0 d-flex flex-column gap-2 text-align-justify"
                 dangerouslySetInnerHTML={{ __html: signleAyahTafsirText }}
               ></span>
             ) : (
@@ -1066,140 +1574,6 @@ const Quran = ({ src, toTop }) => {
             )}
           </Typography>
         </Sheet>
-      </Modal>
-
-      {/* Full Screen Quran Reading Modal */}
-      <Modal open={!!layout} onClose={() => setLayout(undefined)}>
-        <ModalDialog
-          layout={layout}
-          style={{
-            backgroundColor: "var(--card-color)",
-            width: "100%",
-            padding: "1px",
-          }}
-        >
-          <ModalClose className="close-modal" sx={{ zIndex: "999" }} />
-          <DialogContent>
-            <div
-              style={{
-                backgroundColor: "var(--card-color)",
-                color: "var(--text-color)",
-                overflowX: "hidden",
-                width: "100%",
-              }}
-            >
-              <p className="mx-2 m-2 w-100 text-center surah-title  fs-3">
-                ✧ {allAyahs?.name} ✧
-              </p>
-              <div
-                className={
-                  allAyahs?.name === "سُورَةُ ٱلْفَاتِحَةِ" ||
-                  allAyahs?.name === "سُورَةُ التَّوۡبَةِ"
-                    ? "d-none"
-                    : "w-100 text-center me-3 my-3"
-                }
-              >
-                {quranLangs === "English" ? (
-                  "In the name of God, The Most Gracious, The Dispenser of Grace"
-                ) : quranLangs === "Arabe" ? (
-                  " بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ "
-                ) : (
-                  <div className="d-flex flex-column gap-2">
-                    <p> بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ </p>
-                    <p>
-                      In the name of God, The Most Gracious, The Dispenser of
-                      Grace
-                    </p>
-                  </div>
-                )}
-              </div>
-              <section
-                style={{
-                  borderRadius: "4px",
-                  fontSize: "1.5rem",
-                  textAlign: "justify",
-                  position: "relative",
-                  lineHeight: "2",
-                  direction:
-                    quranLangs === "Arabe"
-                      ? "rtl"
-                      : quranLangs === "English"
-                      ? "ltr"
-                      : "rtl",
-                  unicodeBidi: "embed",
-                  width: "100%",
-                }}
-              >
-                <p style={{ margin: 0 }}>
-                  {allAyahs?.ayahs.map((ayah, index) => (
-                    <span
-                      key={index}
-                      id={index}
-                      onClick={() => getSingleAyahTafsir(index)}
-                      className="modal-ayah"
-                    >
-                      <span>
-                        {/* Display the Ayah text */}
-                        {quranLangs === "Arabe" || quranLangs === "Together" ? (
-                          <>
-                            {allAyahs.name !== "سُورَةُ ٱلْفَاتِحَةِ"
-                              ? ayah.text.replace(
-                                  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
-                                  ""
-                                )
-                              : ayah.text}
-                            {quranLangs === "Together" && <br />}
-                          </>
-                        ) : null}
-
-                        {/* Display the Ayah number inside the symbol */}
-                        <span style={{ marginLeft: "5px", marginRight: "5px" }}>
-                          <span
-                            style={{
-                              display: "inline-flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontSize: "1.5rem",
-                              position: "relative",
-                              width: "1.5rem",
-                              height: "1.5rem",
-                              borderRadius: "50%",
-                              lineHeight: "1.5rem",
-                              textAlign: "center",
-                              color: "green",
-                            }}
-                          >
-                            ۝
-                            <span
-                              style={{
-                                position: "absolute",
-                                fontSize: "0.75rem",
-                                top: "50%",
-                                left: "50%",
-                                transform: "translate(-50%, -50%)",
-                              }}
-                            >
-                              {index + 1}
-                            </span>
-                          </span>
-                        </span>
-
-                        {/* For English or combined languages */}
-                        {quranLangs === "English" ||
-                        quranLangs === "Together" ? (
-                          <span className="">
-                            {apiTranslation[index]?.text.replace(/^[;:!]/, "")}
-                            {quranLangs === "Together" && <hr />}
-                          </span>
-                        ) : null}
-                      </span>
-                    </span>
-                  ))}
-                </p>
-              </section>
-            </div>
-          </DialogContent>
-        </ModalDialog>
       </Modal>
     </div>
   );

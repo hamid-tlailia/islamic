@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import en from "./en.json"; // Adjust the path as needed
-import ar from "./ar.json"; // Adjust the path as needed
+import en from "./langsFiles/en.json"; // Adjust the path as needed
+import ar from "./langsFiles/ar.json"; // Adjust the path as needed
 
 // Create a Translation Context
 export const TranslationContext = createContext();

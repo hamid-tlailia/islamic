@@ -571,8 +571,8 @@ const Tajweed = ({ audioName, documentName }) => {
 
   // Function to detect if page changed
   const checkSavedPage = () => {
-    const storedPage = parseInt(localStorage.getItem("savedPage"));
-    const storedSurah = parseInt(localStorage.getItem("savedTajweedSurah"));
+    const storedPage = parseInt(localStorage.getItem("savedPage"), 10);
+    const storedSurah = parseInt(localStorage.getItem("savedTajweedSurah"), 10);
     if (storedPage && storedSurah) {
       if (storedPage === currentPage) {
         setSaved(true);
@@ -583,6 +583,17 @@ const Tajweed = ({ audioName, documentName }) => {
       setSaved(false);
     }
   };
+
+  useEffect(() => {
+    if (saved) {
+      const storedSurah = parseInt(
+        localStorage.getItem("savedTajweedSurah"),
+        10
+      );
+      // Display always saved Surah name
+      setCurrentSurah(storedSurah);
+    }
+  }, [saved, savedPageChanged]);
 
   return (
     <Box
@@ -663,7 +674,10 @@ const Tajweed = ({ audioName, documentName }) => {
 
         <Button
           variant="outlined"
-          sx={{ fontSize: "17px" }}
+          sx={{
+            fontSize: "17px",
+            pointerEvents: saved && !savedPageChanged ? "none" : "all",
+          }}
           onClick={handleSave}
           color={saved && !savedPageChanged ? "success" : "primary"}
         >

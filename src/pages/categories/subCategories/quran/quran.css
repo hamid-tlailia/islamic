@@ -169,6 +169,7 @@
 }
 .ayah-text.scrolled-ayah {
   animation: selected 12s ease;
+  margin-top: 10px;
 }
 
 @keyframes selected {

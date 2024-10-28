@@ -236,7 +236,7 @@ const Home = ({ onNavClick }) => {
                 <div className="feature">
                   <h2>
                     <img src={quran} alt="icon" className="icons" />
-                    {translations.quranInterpretation}
+                    <span>{translations.quranInterpretation}</span>
                   </h2>
                   <p>{translations.quranInterpretationDescription}</p>
                 </div>
@@ -244,7 +244,7 @@ const Home = ({ onNavClick }) => {
                 <div className="feature">
                   <h2>
                     <img src={ahadith} alt="icon" className="icons" />
-                    {translations.propheticHadiths}
+                    <span>{translations.propheticHadiths}</span>
                   </h2>
                   <p>{translations.propheticHadithsDescription}</p>
                 </div>
@@ -252,7 +252,7 @@ const Home = ({ onNavClick }) => {
                 <div className="feature">
                   <h2>
                     <img src={fatawa} alt="icon" className="icons" />
-                    {translations.fatwasAndArticles}
+                    <span>{translations.fatwasAndArticles}</span>
                   </h2>
                   <p>{translations.fatwasAndArticlesDescription}</p>
                 </div>
@@ -260,7 +260,7 @@ const Home = ({ onNavClick }) => {
                 <div className="feature">
                   <h2>
                     <img src={salat} alt="icon" className="icons" />
-                    {translations.prayerTimesAndQibla}
+                    <span>{translations.prayerTimesAndQibla}</span>
                   </h2>
                   <p>{translations.prayerTimesAndQiblaDescription}</p>
                 </div>
@@ -268,7 +268,7 @@ const Home = ({ onNavClick }) => {
                 <div className="feature">
                   <h2>
                     <img src={show} alt="icon" className="icons" />
-                    {translations.userInterface}
+                    <span>{translations.userInterface}</span>
                   </h2>
                   <p>{translations.userInterfaceDescription}</p>
                 </div>

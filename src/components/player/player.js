@@ -18,18 +18,18 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
   const audioRef = useRef(null);
   const progressRef = useRef(null);
   const { language } = useTranslation();
-  // Update the document title with the current Surah name when playing
+
   useEffect(() => {
     if (isPlaying && surah_name) {
       document.title = surah_name;
     } else {
-      document.title = title; // Revert to the initial title
+      document.title = title;
     }
   }, [isPlaying, surah_name, title]);
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return; // Guard clause to ensure audio is not null
+    if (!audio) return;
 
     const updateProgress = () => {
       setCurrentTime(audio.currentTime);
@@ -60,11 +60,21 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
       setIsPlaying(false);
     };
 
+    // Listen for pause events from external controls (e.g., notification tray)
+    const handlePauseFromExternal = () => {
+      setIsPlaying(false);
+    };
+    // Listen for play events from external controls (e.g., notification tray)
+    const handlePlayFromExternal = () => {
+      setIsPlaying(true);
+    };
     // Add event listeners
     audio.addEventListener("timeupdate", updateProgress);
     audio.addEventListener("loadeddata", handleLoadedData);
     audio.addEventListener("loadstart", handleLoadStart);
     audio.addEventListener("ended", handleEnded);
+    audio.addEventListener("pause", handlePauseFromExternal);
+    audio.addEventListener("play", handlePlayFromExternal);
 
     // Clean up event listeners
     return () => {
@@ -72,6 +82,8 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
       audio.removeEventListener("loadeddata", handleLoadedData);
       audio.removeEventListener("loadstart", handleLoadStart);
       audio.removeEventListener("ended", handleEnded);
+      audio.removeEventListener("pause", handlePauseFromExternal);
+      audio.removeEventListener("play", handlePlayFromExternal);
     };
   }, []);
 
@@ -132,29 +144,36 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
 
   const handleDownload = async () => {
     const audioUrl = audioRef?.current?.src;
-    if (!audioUrl) return; // Ensure the audio URL exists
+    if (!audioUrl) return;
     try {
-      const response = await fetch(audioUrl); // Fetch the audio file
-      const blob = await response.blob(); // Convert the response to a Blob
+      const response = await fetch(audioUrl);
+      if (!response.ok) throw new Error("CORS issue or network error");
 
-      // Create a temporary URL for the Blob
+      const blob = await response.blob();
       const blobUrl = window.URL.createObjectURL(blob);
 
-      // Create a new anchor element and trigger a download
       const link = document.createElement("a");
       link.href = blobUrl;
       link.download = `${surah_name || "audio"}.mp3`;
       document.body.appendChild(link);
       link.click();
-
-      // Clean up by removing the link and revoking the object URL
       document.body.removeChild(link);
       window.URL.revokeObjectURL(blobUrl);
     } catch (error) {
+      // If there's a CORS error, set the link directly to the audio URL
+      const link = document.createElement("a");
+      link.setAttribute("target", "_blank");
+      link.href = audioUrl;
+      link.download = `${surah_name || "audio"}.mp3`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Show a message if needed
       toast.info(
         language === "ar"
-          ? "الملف غير متوفر للتحميل"
-          : "File not available for download"
+          ? "الملف غير متوفر للتحميل، تم استخدام الرابط المباشر"
+          : "File not available for download, using direct link"
       );
     }
   };
