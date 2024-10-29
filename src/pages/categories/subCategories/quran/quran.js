@@ -284,11 +284,11 @@ const Quran = ({ src, toTop }) => {
 
   // Pagination state variables for Reading Tab
   const [currentPageReading, setCurrentPageReading] = useState(1);
-  const itemsPerPageReading = 10; // Number of Ayahs per page in Reading Tab
+  const itemsPerPageReading = 5; // Number of Ayahs per page in Reading Tab
 
   // Pagination state variables for Full-Screen Modal
   const [currentPageModal, setCurrentPageModal] = useState(1);
-  const itemsPerPageModal = 10; // Number of Ayahs per page in Modal
+  const itemsPerPageModal = 5; // Number of Ayahs per page in Modal
 
   // Effect to handle errors
   useEffect(() => {
@@ -369,7 +369,7 @@ const Quran = ({ src, toTop }) => {
       }
     }
     // eslint-disable-next-line
-  }, [surahs]);
+  }, [surahs, selectedSurah]);
 
   const selectReciter = useRef(null);
 
@@ -390,12 +390,19 @@ const Quran = ({ src, toTop }) => {
     // Save selected Surah to localStorage
     localStorage.setItem("quranSurah", JSON.stringify(surah));
 
-    // Reset pagination and save to localStorage
-    setCurrentPageReading(1);
-    setCurrentPageModal(1);
-    setCurrentPageExplanation(1);
-    localStorage.setItem("explainedPage", 1);
-    localStorage.setItem("quranModalPage", 1);
+    if (selectedSurah !== surah.number) {
+      // Reset pagination and save to localStorage
+      setCurrentPageReading(1);
+      setCurrentPageModal(1);
+      setCurrentPageExplanation(1);
+      localStorage.setItem("explainedPage", 1);
+      localStorage.setItem("quranModalPage", 1);
+    } else {
+      const savedExplanationPage = localStorage.getItem("explainedPage");
+      const savedModalPage = localStorage.getItem("quranModalPage");
+      setCurrentPageModal(parseInt(savedModalPage), 10);
+      setCurrentPageExplanation(parseInt(savedExplanationPage), 10);
+    }
   };
 
   useEffect(() => {
@@ -422,8 +429,6 @@ const Quran = ({ src, toTop }) => {
     setCurrentPageReading(1); // Reset pagination when going back
     setCurrentPageModal(1);
     setCurrentPageExplanation(1);
-    localStorage.setItem("explainedPage", 1);
-    localStorage.setItem("quranModalPage", 1);
   };
 
   const toggleVisibility = () => setIsOpen(!isOpen);
