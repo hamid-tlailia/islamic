@@ -501,7 +501,7 @@ const Tafsir = ({ toTop }) => {
         </Button>
       )}
       {!optionsVisible && (
-        <Button variant="outlined" color="secondary" onClick={handleReset}>
+        <Button variant="outlined" color="primary" onClick={handleReset}>
           {langs === "arabic" && language === "ar" ? "إعادة تعيين" : "Reset"}
         </Button>
       )}

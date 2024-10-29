@@ -313,8 +313,8 @@ const Categories = ({
     <div className="container-fluid p-0">
       <div className="categories">
         <div className="card content" ref={contentRef} onScroll={handleScroll}>
-          <div className="card-header p-0">
-            <p className="w-100 text-center  p-2">
+          <div className="card-header p-1 d-flex justify-content-center align-items-center">
+            <p className="w-100 text-center  text-primary mt-1">
               {translations.prayerKnowledge}
             </p>
           </div>

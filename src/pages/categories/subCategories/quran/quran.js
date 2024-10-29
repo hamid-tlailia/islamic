@@ -284,11 +284,11 @@ const Quran = ({ src, toTop }) => {
 
   // Pagination state variables for Reading Tab
   const [currentPageReading, setCurrentPageReading] = useState(1);
-  const itemsPerPageReading = 5; // Number of Ayahs per page in Reading Tab
+  const itemsPerPageReading = 10; // Number of Ayahs per page in Reading Tab
 
   // Pagination state variables for Full-Screen Modal
   const [currentPageModal, setCurrentPageModal] = useState(1);
-  const itemsPerPageModal = 5; // Number of Ayahs per page in Modal
+  const itemsPerPageModal = 10; // Number of Ayahs per page in Modal
 
   // Effect to handle errors
   useEffect(() => {
@@ -622,6 +622,9 @@ const Quran = ({ src, toTop }) => {
     if (language === "en") {
       setQuranLangs("English");
       setTafseerLangs("english");
+    } else {
+      setQuranLangs("Arabe");
+      setTafseerLangs("arabe");
     }
   }, [language]);
 
@@ -693,6 +696,34 @@ const Quran = ({ src, toTop }) => {
         top: 0,
         behavior: "smooth",
       });
+  };
+
+  // Define constants for the texts in different languages
+  const arabicText = "🌸 بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🌸";
+  const englishText =
+    "In the name of God, The Most Gracious, The Dispenser of Grace";
+
+  // Define a function to determine the text to display
+  const getQuranText = (quranLangs, language) => {
+    if (quranLangs === "English" && language === "en") {
+      return englishText;
+    }
+    if (quranLangs === "Arabe" && language === "ar") {
+      return arabicText;
+    }
+    if (quranLangs === "English" && language === "ar") {
+      return englishText;
+    }
+    if (quranLangs === "Arabe" && language === "en") {
+      return arabicText;
+    }
+    // Default to displaying both texts
+    return (
+      <div className="d-flex flex-column gap-2">
+        <span>{arabicText}</span>
+        <span>{englishText}</span>
+      </div>
+    );
   };
 
   return (
@@ -940,27 +971,12 @@ const Quran = ({ src, toTop }) => {
 
                       <div
                         className={
-                          allAyahs.name === "سُورَةُ ٱلْفَاتِحَةِ" ||
-                          allAyahs.name === "سُورَةُ التَّوۡبَةِ"
+                          allAyahs.number === 1 || allAyahs.number === 9
                             ? "d-none"
                             : "w-100 text-center me-3 mt-3 mb-3"
                         }
                       >
-                        {quranLangs === "English" && language === "en" ? (
-                          "In the name of God, The Most Gracious, The Dispenser of Grace"
-                        ) : quranLangs === "Arabe" && language === "ar" ? (
-                          "🌸 بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🌸 "
-                        ) : (
-                          <div className="d-flex flex-column gap-2">
-                            <span>
-                              🌸 بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🌸
-                            </span>
-                            <span>
-                              In the name of God, The Most Gracious, The
-                              Dispenser of Grace
-                            </span>
-                          </div>
-                        )}
+                        {getQuranText(quranLangs, language)}
                       </div>
 
                       <div className="ayah w-100">
@@ -1085,16 +1101,26 @@ const Quran = ({ src, toTop }) => {
 
                       {/* Pagination Controls for Reading Tab */}
                       {totalAyahsReading > itemsPerPageReading && (
-                        <div className="pagination-controls d-flex justify-content-between align-items-center mt-4">
+                        <div
+                          className="pagination-controls d-flex justify-content-between align-items-center mt-4"
+                          style={{
+                            direction:
+                              language === "ar" && quranLangs === "Arabe"
+                                ? "rlt"
+                                : "ltr",
+                          }}
+                        >
                           <Button
                             variant="outlined"
                             onClick={handlePrevPageReading}
                             disabled={currentPageReading === 1}
                           >
-                            {language === "ar" ? "السابق" : "Previous"}
+                            {language === "ar" && quranLangs === "Arabe"
+                              ? "السابق"
+                              : "Previous"}
                           </Button>
                           <span>
-                            {language === "ar"
+                            {language === "ar" && quranLangs === "Arabe"
                               ? `صفحة ${currentPageReading} من ${totalPagesReading}`
                               : `Page ${currentPageReading} of ${totalPagesReading}`}
                           </span>
@@ -1103,7 +1129,9 @@ const Quran = ({ src, toTop }) => {
                             onClick={handleNextPageReading}
                             disabled={currentPageReading === totalPagesReading}
                           >
-                            {language === "ar" ? "التالي" : "Next"}
+                            {language === "ar" && quranLangs === "Arabe"
+                              ? "التالي"
+                              : "Next"}
                           </Button>
                         </div>
                       )}
@@ -1243,16 +1271,26 @@ const Quran = ({ src, toTop }) => {
 
                     {/* Pagination Controls for Explanation Tab */}
                     {totalPagesExplanation > 1 && (
-                      <div className="pagination-controls d-flex justify-content-between align-items-center mt-4">
+                      <div
+                        className="pagination-controls d-flex justify-content-between align-items-center mt-4"
+                        style={{
+                          direction:
+                            language === "ar" && tafseerLangs === "arabe"
+                              ? "rtl"
+                              : "ltr",
+                        }}
+                      >
                         <Button
                           variant="outlined"
                           onClick={handlePrevPageExplanation}
                           disabled={currentPageExplanation === 1}
                         >
-                          {language === "ar" ? "السابق" : "Previous"}
+                          {language === "ar" && tafseerLangs === "arabe"
+                            ? "السابق"
+                            : "Previous"}
                         </Button>
                         <span>
-                          {language === "ar"
+                          {language === "ar" && tafseerLangs === "arabe"
                             ? `صفحة ${currentPageExplanation} من ${totalPagesExplanation}`
                             : `Page ${currentPageExplanation} of ${totalPagesExplanation}`}
                         </span>
@@ -1263,7 +1301,9 @@ const Quran = ({ src, toTop }) => {
                             currentPageExplanation === totalPagesExplanation
                           }
                         >
-                          {language === "ar" ? "التالي" : "Next"}
+                          {language === "ar" && tafseerLangs === "arabe"
+                            ? "التالي"
+                            : "Next"}
                         </Button>
                       </div>
                     )}
@@ -1498,16 +1538,26 @@ const Quran = ({ src, toTop }) => {
 
                         {/* Pagination Controls for Full-Screen Modal */}
                         {totalAyahsModal > itemsPerPageModal && (
-                          <div className="pagination-controls d-flex justify-content-between align-items-center mt-4">
+                          <div
+                            className="pagination-controls d-flex justify-content-between align-items-center mt-4"
+                            style={{
+                              direction:
+                                language === "ar" && quranLangs === "Arabe"
+                                  ? "rtl"
+                                  : "ltr",
+                            }}
+                          >
                             <Button
                               variant="outlined"
                               onClick={handlePrevPageModal}
                               disabled={currentPageModal === 1}
                             >
-                              {language === "ar" ? "السابق" : "Previous"}
+                              {language === "ar" && quranLangs === "Arabe"
+                                ? "السابق"
+                                : "Previous"}
                             </Button>
                             <span>
-                              {language === "ar"
+                              {language === "ar" && quranLangs === "Arabe"
                                 ? `صفحة ${currentPageModal} من ${totalPagesModal}`
                                 : `Page ${currentPageModal} of ${totalPagesModal}`}
                             </span>
@@ -1516,7 +1566,9 @@ const Quran = ({ src, toTop }) => {
                               onClick={handleNextPageModal}
                               disabled={currentPageModal === totalPagesModal}
                             >
-                              {language === "ar" ? "التالي" : "Next"}
+                              {language === "ar" && quranLangs === "Arabe"
+                                ? "التالي"
+                                : "Next"}
                             </Button>
                           </div>
                         )}
