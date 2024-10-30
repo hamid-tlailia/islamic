@@ -101,10 +101,8 @@ body.image {
   --tabs-bg-color: rgba(180, 154, 154, 0.5);
   --main-color: coral;
   --api-card: #021602;
-  background: url(./components//images/bg4.avif);
+  background: url("./components/images//bg4.avif") no-repeat center;
   background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
 }
 
 /* Contrast mode styles */

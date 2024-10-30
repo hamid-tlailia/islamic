@@ -398,11 +398,8 @@
   box-shadow: none !important;
 }
 .image {
-  background: url(../images//bg4.avif);
+  background: url("../images//bg4.avif") no-repeat center;
   background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  cursor: pointer;
 }
 
 .shadow {

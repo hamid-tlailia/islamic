@@ -13,7 +13,6 @@ import tasbih from "../images/tasbih.png";
 import wasia from "../images/wasia.png";
 import islam from "../images/islam.png";
 import be from "../images/be.png";
-import ask from "../images/ask.png";
 import qiblah from "../images/qiblah.png";
 import fiqh from "../images/fiqh.png";
 import history from "../images/history.png";
@@ -314,7 +313,10 @@ const Categories = ({
       <div className="categories">
         <div className="card content" ref={contentRef} onScroll={handleScroll}>
           <div className="card-header p-1 d-flex justify-content-center align-items-center">
-            <p className="w-100 text-center  text-primary mt-1">
+            <p
+              className="w-100 text-center  fw-bold mt-2"
+              style={{ color: "rgb(81, 85, 27)" }}
+            >
               {translations.prayerKnowledge}
             </p>
           </div>
@@ -415,10 +417,6 @@ const Categories = ({
               <NavLink className="div" to="tajweed">
                 <img src={tajweed} alt="divs" />
                 <span id="alTajweed"> {translations.alTajweed}</span>
-              </NavLink>
-              <NavLink className="div" to="questions">
-                <img src={ask} alt="divs" />
-                <span id="askAQuestion"> {translations.askAQuestion}</span>
               </NavLink>
             </div>
           </div>

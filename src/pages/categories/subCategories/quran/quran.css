@@ -118,6 +118,7 @@
 .quran .ayahs.active {
   transform: scale(1);
   opacity: 2;
+  z-index: 9999999;
 }
 
 .ayah {

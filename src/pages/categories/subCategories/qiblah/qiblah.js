@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, CircularProgress, Button } from "@mui/material";
 import ArrowDownwardOutlinedIcon from "@mui/icons-material/ArrowDownwardOutlined";
+import LocationOnIcon from "@mui/icons-material/LocationOn"; // Icon for Qiblah symbol
 import { useTranslation } from "../../../../components/languages/provider";
 
 const translations = {
@@ -17,7 +18,7 @@ const translations = {
     allowDeviceOrientationButton: "Allow Device Orientation",
     qiblahDirection: "Qiblah Direction",
     rotateDevice:
-      "Place the phone on a straight surface and rotate your device to find the Qiblah direction.",
+      "Rotate your device to align with the Qiblah direction.",
   },
   ar: {
     errorGettingLocation: "خطأ في الحصول على الموقع.",
@@ -31,7 +32,7 @@ const translations = {
     allowDeviceOrientationButton: "السماح باتجاه الجهاز",
     qiblahDirection: "اتجاه القبلة",
     rotateDevice:
-      "ضع الهاتف على سطح مستقيم ثم قم بتدوير جهازك للعثور على اتجاه القبلة.",
+      "قم بتدوير جهازك لمحاذاة اتجاه القبلة.",
   },
 };
 
@@ -132,15 +133,15 @@ const Qiblah = () => {
     const phi = degreesToRadians(lat);
     const lambda = degreesToRadians(lon);
 
-    const qiblahBearing = radiansToDegrees(
-      Math.atan2(
-        Math.sin(lambdaK - lambda),
-        Math.cos(phi) * Math.tan(phiK) -
-          Math.sin(phi) * Math.cos(lambdaK - lambda)
-      )
-    );
+    const y = Math.sin(lambdaK - lambda);
+    const x =
+      Math.cos(phi) * Math.tan(phiK) -
+      Math.sin(phi) * Math.cos(lambdaK - lambda);
 
-    return (qiblahBearing + 360) % 360;
+    let qiblahBearing = radiansToDegrees(Math.atan2(y, x));
+    qiblahBearing = (qiblahBearing + 360) % 360;
+
+    return qiblahBearing;
   };
 
   const degreesToRadians = (degrees) => (degrees * Math.PI) / 180;
@@ -148,7 +149,8 @@ const Qiblah = () => {
 
   const getArrowRotation = () => {
     if (deviceOrientation !== null && qiblahDirection !== null) {
-      const rotation = (qiblahDirection - deviceOrientation + 360) % 360;
+      // Correcting the rotation calculation
+      const rotation = (deviceOrientation - qiblahDirection + 360) % 360;
       return rotation;
     }
     return 0;
@@ -161,8 +163,9 @@ const Qiblah = () => {
         justifyContent="center"
         alignItems="center"
         minHeight="100vh"
+        padding={2}
       >
-        <Typography variant="h6" color="error">
+        <Typography variant="h6" color="error" align="center">
           {errorMessage}
         </Typography>
       </Box>
@@ -177,9 +180,10 @@ const Qiblah = () => {
         alignItems="center"
         minHeight="100vh"
         justifyContent="center"
+        padding={2}
       >
         <CircularProgress />
-        <Typography>{t("gettingLocation")}</Typography>
+        <Typography style={{ marginTop: 16 }}>{t("gettingLocation")}</Typography>
       </Box>
     );
   }
@@ -192,8 +196,9 @@ const Qiblah = () => {
         alignItems="center"
         minHeight="100vh"
         justifyContent="center"
+        padding={2}
       >
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h6" gutterBottom align="center">
           {t("allowDeviceOrientation")}
         </Typography>
         <Button
@@ -219,6 +224,7 @@ const Qiblah = () => {
               setErrorMessage(t("deviceOrientationNotSupported"));
             }
           }}
+          style={{ marginTop: 16 }}
         >
           {t("allowDeviceOrientationButton")}
         </Button>
@@ -231,23 +237,49 @@ const Qiblah = () => {
       display="flex"
       flexDirection="column"
       alignItems="center"
-      minHeight="80vh"
+      minHeight="100vh"
       justifyContent="center"
       dir={language === "ar" ? "rtl" : "ltr"}
+      padding={2}
     >
-      <Typography variant="h5">{t("qiblahDirection")}</Typography>
-      <Box position="relative" width={250} height={250} marginTop={2}>
-        {/* Compass circle */}
+      <Typography variant="h5" gutterBottom>
+        {t("qiblahDirection")}
+      </Typography>
+      <Box
+        position="relative"
+        width={250}
+        height={250}
+        marginTop={2}
+      >
+        {/* Compass Circle */}
         <Box
           position="absolute"
           top={0}
           left={0}
-          width={250}
-          height={250}
+          width="100%"
+          height="100%"
           borderRadius="50%"
           border="2px solid rgba(11, 107, 203, 1)"
+          boxSizing="border-box"
         ></Box>
-        {/* Arrow pointing towards Qiblah direction */}
+
+        {/* Fixed Qiblah Symbol at the top (e.g., Kaaba) */}
+        <Box
+          position="absolute"
+          top="10%"
+          left="50%"
+          transform="translate(-50%, -50%)"
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+        >
+          <LocationOnIcon style={{ fontSize: 40, color: "red" }} />
+          <Typography variant="caption" style={{ color: "red" }}>
+            Qiblah
+          </Typography>
+        </Box>
+
+        {/* Rotating Arrow */}
         <Box
           position="absolute"
           top="50%"
@@ -263,7 +295,7 @@ const Qiblah = () => {
       </Box>
       <Typography
         variant="body1"
-        style={{ marginTop: 16, textAlign: "center", width: "100%" }}
+        style={{ marginTop: 24, textAlign: "center", maxWidth: 300 }}
       >
         {t("rotateDevice")}
       </Typography>

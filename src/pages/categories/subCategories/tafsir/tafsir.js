@@ -322,7 +322,6 @@ const Tafsir = ({ toTop }) => {
     setWarning("");
     setTafsir([]);
     setOptionsVisible(true); // Show options again
-    setLoading(false);
     setCurrentExplainedAyah(null);
     setCurrentPage(1); // Reset to first page
   };
@@ -584,11 +583,6 @@ const Tafsir = ({ toTop }) => {
       {renderDropdowns()}
       <hr />
       {/* Tafsir area */}
-      {loading && (
-        <div className="close-loader" onClick={handleReset}>
-          X
-        </div>
-      )}
       {loading ? (
         <div>{<Loader />}</div>
       ) : tafsir.length > 0 ? (

@@ -239,10 +239,13 @@ const Ahadith = () => {
         console.error("Ahadith data is not in the expected format");
         setAhadith([]);
         setTotalPages(1);
+        setIsErrorFetching(true);
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error fetching ahadith:", error);
       setIsErrorFetching(true);
+      setLoading(false);
     } finally {
       setLoading(false);
     }
@@ -763,18 +766,13 @@ const Ahadith = () => {
           </Button>
         </FormControl>
       </div>
-      {loading && (
-        <div className="close-loader" onClick={() => setLoading(false)}>
-          X
-        </div>
-      )}
       {searchResult !== null && !loading && (
         <div
           key={searchResult.id}
           className="card p-2 mb-2 border border-secondary d-flex flex-column gap-3"
           ref={resultSearch}
         >
-          <h5 className="hadith-heading">
+          <h5 className="hadith-heading fs-4">
             {hadithLangs === "ar"
               ? searchResult.hadithArabic
               : searchResult.hadithEnglish
@@ -886,7 +884,7 @@ const Ahadith = () => {
               key={index}
               className="card p-2 mb-2 border border-secondary d-flex flex-column gap-3"
             >
-              <h5 className="hadith-heading">
+              <h5 className="hadith-heading fs-4">
                 {language === "ar"
                   ? hadith.hadithArabic
                   : hadith.hadithEnglish

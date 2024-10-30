@@ -47,9 +47,6 @@ const Names = lazy(() =>
 const Prophets = lazy(() =>
   import("./pages/categories/subCategories/prophetsQisas/prophets")
 );
-const Questions = lazy(() =>
-  import("./pages/categories/subCategories/questions/questions")
-);
 const Quran = lazy(() =>
   import("./pages/categories/subCategories/quran/quran")
 );
@@ -335,8 +332,15 @@ function App() {
                       path="prophets"
                       element={<Prophets scrollUp={scrollContent} />}
                     />
-                    <Route path="questions" element={<Questions />} />
-                    <Route path="quran" element={<Quran src={audioSRC} toTop={() => setBackToTop(true)}/>} />
+                    <Route
+                      path="quran"
+                      element={
+                        <Quran
+                          src={audioSRC}
+                          toTop={() => setBackToTop(true)}
+                        />
+                      }
+                    />
                     <Route
                       path="tafsir"
                       element={<Tafsir toTop={() => setBackToTop(true)} />}

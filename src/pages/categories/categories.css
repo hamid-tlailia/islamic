@@ -133,6 +133,7 @@
   color: red;
   cursor: pointer;
   margin-inline: 5px;
+  z-index: 999999;
 }
 
 .back {

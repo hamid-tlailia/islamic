@@ -15,6 +15,7 @@ import {
   Option,
   CircularProgress,
   Alert,
+  Skeleton,
 } from "@mui/joy";
 // Import Icons
 import DownloadIcon from "@mui/icons-material/Download";
@@ -22,7 +23,6 @@ import FavoriteIcon from "@mui/icons-material/Favorite"; // Import filled heart 
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share"; // Import ShareIcon
 import { toast } from "react-toastify";
-import Skeleton from "@mui/material/Skeleton";
 
 const Library = () => {
   const { language } = useTranslation();
@@ -37,6 +37,9 @@ const Library = () => {
     const savedFavorites = localStorage.getItem("favoriteBooks");
     return savedFavorites ? JSON.parse(savedFavorites) : [];
   });
+
+  // State to track image loading
+  const [imageLoaded, setImageLoaded] = useState({});
 
   const bookCategories = {
     All: {
@@ -220,6 +223,11 @@ const Library = () => {
       ? filteredBooks.slice().reverse()
       : filteredBooks;
 
+  // Handler for image load
+  const handleImageLoad = (id) => {
+    setImageLoaded((prevState) => ({ ...prevState, [id]: true }));
+  };
+
   return (
     <Box sx={{ padding: 2 }}>
       {/* Filters */}
@@ -304,129 +312,126 @@ const Library = () => {
           }}
         >
           {booksToDisplay.length > 0 ? (
-            booksToDisplay.map((book, index) =>
-              book ? (
-                <Card
-                  key={index}
-                  variant="outlined"
-                  sx={{
-                    maxHeight: 500,
-                    maxWidth: 300,
-                    backgroundColor: "var(--card-color)",
-                    color: "var(--text-color)",
-                  }}
-                >
-                  {book.book_image_ar ? (
-                    <img
-                      className="img-fluid w-100"
-                      src={
-                        languageFilter === "ar"
-                          ? book.book_image_ar
-                          : book.book_image_en || book.book_image_ar
-                      }
-                      alt={book.book_name[language]}
+            booksToDisplay.map((book) => (
+              <Card
+                key={book.id}
+                variant="outlined"
+                sx={{
+                  maxHeight: 500,
+                  maxWidth: 300,
+                  backgroundColor: "var(--card-color)",
+                  color: "var(--text-color)",
+                }}
+              >
+                <Box sx={{ position: "relative" }}>
+                  {!imageLoaded[book.id] && (
+                    <Skeleton
+                      variant="rectangular"
+                      width="100%"
+                      height={200}
+                      animation="wave"
                     />
-                  ) : (
-                    <Box sx={{ pt: 0.5 }}>
-                      <Skeleton
-                        variant="rectangular"
-                        width={210}
-                        height={118}
-                      />
-                    </Box>
                   )}
+                  <img
+                    className="img-fluid w-100"
+                    src={
+                      languageFilter === "ar"
+                        ? book.book_image_ar
+                        : book.book_image_en || book.book_image_ar
+                    }
+                    alt={book.book_name[language]}
+                    style={
+                      imageLoaded[book.id]
+                        ? { display: "block" }
+                        : { display: "none" }
+                    }
+                    onLoad={() => handleImageLoad(book.id)}
+                    onError={() => handleImageLoad(book.id)} // Handle image load error
+                  />
+                </Box>
 
-                  <CardContent>
-                    <Typography
-                      level="h6"
-                      component="div"
-                      sx={{ color: "var(--main-color)" }}
-                    >
-                      {book.book_name[languageFilter] || book.book_name["ar"]}
-                    </Typography>
-                    <Typography level="body2">
-                      {languageFilter === "ar" ? "الحجم :" : "Size:"}{" "}
-                      {languageFilter === "ar"
-                        ? book.book_size_ar
-                        : book.book_size_en}
-                    </Typography>
-                  </CardContent>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      padding: 1,
-                      boxShadow: 3,
-                    }}
-                    className="box"
+                <CardContent>
+                  <Typography
+                    level="h6"
+                    component="div"
+                    sx={{ color: "var(--main-color)", minHeight: "3em" }}
                   >
-                    <IconButton
-                      component="a"
-                      href={
-                        languageFilter === "ar"
-                          ? book.book_url_ar
-                          : book.book_url_en || book.book_url_ar
-                      }
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      sx={{
+                    {book.book_name[languageFilter] || book.book_name["ar"]}
+                  </Typography>
+                  <Typography level="body2">
+                    {languageFilter === "ar" ? "الحجم :" : "Size:"}{" "}
+                    {languageFilter === "ar"
+                      ? book.book_size_ar
+                      : book.book_size_en}
+                  </Typography>
+                </CardContent>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: 1,
+                    boxShadow: 3,
+                  }}
+                  className="box"
+                >
+                  <IconButton
+                    component="a"
+                    href={
+                      languageFilter === "ar"
+                        ? book.book_url_ar
+                        : book.book_url_en || book.book_url_ar
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      color: "blue",
+                      "&:hover": {
+                        border: "1px solid blue",
                         color: "blue",
-                        "&:hover": {
-                          border: "1px solid blue",
-                          color: "blue",
-                        },
-                      }}
-                    >
-                      <DownloadIcon />
-                    </IconButton>
+                      },
+                    }}
+                  >
+                    <DownloadIcon />
+                  </IconButton>
 
-                    {/* Share Button */}
-                    <IconButton
-                      onClick={() => handleShare(book)}
-                      sx={{
-                        color: "var(--text-color)",
-                        "&:hover": {
-                          color: "blue",
-                        },
-                      }}
-                    >
-                      <ShareIcon />
-                    </IconButton>
+                  {/* Share Button */}
+                  <IconButton
+                    onClick={() => handleShare(book)}
+                    sx={{
+                      color: "var(--text-color)",
+                      "&:hover": {
+                        color: "blue",
+                      },
+                    }}
+                  >
+                    <ShareIcon />
+                  </IconButton>
 
-                    {/* Favorite Button */}
-                    <IconButton
-                      onClick={() => handleAddToFavorites(book)}
-                      sx={{
+                  {/* Favorite Button */}
+                  <IconButton
+                    onClick={() => handleAddToFavorites(book)}
+                    sx={{
+                      color: favorites.some((favBook) => favBook.id === book.id)
+                        ? "red"
+                        : "var(--text-color)",
+                      "&:hover": {
                         color: favorites.some(
                           (favBook) => favBook.id === book.id
                         )
-                          ? "red"
-                          : "var(--text-color)",
-                        "&:hover": {
-                          color: favorites.some(
-                            (favBook) => favBook.id === book.id
-                          )
-                            ? "darkred"
-                            : "gray",
-                        },
-                      }}
-                    >
-                      {favorites.some((favBook) => favBook.id === book.id) ? (
-                        <FavoriteIcon />
-                      ) : (
-                        <FavoriteBorderIcon />
-                      )}
-                    </IconButton>
-                  </Box>
-                </Card>
-              ) : (
-                <Box sx={{ pt: 0.5 }}>
-                  <Skeleton variant="rectangular" width={210} height={118} />
-                  <Skeleton />
-                  <Skeleton width="60%" />
+                          ? "darkred"
+                          : "gray",
+                      },
+                    }}
+                  >
+                    {favorites.some((favBook) => favBook.id === book.id) ? (
+                      <FavoriteIcon />
+                    ) : (
+                      <FavoriteBorderIcon />
+                    )}
+                  </IconButton>
                 </Box>
-              )
-            )
+              </Card>
+            ))
           ) : categoryFilter === "Favorites" ? (
             <Alert
               variant="outlined"
