@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback, memo } from "react";
 import {
   Card,
   CardContent,
@@ -37,7 +37,12 @@ const Topics = ({ src, audioName }) => {
   const audioRef = useRef(null); // Ref for the hidden audio element
   const { language } = useTranslation();
 
-  const hiddenIndexs = [3, 7, 8, 12];
+  const hiddenIndices = [3, 7, 8, 12];
+
+  // Pagination states for subcategories and category items
+  const [currentPageSubCategories, setCurrentPageSubCategories] = useState(1);
+  const [currentPageCategoryItems, setCurrentPageCategoryItems] = useState(1);
+  const itemsPerPage = 10; // Number of items per page
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -46,9 +51,12 @@ const Topics = ({ src, audioName }) => {
         const response = await fetch(
           `https://api3.islamhouse.com/v3/paV29H2gm56kvLPy/main/get-object-category-tree/${language}/json`
         );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
         const data = await response.json();
         const newData = data.sub_categories.filter(
-          (item, index) => !hiddenIndexs.includes(index)
+          (item, index) => !hiddenIndices.includes(index)
         );
         setCategories(newData); // Set the filtered categories
       } catch (error) {
@@ -77,38 +85,53 @@ const Topics = ({ src, audioName }) => {
     // eslint-disable-next-line
   }, [errorFetching]);
 
-  const handleOpenModal = async (category) => {
-    if (category.has_children && category.sub_categories.length > 0) {
-      setModalStack((prevStack) => [...prevStack, { category, isLeaf: false }]);
-      setSelectedCategory(category);
-      setModalOpen(true);
-    } else if (category.category_items) {
-      setModalStack((prevStack) => [...prevStack, { category, isLeaf: true }]);
-      setSelectedCategory(category);
-      setModalOpen(true);
-      setLoading(true);
-      try {
-        const response = await fetch(category.category_items);
-        const data = await response.json();
-        setCategoryItems(data.data || []); // Ensure that data is correctly set or an empty array if none
-      } catch (error) {
-        console.error("Error fetching category items", error);
-      } finally {
-        setLoading(false); // Stop loader
+  // Memoized handler to open modals
+  const handleOpenModal = useCallback(
+    async (category) => {
+      if (category.has_children && category.sub_categories.length > 0) {
+        setModalStack((prevStack) => [...prevStack, { category, isLeaf: false }]);
+        setSelectedCategory(category);
+        setModalOpen(true);
+        // Reset pagination for subcategories
+        setCurrentPageSubCategories(1);
+      } else if (category.category_items) {
+        setModalStack((prevStack) => [...prevStack, { category, isLeaf: true }]);
+        setSelectedCategory(category);
+        setModalOpen(true);
+        setLoading(true);
+        // Reset pagination for category items
+        setCurrentPageCategoryItems(1);
+        try {
+          const response = await fetch(category.category_items);
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          const data = await response.json();
+          setCategoryItems(data.data || []); // Ensure that data is correctly set or an empty array if none
+        } catch (error) {
+          setErrorFetching(true);
+          console.error("Error fetching category items", error);
+        } finally {
+          setLoading(false); // Stop loader
+        }
       }
-    }
-  };
+    },
+    // eslint-disable-next-line
+    [language]
+  );
 
-  const handleOpenFullDescription = (fullDescription) => {
+  // Memoized handler to open full descriptions
+  const handleOpenFullDescription = useCallback((fullDescription) => {
     setModalStack((prevStack) => [
       ...prevStack,
       { category: null, isLeaf: true },
     ]);
     setSelectedFullDescription(fullDescription);
     setModalOpen(true);
-  };
+  }, []);
 
-  const handleCloseModal = () => {
+  // Memoized handler to close modals
+  const handleCloseModal = useCallback(() => {
     if (modalStack.length > 1) {
       setModalStack((prevStack) => prevStack.slice(0, -1));
       setSelectedCategory(modalStack[modalStack.length - 2].category);
@@ -116,10 +139,14 @@ const Topics = ({ src, audioName }) => {
       setModalOpen(false);
       setCategoryItems([]); // Clear the category items when closing the modal
       setModalStack([]);
+      // Reset pagination states
+      setCurrentPageSubCategories(1);
+      setCurrentPageCategoryItems(1);
     }
-  };
+  }, [modalStack]);
 
-  const handleBack = () => {
+  // Memoized handler to go back in modal stack
+  const handleBack = useCallback(() => {
     if (selectedFullDescription) {
       setSelectedFullDescription("");
       setModalStack((prevStack) => prevStack.slice(0, -1));
@@ -130,38 +157,87 @@ const Topics = ({ src, audioName }) => {
     } else {
       setModalOpen(false);
       setModalStack([]);
+      // Reset pagination states
+      setCurrentPageSubCategories(1);
+      setCurrentPageCategoryItems(1);
     }
-  };
+  }, [modalStack, selectedFullDescription]);
 
   const pageName = "زاد طالب العلم";
-  const handleListenClick = (audioSrc) => {
-    const audio = audioRef.current;
-    src(audioSrc);
-    if (audio.src !== audioSrc) {
-      setIsAudioLoading(true);
-      setCurrentAudioSrc(audioSrc);
 
-      audio.src = audioSrc;
-      audio.load();
+  // Memoized handler for listening to audio
+  const handleListenClick = useCallback(
+    (audioSrc) => {
+      const audio = audioRef.current;
+      src(audioSrc);
+      if (audio.src !== audioSrc) {
+        setIsAudioLoading(true);
+        setCurrentAudioSrc(audioSrc);
 
-      audio.onloadeddata = () => {
-        setIsAudioLoading(false);
-        src(audioSrc);
-        audioName(pageName);
-      };
+        audio.src = audioSrc;
+        audio.load();
 
-      audio.onerror = () => {
-        setIsAudioLoading(false);
-        // Reset currentAudioSrc since there was an error
-        setCurrentAudioSrc(null);
-      };
-    } else {
-      // If the same audio is clicked again, you can choose to pause or restart the audio
-      // For now, we'll just keep it playing
-    }
+        audio.onloadeddata = () => {
+          setIsAudioLoading(false);
+          src(audioSrc);
+          audioName(pageName);
+        };
+
+        audio.onerror = () => {
+          setIsAudioLoading(false);
+          // Reset currentAudioSrc since there was an error
+          setCurrentAudioSrc(null);
+          toast.error(
+            language === "ar"
+              ? "خطأ في تحميل الملف الصوتي."
+              : "Error loading audio file."
+          );
+        };
+      } else {
+        // If the same audio is clicked again, play it
+        audio.play();
+      }
+    },
+    [src, audioName, language]
+  );
+
+  // Handler to load more subcategories
+  const handleLoadMoreSubCategories = () => {
+    setCurrentPageSubCategories((prevPage) => prevPage + 1);
   };
 
-  const ModalContent = () => {
+  // Handler to load more category items
+  const handleLoadMoreCategoryItems = () => {
+    setCurrentPageCategoryItems((prevPage) => prevPage + 1);
+  };
+
+  // Memoized ModalContent component
+  const ModalContent = memo(() => {
+    // Determine which content to display
+    const isFullDescription = Boolean(selectedFullDescription);
+    const isSubCategories =
+      selectedCategory?.sub_categories?.length > 0 && !isFullDescription;
+    const isCategoryItems = categoryItems.length > 0 && !isFullDescription;
+
+    // Calculate items to display based on current page
+    const displayedSubCategories = isSubCategories
+      ? selectedCategory.sub_categories.slice(
+          0,
+          currentPageSubCategories * itemsPerPage
+        )
+      : [];
+    const hasMoreSubCategories =
+      isSubCategories &&
+      selectedCategory.sub_categories.length >
+        currentPageSubCategories * itemsPerPage;
+
+    const displayedCategoryItems = isCategoryItems
+      ? categoryItems.slice(0, currentPageCategoryItems * itemsPerPage)
+      : [];
+    const hasMoreCategoryItems =
+      isCategoryItems &&
+      categoryItems.length > currentPageCategoryItems * itemsPerPage;
+
     return (
       <Box sx={{ p: 1 }} className="topics-component">
         <Box
@@ -180,7 +256,7 @@ const Topics = ({ src, audioName }) => {
           }}
         >
           <Typography variant="h6">
-            {selectedFullDescription
+            {isFullDescription
               ? language === "ar"
                 ? "الوصف الكامل"
                 : "Full Description"
@@ -203,7 +279,7 @@ const Topics = ({ src, audioName }) => {
           <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
             <CircularProgress />
           </Box>
-        ) : selectedFullDescription ? (
+        ) : isFullDescription ? (
           <Box sx={{ mt: 2, p: 2 }}>
             <Typography
               variant="body1"
@@ -212,11 +288,11 @@ const Topics = ({ src, audioName }) => {
               }}
             />
           </Box>
-        ) : selectedCategory?.sub_categories?.length > 0 ? (
+        ) : isSubCategories ? (
           <Box sx={{ mt: 2 }}>
-            {selectedCategory.sub_categories.map((subCategory, index) => (
+            {displayedSubCategories.map((subCategory) => (
               <Card
-                key={index}
+                key={subCategory.id} // Use unique identifier
                 sx={{
                   m: 2,
                   cursor: "pointer",
@@ -233,17 +309,27 @@ const Topics = ({ src, audioName }) => {
                     {subCategory.title || "No Title"}
                   </Typography>
                   <Typography variant="body1">
-                    {subCategory.description && subCategory.description}
+                    {subCategory.description || ""}
                   </Typography>
                 </CardContent>
               </Card>
             ))}
+            {hasMoreSubCategories && (
+              <Box sx={{ textAlign: "center", mt: 2 }}>
+                <Button
+                  variant="contained"
+                  onClick={handleLoadMoreSubCategories}
+                >
+                  {language === "ar" ? "تحميل المزيد" : "Load More"}
+                </Button>
+              </Box>
+            )}
           </Box>
-        ) : categoryItems.length > 0 ? (
+        ) : isCategoryItems ? (
           <Box sx={{ display: "flex", flexDirection: "column" }}>
-            {categoryItems.map((item, index) => (
+            {displayedCategoryItems.map((item, index) => (
               <Card
-                key={index}
+                key={item.id || index} // Use unique identifier
                 sx={{
                   m: 1,
                   transition: "transform 0.2s",
@@ -376,7 +462,13 @@ const Topics = ({ src, audioName }) => {
                             <Typography variant="body1">
                               {language === "ar" ? "ملف فيديو" : "Video File"}
                             </Typography>
-                            <ReactPlayer url={file.url} controls width="100%" />
+                            <ReactPlayer
+                              url={file.url}
+                              controls
+                              width="100%"
+                              height="100%"
+                              style={{ maxHeight: "400px" }}
+                            />
                           </Box>
                         )}
                         {file.extension_type.toUpperCase() === "LINK" && (
@@ -429,6 +521,7 @@ const Topics = ({ src, audioName }) => {
                                   height: "50%",
                                   borderRadius: "5px",
                                 }}
+                                loading="lazy"
                               />
                               <Button
                                 variant="outlined"
@@ -450,6 +543,16 @@ const Topics = ({ src, audioName }) => {
                 </CardContent>
               </Card>
             ))}
+            {hasMoreCategoryItems && (
+              <Box sx={{ textAlign: "center", mt: 2 }}>
+                <Button
+                  variant="contained"
+                  onClick={handleLoadMoreCategoryItems}
+                >
+                  {language === "ar" ? "تحميل المزيد" : "Load More"}
+                </Button>
+              </Box>
+            )}
           </Box>
         ) : (
           <Typography>
@@ -460,7 +563,7 @@ const Topics = ({ src, audioName }) => {
         )}
       </Box>
     );
-  };
+  });
 
   return (
     <div>
@@ -473,7 +576,7 @@ const Topics = ({ src, audioName }) => {
       ) : (
         categories.map((category) => (
           <Card
-            key={category.id}
+            key={category.id} // Use unique identifier
             sx={{
               m: 2,
               cursor: "pointer",
@@ -490,14 +593,14 @@ const Topics = ({ src, audioName }) => {
                 {category.title || "No Title"}
               </Typography>
               <Typography variant="body1">
-                {category.description && category.description}
+                {category.description || ""}
               </Typography>
             </CardContent>
           </Card>
         ))
       )}
       {/* Modal for Subcategories or Files */}
-      <Modal open={modalOpen} onClose={handleCloseModal} fullscreen="true">
+      <Modal open={modalOpen} onClose={handleCloseModal}>
         <Box
           sx={{
             position: "absolute",

@@ -17,8 +17,8 @@ const translations = {
     deviceOrientationNotSupported: "Device orientation not supported.",
     allowDeviceOrientationButton: "Allow Device Orientation",
     qiblahDirection: "Qiblah Direction",
-    rotateDevice:
-      "Rotate your device to align with the Qiblah direction.",
+    rotateDevice: "Rotate your device to align with the Qiblah direction.",
+    facingQiblah: "You are facing Qiblah now!",
   },
   ar: {
     errorGettingLocation: "خطأ في الحصول على الموقع.",
@@ -31,8 +31,8 @@ const translations = {
     deviceOrientationNotSupported: "اتجاه الجهاز غير مدعوم.",
     allowDeviceOrientationButton: "السماح باتجاه الجهاز",
     qiblahDirection: "اتجاه القبلة",
-    rotateDevice:
-      "قم بتدوير جهازك لمحاذاة اتجاه القبلة.",
+    rotateDevice: "قم بتدوير جهازك لمحاذاة اتجاه القبلة.",
+    facingQiblah: "أنت تواجه القبلة الآن!",
   },
 };
 
@@ -42,9 +42,13 @@ const Qiblah = () => {
   const [deviceOrientation, setDeviceOrientation] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [locationLoading, setLocationLoading] = useState(true);
+  const [isFacingQiblah, setIsFacingQiblah] = useState(false);
   const { language } = useTranslation();
 
   const t = (key) => translations[language][key] || key;
+
+  // Define the threshold in degrees to consider as facing Qiblah
+  const FACING_THRESHOLD = 5; // degrees
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -121,6 +125,17 @@ const Qiblah = () => {
 
     alpha = (alpha + 360) % 360;
     setDeviceOrientation(alpha);
+
+    if (qiblahDirection !== null) {
+      const difference = Math.abs(alpha - qiblahDirection);
+      const normalizedDifference =
+        difference > 180 ? 360 - difference : difference;
+      if (normalizedDifference <= FACING_THRESHOLD) {
+        setIsFacingQiblah(true);
+      } else {
+        setIsFacingQiblah(false);
+      }
+    }
   };
 
   const calculateQiblahDirection = (lat, lon) => {
@@ -183,7 +198,9 @@ const Qiblah = () => {
         padding={2}
       >
         <CircularProgress />
-        <Typography style={{ marginTop: 16 }}>{t("gettingLocation")}</Typography>
+        <Typography style={{ marginTop: 16 }}>
+          {t("gettingLocation")}
+        </Typography>
       </Box>
     );
   }
@@ -245,12 +262,7 @@ const Qiblah = () => {
       <Typography variant="h5" gutterBottom>
         {t("qiblahDirection")}
       </Typography>
-      <Box
-        position="relative"
-        width={250}
-        height={250}
-        marginTop={2}
-      >
+      <Box position="relative" width={250} height={250} marginTop={2}>
         {/* Compass Circle */}
         <Box
           position="absolute"
@@ -273,9 +285,18 @@ const Qiblah = () => {
           flexDirection="column"
           alignItems="center"
         >
-          <LocationOnIcon style={{ fontSize: 40, color: "red" }} />
-          <Typography variant="caption" style={{ color: "red" }}>
-            Qiblah
+          <LocationOnIcon
+            style={{
+              fontSize: 40,
+              color: isFacingQiblah ? "green" : "red",
+              transition: "color 0.3s ease",
+            }}
+          />
+          <Typography
+            variant="caption"
+            style={{ color: isFacingQiblah ? "green" : "red" }}
+          >
+            {language === "ar" ? "القبلة" : "Qiblah"}
           </Typography>
         </Box>
 
@@ -293,9 +314,24 @@ const Qiblah = () => {
           <ArrowDownwardOutlinedIcon style={{ fontSize: 100, color: "blue" }} />
         </Box>
       </Box>
+
+      {/* Confirmation Message */}
+      {isFacingQiblah && (
+        <Typography
+          variant="h6"
+          style={{ marginTop: 24, textAlign: "center", color: "green" }}
+        >
+          {t("facingQiblah")}
+        </Typography>
+      )}
+
       <Typography
         variant="body1"
-        style={{ marginTop: 24, textAlign: "center", maxWidth: 300 }}
+        style={{
+          marginTop: isFacingQiblah ? 16 : 24,
+          textAlign: "center",
+          maxWidth: 300,
+        }}
       >
         {t("rotateDevice")}
       </Typography>
