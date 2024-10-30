@@ -83,7 +83,7 @@
 .mobile-header .black-left .close {
   align-self: flex-start;
   font-size: 30px;
-  margin-top: 13px;
+  margin-top: -5px !important;
 }
 .mobile-header .right-nav {
   width: 40%;
@@ -134,7 +134,8 @@
 .mobile-header .right-nav ul .nav-item .nav-link.active {
   text-decoration: none;
   border: none;
-  border-bottom: 2px solid var(--nav-link-color);
+  border-radius: 10px;
+  border: 2px solid var(--nav-link-color);
 }
 
 /* from switch style */
