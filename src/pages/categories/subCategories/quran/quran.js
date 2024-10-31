@@ -793,47 +793,47 @@ const Quran = ({ src, toTop }) => {
           </div>
 
           {/* Surahs List */}
-          <div
-            className={isReversed ? "reversed 114-1" : "surahs 1-114"}
-            ref={surahsRef}
-          >
+          <div className="surahs" ref={surahsRef}>
             {surahs.length > 0 ? (
-              surahs.map((surah, index) => (
-                <div
-                  className="surah"
-                  key={index}
-                  data-name={index + 1}
-                  onClick={(e) => handleSurahClick(e, surah)}
-                >
-                  <div className="surah-number pe-none"> {surah.number} </div>
-                  <div className="surah-names pe-none">
-                    <div className="surah-arabic-name"> {surah.name} </div>
-                    <h5 className="surah-english-name">{surah.englishName}</h5>
+              (isReversed ? [...surahs].reverse() : surahs).map(
+                (surah, index) => (
+                  <div
+                    className="surah"
+                    key={index}
+                    data-name={index + 1}
+                    onClick={(e) => handleSurahClick(e, surah)}
+                  >
+                    <div className="surah-number pe-none"> {surah.number} </div>
+                    <div className="surah-names pe-none">
+                      <div className="surah-arabic-name"> {surah.name} </div>
+                      <h5 className="surah-english-name">
+                        {surah.englishName}
+                      </h5>
+                    </div>
+                    <div className="surah-infos pe-none">
+                      <p className="surah-ayahs mb-1">
+                        <span> {surah.ayahs.length} </span>{" "}
+                        {language === "ar" ? "آية" : "Ayahs"}
+                      </p>
+                      <hr className="mb-0 mt-0" />
+                      <p className="surah-placement pe-none">
+                        {surah.revelationType === "Meccan"
+                          ? language === "ar"
+                            ? "مكية"
+                            : "Meccan"
+                          : language === "ar"
+                          ? "مدنية"
+                          : "Medinan"}
+                      </p>
+                    </div>
                   </div>
-                  <div className="surah-infos pe-none">
-                    <p className="surah-ayahs mb-1">
-                      <span> {surah.ayahs.length} </span>{" "}
-                      {language === "ar" ? "ايه" : "Ayahs"}
-                    </p>
-                    <hr className="mb-0 mt-0" />
-                    <p className="surah-placement pe-none">
-                      {surah.revelationType === "Meccan"
-                        ? language === "ar"
-                          ? "مكية"
-                          : "Meccan"
-                        : language === "ar"
-                        ? "مدنية"
-                        : "Medinan"}
-                    </p>
-                  </div>
-                </div>
-              ))
+                )
+              )
             ) : (
               <span>
-                {" "}
                 {language === "ar"
                   ? "الرجاء المحاولة مرة أخرى"
-                  : "No Data please try again"}{" "}
+                  : "No Data, please try again"}
               </span>
             )}
           </div>

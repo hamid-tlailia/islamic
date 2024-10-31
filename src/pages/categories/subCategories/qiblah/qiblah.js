@@ -248,7 +248,7 @@ const Qiblah = () => {
       display="flex"
       flexDirection="column"
       alignItems="center"
-      minHeight="100vh"
+      minHeight="50vh"
       justifyContent="center"
       dir={language === "ar" ? "rtl" : "ltr"}
       padding={2}
@@ -256,7 +256,7 @@ const Qiblah = () => {
       <Typography variant="h5" gutterBottom>
         {t("qiblahDirection")}
       </Typography>
-      <Box position="relative" width={250} height={250} marginTop={2}>
+      <Box position="relative" width={250} height={250}>
         <Box
           position="absolute"
           top={0}

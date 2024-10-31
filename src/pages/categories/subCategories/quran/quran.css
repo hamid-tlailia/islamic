@@ -3,7 +3,7 @@
 .quran {
   display: flex;
   flex-direction: column;
-  padding: 8px !important;
+  padding: 1px !important;
   margin-bottom: 50px;
   height: 100% !important;
   overflow: auto;
@@ -14,16 +14,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, auto));
   flex-direction: column-reverse;
-  gap: 10px;
-  padding: 1px !important;
-  opacity: 1;
-  transition: 0.5s ease;
-}
-
-.reversed {
-  display: flex;
-  width: 100%;
-  flex-wrap: wrap-reverse; /* This is fine if you intend to reverse wrapping */
   gap: 10px;
   padding: 1px !important;
   opacity: 1;
@@ -44,7 +34,7 @@
   cursor: pointer;
   flex-grow: 1 !important; /* Removed !important to avoid potential conflicts */
   flex-basis: auto;
-  max-width: 100%;
+  min-width: 100%;
 }
 
 .quran .surahs.hidden {

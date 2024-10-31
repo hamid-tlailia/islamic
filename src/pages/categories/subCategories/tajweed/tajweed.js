@@ -856,6 +856,7 @@ const Tajweed = ({ audioName, documentName }) => {
 
           <div
             mb={3}
+            className="rtl"
             dangerouslySetInnerHTML={{
               __html: DOMPurify.sanitize(selectedAyah?.text_uthmani),
             }}
