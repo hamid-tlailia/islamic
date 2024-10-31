@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Box, Typography, CircularProgress, Button } from "@mui/material";
-import ArrowDownwardOutlinedIcon from "@mui/icons-material/ArrowDownwardOutlined";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
+import ArrowUpwardOutlinedIcon from "@mui/icons-material/ArrowUpwardOutlined";
 import { useTranslation } from "../../../../components/languages/provider";
 
 const translations = {
@@ -50,6 +49,7 @@ const Qiblah = () => {
     [language]
   );
 
+  // Define the threshold in degrees to consider as facing Qiblah
   const FACING_THRESHOLD = 5; // degrees
 
   useEffect(() => {
@@ -159,7 +159,7 @@ const Qiblah = () => {
 
   const getArrowRotation = () => {
     if (deviceOrientation !== null && qiblahDirection !== null) {
-      return (deviceOrientation - qiblahDirection + 360) % 360;
+      return (qiblahDirection - deviceOrientation + 360) % 360;
     }
     return 0;
   };
@@ -268,29 +268,6 @@ const Qiblah = () => {
         ></Box>
         <Box
           position="absolute"
-          top="10%"
-          left="50%"
-          transform="translate(-50%, -50%)"
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-        >
-          <LocationOnIcon
-            style={{
-              fontSize: 40,
-              color: isFacingQiblah ? "green" : "red",
-              transition: "color 0.3s ease",
-            }}
-          />
-          <Typography
-            variant="caption"
-            style={{ color: isFacingQiblah ? "green" : "red" }}
-          >
-            {language === "ar" ? "القبلة" : "Qiblah"}
-          </Typography>
-        </Box>
-        <Box
-          position="absolute"
           top="50%"
           left="50%"
           style={{
@@ -299,7 +276,9 @@ const Qiblah = () => {
             transition: "transform 0.5s ease-in-out",
           }}
         >
-          <ArrowDownwardOutlinedIcon style={{ fontSize: 100, color: "blue" }} />
+          <ArrowUpwardOutlinedIcon
+            style={{ fontSize: 100, color: isFacingQiblah ? "green" : "blue" }}
+          />
         </Box>
       </Box>
       {isFacingQiblah && (
