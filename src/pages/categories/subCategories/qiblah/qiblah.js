@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Box, Typography, CircularProgress, Button } from "@mui/material";
+import ArrowDownwardOutlinedIcon from "@mui/icons-material/ArrowDownwardOutlined";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useTranslation } from "../../../../components/languages/provider";
 
 const translations = {
@@ -156,9 +158,9 @@ const Qiblah = () => {
   const degreesToRadians = (degrees) => (degrees * Math.PI) / 180;
   const radiansToDegrees = (radians) => (radians * 180) / Math.PI;
 
-  const getIconRotation = () => {
+  const getArrowRotation = () => {
     if (deviceOrientation !== null && qiblahDirection !== null) {
-      return (qiblahDirection - deviceOrientation + 360) % 360;
+      return (deviceOrientation - qiblahDirection + 360) % 360;
     }
     return 0;
   };
@@ -267,24 +269,38 @@ const Qiblah = () => {
         ></Box>
         <Box
           position="absolute"
+          top="10%"
+          left="50%"
+          transform="translate(-50%, -50%)"
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+        >
+          <LocationOnIcon
+            style={{
+              fontSize: 40,
+              color: isFacingQiblah ? "green" : "red",
+              transition: "color 0.3s ease",
+            }}
+          />
+          <Typography
+            variant="caption"
+            style={{ color: isFacingQiblah ? "green" : "red" }}
+          >
+            {language === "ar" ? "القبلة" : "Qiblah"}
+          </Typography>
+        </Box>
+        <Box
+          position="absolute"
           top="50%"
           left="50%"
           style={{
-            transform: `translate(-50%, -50%) rotate(${getIconRotation()}deg)`,
+            transform: `translate(-50%, -50%) rotate(${getArrowRotation()}deg)`,
             transformOrigin: "center center",
             transition: "transform 0.5s ease-in-out",
           }}
         >
-          <Typography
-            variant="h1"
-            style={{
-              fontSize: 100,
-              color: isFacingQiblah ? "green" : "blue",
-              lineHeight: 1,
-            }}
-          >
-            🕋
-          </Typography>
+          <ArrowDownwardOutlinedIcon style={{ fontSize: 100, color: "blue" }} />
         </Box>
       </Box>
       {isFacingQiblah && (
