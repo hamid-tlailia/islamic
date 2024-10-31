@@ -1100,7 +1100,7 @@ const BeMuslim = () => {
   };
 
   return (
-    <Box sx={{ padding: 4 }}>
+    <Box sx={{ padding: 0  , maxWidth : "100%" , overflowX : "hidden" }}>
       <div className="w-100 text-center fs-2 mb-4" style={{ color: "#169777" }}>
         {beMuslimContent[0].title[language]}
       </div>

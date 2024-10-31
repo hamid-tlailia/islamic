@@ -213,13 +213,13 @@ const Home = ({ onNavClick }) => {
                   <div
                     className={`carousel-caption ${language === "en" && "en"}`}
                   >
-                    <div className={`p-3 ${language === "en" && "text-start"}`}>
+                    <div className={`p-1 ${language === "en" && "text-start"}`} style={{overflowX : "hidden"}}>
                       <p className="text-warning">{item.data.hadeeth}</p>
-                      <small className="text-white badge bg-success mt-1">
+                      <small className="text-white badge hadith-degree p-1 bg-success mt-1">
                         {language === "ar"
                           ? "درجة الحديث : "
                           : "Hadith degree : "}{" "}
-                        {item.data.grade}
+                        {item.data.grade.replace('hadith' ,'')}
                       </small>
                       <hr />
                       <p className="text-light">{item.data.explanation}</p>

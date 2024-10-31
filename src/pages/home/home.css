@@ -126,7 +126,7 @@
   height: 80vh;
 }
 .home-btns button {
-  width: 180px;
+  width: 170px;
   height: 120px;
   display: flex;
   flex-direction: column;
@@ -134,6 +134,9 @@
   align-items: center;
   gap: 10px;
   font-size: 30px;
+}
+.hadith-degree {
+  flex-wrap: wrap;
 }
 .content {
   margin-top: -8vh;
@@ -159,7 +162,7 @@
     height: 40vh;
   }
   .home-btns button {
-    width: 130px;
+    width: 140px;
     height: 120px;
     display: flex;
     flex-direction: column;
