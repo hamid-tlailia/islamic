@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Box, Typography, CircularProgress, Button } from "@mui/material";
-import ArrowUpwardOutlinedIcon from "@mui/icons-material/ArrowUpwardOutlined";
 import { useTranslation } from "../../../../components/languages/provider";
 
 const translations = {
@@ -157,7 +156,7 @@ const Qiblah = () => {
   const degreesToRadians = (degrees) => (degrees * Math.PI) / 180;
   const radiansToDegrees = (radians) => (radians * 180) / Math.PI;
 
-  const getArrowRotation = () => {
+  const getIconRotation = () => {
     if (deviceOrientation !== null && qiblahDirection !== null) {
       return (qiblahDirection - deviceOrientation + 360) % 360;
     }
@@ -271,14 +270,21 @@ const Qiblah = () => {
           top="50%"
           left="50%"
           style={{
-            transform: `translate(-50%, -50%) rotate(${getArrowRotation()}deg)`,
+            transform: `translate(-50%, -50%) rotate(${getIconRotation()}deg)`,
             transformOrigin: "center center",
             transition: "transform 0.5s ease-in-out",
           }}
         >
-          <ArrowUpwardOutlinedIcon
-            style={{ fontSize: 100, color: isFacingQiblah ? "green" : "blue" }}
-          />
+          <Typography
+            variant="h1"
+            style={{
+              fontSize: 100,
+              color: isFacingQiblah ? "green" : "blue",
+              lineHeight: 1,
+            }}
+          >
+            🕋
+          </Typography>
         </Box>
       </Box>
       {isFacingQiblah && (
