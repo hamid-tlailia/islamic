@@ -178,6 +178,12 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
     }
   };
 
+  const handleClosePlayer = () => {
+    const restoreDocumentTitle = localStorage.getItem("pageTitle");
+    document.title = restoreDocumentTitle ? restoreDocumentTitle : "دين الله";
+    hidePlayer();
+  };
+
   return (
     <div
       className={
@@ -247,13 +253,7 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
           )}
           <button
             className="btn btn-gold text-danger p-0"
-            onClick={() => {
-              const restoreDocumentTitle = localStorage.getItem("pageTitle");
-              document.title = restoreDocumentTitle
-                ? restoreDocumentTitle
-                : "دين الله";
-              hidePlayer();
-            }}
+            onClick={handleClosePlayer}
           >
             <CloseOutlinedIcon />
           </button>

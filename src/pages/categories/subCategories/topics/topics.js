@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, memo } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -38,11 +38,6 @@ const Topics = ({ src, audioName }) => {
   const { language } = useTranslation();
 
   const hiddenIndices = [3, 7, 8, 12];
-
-  // Pagination states for subcategories and category items
-  const [currentPageSubCategories, setCurrentPageSubCategories] = useState(1);
-  const [currentPageCategoryItems, setCurrentPageCategoryItems] = useState(1);
-  const itemsPerPage = 10; // Number of items per page
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -85,22 +80,24 @@ const Topics = ({ src, audioName }) => {
     // eslint-disable-next-line
   }, [errorFetching]);
 
-  // Memoized handler to open modals
+  // Handler to open modals
   const handleOpenModal = useCallback(
     async (category) => {
       if (category.has_children && category.sub_categories.length > 0) {
-        setModalStack((prevStack) => [...prevStack, { category, isLeaf: false }]);
+        setModalStack((prevStack) => [
+          ...prevStack,
+          { category, isLeaf: false },
+        ]);
         setSelectedCategory(category);
         setModalOpen(true);
-        // Reset pagination for subcategories
-        setCurrentPageSubCategories(1);
       } else if (category.category_items) {
-        setModalStack((prevStack) => [...prevStack, { category, isLeaf: true }]);
+        setModalStack((prevStack) => [
+          ...prevStack,
+          { category, isLeaf: true },
+        ]);
         setSelectedCategory(category);
         setModalOpen(true);
         setLoading(true);
-        // Reset pagination for category items
-        setCurrentPageCategoryItems(1);
         try {
           const response = await fetch(category.category_items);
           if (!response.ok) {
@@ -120,7 +117,7 @@ const Topics = ({ src, audioName }) => {
     [language]
   );
 
-  // Memoized handler to open full descriptions
+  // Handler to open full descriptions
   const handleOpenFullDescription = useCallback((fullDescription) => {
     setModalStack((prevStack) => [
       ...prevStack,
@@ -130,7 +127,7 @@ const Topics = ({ src, audioName }) => {
     setModalOpen(true);
   }, []);
 
-  // Memoized handler to close modals
+  // Handler to close modals
   const handleCloseModal = useCallback(() => {
     if (modalStack.length > 1) {
       setModalStack((prevStack) => prevStack.slice(0, -1));
@@ -139,13 +136,12 @@ const Topics = ({ src, audioName }) => {
       setModalOpen(false);
       setCategoryItems([]); // Clear the category items when closing the modal
       setModalStack([]);
-      // Reset pagination states
-      setCurrentPageSubCategories(1);
-      setCurrentPageCategoryItems(1);
+      // Reset selected full description
+      setSelectedFullDescription("");
     }
   }, [modalStack]);
 
-  // Memoized handler to go back in modal stack
+  // Handler to go back in modal stack
   const handleBack = useCallback(() => {
     if (selectedFullDescription) {
       setSelectedFullDescription("");
@@ -157,15 +153,14 @@ const Topics = ({ src, audioName }) => {
     } else {
       setModalOpen(false);
       setModalStack([]);
-      // Reset pagination states
-      setCurrentPageSubCategories(1);
-      setCurrentPageCategoryItems(1);
+      // Reset selected full description
+      setSelectedFullDescription("");
     }
   }, [modalStack, selectedFullDescription]);
 
   const pageName = "زاد طالب العلم";
 
-  // Memoized handler for listening to audio
+  // Handler for listening to audio
   const handleListenClick = useCallback(
     (audioSrc) => {
       const audio = audioRef.current;
@@ -201,42 +196,23 @@ const Topics = ({ src, audioName }) => {
     [src, audioName, language]
   );
 
-  // Handler to load more subcategories
-  const handleLoadMoreSubCategories = () => {
-    setCurrentPageSubCategories((prevPage) => prevPage + 1);
-  };
+  // Removed pagination handlers
+  // const handleLoadMoreSubCategories = () => { /* Removed */ };
+  // const handleLoadMoreCategoryItems = () => { /* Removed */ };
 
-  // Handler to load more category items
-  const handleLoadMoreCategoryItems = () => {
-    setCurrentPageCategoryItems((prevPage) => prevPage + 1);
-  };
+  // Removed pagination states
+  // const [currentPageSubCategories, setCurrentPageSubCategories] = useState(1);
+  // const [currentPageCategoryItems, setCurrentPageCategoryItems] = useState(1);
+  // const itemsPerPage = 10;
 
-  // Memoized ModalContent component
-  const ModalContent = memo(() => {
+  // Removed audioDisplayCount and related handlers
+
+  const ModalContent = () => {
     // Determine which content to display
     const isFullDescription = Boolean(selectedFullDescription);
     const isSubCategories =
       selectedCategory?.sub_categories?.length > 0 && !isFullDescription;
     const isCategoryItems = categoryItems.length > 0 && !isFullDescription;
-
-    // Calculate items to display based on current page
-    const displayedSubCategories = isSubCategories
-      ? selectedCategory.sub_categories.slice(
-          0,
-          currentPageSubCategories * itemsPerPage
-        )
-      : [];
-    const hasMoreSubCategories =
-      isSubCategories &&
-      selectedCategory.sub_categories.length >
-        currentPageSubCategories * itemsPerPage;
-
-    const displayedCategoryItems = isCategoryItems
-      ? categoryItems.slice(0, currentPageCategoryItems * itemsPerPage)
-      : [];
-    const hasMoreCategoryItems =
-      isCategoryItems &&
-      categoryItems.length > currentPageCategoryItems * itemsPerPage;
 
     return (
       <Box sx={{ p: 1 }} className="topics-component">
@@ -290,44 +266,40 @@ const Topics = ({ src, audioName }) => {
           </Box>
         ) : isSubCategories ? (
           <Box sx={{ mt: 2 }}>
-            {displayedSubCategories.map((subCategory) => (
-              <Card
-                key={subCategory.id} // Use unique identifier
-                sx={{
-                  m: 2,
-                  cursor: "pointer",
-                  transition: "transform 0.2s",
-                  "&:hover": { transform: "scale(1.02)" },
-                  backgroundColor: "var(--card-color)",
-                  color: "var(--text-color)",
-                  border: "1px solid white",
-                }}
-                onClick={() => handleOpenModal(subCategory)}
-              >
-                <CardContent>
-                  <Typography variant="body1" className="text-coral">
-                    {subCategory.title || "No Title"}
-                  </Typography>
-                  <Typography variant="body1">
-                    {subCategory.description || ""}
-                  </Typography>
-                </CardContent>
-              </Card>
-            ))}
-            {hasMoreSubCategories && (
-              <Box sx={{ textAlign: "center", mt: 2 }}>
-                <Button
-                  variant="contained"
-                  onClick={handleLoadMoreSubCategories}
+            {selectedCategory.sub_categories.map((subCategory, index) =>
+              // Optionally exclude specific subcategories if needed
+              // For example, exclude index 1:
+              // index !== 1 && (
+              selectedCategory.id === 86219 && index === 1 ? null : (
+                <Card
+                  key={subCategory.id} // Use unique identifier
+                  sx={{
+                    m: 2,
+                    cursor: "pointer",
+                    transition: "transform 0.2s",
+                    "&:hover": { transform: "scale(1.02)" },
+                    backgroundColor: "var(--card-color)",
+                    color: "var(--text-color)",
+                    border: "1px solid white",
+                  }}
+                  onClick={() => handleOpenModal(subCategory)}
                 >
-                  {language === "ar" ? "تحميل المزيد" : "Load More"}
-                </Button>
-              </Box>
+                  <CardContent>
+                    <Typography variant="body1" className="text-coral">
+                      {subCategory.title || "No Title"}
+                    </Typography>
+                    <Typography variant="body1">
+                      {subCategory.description || ""}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              )
             )}
+            {/* Removed "Load More" button */}
           </Box>
         ) : isCategoryItems ? (
           <Box sx={{ display: "flex", flexDirection: "column" }}>
-            {displayedCategoryItems.map((item, index) => (
+            {categoryItems.map((item, index) => (
               <Card
                 key={item.id || index} // Use unique identifier
                 sx={{
@@ -540,19 +512,12 @@ const Topics = ({ src, audioName }) => {
                         )}
                       </Box>
                     ))}
+
+                  {/* Removed "Load More Attachments" button */}
                 </CardContent>
               </Card>
             ))}
-            {hasMoreCategoryItems && (
-              <Box sx={{ textAlign: "center", mt: 2 }}>
-                <Button
-                  variant="contained"
-                  onClick={handleLoadMoreCategoryItems}
-                >
-                  {language === "ar" ? "تحميل المزيد" : "Load More"}
-                </Button>
-              </Box>
-            )}
+            {/* Removed "Load More" button for category items */}
           </Box>
         ) : (
           <Typography>
@@ -563,7 +528,7 @@ const Topics = ({ src, audioName }) => {
         )}
       </Box>
     );
-  });
+  };
 
   return (
     <div>

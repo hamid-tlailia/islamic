@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Box, Typography, CircularProgress, Button } from "@mui/material";
 import ArrowDownwardOutlinedIcon from "@mui/icons-material/ArrowDownwardOutlined";
-import LocationOnIcon from "@mui/icons-material/LocationOn"; // Icon for Qiblah symbol
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useTranslation } from "../../../../components/languages/provider";
 
 const translations = {
@@ -45,7 +45,10 @@ const Qiblah = () => {
   const [isFacingQiblah, setIsFacingQiblah] = useState(false);
   const { language } = useTranslation();
 
-  const t = (key) => translations[language][key] || key;
+  const t = useCallback(
+    (key) => translations[language][key] || key,
+    [language]
+  );
 
   // Define the threshold in degrees to consider as facing Qiblah
   const FACING_THRESHOLD = 5; // degrees
@@ -70,7 +73,7 @@ const Qiblah = () => {
       setLocationLoading(false);
     }
     // eslint-disable-next-line
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     if (qiblahDirection !== null) {
@@ -93,8 +96,7 @@ const Qiblah = () => {
         setPermissionGranted(true);
       }
     }
-    // eslint-disable-next-line
-  }, [qiblahDirection]);
+  }, [qiblahDirection, t]);
 
   useEffect(() => {
     if (permissionGranted) {
@@ -130,21 +132,15 @@ const Qiblah = () => {
       const difference = Math.abs(alpha - qiblahDirection);
       const normalizedDifference =
         difference > 180 ? 360 - difference : difference;
-      if (normalizedDifference <= FACING_THRESHOLD) {
-        setIsFacingQiblah(true);
-      } else {
-        setIsFacingQiblah(false);
-      }
+      setIsFacingQiblah(normalizedDifference <= FACING_THRESHOLD);
     }
   };
 
   const calculateQiblahDirection = (lat, lon) => {
     const kaabaLat = 21.4225;
     const kaabaLon = 39.8262;
-
     const phiK = degreesToRadians(kaabaLat);
     const lambdaK = degreesToRadians(kaabaLon);
-
     const phi = degreesToRadians(lat);
     const lambda = degreesToRadians(lon);
 
@@ -164,9 +160,7 @@ const Qiblah = () => {
 
   const getArrowRotation = () => {
     if (deviceOrientation !== null && qiblahDirection !== null) {
-      // Correcting the rotation calculation
-      const rotation = (deviceOrientation - qiblahDirection + 360) % 360;
-      return rotation;
+      return (deviceOrientation - qiblahDirection + 360) % 360;
     }
     return 0;
   };
@@ -263,7 +257,6 @@ const Qiblah = () => {
         {t("qiblahDirection")}
       </Typography>
       <Box position="relative" width={250} height={250} marginTop={2}>
-        {/* Compass Circle */}
         <Box
           position="absolute"
           top={0}
@@ -274,8 +267,6 @@ const Qiblah = () => {
           border="2px solid rgba(11, 107, 203, 1)"
           boxSizing="border-box"
         ></Box>
-
-        {/* Fixed Qiblah Symbol at the top (e.g., Kaaba) */}
         <Box
           position="absolute"
           top="10%"
@@ -299,8 +290,6 @@ const Qiblah = () => {
             {language === "ar" ? "القبلة" : "Qiblah"}
           </Typography>
         </Box>
-
-        {/* Rotating Arrow */}
         <Box
           position="absolute"
           top="50%"
@@ -314,8 +303,6 @@ const Qiblah = () => {
           <ArrowDownwardOutlinedIcon style={{ fontSize: 100, color: "blue" }} />
         </Box>
       </Box>
-
-      {/* Confirmation Message */}
       {isFacingQiblah && (
         <Typography
           variant="h6"
@@ -324,7 +311,6 @@ const Qiblah = () => {
           {t("facingQiblah")}
         </Typography>
       )}
-
       <Typography
         variant="body1"
         style={{

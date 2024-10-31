@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import "./home.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -22,79 +22,92 @@ const Home = ({ onNavClick }) => {
   const [selectedHadiths, setSelectedHadiths] = useState([]);
   const [hadithsLoading, setHadithsLoading] = useState(true);
   const [error, setError] = useState(null);
-  useEffect(() => {
-    localStorage.removeItem("last-category-position");
-  }, []);
 
-  useEffect(() => {
-    const fetchHadiths = async () => {
-      try {
-        // Fetch categories in the selected language
-        const categoriesResponse = await fetch(
-          `https://hadeethenc.com/api/v1/categories/list/?language=${language}`
-        );
-        if (!categoriesResponse.ok) {
-          throw new Error(`HTTP error! status: ${categoriesResponse.status}`);
-        }
-        const categoriesData = await categoriesResponse.json();
+  // Function to fetch Hadiths
+  const fetchHadiths = useCallback(async () => {
+    try {
+      setHadithsLoading(true); // Start loading
 
-        let allHadithIds = [];
-
-        // Limit the number of categories to fetch
-        const categoriesToFetch = categoriesData.slice(0, 5);
-
-        // Fetch Hadith IDs for each category
-        for (const category of categoriesToFetch) {
-          const hadithsResponse = await fetch(
-            `https://hadeethenc.com/api/v1/hadeeths/list/?language=${language}&category_id=${category.id}`
-          );
-          if (!hadithsResponse.ok) {
-            throw new Error(`HTTP error! status: ${hadithsResponse.status}`);
-          }
-          const hadithsData = await hadithsResponse.json();
-
-          if (
-            hadithsData &&
-            hadithsData.data &&
-            Array.isArray(hadithsData.data)
-          ) {
-            const ids = hadithsData.data.map((hadith) => hadith.id);
-            allHadithIds = allHadithIds.concat(ids);
-          } else {
-            console.error(
-              `Unexpected hadithsData structure for category ID ${category.id}:`,
-              hadithsData
-            );
-          }
-        }
-
-        // Remove duplicate IDs
-        allHadithIds = [...new Set(allHadithIds)];
-
-        // Shuffle the IDs
-        const shuffledIds = shuffleArray(allHadithIds);
-
-        // Limit the number of Hadiths to fetch to 10
-        const limitedIds = shuffledIds.slice(0, 100);
-
-        // Fetch Hadith details for the limited IDs
-        const hadithDetailsPromises = limitedIds.map((id) =>
-          fetchHadithDetails(id)
-        );
-        const hadithDetails = await Promise.all(hadithDetailsPromises);
-
-        setSelectedHadiths(hadithDetails.filter((hadith) => hadith !== null));
-        setHadithsLoading(false);
-      } catch (error) {
-        console.error("Error fetching Hadiths:", error);
-        setError("Failed to load Hadiths. Please try again later.");
-        setHadithsLoading(false);
+      // Fetch categories in the selected language
+      const categoriesResponse = await fetch(
+        `https://hadeethenc.com/api/v1/categories/list/?language=${language}`
+      );
+      if (!categoriesResponse.ok) {
+        throw new Error(`HTTP error! status: ${categoriesResponse.status}`);
       }
-    };
+      const categoriesData = await categoriesResponse.json();
 
-    fetchHadiths();
+      // Get the current limit from localStorage or start at 0
+      const storedLimit =
+        parseInt(localStorage.getItem("last-category-limit")) || 0;
+
+      // Determine the new limit
+      const newLimit = storedLimit + 5;
+
+      // Slice the categories data based on the current limit
+      const categoriesToFetch = categoriesData.slice(storedLimit, newLimit);
+
+      // Update the limit in localStorage
+      localStorage.setItem("last-category-limit", newLimit);
+
+      let allHadithIds = [];
+
+      // Fetch Hadith IDs for each category in the current slice
+      for (const category of categoriesToFetch) {
+        const hadithsResponse = await fetch(
+          `https://hadeethenc.com/api/v1/hadeeths/list/?language=${language}&category_id=${category.id}`
+        );
+        if (!hadithsResponse.ok) {
+          throw new Error(`HTTP error! status: ${hadithsResponse.status}`);
+        }
+        const hadithsData = await hadithsResponse.json();
+
+        if (
+          hadithsData &&
+          hadithsData.data &&
+          Array.isArray(hadithsData.data)
+        ) {
+          const ids = hadithsData.data.map((hadith) => hadith.id);
+          allHadithIds = allHadithIds.concat(ids);
+        } else {
+          console.error(
+            `Unexpected hadithsData structure for category ID ${category.id}:`,
+            hadithsData
+          );
+        }
+      }
+
+      // Remove duplicate IDs
+      allHadithIds = [...new Set(allHadithIds)];
+
+      // Shuffle the IDs
+      const shuffledIds = shuffleArray(allHadithIds);
+
+      // Limit the number of Hadiths to fetch to 100 (adjust as needed)
+      const limitedIds = shuffledIds.slice(0, 100);
+
+      // Fetch Hadith details for the limited IDs
+      const hadithDetailsPromises = limitedIds.map((id) =>
+        fetchHadithDetails(id)
+      );
+      const hadithDetails = await Promise.all(hadithDetailsPromises);
+
+      setSelectedHadiths((prevHadiths) => [
+        ...prevHadiths,
+        ...hadithDetails.filter((hadith) => hadith !== null),
+      ]);
+      setHadithsLoading(false);
+    } catch (error) {
+      console.error("Error fetching Hadiths:", error);
+      setError("Failed to load Hadiths. Please try again later.");
+      setHadithsLoading(false);
+    }
     // eslint-disable-next-line
-  }, [language]); // Depend on the language
+  }, [language]);
+
+  useEffect(() => {
+    fetchHadiths();
+  }, [fetchHadiths]);
 
   const fetchHadithDetails = async (id) => {
     try {
@@ -148,6 +161,7 @@ const Home = ({ onNavClick }) => {
 
   useEffect(() => {
     setIsReady(true);
+    localStorage.removeItem("last-category-position");
   }, []);
 
   return (
@@ -164,7 +178,7 @@ const Home = ({ onNavClick }) => {
           </div>
         ) : (
           <Slider {...settings}>
-            {hadithsLoading ? (
+            {hadithsLoading && selectedHadiths.length === 0 ? (
               // Show a loader or skeleton in place of the Hadith text
               <div className="carousel-item">
                 <img
@@ -218,6 +232,7 @@ const Home = ({ onNavClick }) => {
         )}
         <div className="custom-arrows"></div>
       </div>
+
       {/* Description */}
       <div className="container-fluid d-flex justify-content-center align-items-center card content">
         <div
