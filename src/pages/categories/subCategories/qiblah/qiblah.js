@@ -50,7 +50,6 @@ const Qiblah = () => {
     [language]
   );
 
-  // Define the threshold in degrees to consider as facing Qiblah
   const FACING_THRESHOLD = 5; // degrees
 
   useEffect(() => {
