@@ -3,6 +3,8 @@ import { Box, Typography, CircularProgress, Button } from "@mui/material";
 import ArrowDownwardOutlinedIcon from "@mui/icons-material/ArrowDownwardOutlined";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useTranslation } from "../../../../components/languages/provider";
+import Alert from "@mui/joy/Alert";
+import PrivacyTipOutlinedIcon from "@mui/icons-material/PrivacyTipOutlined";
 
 const translations = {
   en: {
@@ -165,22 +167,6 @@ const Qiblah = () => {
     return 0;
   };
 
-  if (errorMessage) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="100vh"
-        padding={2}
-      >
-        <Typography variant="h6" color="error" align="center">
-          {errorMessage}
-        </Typography>
-      </Box>
-    );
-  }
-
   if (locationLoading) {
     return (
       <Box
@@ -198,7 +184,21 @@ const Qiblah = () => {
       </Box>
     );
   }
-
+  if (errorMessage) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+        padding={2}
+      >
+        <Typography variant="h6" color="error" align="center">
+          {errorMessage}
+        </Typography>
+      </Box>
+    );
+  }
   if (!permissionGranted) {
     return (
       <Box
@@ -248,11 +248,31 @@ const Qiblah = () => {
       display="flex"
       flexDirection="column"
       alignItems="center"
-      minHeight="50vh"
+      minHeight="70vh"
       justifyContent="center"
       dir={language === "ar" ? "rtl" : "ltr"}
       padding={2}
     >
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          width: "100%",
+          mb: 3,
+        }}
+      >
+        <Alert
+          variant="outlined"
+          color="warning"
+          startDecorator={<PrivacyTipOutlinedIcon />}
+          sx={{ backgroundColor: "var(--card-color)" }}
+        >
+          {language === "ar"
+            ? "تنويه : قد لا يكون اتجاه القبلة صحيحًا، الموقع تحت الصيانة."
+            : "Notice : Qiblah direction may not be correct, the website is under maintenance."}
+        </Alert>
+      </Box>
       <Typography variant="h5" gutterBottom>
         {t("qiblahDirection")}
       </Typography>

@@ -536,16 +536,16 @@ const Tajweed = ({ audioName, documentName }) => {
               variant="h6"
               sx={{
                 textAlign: "center",
-                margin: "20px 0",
+                margin: "5px 0",
               }}
-              className="w-100 d-flex justify-content-center align-items-center mb-3"
+              className="w-100 d-flex justify-content-center align-items-center mb-1"
             >
               <span className="surah_name">
                 {parseInt(currentAyahNumber) === 1
                   ? language === "ar"
                     ? `【 سورة ${surahName?.name_arabic} 】`
                     : `[ ${surahName?.name_simple} ]`
-                  : ""}
+                  : null}
               </span>
             </Typography>
           )}
@@ -768,10 +768,10 @@ const Tajweed = ({ audioName, documentName }) => {
             style={{
               borderRadius: "4px",
               whiteSpace: "pre-wrap",
-              fontSize: "1.5rem",
+              fontSize: "2rem",
               textAlign: "justify",
             }}
-            className="tajweed-parent"
+            className="tajweed-parent "
           >
             {quranData.map((ayah, index) => (
               <React.Fragment key={ayah.id}>
