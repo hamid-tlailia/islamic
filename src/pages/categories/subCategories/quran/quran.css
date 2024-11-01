@@ -445,3 +445,103 @@
 .text-align-justify {
   text-align: justify !important;
 }
+
+/* Book flip animation */
+
+/* Flipbook styles */
+.flipbook-container {
+  perspective: 2000px;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.flipbook {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 1s;
+}
+
+.flipbook.rtl .page {
+  transform-origin: left;
+}
+
+.flipbook.ltr .page {
+  transform-origin: right;
+}
+
+.page {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: var(--card-color);
+  backface-visibility: hidden;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  transform: rotateY(0deg);
+  transition: transform 1s;
+}
+
+.page.flipped {
+  transform: rotateY(-180deg);
+}
+
+.flipbook.rtl .page.flipped {
+  transform: rotateY(180deg);
+}
+
+.page-content {
+  padding: 20px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.flipbook-controls {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+}
+
+.flipbook-button {
+  background-color: var(--main-color);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.flipbook-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.flipbook-page-indicator {
+  margin: 0 20px;
+  font-size: 1rem;
+}
+
+/* Adjust for RTL */
+.flipbook.rtl .flipbook-controls {
+  flex-direction: row-reverse;
+}
+
+.flipbook.rtl .flipbook-button.prev-button {
+  order: 2;
+}
+
+.flipbook.rtl .flipbook-button.next-button {
+  order: 1;
+}
+
+.flipbook.ltr .flipbook-button.prev-button {
+  order: 1;
+}
+
+.flipbook.ltr .flipbook-button.next-button {
+  order: 2;
+}

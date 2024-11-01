@@ -805,9 +805,14 @@ const Quran = ({ src, toTop }) => {
                   >
                     <div className="surah-number pe-none"> {surah.number} </div>
                     <div className="surah-names pe-none">
-                      <div className="surah-arabic-name"> {surah.name} </div>
+                      <div className="surah-arabic-name">
+                        {" "}
+                        {language === "ar"
+                          ? surah.name
+                          : surah.englishName}{" "}
+                      </div>
                       <h5 className="surah-english-name">
-                        {surah.englishName}
+                        {language === "ar" ? surah.englishName : surah.name}
                       </h5>
                     </div>
                     <div className="surah-infos pe-none">
@@ -1249,7 +1254,7 @@ const Quran = ({ src, toTop }) => {
                                 <span>
                                   {language === "ar"
                                     ? "جاري العمل..."
-                                    : "Working..."}
+                                    : "Loading..."}
                                 </span>
                               ) : (
                                 <div>
@@ -1333,30 +1338,34 @@ const Quran = ({ src, toTop }) => {
                         }}
                         ref={modalContainer}
                       >
-                        <p className="mx-2 m-2 w-100 text-center surah-title fs-3">
-                          ✧ {allAyahs?.name} ✧
-                        </p>
+                        {currentPageModal < 2 && (
+                          <p className="mx-2 m-2 w-100 text-center surah-title fs-3">
+                            ✧ {allAyahs?.name} ✧
+                          </p>
+                        )}
+
                         <div
                           className={
-                            allAyahs?.name === "سُورَةُ ٱلْفَاتِحَةِ" ||
-                            allAyahs?.name === "سُورَةُ التَّوۡبَةِ"
+                            allAyahs?.number === 1 || allAyahs?.number === 9
                               ? "d-none"
                               : "w-100 text-center me-3 my-3"
                           }
                         >
-                          {quranLangs === "English" ? (
-                            "In the name of God, The Most Gracious, The Dispenser of Grace"
-                          ) : quranLangs === "Arabe" ? (
-                            " بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ "
-                          ) : (
-                            <div className="d-flex flex-column gap-2">
-                              <p> بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ </p>
-                              <p>
-                                In the name of God, The Most Gracious, The
-                                Dispenser of Grace
-                              </p>
-                            </div>
-                          )}
+                          {currentPageModal < 2 ? (
+                            quranLangs === "English" ? (
+                              "In the name of God, The Most Gracious, The Dispenser of Grace"
+                            ) : quranLangs === "Arabe" ? (
+                              " بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ "
+                            ) : (
+                              <div className="d-flex flex-column gap-2">
+                                <p> بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ </p>
+                                <p>
+                                  In the name of God, The Most Gracious, The
+                                  Dispenser of Grace
+                                </p>
+                              </div>
+                            )
+                          ) : null}
                         </div>
                         <section
                           style={{
@@ -1375,7 +1384,10 @@ const Quran = ({ src, toTop }) => {
                             width: "100%",
                           }}
                         >
-                          <p style={{ margin: 0 }}>
+                          <p
+                            className="modal-ayahs-container"
+                            style={{ margin: 0 }}
+                          >
                             {totalAyahsModal > itemsPerPageModal
                               ? currentAyahsModal.map((ayah, index) => (
                                   <span
@@ -1471,8 +1483,7 @@ const Quran = ({ src, toTop }) => {
                                       {quranLangs === "Arabe" ||
                                       quranLangs === "Together" ? (
                                         <>
-                                          {allAyahs.name !==
-                                          "سُورَةُ ٱلْفَاتِحَةِ"
+                                          {allAyahs.number !== 1
                                             ? ayah.text.replace(
                                                 "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
                                                 ""
@@ -1638,7 +1649,7 @@ const Quran = ({ src, toTop }) => {
                 dangerouslySetInnerHTML={{ __html: signleAyahTafsirText }}
               ></span>
             ) : (
-              <span>{language === "ar" ? "جاري العمل..." : "Working..."}</span>
+              <span>{language === "ar" ? "جاري العمل..." : "Loading..."}</span>
             )}
           </Typography>
         </Sheet>
