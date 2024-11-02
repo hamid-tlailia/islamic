@@ -1,0 +1,219 @@
+/* radio.css */
+
+.radio-container {
+  position: relative;
+}
+
+.current-radio-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("./images/radio.jpg") ;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 99999999;
+}
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0.255); /* Semi-transparent overlay */
+  position: relative;
+}
+
+.header {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.current-radio-name {
+  color: green !important;
+  margin-left: 10px;
+  font-size: 1.2rem;
+}
+
+.equalizer {
+  position: absolute;
+  top: 150px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+}
+
+.equalizer-bar {
+  width: 10px;
+  height: 40px;
+  background-color: white;
+  animation: equalizerAnimation 1s infinite;
+}
+
+.equalizer-bar:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.equalizer-bar:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.equalizer-bar:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes equalizerAnimation {
+  0% {
+    transform: scaleY(0.4);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+  100% {
+    transform: scaleY(0.4);
+  }
+}
+.current-radio-info {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.current-radio-title {
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+.radio-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  border: 1px solid #2196f3;
+}
+
+.current-radio-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+}
+
+.current-radio-name {
+  font-size: 24px;
+  color: var(--text-color);
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px; /* Adjust as needed */
+}
+
+.radios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+.radio-card {
+  background-color: var(--card-color);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.6);
+}
+
+.radio-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.radio-card.active {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
+}
+
+.radio-image-container {
+  position: relative;
+  width: 100%;
+  padding-top: 75%; /* 4:3 Aspect Ratio */
+  overflow: hidden;
+}
+
+.radio-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.playing-indicator {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  display: flex;
+  gap: 3px;
+  z-index: 100;
+}
+
+.equalizer-bar {
+  width: 4px;
+  height: 10px;
+  background-color: var(--primary-color);
+  animation: equalizer 1s infinite ease-in-out;
+}
+
+.equalizer-bar:nth-child(1) {
+  animation-delay: -0.4s;
+}
+
+.equalizer-bar:nth-child(2) {
+  animation-delay: -0.2s;
+}
+
+.equalizer-bar:nth-child(3) {
+  animation-delay: 0s;
+}
+
+@keyframes equalizer {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(2);
+  }
+}
+
+.radio-name {
+  padding: 10px;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.text-primary {
+  color: var(--primary-color) !important;
+}
+
+/* Define CSS variables for theming */
+:root {
+  --background-color: #f9f9f9;
+  --card-color: #ffffff;
+  --border-color: #e0e0e0;
+  --text-color: #333333;
+  --primary-color: #2196f3; /* You can change this to your preferred primary color */
+}

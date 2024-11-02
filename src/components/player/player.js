@@ -11,6 +11,7 @@ import { useTranslation } from "../languages/provider";
 
 const Player = ({ show, hidePlayer, src, surah_name, title }) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isLiveStream, setIsLiveStream] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
@@ -30,11 +31,10 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-
     const updateProgress = () => {
       setCurrentTime(audio.currentTime);
       setDuration(audio.duration);
-      if (progressRef.current) {
+      if (progressRef.current && isFinite(audio.duration)) {
         progressRef.current.value = (audio.currentTime / audio.duration) * 100;
       }
     };
@@ -42,6 +42,12 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
     const handleLoadedData = () => {
       setDuration(audio.duration);
       setLoaded(false);
+      if (isNaN(audio.duration) || !isFinite(audio.duration)) {
+        // Live stream detected
+        setIsLiveStream(true);
+      } else {
+        setIsLiveStream(false);
+      }
       updateProgress();
     };
 
@@ -54,24 +60,34 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
       }
     };
 
+    const handleWaiting = () => {
+      setLoaded(true);
+    };
+
+    const handlePlaying = () => {
+      setLoaded(false);
+    };
+
     const handleEnded = () => {
       audio.currentTime = 0;
       audio.pause();
       setIsPlaying(false);
     };
 
-    // Listen for pause events from external controls (e.g., notification tray)
     const handlePauseFromExternal = () => {
       setIsPlaying(false);
     };
-    // Listen for play events from external controls (e.g., notification tray)
+
     const handlePlayFromExternal = () => {
       setIsPlaying(true);
     };
+
     // Add event listeners
     audio.addEventListener("timeupdate", updateProgress);
     audio.addEventListener("loadeddata", handleLoadedData);
     audio.addEventListener("loadstart", handleLoadStart);
+    audio.addEventListener("waiting", handleWaiting);
+    audio.addEventListener("playing", handlePlaying);
     audio.addEventListener("ended", handleEnded);
     audio.addEventListener("pause", handlePauseFromExternal);
     audio.addEventListener("play", handlePlayFromExternal);
@@ -81,6 +97,8 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
       audio.removeEventListener("timeupdate", updateProgress);
       audio.removeEventListener("loadeddata", handleLoadedData);
       audio.removeEventListener("loadstart", handleLoadStart);
+      audio.removeEventListener("waiting", handleWaiting);
+      audio.removeEventListener("playing", handlePlaying);
       audio.removeEventListener("ended", handleEnded);
       audio.removeEventListener("pause", handlePauseFromExternal);
       audio.removeEventListener("play", handlePlayFromExternal);
@@ -130,13 +148,14 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
 
   const handleProgressChange = (e) => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || isLiveStream) return;
 
     const progress = e.target.value;
     audio.currentTime = (progress / 100) * audio.duration;
   };
 
   const formatTime = (time) => {
+    if (isNaN(time) || !isFinite(time)) return "-:-";
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
@@ -192,7 +211,7 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
           : "quran-player d-flex flex-column justify-content-center align-items-center"
       }
     >
-      <div className="text-center surah-name">
+      <div className="text-center surah-name mb-1">
         {surah_name && `✧ ${surah_name} ✧`}
       </div>
       <audio
@@ -233,17 +252,28 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
         <input
           type="range"
           id="range"
-          className={loaded ? "w-100 bar mt-1 pe-none" : "w-100 bar mt-1"}
+          className={`${
+            loaded || isLiveStream ? "pe-none" : ""
+          } w-100 bar mt-1`}
           ref={progressRef}
           onChange={handleProgressChange}
           min="0"
           max="100"
         />
         <span className="duration">
-          {loaded ? "-:-" : formatTime(duration)}
+          {isLiveStream ? (
+            <span className="live-indicator">
+              <span className="red-dot"></span>
+              {language === "ar" ? "مباشر" : "Live"}
+            </span>
+          ) : loaded ? (
+            "-:-"
+          ) : (
+            formatTime(duration)
+          )}
         </span>
         <div className="buttons">
-          {!loaded && (
+          {!loaded && !isLiveStream && (
             <button
               className="btn btn-gold text-primary p-0"
               onClick={handleDownload}

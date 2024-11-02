@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button } from "@mui/material";
+import {
+  Button,
+  Tabs,
+  Tab,
+  Card,
+  CardContent,
+  Typography,
+} from "@mui/material";
 import { Autocomplete, FormControl, FormLabel } from "@mui/joy";
 import "./tafsir.css";
 import { useTranslation } from "../../../../components/languages/provider";
@@ -9,6 +16,8 @@ import DOMPurify from "dompurify"; // Import DOMPurify for sanitization
 import { franc } from "franc";
 import { toast } from "react-toastify";
 import Alert from "@mui/material/Alert";
+import CircularProgress from "@mui/material/CircularProgress";
+import GraphicEqOutlinedIcon from "@mui/icons-material/GraphicEqOutlined";
 
 const TafsirContainer = styled.div`
   padding: 1rem;
@@ -32,7 +41,18 @@ const TafsirContent = styled.div`
   margin-bottom: 35px;
 `;
 
-const Tafsir = ({ toTop }) => {
+const AudioTafsirCard = styled(Card)`
+  margin: 1rem;
+  cursor: pointer;
+  background-color: var(--card-color) !important;
+  color: var(--text-color) !important;
+
+  &.active {
+    border: 2px solid mediumvioletred;
+  }
+`;
+
+const Tafsir = ({ toTop, src, audioName }) => {
   const [langs, setLangs] = useState("arabic");
   const [surahs, setSurahs] = useState([]);
   const [selectedSurah, setSelectedSurah] = useState(null);
@@ -41,7 +61,7 @@ const Tafsir = ({ toTop }) => {
   const [tafsirList, setTafsirList] = useState([]);
   const [ayahList, setAyahList] = useState([]);
   const [warning, setWarning] = useState("");
-  const [tafsir, setTafsir] = useState([]); // Initialize as an array
+  const [tafsir, setTafsir] = useState([]); // Text tafsir
   const [optionsVisible, setOptionsVisible] = useState(true);
   const [loading, setLoading] = useState(false);
   const [alignmentClass, setAlignmentClass] = useState("w-100 my-3 text-end");
@@ -50,6 +70,19 @@ const Tafsir = ({ toTop }) => {
   const [currentPage, setCurrentPage] = useState(1); // For pagination
   const itemsPerPage = 1; // Number of tafsir items per page
   const parentRef = useRef(null);
+
+  // New state variables for tabs and audio tafsir
+  const [tabIndex, setTabIndex] = useState(0);
+  const [audioTafsirData, setAudioTafsirData] = useState([]);
+  const [audioLoading, setAudioLoading] = useState(false);
+  const [activeAudioCardId, setActiveAudioCardId] = useState(null);
+
+  // Pagination for audio tafsir
+  const initialAudioPage =
+    parseInt(localStorage.getItem("audioTafsirPage"), 10) || 1;
+  const [audioCurrentPage, setAudioCurrentPage] = useState(initialAudioPage);
+
+  const audioItemsPerPage = 10; // Number of audio tafsir cards per page
 
   const { language } = useTranslation();
 
@@ -211,8 +244,19 @@ const Tafsir = ({ toTop }) => {
         true
       );
     }
+
+    // Load activeAudioCardId and audioCurrentPage from localStorage
+    const savedActiveAudioCardId = localStorage.getItem("activeAudioCardId");
+    if (savedActiveAudioCardId) {
+      setActiveAudioCardId(parseInt(savedActiveAudioCardId, 10));
+    }
+
+    const savedAudioTafsirPage = localStorage.getItem("audioTafsirPage");
+    if (savedAudioTafsirPage) {
+      setAudioCurrentPage(parseInt(savedAudioTafsirPage, 10));
+    }
     // eslint-disable-next-line
-  }, [surahs]);
+  }, [surahs]); // Empty dependency array to run only once on mount
 
   const handleSubmit = (
     langParam,
@@ -332,6 +376,11 @@ const Tafsir = ({ toTop }) => {
       localStorage.setItem("savedCurrentPage", currentPage);
     }
   }, [currentPage, selectedAyah, tafsir]);
+
+  // Save audioCurrentPage to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem("audioTafsirPage", audioCurrentPage);
+  }, [audioCurrentPage]);
 
   // Helper function to get the display value based on the current language
   const getDisplayLangValue = (lang) => {
@@ -552,156 +601,351 @@ const Tafsir = ({ toTop }) => {
         );
       }
     }
-  }, [selectedAyah, langs, surahs, selectedSurah]);
+    // eslint-disable-next-line
+  }, [selectedAyah, surahs]);
+
+  // Handle tab change
+  const handleTabChange = (event, newValue) => {
+    setTabIndex(newValue);
+  };
+
+  // Fetch Audio Tafsir Data
+  useEffect(() => {
+    if (tabIndex === 1) {
+      fetchAudioTafsirData();
+    }
+    // eslint-disable-next-line
+  }, [tabIndex, langs]);
+
+  const fetchAudioTafsirData = () => {
+    setAudioLoading(true);
+    const languageCode = langs === "arabic" ? "ar" : "en";
+    fetch(
+      `https://www.mp3quran.net/api/v3/tafsir?tafsir=1&language=${languageCode}`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.tafasir && data.tafasir.soar) {
+          const soarData = data.tafasir.soar;
+          setAudioTafsirData(soarData);
+        } else {
+          setAudioTafsirData([]);
+        }
+        setAudioLoading(false);
+      })
+      .catch((error) => {
+        setIsErrorFetching(true);
+        setAudioLoading(false);
+      });
+  };
+
+  const handlePlayAudio = (url, name, id) => {
+    src(url);
+    audioName(name);
+    setActiveAudioCardId(id);
+    localStorage.setItem("activeAudioCardId", id);
+  };
 
   return (
     <div ref={parentRef}>
-      {tafsir.length === 0 && (
-        <Alert
-          variant="outlined"
-          severity="success"
+      {/* Tabs at the top, full width */}
+      <Tabs
+        value={tabIndex}
+        onChange={handleTabChange}
+        variant="fullWidth"
+        indicatorColor="primary"
+        className="navs shadow-1-strong rounded-2 mx-2"
+        textColor="primary"
+        style={{ marginBottom: "1rem" }}
+      >
+        <Tab
+          label={language === "ar" ? "تفسير النص" : "Text Tafsir"}
           sx={{
-            fontSize: "17px",
-            width: "90%",
-            margin: "10px",
-            textAlign: "center",
-            display: "flex",
-            flexDirection: "row",
-            gap: "5px",
-            padding: "5px",
-            color: "#169777",
-            border: "1px solid #169777",
-            direction: language === "ar" ? "rtl" : "ltr",
+            color:
+              tabIndex === 0
+                ? "mediumvioletred !important"
+                : "var(--text-color)",
+            fontWeight: tabIndex === 0 ? "bold" : "normal",
           }}
-        >
-          {language === "ar"
-            ? "للعلم: في حال عدم اختيار الآية، سيتم تفسير السورة كاملة. يتم حفظ المعلومات الخاصة بك في كل مرة تبحث فيها عن تفسير جديد."
-            : "Note: If no Ayah is selected, the entire Surah will be explained. Your selections are saved every time you search for a new Tafsir."}
-        </Alert>
+          className="quranTabs"
+        />
+        <Tab
+          label={language === "ar" ? "تفسير صوتي" : "Audio Tafsir"}
+          sx={{
+            color:
+              tabIndex === 1
+                ? "mediumvioletred !important"
+                : "var(--text-color)",
+            fontWeight: tabIndex === 1 ? "bold" : "normal",
+          }}
+          className="quranTabs"
+        />
+      </Tabs>
+
+      {tabIndex === 0 && (
+        <>
+          {/* Text Tafsir Tab Content */}
+          {/* Move the alert and dropdowns here */}
+          {tafsir.length === 0 && (
+            <Alert
+              variant="outlined"
+              severity="success"
+              sx={{
+                fontSize: "17px",
+                width: "90%",
+                margin: "10px",
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "row",
+                gap: "5px",
+                padding: "5px",
+                color: "#169777",
+                border: "1px solid #169777",
+                direction: language === "ar" ? "rtl" : "ltr",
+              }}
+            >
+              {language === "ar"
+                ? "للعلم: في حال عدم اختيار الآية، سيتم تفسير السورة كاملة. يتم حفظ المعلومات الخاصة بك في كل مرة تبحث فيها عن تفسير جديد."
+                : "Note: If no Ayah is selected, the entire Surah will be explained. Your selections are saved every time you search for a new Tafsir."}
+            </Alert>
+          )}
+
+          {renderDropdowns()}
+          <hr />
+
+          {loading ? (
+            <div>{<Loader />}</div>
+          ) : tafsir.length > 0 ? (
+            <>
+              <TafsirContainer>
+                {/* Explained ayah text */}
+                {!optionsVisible && (
+                  <div className="">
+                    {" "}
+                    {currentExplainedAyah !== null ? (
+                      <p className="w-100 text-center my-2 explained-ayah d-flex flex-column gap-2 justify-content-center align-items-center">
+                        <span>✦ {currentExplainedAyah?.text} ✦</span>
+                        <span className="mx-2" style={{ color: "#169777" }}>
+                          [
+                          {langs === "arabic"
+                            ? currentExplainedAyah?.surah.name
+                            : currentExplainedAyah?.surah.englishName}
+                          {" : "}
+                          {currentExplainedAyah?.numberInSurah}]
+                        </span>
+                      </p>
+                    ) : (
+                      <p className="w-100 text-center my-2 explained-ayah">
+                        ✦{" "}
+                        {langs === "arabic"
+                          ? surahs.find(
+                              (s) => s.number === selectedSurah?.value
+                            )?.name
+                          : surahs.find(
+                              (s) => s.number === selectedSurah?.value
+                            )?.englishName}{" "}
+                        ✦
+                      </p>
+                    )}
+                  </div>
+                )}
+                {(() => {
+                  const indexOfLastItem = currentPage * itemsPerPage;
+                  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+                  const currentTafsirItems = tafsir.slice(
+                    indexOfFirstItem,
+                    indexOfLastItem
+                  );
+                  const totalPages = Math.ceil(tafsir.length / itemsPerPage);
+
+                  return (
+                    <>
+                      <div
+                        className={`w-100  text-primary fw-bold  my-3 ${
+                          langs === "arabic" && language === "ar"
+                            ? "ltr text-end"
+                            : "rtl text-start"
+                        }`}
+                      >
+                        <span>
+                          {totalPages} / {currentPage}{" "}
+                          {language === "ar" && langs === "arabic"
+                            ? "الصفحة"
+                            : "Page"}
+                        </span>
+                      </div>
+                      {currentTafsirItems.map((tafsirText, index) => (
+                        <TafsirContent
+                          key={index + indexOfFirstItem}
+                          className={alignmentClass}
+                          dangerouslySetInnerHTML={{ __html: tafsirText }}
+                        />
+                      ))}
+                      {/* Pagination buttons */}
+                      <div className="pagination-buttons w-100 text-center d-flex flex-row gap-3 justify-content-center align-items-center my-3">
+                        {currentPage > 1 && (
+                          <Button
+                            variant="outlined"
+                            onClick={() => {
+                              setCurrentPage(currentPage - 1);
+                              toTop();
+                            }}
+                            style={{ marginRight: "10px" }}
+                          >
+                            {langs === "arabic" && language === "ar"
+                              ? "السابق"
+                              : "Previous"}
+                          </Button>
+                        )}
+                        {currentPage < totalPages && (
+                          <Button
+                            variant="outlined"
+                            onClick={() => {
+                              setCurrentPage(currentPage + 1);
+                              toTop();
+                            }}
+                          >
+                            {langs === "arabic" && language === "ar"
+                              ? "التالي"
+                              : "Next"}
+                          </Button>
+                        )}
+                      </div>
+                    </>
+                  );
+                })()}
+              </TafsirContainer>
+            </>
+          ) : (
+            <div className="w-100 my-5 p-4 text-center  border rounded shadow">
+              <p className="text-primary font-weight-bold">
+                {language === "ar"
+                  ? "﴿وَاتَّقُوا اللَّهَ وَيُعَلِّمُكُمُ اللَّهُ وَاللَّهُ بِكُلِّ شَيْءٍ عَلِيمٌ﴾"
+                  : "“And fear Allah. And Allah teaches you. And Allah is Knowing of all things.”"}
+              </p>
+              <p>
+                {language === "ar"
+                  ? "سورة البقرة، الآية 282"
+                  : "Surah Al-Baqarah, Ayah 282"}
+              </p>
+
+              <div className="mt-4 p-3 text-dark bg-warning rounded">
+                <h5 className="font-weight-bold">
+                  {language === "ar" ? "التفسير" : "Tafsir"}
+                </h5>
+                <p className="text-justify">
+                  {language === "ar"
+                    ? "في هذه الآية الكريمة، يأمر الله المؤمنين بتقواه، ويبيّن لهم أن التقوى تؤدي إلى تعليم الله لهم. العلم هنا يشمل المعرفة بالدين والدنيا، وهو مرتبط بشكل مباشر بتقوى الله."
+                    : "In this noble Ayah, Allah commands the believers to have Taqwa (piety), and He makes it clear that piety leads to Allah teaching them. The knowledge mentioned here encompasses both religious and worldly matters, and it is directly related to the fear of Allah."}
+                </p>
+              </div>
+            </div>
+          )}
+        </>
       )}
 
-      {renderDropdowns()}
-      <hr />
-      {/* Tafsir area */}
-      {loading ? (
-        <div>{<Loader />}</div>
-      ) : tafsir.length > 0 ? (
+      {tabIndex === 1 && (
         <>
-          <TafsirContainer>
-            {/* Explained ayah text */}
-            {!optionsVisible && (
-              <p className="w-100 text-center my-2 explained-ayah">
-                ✦{" "}
-                {currentExplainedAyah !== null
-                  ? currentExplainedAyah?.text
-                  : langs === "arabic"
-                  ? surahs.find((s) => s.number === selectedSurah?.value)?.name
-                  : surahs.find((s) => s.number === selectedSurah?.value)
-                      ?.englishName}
-                ✦
-                {currentExplainedAyah !== null && (
-                  <span className="mx-2" style={{ color: "#169777" }}>
-                    [
-                    {langs === "arabic"
-                      ? currentExplainedAyah?.surah.name
-                      : currentExplainedAyah?.surah.englishName}
-                    {" : "}
-                    {currentExplainedAyah?.numberInSurah}]
-                  </span>
-                )}
-              </p>
-            )}
-            {(() => {
-              const indexOfLastItem = currentPage * itemsPerPage;
-              const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-              const currentTafsirItems = tafsir.slice(
-                indexOfFirstItem,
-                indexOfLastItem
-              );
-              const totalPages = Math.ceil(tafsir.length / itemsPerPage);
+          {/* Audio Tafsir Tab Content */}
+          {audioLoading ? (
+            <div className="w-100 text-center loader-placeholder">
+              <CircularProgress />
+            </div>
+          ) : audioTafsirData.length > 0 ? (
+            <>
+              {(() => {
+                const audioIndexOfLastItem =
+                  audioCurrentPage * audioItemsPerPage;
+                const audioIndexOfFirstItem =
+                  audioIndexOfLastItem - audioItemsPerPage;
+                const currentAudioTafsirItems = audioTafsirData.slice(
+                  audioIndexOfFirstItem,
+                  audioIndexOfLastItem
+                );
+                const totalAudioPages = Math.ceil(
+                  audioTafsirData.length / audioItemsPerPage
+                );
 
-              return (
-                <>
-                  <div
-                    className={`w-100  text-primary fw-bold  my-3 ${
-                      langs === "arabic" && language === "ar"
-                        ? "ltr text-end"
-                        : "rtl text-start"
-                    }`}
-                  >
-                    <span>
-                      {totalPages} / {currentPage}{" "}
-                      {language === "ar" && langs === "arabic"
-                        ? "الصفحة"
-                        : "Page"}
-                    </span>
-                  </div>
-                  {currentTafsirItems.map((tafsirText, index) => (
-                    <TafsirContent
-                      key={index + indexOfFirstItem}
-                      className={alignmentClass}
-                      dangerouslySetInnerHTML={{ __html: tafsirText }}
-                    />
-                  ))}
-                  {/* Pagination buttons */}
-                  <div className="pagination-buttons w-100 text-center d-flex flex-row gap-3 justify-content-center align-items-center my-3">
-                    {currentPage > 1 && (
-                      <Button
-                        variant="outlined"
-                        onClick={() => {
-                          setCurrentPage(currentPage - 1);
-                          toTop();
-                        }}
-                        style={{ marginRight: "10px" }}
-                      >
-                        {langs === "arabic" && language === "ar"
-                          ? "السابق"
-                          : "Previous"}
-                      </Button>
-                    )}
-                    {currentPage < totalPages && (
-                      <Button
-                        variant="outlined"
-                        onClick={() => {
-                          setCurrentPage(currentPage + 1);
-                          toTop();
-                        }}
-                      >
-                        {langs === "arabic" && language === "ar"
-                          ? "التالي"
-                          : "Next"}
-                      </Button>
-                    )}
-                  </div>
-                </>
-              );
-            })()}
-          </TafsirContainer>
-        </>
-      ) : (
-        <div className="w-100 my-5 p-4 text-center  border rounded shadow">
-          <p className="text-primary font-weight-bold">
-            {language === "ar"
-              ? "﴿وَاتَّقُوا اللَّهَ وَيُعَلِّمُكُمُ اللَّهُ وَاللَّهُ بِكُلِّ شَيْءٍ عَلِيمٌ﴾"
-              : "“And fear Allah. And Allah teaches you. And Allah is Knowing of all things.”"}
-          </p>
-          <p>
-            {language === "ar"
-              ? "سورة البقرة، الآية 282"
-              : "Surah Al-Baqarah, Ayah 282"}
-          </p>
-
-          <div className="mt-4 p-3 text-dark bg-warning rounded">
-            <h5 className="font-weight-bold">
-              {language === "ar" ? "التفسير" : "Tafsir"}
-            </h5>
-            <p className="text-justify">
+                return (
+                  <>
+                    <div className="d-flex flex-row gap-2 w-100 justify-content-center align-items-center text-primary p-2">
+                      {" "}
+                      <span>
+                        {language === "ar" ? " الصفحة " : " Page "}{" "}
+                        {audioCurrentPage}{" "}
+                      </span>
+                      <span>
+                        {language === "ar" ? " من " : " From "}{" "}
+                        {totalAudioPages}{" "}
+                      </span>{" "}
+                    </div>
+                    <div className="audio-tafsir-parent w-100">
+                      {currentAudioTafsirItems.map((item) => (
+                        <AudioTafsirCard
+                          key={item.id}
+                          onClick={() =>
+                            handlePlayAudio(item.url, item.name, item.id)
+                          }
+                          className={`audio-tafsir-container  d-flex flex-row gap-2 ${
+                            item.id === activeAudioCardId ? "active" : ""
+                          }`}
+                        >
+                          <GraphicEqOutlinedIcon
+                            className={
+                              item.id === activeAudioCardId
+                                ? "text-primary"
+                                : ""
+                            }
+                          />
+                          <CardContent className="d-flex flex-column justify-content-center align-items-center gap-2">
+                            <Typography variant="h5" color="primary">
+                              {language === "ar"
+                                ? "الخلاصة من تفسير الطبري"
+                                : "Summary from Tafsir Al-Tabari Arabic only"}{" "}
+                            </Typography>
+                            <Typography variant="h6">{item.name}</Typography>
+                          </CardContent>
+                        </AudioTafsirCard>
+                      ))}
+                    </div>
+                    {/* Pagination buttons */}
+                    <div className="pagination-buttons w-100 text-center d-flex flex-row gap-3 justify-content-center align-items-center my-3">
+                      {audioCurrentPage > 1 && (
+                        <Button
+                          variant="outlined"
+                          onClick={() => {
+                            setAudioCurrentPage(audioCurrentPage - 1);
+                            toTop();
+                          }}
+                          style={{ marginRight: "10px" }}
+                        >
+                          {language === "ar" ? "السابق" : "Previous"}
+                        </Button>
+                      )}
+                      {audioCurrentPage < totalAudioPages && (
+                        <Button
+                          variant="outlined"
+                          onClick={() => {
+                            setAudioCurrentPage(audioCurrentPage + 1);
+                            toTop();
+                          }}
+                        >
+                          {language === "ar" ? "التالي" : "Next"}
+                        </Button>
+                      )}
+                    </div>
+                  </>
+                );
+              })()}
+            </>
+          ) : (
+            <Typography variant="body1">
               {language === "ar"
-                ? "في هذه الآية الكريمة، يأمر الله المؤمنين بتقواه، ويبيّن لهم أن التقوى تؤدي إلى تعليم الله لهم. العلم هنا يشمل المعرفة بالدين والدنيا، وهو مرتبط بشكل مباشر بتقوى الله."
-                : "In this noble Ayah, Allah commands the believers to have Taqwa (piety), and He makes it clear that piety leads to Allah teaching them. The knowledge mentioned here encompasses both religious and worldly matters, and it is directly related to the fear of Allah."}
-            </p>
-          </div>
-        </div>
+                ? "لا توجد بيانات تفسير صوتي متاحة."
+                : "No audio tafsir data available."}
+            </Typography>
+          )}
+        </>
       )}
     </div>
   );

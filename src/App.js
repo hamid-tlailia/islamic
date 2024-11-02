@@ -59,8 +59,8 @@ const Tasbih = lazy(() =>
 const Times = lazy(() =>
   import("./pages/categories/subCategories/times/times")
 );
-const Qiblah = lazy(() =>
-  import("./pages/categories/subCategories/qiblah/qiblah")
+const Radio = lazy(() =>
+  import("./pages/categories/subCategories/qiblah/radio")
 );
 const Fiqh = lazy(() => import("./pages/categories/subCategories/fiqh/fiqh"));
 const Historic = lazy(() =>
@@ -343,11 +343,11 @@ function App() {
                     />
                     <Route
                       path="tafsir"
-                      element={<Tafsir toTop={() => setBackToTop(true)} />}
+                      element={<Tafsir toTop={() => setBackToTop(true)} src={playerSrc} audioName={nowPlayingName} />}
                     />
                     <Route path="tasbih" element={<Tasbih />} />
                     <Route path="times" element={<Times />} />
-                    <Route path="qiblah" element={<Qiblah />} />
+                    <Route path="radio" element={<Radio  src={playerSrc} audioName={nowPlayingName} isPlaying={isNowPlaying}/>} />
                     <Route
                       path="fiqh"
                       element={

@@ -13,7 +13,7 @@ import tasbih from "../images/tasbih.png";
 import wasia from "../images/wasia.png";
 import islam from "../images/islam.png";
 import be from "../images/be.png";
-import qiblah from "../images/qiblah.png";
+import radio from "../images/radio.png";
 import fiqh from "../images/fiqh.png";
 import history from "../images/history.png";
 import arabic from "../images/arabic.png";
@@ -80,8 +80,8 @@ const navLinks = [
     title: "wisdomAndAdmonitions",
   },
   {
-    path: "qiblah",
-    title: "qiblahDirection",
+    path: "radio",
+    title: "QuranRadio",
   },
   {
     path: "fiqh",
@@ -387,11 +387,11 @@ const Categories = ({
                   {translations.wisdomAndAdmonitions}
                 </span>
               </NavLink>
-              <NavLink className="div" to="qiblah">
-                <img src={qiblah} className="w-100" alt="divs" />
-                <span id="qiblahDirection">
+              <NavLink className="div" to="radio">
+                <img src={radio} className="w-100" alt="divs" />
+                <span id="QuranRadio">
                   {" "}
-                  {translations.qiblahDirection}
+                  {translations.QuranRadio}
                 </span>
               </NavLink>
               <NavLink className="div" to="fiqh">
