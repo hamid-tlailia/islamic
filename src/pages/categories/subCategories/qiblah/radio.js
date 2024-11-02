@@ -17,7 +17,7 @@ const Radio = ({ src, audioName, isPlaying, toTop }) => {
   const [currentRadio, setCurrentRadio] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showRadiosGrid, setShowRadiosGrid] = useState(true);
-
+  const [searchResultMessage, setSearchResultMessage] = useState("");
   useEffect(() => {
     // Fetch the radios data from the API
     fetch("https://mp3quran.net/api/v3/radios")
@@ -48,13 +48,25 @@ const Radio = ({ src, audioName, isPlaying, toTop }) => {
   useEffect(() => {
     if (searchTerm === "") {
       setFilteredRadios(radios);
+      setSearchResultMessage("");
     } else {
       const lowerCaseSearchTerm = searchTerm.toLowerCase();
       const filtered = radios.filter((radio) =>
         radio.name.toLowerCase().includes(lowerCaseSearchTerm)
       );
-      setFilteredRadios(filtered);
+      if (filtered.length > 0) {
+        setFilteredRadios(filtered);
+        setSearchResultMessage("");
+      } else {
+        setSearchResultMessage(
+          language === "ar"
+            ? "عذرًا، لا يوجد راديو بهذا الاسم"
+            : "Sorry, no radio found with this name"
+        );
+        setFilteredRadios([]); // Clear the filtered list if no match is found
+      }
     }
+    // eslint-disable-next-line
   }, [searchTerm, radios]);
 
   // Scroll to the currently playing radio when the grid is shown
@@ -179,6 +191,11 @@ const Radio = ({ src, audioName, isPlaying, toTop }) => {
                 </div>
               )}
             </div>
+            {searchResultMessage !== "" && (
+              <div className="alert alert-danger w-100">
+                {searchResultMessage}{" "}
+              </div>
+            )}
             <div className="radios-grid">
               {filteredRadios.map((radio) => (
                 <div

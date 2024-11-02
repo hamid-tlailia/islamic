@@ -1,11 +1,12 @@
 .container-fluid {
   position: relative !important;
+  padding: 0 !important;
+  margin-top: 0 !important;
 }
 .categories {
   position: relative;
   width: 100%;
   height: 100%;
-  margin-top: 1vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -18,7 +19,7 @@
   margin-top: auto;
   width: 90%;
   border: var(--search-border);
-  padding: 0;
+  padding: 0 !important;
   overflow-y: auto;
   height: 100%;
 }
@@ -26,6 +27,7 @@
 @media screen and (max-width: 754px) {
   .categories .content {
     width: 100%;
+    margin-top: 0;
   }
 }
 @media screen and (max-width: 754px) and (orientation: landscape) {
@@ -123,17 +125,21 @@
   justify-content: space-between;
   align-items: center;
   text-align: center;
+  padding-block: 0 !important;
+  padding-inline: 5px !important;
 }
 .outlets-top p:nth-child(1) {
   color: rgb(70, 17, 182);
   font-size: 25px;
   letter-spacing: 2px;
+  margin-top: 5px;
 }
 .outlets-top p:nth-child(2) {
   color: red;
   cursor: pointer;
   margin-inline: 5px;
   z-index: 999999;
+  margin-top: 5px;
 }
 
 .back {

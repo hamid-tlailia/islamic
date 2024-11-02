@@ -141,7 +141,7 @@ html {
   direction: rtl;
   overflow-x: hidden;
   font-family: "Cairo", sans-serif;
-  user-select: red;
+  padding: 0 !important;
 }
 body *::selection {
   background-color: #164119;
@@ -155,12 +155,13 @@ body *::-moz-selection {
 }
 
 body {
-  padding-top: 90px !important;
+  padding-top: 85px !important;
 }
 @media screen and (max-width: 500px) {
-  html,
   body {
-    padding-top: 0 !important;
+    padding-top: 0px !important;
+    margin-top: 0;
+    margin-bottom: 0;
   }
 }
 

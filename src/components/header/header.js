@@ -306,7 +306,7 @@ const Header = ({ onNavClick, visibility, size }) => {
   }, []);
 
   return (
-    <div className="bg-transparent">
+    <div className="bg-transparent mb-0">
       <header
         className={`navbar navbar-expand-lg bg-light fixed-top ${
           language === "en" ? "ltr" : "rtl"
