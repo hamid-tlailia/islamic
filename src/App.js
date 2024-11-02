@@ -343,11 +343,27 @@ function App() {
                     />
                     <Route
                       path="tafsir"
-                      element={<Tafsir toTop={() => setBackToTop(true)} src={playerSrc} audioName={nowPlayingName} />}
+                      element={
+                        <Tafsir
+                          toTop={() => setBackToTop(true)}
+                          src={playerSrc}
+                          audioName={nowPlayingName}
+                        />
+                      }
                     />
                     <Route path="tasbih" element={<Tasbih />} />
                     <Route path="times" element={<Times />} />
-                    <Route path="radio" element={<Radio  src={playerSrc} audioName={nowPlayingName} isPlaying={isNowPlaying}/>} />
+                    <Route
+                      path="radio"
+                      element={
+                        <Radio
+                          src={playerSrc}
+                          audioName={nowPlayingName}
+                          isPlaying={isNowPlaying}
+                          toTop={() => setBackToTop(true)}
+                        />
+                      }
+                    />
                     <Route
                       path="fiqh"
                       element={

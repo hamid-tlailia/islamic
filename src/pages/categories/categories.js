@@ -389,10 +389,7 @@ const Categories = ({
               </NavLink>
               <NavLink className="div" to="radio">
                 <img src={radio} className="w-100" alt="divs" />
-                <span id="QuranRadio">
-                  {" "}
-                  {translations.QuranRadio}
-                </span>
+                <span id="QuranRadio"> {translations.QuranRadio}</span>
               </NavLink>
               <NavLink className="div" to="fiqh">
                 <img src={fiqh} alt="divs" />

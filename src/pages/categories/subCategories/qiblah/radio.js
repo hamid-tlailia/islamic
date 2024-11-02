@@ -4,10 +4,15 @@ import "./radio.css"; // Ensure this CSS file is updated
 import { Typography, CircularProgress } from "@mui/material";
 import radioImage from "./images/radio.jpg";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from "@mui/icons-material/Close";
 
-const Qiblah = ({ src, audioName, isPlaying }) => {
+const Radio = ({ src, audioName, isPlaying, toTop }) => {
   const { language } = useTranslation();
   const [radios, setRadios] = useState([]);
+  const [filteredRadios, setFilteredRadios] = useState([]); // For search
+  const [searchTerm, setSearchTerm] = useState(""); // Search term
+  const [showSearch, setShowSearch] = useState(false); // Whether to show search input
   const [activeRadioId, setActiveRadioId] = useState(null);
   const [currentRadio, setCurrentRadio] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,11 +24,17 @@ const Qiblah = ({ src, audioName, isPlaying }) => {
       .then((response) => response.json())
       .then((data) => {
         if (data.radios) {
-          // Filter out radios with IDs from 109040 to 109059
-          const filteredRadios = data.radios.filter(
-            (radio) => radio.id < 109040 || radio.id > 109059
+          // Only include radios with specified IDs
+          const allowedRadioIds = [
+            1, 2, 3, 10, 11, 14, 17, 18, 26, 30, 33, 48, 52, 53, 58, 63, 69, 79,
+            105, 108, 109, 110, 113, 114, 115, 116, 117, 123, 21114, 21116,
+            21117, 307, 10902, 10903, 10904, 10906, 10907, 109061,
+          ];
+          const filteredRadiosData = data.radios.filter((radio) =>
+            allowedRadioIds.includes(radio.id)
           );
-          setRadios(filteredRadios);
+          setRadios(filteredRadiosData);
+          setFilteredRadios(filteredRadiosData);
         }
         setLoading(false);
       })
@@ -32,6 +43,62 @@ const Qiblah = ({ src, audioName, isPlaying }) => {
         setLoading(false);
       });
   }, []);
+
+  // Search functionality
+  useEffect(() => {
+    if (searchTerm === "") {
+      setFilteredRadios(radios);
+    } else {
+      const lowerCaseSearchTerm = searchTerm.toLowerCase();
+      const filtered = radios.filter((radio) =>
+        radio.name.toLowerCase().includes(lowerCaseSearchTerm)
+      );
+      setFilteredRadios(filtered);
+    }
+  }, [searchTerm, radios]);
+
+  // Scroll to the currently playing radio when the grid is shown
+  useEffect(() => {
+    if (!loading && showRadiosGrid && isPlaying && activeRadioId) {
+      const element = document.getElementById(`radio-${activeRadioId}`);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+  }, [loading, showRadiosGrid, isPlaying, activeRadioId]);
+  // Back to last playing
+  const backToLastPlayedAudio = () => {
+    if (!loading && isPlaying) {
+      const lastPlayed = localStorage.getItem("playingRadio");
+      const element = document.getElementById(lastPlayed);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+        element.classList.add("active");
+        setActiveRadioId(parseInt(lastPlayed.replace("radio-", "")));
+      }
+    }
+  };
+  useEffect(() => {
+    backToLastPlayedAudio();
+    // eslint-disable-next-line
+  }, [loading]);
+  // Scroll to top when opening full-screen div
+
+  useEffect(() => {
+    if (!showRadiosGrid) {
+      // Scroll radio container to top
+      toTop();
+    } else {
+      const lastPlayed = localStorage.getItem("playingRadio");
+      const element = document.getElementById(lastPlayed);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+        element.classList.add("active");
+        setActiveRadioId(parseInt(lastPlayed.replace("radio-", "")));
+      }
+    }
+    // eslint-disable-next-line
+  }, [showRadiosGrid]);
 
   const handleRadioClick = (radio) => {
     if (radio) {
@@ -42,6 +109,10 @@ const Qiblah = ({ src, audioName, isPlaying }) => {
       setActiveRadioId(radio.id);
       setCurrentRadio(radio);
       setShowRadiosGrid(false); // Hide radios grid and show the playing screen
+      localStorage.setItem("playingRadio", `radio-${radio.id}`);
+      toTop();
+      setShowSearch(false);
+      setSearchTerm("");
     }
   };
 
@@ -76,42 +147,76 @@ const Qiblah = ({ src, audioName, isPlaying }) => {
         </div>
       ) : (
         (!isPlaying || showRadiosGrid) && (
-          <div className="radios-grid">
-            {radios.map((radio) => (
-              <div
-                key={radio.id}
-                className={`radio-card ${
-                  isPlaying && radio.id === activeRadioId ? "active" : ""
-                }`}
-                onClick={() => handleRadioClick(radio)}
-              >
-                <div className="radio-image-container">
-                  {isPlaying && radio.id === activeRadioId && (
-                    <div className="playing-indicator">
-                      <span className="equalizer-bar"></span>
-                      <span className="equalizer-bar"></span>
-                      <span className="equalizer-bar"></span>
-                    </div>
-                  )}
-                  <img
-                    src={radioImage}
-                    alt={radio.name}
-                    className="radio-image"
-                  />
-                </div>
-                <Typography
-                  variant="subtitle1"
-                  className="radio-name text-primary p-2 text-center"
+          <>
+            <div className="search-container">
+              {!showSearch ? (
+                <button
+                  className="search-icon-button"
+                  onClick={() => setShowSearch(true)}
                 >
-                  {radio.name}
-                </Typography>
-              </div>
-            ))}
-          </div>
+                  <SearchIcon />
+                </button>
+              ) : (
+                <div className="search-input-container">
+                  <input
+                    type="text"
+                    placeholder={
+                      language === "ar" ? "ابحث عن راديو" : "Search for radio"
+                    }
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="search-input"
+                  />
+                  <button
+                    className="close-search-button"
+                    onClick={() => {
+                      setShowSearch(false);
+                      setSearchTerm("");
+                    }}
+                  >
+                    <CloseIcon />
+                  </button>
+                </div>
+              )}
+            </div>
+            <div className="radios-grid">
+              {filteredRadios.map((radio) => (
+                <div
+                  key={radio.id}
+                  id={`radio-${radio.id}`}
+                  className={`radio-card ${
+                    isPlaying && radio.id === activeRadioId ? "active" : ""
+                  }`}
+                  onClick={() => handleRadioClick(radio)}
+                >
+                  <div className="radio-image-container">
+                    {isPlaying && radio.id === activeRadioId && (
+                      <div className="playing-indicator">
+                        <span className="equalizer-bar"></span>
+                        <span className="equalizer-bar"></span>
+                        <span className="equalizer-bar"></span>
+                      </div>
+                    )}
+                    <img
+                      src={radioImage}
+                      alt={radio.name}
+                      className="radio-image"
+                    />
+                  </div>
+                  <Typography
+                    variant="subtitle1"
+                    className="radio-name text-primary p-2 text-center"
+                  >
+                    {radio.name}
+                  </Typography>
+                </div>
+              ))}
+            </div>
+          </>
         )
       )}
     </div>
   );
 };
 
-export default Qiblah;
+export default Radio;

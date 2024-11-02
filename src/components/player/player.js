@@ -260,18 +260,18 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
           min="0"
           max="100"
         />
-        <span className="duration">
+        <div className="duration">
           {isLiveStream ? (
-            <span className="live-indicator">
-              <span className="red-dot"></span>
+            <div className="live-indicator d-flex flex-row-reverse justify-content-center align-items-center gap-2">
               {language === "ar" ? "مباشر" : "Live"}
-            </span>
+              <pspan className="record-dot"></pspan>
+            </div>
           ) : loaded ? (
             "-:-"
           ) : (
             formatTime(duration)
           )}
-        </span>
+        </div>
         <div className="buttons">
           {!loaded && !isLiveStream && (
             <button

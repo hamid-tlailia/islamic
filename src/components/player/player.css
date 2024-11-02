@@ -183,3 +183,26 @@ button {
 .btn-gold {
   background-color: var(--card-color);
 }
+.record-dot {
+  width: 8px !important;
+  height: 8px !important;
+  background-color: red;
+  border-radius: 50%;
+  position: relative;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
