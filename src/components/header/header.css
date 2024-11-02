@@ -177,6 +177,7 @@
   display: inline-block;
   cursor: pointer;
   z-index: 13;
+  margin-inline: 10px;
 }
 .local-settings.margin {
   margin-inline: 70px !important;

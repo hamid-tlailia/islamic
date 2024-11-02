@@ -654,7 +654,7 @@ const Tafsir = ({ toTop, src, audioName }) => {
         onChange={handleTabChange}
         variant="fullWidth"
         indicatorColor="primary"
-        className="navs shadow-1-strong rounded-2 mx-2"
+        className="tafsir-navs shadow-1-strong rounded-2 mx-2"
         textColor="primary"
         style={{ marginBottom: "1rem" }}
       >

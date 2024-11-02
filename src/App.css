@@ -31,7 +31,7 @@
   --shadow-primary-color: rgb(204, 219, 232);
   --shadow-secondary-color: rgba(255, 255, 255, 0.5);
   --api-card: #ddeedf;
-  --names-color : rgb(29, 14, 108);
+  --names-color: rgb(29, 14, 108);
 }
 
 body.dark-mode {
@@ -59,7 +59,7 @@ body.dark-mode {
   --shadow-primary-color: rgb(31, 103, 167);
   --shadow-secondary-color: rgba(255, 255, 255, 0.5);
   --api-card: #010e01;
-  --names-color : gold;
+  --names-color: gold;
 }
 body.light-filter {
   --header-bg-color: rgb(81, 85, 27);
@@ -72,7 +72,7 @@ body.light-filter {
   --outlets-bg-color: rgb(178, 174, 159);
   --surah-border: 1px solid white;
   --surah-hover-color: rgb(7, 24, 73);
-  --nav-color: rgba(34, 28, 6, 0.29);
+  --nav-color: rgba(94, 91, 85, 0.196);
   --ayah-text-color: #253987;
   --scrolled-ayah-bg: rgba(0, 128, 0, 0.436);
   --scolled-ayah-color: gold;
@@ -82,7 +82,7 @@ body.light-filter {
   --tabs-bg-color: rgba(8, 4, 4, 0.479);
   --main-color: rgb(70, 17, 182);
   --api-card: #ddeedf;
-  --names-color : rgb(6, 23, 106);
+  --names-color: rgb(6, 23, 106);
 }
 body.image {
   --header-bg-color: rgba(0, 0, 0, 0.896);
@@ -103,7 +103,7 @@ body.image {
   --scolled-ayah-color: gold;
   --tabs-bg-color: rgba(180, 154, 154, 0.5);
   --main-color: coral;
-  --names-color : gold;
+  --names-color: gold;
   --api-card: #021602;
   background: url("./components/images//bg4.avif") no-repeat center;
   background-size: cover;
