@@ -192,7 +192,7 @@ const Radio = ({ src, audioName, isPlaying, toTop }) => {
               )}
             </div>
             {searchResultMessage !== "" && (
-              <div className="alert alert-danger w-100">
+              <div className="alert alert-danger w-100 my-3">
                 {searchResultMessage}{" "}
               </div>
             )}

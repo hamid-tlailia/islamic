@@ -60,7 +60,7 @@ const Times = lazy(() =>
   import("./pages/categories/subCategories/times/times")
 );
 const Radio = lazy(() =>
-  import("./pages/categories/subCategories/qiblah/radio")
+  import("./pages/categories/subCategories/radio/radio")
 );
 const Fiqh = lazy(() => import("./pages/categories/subCategories/fiqh/fiqh"));
 const Historic = lazy(() =>

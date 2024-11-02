@@ -121,6 +121,7 @@ const Categories = ({
   hideButton,
   backTop,
   scrollTop,
+  hasError,
 }) => {
   // Define sub component title
   const [subTitle, setSubTitle] = useState("");
@@ -428,7 +429,9 @@ const Categories = ({
                 X
               </p>
             </div>
-            <div className="card-body outlets-body">{<Outlet />}</div>
+            <div className="card-body outlets-body">
+              {hasError ? "Error occurred!" : <Outlet />}
+            </div>
           </div>
         </div>
       </div>
