@@ -66,18 +66,14 @@ const Footer = ({ onFooterClick }) => {
             </p>
           </div>
 
-          <div className="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
+          <div className="col-md-3 col-lg-3 col-xl-3 mx-auto mt-1">
             <h5 className="text-uppercase mb-4 font-weight-bold text-warning">
               {language === "en" ? "Hours of Operation" : "ساعات العمل"}
             </h5>
-            <p>
+            <p className="my-0">
               {language === "en" ? "Monday" : "الأثنين"} -{" "}
-              {language === "en" ? "Friday" : "الجمعة"} : 9:00 AM - 5:00 PM
+              {language === "en" ? "Sunday" : "الأحد"}
             </p>
-            <p>
-              {language === "en" ? "Saturday" : "السبت"} : 10:00 AM - 2:00 PM
-            </p>
-            <p>{language === "en" ? "Sunday" : "الأحد"} : Closed</p>
           </div>
 
           <div className="col-md-4 col-lg-4 col-xl-4 mx-auto mt-3">

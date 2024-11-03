@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "../../../../components/languages/provider";
 import "./radio.css"; // Ensure this CSS file is updated
-import { Typography, CircularProgress } from "@mui/material";
+import { Typography, Skeleton } from "@mui/material";
 import radioImage from "./images/radio.jpg";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SearchIcon from "@mui/icons-material/Search";
@@ -18,6 +18,7 @@ const Radio = ({ src, audioName, isPlaying, toTop }) => {
   const [loading, setLoading] = useState(true);
   const [showRadiosGrid, setShowRadiosGrid] = useState(true);
   const [searchResultMessage, setSearchResultMessage] = useState("");
+
   useEffect(() => {
     // Fetch the radios data from the API
     fetch("https://mp3quran.net/api/v3/radios")
@@ -78,6 +79,7 @@ const Radio = ({ src, audioName, isPlaying, toTop }) => {
       }
     }
   }, [loading, showRadiosGrid, isPlaying, activeRadioId]);
+
   // Back to last playing
   const backToLastPlayedAudio = () => {
     if (!loading && isPlaying) {
@@ -90,12 +92,13 @@ const Radio = ({ src, audioName, isPlaying, toTop }) => {
       }
     }
   };
+
   useEffect(() => {
     backToLastPlayedAudio();
     // eslint-disable-next-line
   }, [loading]);
-  // Scroll to top when opening full-screen div
 
+  // Scroll to top when opening full-screen div
   useEffect(() => {
     if (!showRadiosGrid) {
       // Scroll radio container to top
@@ -154,8 +157,15 @@ const Radio = ({ src, audioName, isPlaying, toTop }) => {
         </div>
       )}
       {loading ? (
-        <div className="loading-container">
-          <CircularProgress />
+        <div className="radios-grid">
+          {Array.from(new Array(10)).map((_, index) => (
+            <div key={index} className="radio-card">
+              <div className="radio-image-container">
+                <Skeleton variant="rectangular" className="radio-image" />
+              </div>
+              <Skeleton variant="text" className="radio-name" />
+            </div>
+          ))}
         </div>
       ) : (
         (!isPlaying || showRadiosGrid) && (

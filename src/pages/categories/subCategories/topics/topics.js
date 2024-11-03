@@ -270,7 +270,8 @@ const Topics = ({ src, audioName }) => {
               // Optionally exclude specific subcategories if needed
               // For example, exclude index 1:
               // index !== 1 && (
-              selectedCategory.id === 86219 && index === 1 ? null : (
+              selectedCategory.id === 86219 &&
+              (index === 1 || index === 2) ? null : (
                 <Card
                   key={subCategory.id} // Use unique identifier
                   sx={{

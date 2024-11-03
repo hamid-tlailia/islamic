@@ -1,7 +1,7 @@
 .container-fluid {
   position: relative !important;
-  padding: 0 !important;
-  margin-top: 0 !important;
+  padding: 0;
+  margin-top: 0;
 }
 .categories {
   position: relative;
@@ -11,6 +11,7 @@
   justify-content: center;
   align-items: center;
   padding: 0;
+  margin-top: 1vh;
   overflow-y: auto;
 }
 

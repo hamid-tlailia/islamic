@@ -213,13 +213,16 @@ const Home = ({ onNavClick }) => {
                   <div
                     className={`carousel-caption ${language === "en" && "en"}`}
                   >
-                    <div className={`p-1 ${language === "en" && "text-start"}`} style={{overflowX : "hidden"}}>
+                    <div
+                      className={`p-1 ${language === "en" && "text-start"}`}
+                      style={{ overflowX: "hidden" }}
+                    >
                       <p className="text-warning">{item.data.hadeeth}</p>
                       <small className="text-white badge hadith-degree p-1 bg-success mt-1">
                         {language === "ar"
                           ? "درجة الحديث : "
                           : "Hadith degree : "}{" "}
-                        {item.data.grade.replace('hadith' ,'')}
+                        {item.data.grade.replace("hadith", "")}
                       </small>
                       <hr />
                       <p className="text-light">{item.data.explanation}</p>
@@ -234,7 +237,10 @@ const Home = ({ onNavClick }) => {
       </div>
 
       {/* Description */}
-      <div className="container-fluid d-flex justify-content-center align-items-center card content">
+      <div
+        className="container-fluid d-flex justify-content-center align-items-center card home-content"
+        style={{ marginTop: "-8vh" }}
+      >
         <div
           className={`row w-100 site-map ${
             language === "ar" ? "rtl" : "ltr en"

@@ -139,9 +139,9 @@
 .hadith-degree {
   flex-wrap: wrap;
 }
-.content {
-  margin-top: -8vh;
-  width: 70%;
+.home-content {
+  margin-top: -8vh !important;
+  width: 95%;
   border: var(--border);
   background-color: var(--card-color);
 }

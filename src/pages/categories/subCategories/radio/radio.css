@@ -197,11 +197,13 @@
   color: mediumvioletred !important;
 }
 .radio-name {
-  padding: 10px;
+  padding: 5px;
   font-weight: bold;
   color: var(--text-color);
   font-family: "Cairo", sans-serif;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Search Container */
@@ -226,6 +228,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-inline: 5px;
 }
 
 .search-input-container {
@@ -239,11 +242,14 @@
   font-size: 16px;
   margin-left: 10px;
   border: 1px solid #2196f3;
+  color: var(--text-color) !important;
   background-color: var(--card-color);
   border-radius: 5px;
   outline: none;
 }
-
+.search-input::placeholder {
+  color: var(--text-color) !important;
+}
 .search-input:focus {
   border-color: var(--primary-color);
   box-shadow: 0 0 5px rgba(33, 150, 243, 0.5);

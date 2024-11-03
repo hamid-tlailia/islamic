@@ -358,11 +358,21 @@ const apiList = [
   },
   {
     id: 31,
-    name_en: "Access religious sciences API",
-    name_ar: "الحصول على  علوم دينية",
-    description_en: "Access a comprehensive encyclopedia of religious sciences",
-    description_ar: "الحصول على موسوعة شاملة من العلوم الدينية",
+    name_en: "Access religious sciences API part 1",
+    name_ar: "الحصول على  علوم دينية الجزء الأول",
+    description_en:
+      "Access a comprehensive encyclopedia of religious sciences api 1",
+    description_ar: "الحصول على موسوعة شاملة من العلوم الدينية موسوعة 1",
     url: "https://documenter.getpostman.com/view/7929737/TzkyMfPc#intro",
+  },
+  {
+    id: 32,
+    name_en: "Access religious sciences API last part",
+    name_ar: "الحصول على  علوم دينية الجزء الأخير",
+    description_en:
+      "Access a comprehensive encyclopedia of religious sciences api 2",
+    description_ar: "الحصول على موسوعة شاملة من العلوم الدينية موسوعة 2",
+    url: "https://mp3quran.net/ar/api",
   },
 ];
 

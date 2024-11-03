@@ -128,6 +128,7 @@ const Categories = ({
   // Handle scrolling state
   const [currentScroll, setCurrentScroll] = useState(0);
   const [checkTitle, setCheckTitle] = useState(false);
+  const [isRadio, setIsRadio] = useState(false);
   // State to store the selected category position
   const [selectedCategoryPosition, setSelectedCategoryPosition] = useState(0);
   const { language, translations } = useTranslation();
@@ -170,6 +171,7 @@ const Categories = ({
       const componentTitleId = target.querySelector("span")?.id; // Get the ID from the span element
       if (componentTitleId) {
         setSubTitle(componentTitleId); // Set the subtitle for the outlet
+        if (componentTitleId === "QuranRadio") setIsRadio(true);
         localStorage.setItem("component-title", componentTitleId);
         // Save the clicked category's position relative to the scrollable content
         if (contentRef.current) {
@@ -212,7 +214,7 @@ const Categories = ({
     if (outletsRef.current) outletsRef.current.classList.remove("active");
     navigate("/categories");
     categoriesRef.current.classList.remove("hide");
-
+    setIsRadio(false);
     // Delay scrolling to ensure the categories are visible
     if (contentRef.current) {
       document.body.scrollTo({
@@ -311,7 +313,7 @@ const Categories = ({
 
   return (
     <div className="container-fluid p-0">
-      <div className="categories">
+      <div className="categories" style={{ marginTop: isRadio ? "0" : "1vh" }}>
         <div className="card content" ref={contentRef} onScroll={handleScroll}>
           <div className="card-header p-1 d-flex justify-content-center align-items-center">
             <p
