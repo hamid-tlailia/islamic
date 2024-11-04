@@ -10,7 +10,7 @@ import { useTranslation } from "../../components/languages/provider";
 import { toast } from "react-toastify";
 
 // Import the single image to use for all Hadiths
-import sliderImageOne from "../images/slider2.jpg"; // Use your preferred image here
+import sliderImageOne from "../images/slider3.jpg"; // Use your preferred image here
 import quran from "../images/quran.png";
 import ahadith from "../images/ahadith.png";
 import fatawa from "../images/fatawa.png";
