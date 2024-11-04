@@ -23,12 +23,18 @@
   padding: 0 !important;
   overflow-y: auto;
   height: 100%;
+  border-radius: 0;
 }
 
 @media screen and (max-width: 754px) {
   .categories .content {
     width: 100%;
     margin-top: 0;
+    border-radius: 0 !important;
+  }
+  .categories {
+    margin-top: 0 !important;
+    border-radius: 0 !important;
   }
 }
 @media screen and (max-width: 754px) and (orientation: landscape) {
@@ -58,7 +64,7 @@
   justify-items: center; /* Center items horizontally in their grid cells */
 }
 .divisions.hide {
-  height: 723px !important;
+  height: 730px !important;
   overflow: clip;
 }
 .divisions .div {
@@ -109,6 +115,7 @@
   transform: scale(0);
   transition: 0.3s ease-out;
   opacity: 0;
+  border-radius: 0;
 }
 
 /* Final state when loaded */
@@ -142,7 +149,11 @@
   z-index: 999999;
   margin-top: 2px;
 }
-
+@media screen and(max-width : 500px) {
+  .outlets-top {
+    border-radius: 0 !important;
+  }
+}
 .back {
   position: relative;
   left: 0;

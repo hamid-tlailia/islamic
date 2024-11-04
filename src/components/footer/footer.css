@@ -9,7 +9,7 @@
     rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
   padding: 8px;
   height: max-content;
-  margin-top: 3vh;
+  margin-top: 0;
 }
 .footer p {
   color: var(--header-text-color) !important;

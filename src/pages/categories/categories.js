@@ -25,6 +25,7 @@ import { useTranslation } from "../../components/languages/provider";
 import { useNavigate, useLocation } from "react-router-dom";
 import throttle from "lodash.throttle";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
+import { useMediaQuery } from "@mui/material";
 
 const navLinks = [
   {
@@ -138,6 +139,7 @@ const Categories = ({
   const categoriesRef = useRef(null);
   const outletsRef = useRef(null);
   const contentRef = useRef(null);
+  const isSmallScreen = useMediaQuery("(max-width:500px)");
   // Change page title
   useEffect(() => {
     if (location.pathname.startsWith("/categories/")) {
@@ -171,7 +173,6 @@ const Categories = ({
       const componentTitleId = target.querySelector("span")?.id; // Get the ID from the span element
       if (componentTitleId) {
         setSubTitle(componentTitleId); // Set the subtitle for the outlet
-        if (componentTitleId === "QuranRadio") setIsRadio(true);
         localStorage.setItem("component-title", componentTitleId);
         // Save the clicked category's position relative to the scrollable content
         if (contentRef.current) {
@@ -291,7 +292,10 @@ const Categories = ({
   const handleScroll = (e) => {
     checkScrollTop(e);
   };
-
+  useEffect(() => {
+    if (subTitle === "QuranRadio") setIsRadio(true);
+    else setIsRadio(false);
+  }, [subTitle]);
   // Function to scroll back to the top
   useEffect(() => {
     if (contentRef.current) {
@@ -313,7 +317,10 @@ const Categories = ({
 
   return (
     <div className="container-fluid p-0">
-      <div className="categories" style={{ marginTop: isRadio ? "0" : "1vh" }}>
+      <div
+        className="categories"
+        style={{ marginTop: isRadio && isSmallScreen ? "0" : "1vh" }}
+      >
         <div className="card content" ref={contentRef} onScroll={handleScroll}>
           <div className="card-header p-1 d-flex justify-content-center align-items-center">
             <p
@@ -422,7 +429,10 @@ const Categories = ({
           </div>
           {/* Categories result area */}
           <div className="outlets card" ref={outletsRef}>
-            <div className="card-header outlets-top">
+            <div
+              className="card-header outlets-top"
+              style={{ borderRadius: isSmallScreen && "0" }}
+            >
               <p>
                 {" "}
                 <MenuBookOutlinedIcon /> {translations[subTitle]}{" "}
