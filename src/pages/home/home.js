@@ -7,9 +7,10 @@ import ManageSearchOutlinedIcon from "@mui/icons-material/ManageSearchOutlined";
 import GridViewOutlinedIcon from "@mui/icons-material/GridViewOutlined";
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "../../components/languages/provider";
+import { toast } from "react-toastify";
 
 // Import the single image to use for all Hadiths
-import sliderImageOne from "../images/slider1.jpg"; // Use your preferred image here
+import sliderImageOne from "../images/slider2.jpg"; // Use your preferred image here
 import quran from "../images/quran.png";
 import ahadith from "../images/ahadith.png";
 import fatawa from "../images/fatawa.png";
@@ -21,7 +22,7 @@ const Home = ({ onNavClick }) => {
   const [isReady, setIsReady] = useState(false);
   const [selectedHadiths, setSelectedHadiths] = useState([]);
   const [hadithsLoading, setHadithsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(false);
 
   // Function to fetch Hadiths
   const fetchHadiths = useCallback(async () => {
@@ -100,7 +101,12 @@ const Home = ({ onNavClick }) => {
       console.log(hadithDetails);
     } catch (error) {
       console.error("Error fetching Hadiths:", error);
-      setError("Failed to load Hadiths. Please try again later.");
+      setError(true);
+      toast.error(
+        language === "ar"
+          ? "هناك مشكلة بسيطة سيتم حلها قريبا"
+          : "Failed to load Hadiths. Please try again later."
+      );
       setHadithsLoading(false);
     }
     // eslint-disable-next-line
@@ -259,7 +265,7 @@ const Home = ({ onNavClick }) => {
       {/* Description */}
       <div
         className="container-fluid d-flex justify-content-center align-items-center card home-content"
-        style={{ marginTop: "-8vh" }}
+        style={{ marginTop: selectedHadiths.length === 0 ? "0" : "-8vh" }}
       >
         <div
           className={`row w-100 site-map ${
