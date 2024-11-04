@@ -84,7 +84,7 @@ const Home = ({ onNavClick }) => {
       const shuffledIds = shuffleArray(allHadithIds);
 
       // Limit the number of Hadiths to fetch to 100 (adjust as needed)
-      const limitedIds = shuffledIds.slice(0, 100);
+      const limitedIds = shuffledIds.slice(0, 5);
 
       // Fetch Hadith details for the limited IDs
       const hadithDetailsPromises = limitedIds.map((id) =>
@@ -97,6 +97,7 @@ const Home = ({ onNavClick }) => {
         ...hadithDetails.filter((hadith) => hadith !== null),
       ]);
       setHadithsLoading(false);
+      console.log(hadithDetails);
     } catch (error) {
       console.error("Error fetching Hadiths:", error);
       setError("Failed to load Hadiths. Please try again later.");
@@ -178,7 +179,7 @@ const Home = ({ onNavClick }) => {
           </div>
         ) : (
           <Slider {...settings}>
-            {hadithsLoading && selectedHadiths.length === 0 ? (
+            {hadithsLoading ? (
               // Show a loader or skeleton in place of the Hadith text
               <div className="carousel-item">
                 <img
@@ -202,7 +203,7 @@ const Home = ({ onNavClick }) => {
                   </div>
                 </div>
               </div>
-            ) : (
+            ) : selectedHadiths.length !== 0 ? (
               selectedHadiths.map((item, index) => (
                 <div className="carousel-item" key={index}>
                   <img
@@ -230,6 +231,25 @@ const Home = ({ onNavClick }) => {
                   </div>
                 </div>
               ))
+            ) : (
+              <div className="carousel-item">
+                <img src={sliderImageOne} className="img-fluid" alt="Hadith" />
+                <div
+                  className={`carousel-caption ${language === "en" && "en"}`}
+                >
+                  <div
+                    className={`p-1 ${language === "en" && "text-start"}`}
+                    style={{ overflowX: "hidden" }}
+                  >
+                    <p className="text-warning">
+                      {translations.prophetSaid} : {translations.prophetHadith}
+                    </p>
+                    <small className="text-white hadith-degree p-1 mt-1">
+                      {translations.hadithReference}
+                    </small>
+                  </div>
+                </div>
+              </div>
             )}
           </Slider>
         )}
