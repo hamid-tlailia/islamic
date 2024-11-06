@@ -123,6 +123,13 @@
   grid-template-columns: repeat(auto-fit, minmax(350px, auto));
   gap: 10px;
 }
+@media screen and (max-width: 400px) {
+  .audio-tafsir-parent {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, auto));
+    gap: 10px;
+  }
+}
 .audio-tafsir-container {
   background-color: var(--card-color) !important;
   color: var(--text-color) !important;

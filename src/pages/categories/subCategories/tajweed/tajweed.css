@@ -78,6 +78,7 @@
   border-radius: 8px !important;
   text-align: right;
 }
+
 .tajweed-text:hover {
   opacity: 1;
   background-color: #4a2c61fc;
@@ -89,11 +90,11 @@
 .end {
   display: inline-block;
   position: relative;
-  width: 30px;
-  height: 30px;
+  width: 30px !important;
+  height: 30px !important;
   line-height: 1.9em;
   border-radius: 50%;
-  text-align: center;
+  text-align: center !important;
   font-size: 0.6em;
   font-weight: bold;
   vertical-align: middle;
@@ -129,19 +130,19 @@
 
 @keyframes flipLeft {
   from {
-    opacity: 0;
+    left: -100vh;
   }
   to {
-    opacity: 1;
+    left: 0;
   }
 }
 
 @keyframes flipRight {
   from {
-    opacity: 0;
+    right: -100vh;
   }
   to {
-    opacity: 1;
+    right: 0;
   }
 }
 .surahs-select {

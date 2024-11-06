@@ -213,7 +213,7 @@ const Tajweed = ({ audioName, documentName }) => {
   const [saved, setSaved] = useState(false);
   const [savedPageChanged, setSavedPageChanged] = useState(false);
   const contentRef = useRef(null);
-
+  const [animationClass, setAnimationClass] = useState("");
   const [audioLoading, setAudioLoading] = useState(false);
   const audioRef = useRef(null);
 
@@ -368,10 +368,12 @@ const Tajweed = ({ audioName, documentName }) => {
 
   const handlePrev = () => {
     if (currentPage && currentPage > 1) {
+      setAnimationClass("flip-right");
       const newPage = currentPage - 1;
       setCurrentPage(newPage);
       updateSurahBasedOnPage(newPage);
     } else {
+      setAnimationClass("flip-left");
       toast.info(
         language === "ar"
           ? "أنت بالفعل في أول صفحة"
@@ -383,10 +385,12 @@ const Tajweed = ({ audioName, documentName }) => {
 
   const handleNext = () => {
     if (currentPage && currentPage < 604) {
+      setAnimationClass("flip-left");
       const newPage = currentPage + 1;
       setCurrentPage(newPage);
       updateSurahBasedOnPage(newPage);
     } else {
+      setAnimationClass("flip-right");
       toast.info(
         language === "ar" ? "لقد وصلت الى اخر صفحة" : "You are in the last page"
       );
@@ -735,6 +739,7 @@ const Tajweed = ({ audioName, documentName }) => {
       <Box
         {...swipeHandlers}
         ref={contentRef}
+        className={!loading && animationClass} // Apply the animation class here
         sx={{
           mb: 2,
           overflowY: "auto",
@@ -752,8 +757,9 @@ const Tajweed = ({ audioName, documentName }) => {
           <Typography
             textAlign="center"
             sx={{ my: 4, fontSize: "1.2rem", color: "var(--text-color)" }}
+            className="w-100 text-center"
           >
-            {language === "ar" ? "جار التحميل..." : "Loading..."}
+            {language === "ar" ? "جاري التحميل..." : "Loading..."}
           </Typography>
         )}
 

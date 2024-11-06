@@ -602,7 +602,7 @@ const Tafsir = ({ toTop, src, audioName }) => {
       }
     }
     // eslint-disable-next-line
-  }, [selectedAyah, surahs]);
+  }, [selectedAyah, surahs, selectedTafsir]);
 
   // Handle tab change
   const handleTabChange = (event, newValue) => {
@@ -659,7 +659,7 @@ const Tafsir = ({ toTop, src, audioName }) => {
         style={{ marginBottom: "1rem" }}
       >
         <Tab
-          label={language === "ar" ? "تفسير النص" : "Text Tafsir"}
+          label={language === "ar" ? "التفسير النصي " : "Text Tafsir"}
           sx={{
             color:
               tabIndex === 0
@@ -670,7 +670,7 @@ const Tafsir = ({ toTop, src, audioName }) => {
           className="quranTabs"
         />
         <Tab
-          label={language === "ar" ? "تفسير صوتي" : "Audio Tafsir"}
+          label={language === "ar" ? "التفسير المسموع" : "Audio Tafsir"}
           sx={{
             color:
               tabIndex === 1
@@ -720,7 +720,7 @@ const Tafsir = ({ toTop, src, audioName }) => {
               <TafsirContainer>
                 {/* Explained ayah text */}
                 {!optionsVisible && (
-                  <div className="">
+                  <div>
                     {" "}
                     {currentExplainedAyah !== null ? (
                       <p className="w-100 text-center my-2 explained-ayah d-flex flex-column gap-2 justify-content-center align-items-center">
@@ -782,7 +782,7 @@ const Tafsir = ({ toTop, src, audioName }) => {
                         />
                       ))}
                       {/* Pagination buttons */}
-                      <div className="pagination-buttons w-100 text-center d-flex flex-row gap-3 justify-content-center align-items-center my-3">
+                      <div className="pagination-buttons w-100 text-center d-flex flex-row gap-3 justify-content-center align-items-center my-1 ">
                         {currentPage > 1 && (
                           <Button
                             variant="outlined"
@@ -901,7 +901,7 @@ const Tafsir = ({ toTop, src, audioName }) => {
                             <Typography variant="h5" color="primary">
                               {language === "ar"
                                 ? "الخلاصة من تفسير الطبري"
-                                : "Summary from Tafsir Al-Tabari Arabic only"}{" "}
+                                : "Summary from Tafsir Al-Tabari in Arabic"}{" "}
                             </Typography>
                             <Typography variant="h6">{item.name}</Typography>
                           </CardContent>
