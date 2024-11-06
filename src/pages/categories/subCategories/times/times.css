@@ -1,14 +1,32 @@
 .times {
   background-color: var(--card-color);
   color: var(--text-color);
+  justify-content: center !important;
+  align-items: center !important;
 }
 .times div {
   background-color: var(--card-color) !important;
   color: var(--text-color);
+  justify-content: center !important;
+  align-items: center !important;
 }
 .loader-manager {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: center !important;
+  align-items: center !important;
   min-height: 300px;
+}
+.times-container h4 {
+  display: flex;
+  justify-content: center; /* Horizontally center */
+  align-items: center; /* Vertically center */
+  text-align: center !important;
+}
+.times-container h5 {
+  display: flex;
+  justify-content: center; /* Horizontally center */
+  align-items: center; /* Vertically center */
+  text-align: center !important;
+  width: 100% !important;
+  background-color: red;
 }

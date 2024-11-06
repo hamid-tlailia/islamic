@@ -201,9 +201,13 @@ const Home = ({ onNavClick }) => {
                       language === "en ltr" && "text-start rtl"
                     }`}
                   >
-                    <p>
+                    <p
+                      className={
+                        language === "ar" ? "text-info rtl" : "text-info ltr"
+                      }
+                    >
                       {language === "ar"
-                        ? "...جاري تحميل الأحاديث"
+                        ? "جاري تحميل الأحاديث..."
                         : "Loading Hadiths..."}{" "}
                     </p>
                   </div>
@@ -224,7 +228,15 @@ const Home = ({ onNavClick }) => {
                       className={`p-1 ${language === "en" && "text-start"}`}
                       style={{ overflowX: "hidden" }}
                     >
-                      <p className="text-warning">{item.data.hadeeth}</p>
+                      <p
+                        className={
+                          language === "ar"
+                            ? "text-warning rtl"
+                            : "text-warning ltr"
+                        }
+                      >
+                        {item.data.hadeeth}
+                      </p>
                       <small className="text-white badge hadith-degree p-1 bg-success mt-1">
                         {language === "ar"
                           ? "درجة الحديث : "
@@ -232,7 +244,15 @@ const Home = ({ onNavClick }) => {
                         {item.data.grade.replace("hadith", "")}
                       </small>
                       <hr />
-                      <p className="text-light">{item.data.explanation}</p>
+                      <p
+                        className={
+                          language === "ar"
+                            ? "text-light rtl"
+                            : "text-light ltr"
+                        }
+                      >
+                        {item.data.explanation}
+                      </p>
                     </div>
                   </div>
                 </div>

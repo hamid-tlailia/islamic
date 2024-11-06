@@ -185,13 +185,17 @@ const Times = () => {
   };
 
   return (
-    <div className="container-fluid text-center position-relative py-4">
+    <div className="container-fluid text-center position-relative py-4 times-container">
       <Typography level="h4" sx={{ mb: 2, color: "crimson" }}>
         {language === "ar" ? "مواقيت الصلاة اليوم :" : "Today's Prayer Times:"}{" "}
         {todayDate ? todayDate : "--/--/----"}
       </Typography>
       {currentLocation && (
-        <Typography level="h5" sx={{ mb: 2, color: "green" }}>
+        <Typography
+          level="h5"
+          sx={{ mb: 2, color: "green", textAlign: "center", width: "100%" }}
+          className="text-center"
+        >
           <LocationOn /> {currentLocation.city}, {currentLocation.country}
         </Typography>
       )}
@@ -234,6 +238,7 @@ const Times = () => {
                     boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
                     borderRadius: "10px",
                   }}
+                  className="times"
                 >
                   <div style={{ marginBottom: "10px" }}>
                     <AccessTime
@@ -252,7 +257,7 @@ const Times = () => {
           </Grid>
         </div>
       ) : (
-        <Typography sx={{ mt: 4 }}>
+        <Typography sx={{ mt: 4, textAlign: "center", width: "100%" }}>
           {language === "ar"
             ? "جاري تحميل مواقيت الصلاة..."
             : "Loading prayer times..."}

@@ -858,10 +858,11 @@ const Names = () => {
               bgcolor: "var(--card-color)",
               color: "var(--text-color)",
               padding: 2,
-              textAlign: "center",
+              textAlign: "center !important",
               fontWeight: "bold",
               cursor: "pointer",
             }}
+            className="name-card"
             onClick={() => getDescription(item)}
           >
             {/* Display the name based on the selected language */}

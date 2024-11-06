@@ -1,6 +1,6 @@
 {
   "name": "islamic-app",
-  "version": "1.9.8",
+  "version": "1.9.9",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.13.3",
