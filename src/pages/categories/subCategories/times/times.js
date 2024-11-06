@@ -257,7 +257,10 @@ const Times = () => {
           </Grid>
         </div>
       ) : (
-        <Typography sx={{ mt: 4, textAlign: "center", width: "100%" }}>
+        <Typography
+          sx={{ mt: 4, textAlign: "center", width: "100%" }}
+          className="text-center"
+        >
           {language === "ar"
             ? "جاري تحميل مواقيت الصلاة..."
             : "Loading prayer times..."}
