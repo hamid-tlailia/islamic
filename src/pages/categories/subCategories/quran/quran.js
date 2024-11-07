@@ -755,16 +755,20 @@ const Quran = ({ src, toTop }) => {
               <span>{translations.numberOfJuz}</span>
             </div>
             <button
-              className="btn btn-coral text-light metaData-btns"
+              className="btn btn-coral text-light metaData-btns p-1 text-center"
               onClick={toggleVisibility}
               style={{
                 position: "absolute",
                 bottom: "-20px",
-                left: "40px",
+                left: "42px",
                 transform: "translateX(-50%)",
               }}
             >
-              <p className={`${isOpen ? "text-warning" : "text-light"}`}>
+              <p
+                className={`w-100 text-center ${
+                  isOpen ? "text-warning" : "text-light"
+                }`}
+              >
                 {isOpen
                   ? language === "ar"
                     ? "أقل"
@@ -775,7 +779,7 @@ const Quran = ({ src, toTop }) => {
               </p>
             </button>
             <button
-              className="btn btn-coral rounded-3 shadow-2-strong p-1 mt-2 text-light metaData-btns"
+              className="btn btn-coral rounded-3 shadow-2-strong p-1 mt-2 text-light"
               onClick={reverseSurahs}
               style={{
                 position: "absolute",
@@ -815,7 +819,7 @@ const Quran = ({ src, toTop }) => {
                         {language === "ar" ? surah.englishName : surah.name}
                       </h5>
                     </div>
-                    <div className="surah-infos pe-none">
+                    <div className="surah-infos pe-none mx-2">
                       <p className="surah-ayahs mb-1">
                         <span> {surah.ayahs.length} </span>{" "}
                         {language === "ar" ? "آية" : "Ayahs"}
@@ -952,7 +956,7 @@ const Quran = ({ src, toTop }) => {
 
                   <TabPanel value={tabValue} index={0}>
                     {/* Reading Tab Content */}
-                    <div className="w-100 h-100 p-2">
+                    <div className="w-100 h-100">
                       <div className="w-100 text-center d-flex justify-content-between dr-rtl align-items-center langs gap-2 py-2">
                         <select
                           className="form-select"
@@ -967,7 +971,7 @@ const Quran = ({ src, toTop }) => {
                           <option value="Together">Together</option>
                         </select>
                         <button
-                          className="btn btn-outline-primary"
+                          className="btn btn-outline-light text-primary"
                           onClick={() => setLayout("fullscreen")}
                         >
                           <ZoomOutMapOutlinedIcon />

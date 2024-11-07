@@ -252,7 +252,7 @@ const Home = ({ onNavClick }) => {
                         {item.data.hadeeth}
                       </p>
                       <small
-                        className="badge hadith-degree p-2 w-100 text-light bg-success mt-1"
+                        className="badge hadith-degree p-2 mb-1 text-light bg-success mt-1"
                         style={{ whiteSpace: "normal" }}
                       >
                         {language === "ar" && " حديث"}{" "}

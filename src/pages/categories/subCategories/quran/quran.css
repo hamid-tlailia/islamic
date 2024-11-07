@@ -27,6 +27,7 @@
   background-color: var(--outlets-bg-color);
   border-radius: 5px;
   padding: 3px !important;
+  padding-inline: 5px;
   color: var(--text-color);
   border: var(--surah-border);
   cursor: pointer;
@@ -217,6 +218,12 @@
   gap: 15px;
   text-align: left;
   margin-bottom: 5px;
+}
+.metaData-btns {
+  width: 70px;
+  height: 37px;
+  border-radius: 10px !important;
+  text-align: center !important;
 }
 .data-container span {
   background-color: var(--search-card-bg);
