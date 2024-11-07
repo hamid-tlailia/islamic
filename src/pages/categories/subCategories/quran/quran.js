@@ -1004,11 +1004,11 @@ const Quran = ({ src, toTop }) => {
                                   )
                                 }
                               >
-                                <p className="pe-none">
+                                <p className="pe-none mt-3">
                                   {quranLangs === "Arabe" ||
                                   quranLangs === "Together" ? (
                                     <>
-                                      {allAyahs.name !== "سُورَةُ ٱلْفَاتِحَةِ"
+                                      {allAyahs.number !== 1
                                         ? ayah.text.replace(
                                             "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
                                             ""

@@ -1,10 +1,8 @@
-@import "https://unpkg.com/jolty-ui/dist/jolty-ui.min.css";
-
 .quran {
   display: flex;
   flex-direction: column;
   padding: 1px !important;
-  margin-bottom: 50px;
+  margin-bottom: 20px;
   height: 100% !important;
   overflow: auto;
 }
@@ -28,7 +26,7 @@
   text-align: center;
   background-color: var(--outlets-bg-color);
   border-radius: 5px;
-  padding: 7px;
+  padding: 3px !important;
   color: var(--text-color);
   border: var(--surah-border);
   cursor: pointer;
@@ -48,7 +46,7 @@
   align-items: center;
   text-align: center;
   background-color: var(--outlets-bg-color);
-  padding: 7px;
+  padding: 3px;
   border-radius: 5px;
   color: var(--text-color);
   border: var(--surah-border);
@@ -149,17 +147,18 @@
   display: flex;
   flex-direction: row-reverse;
   justify-content: start;
-  align-items: center;
+  align-items: center !important;
   min-width: 100% !important;
   gap: 6px;
   color: var(--ayah-text-color);
   border: var(--surah-border);
-  padding: 6px;
+  padding: 4px;
+  padding-block: 0 !important;
   border-radius: 6px;
   cursor: pointer;
 }
 .ayah-text.scrolled-ayah {
-  animation: selected 12s ease;
+  animation: selected 8s ease;
   margin-top: 10px;
 }
 
@@ -178,12 +177,13 @@
   padding: 10px;
   background-color: navy;
   width: max-content;
-  height: max-content;
+  height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
   color: white;
   transition: 0.5s ease;
+  margin: 0;
 }
 .ayah-number.ltr {
   clip-path: polygon(0 20%, 74% 20%, 100% 50%, 75% 80%, 0 80%);
