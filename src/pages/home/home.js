@@ -241,7 +241,7 @@ const Home = ({ onNavClick }) => {
                       >
                         {item.data?.title}
                       </p>
-                      <hr />
+                      <hr className="my-1" />
                       <p
                         className={
                           language === "ar"
@@ -263,7 +263,7 @@ const Home = ({ onNavClick }) => {
                         </span>
                       </small>
 
-                      <hr />
+                      <hr className="my-1" />
                       <p
                         className={`text-info ${
                           language === "ar" ? "rtl" : "ltr"
@@ -280,7 +280,7 @@ const Home = ({ onNavClick }) => {
                       >
                         {item.data.explanation}
                       </p>
-                      <hr />
+                      <hr className="my-1" />
                       <p
                         className={`text-info ${
                           language === "ar" ? "rtl" : "ltr"
@@ -296,7 +296,7 @@ const Home = ({ onNavClick }) => {
                         {item.data?.hints.map((h, idx) => (
                           <p
                             key={idx}
-                            className="text-coral bg-dark p-2 rounded-2"
+                            className="text-coral bg-dark p-2 rounded-2 fs-6"
                           >
                             {h}
                           </p>

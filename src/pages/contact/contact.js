@@ -45,7 +45,7 @@ const Contact = () => {
   useEffect(() => {
     localStorage.removeItem("last-category-position");
   }, []);
-  
+
   useEffect(() => {
     setIsReady(true);
   }, []);
@@ -123,6 +123,7 @@ const Contact = () => {
         sx={{
           mb: 5,
           width: "100%",
+          textAlign: "center",
         }}
         color="primary"
       >

@@ -24,7 +24,7 @@
   --primary-color: #2a9d8f;
   --secondary-color: #e76f51;
   --tertiary-color: #264653;
-  --quaternary-color: #f4a261;
+  --quaternary-color: #8c4103;
   --scrolled-ayah-bg: rgba(0, 128, 0, 0.436);
   --scolled-ayah-color: navy;
   --main-color: coral;
@@ -49,10 +49,10 @@ body.dark-mode {
   --ayah-text-color: rgb(241, 170, 18);
   --dropdown-bg-color: rgba(0, 0, 0, 0.153);
   --player-bg-color: rgb(8, 27, 42);
-  --primary-color: #00bfa6;
-  --secondary-color: #f0937a;
-  --tertiary-color: #a3c4bc;
-  --quaternary-color: #ffb4a1;
+  --primary-color: #107996;
+  --secondary-color: #6d200b;
+  --tertiary-color: #128b6d;
+  --quaternary-color: #d67056;
   --scrolled-ayah-bg: rgba(54, 87, 217, 0.436);
   --scolled-ayah-color: gold;
   --main-color: coral;
