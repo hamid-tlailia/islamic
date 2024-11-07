@@ -740,19 +740,19 @@ const Quran = ({ src, toTop }) => {
           {/* Data Container */}
           <div className="data-container shadow-4 card mb-5 p-2">
             <div className="metaData" style={{ position: "relative" }}>
-              <p>{translations.numberOfAyahs}</p>
-              <p>{translations.numberOfSurahs}</p>
-              <p>{translations.numberOfSajdahs}</p>
+              <span>{translations.numberOfAyahs}</span>
+              <span>{translations.numberOfSurahs}</span>
+              <span>{translations.numberOfSajdahs}</span>
             </div>
             <div
               id="additional-info"
               className={`additional-infos mb-3 ${isOpen && "show"}`}
             >
-              <p>{translations.numberOfRukoos}</p>
-              <p>{translations.numberOfPages}</p>
-              <p>{translations.numberOfManazil}</p>
-              <p>{translations.numberOfQuarterHizbs}</p>
-              <p>{translations.numberOfJuz}</p>
+              <span>{translations.numberOfRukoos}</span>
+              <span>{translations.numberOfPages}</span>
+              <span>{translations.numberOfManazil}</span>
+              <span>{translations.numberOfQuarterHizbs}</span>
+              <span>{translations.numberOfJuz}</span>
             </div>
             <button
               className="btn btn-coral text-light metaData-btns"
@@ -764,7 +764,7 @@ const Quran = ({ src, toTop }) => {
                 transform: "translateX(-50%)",
               }}
             >
-              <span className={`${isOpen && "text-primary"}`}>
+              <p className={`${isOpen ? "text-warning" : "text-light"}`}>
                 {isOpen
                   ? language === "ar"
                     ? "أقل"
@@ -772,7 +772,7 @@ const Quran = ({ src, toTop }) => {
                   : language === "ar"
                   ? "المزيد"
                   : "More"}
-              </span>
+              </p>
             </button>
             <button
               className="btn btn-coral rounded-3 shadow-2-strong p-1 mt-2 text-light metaData-btns"
@@ -785,9 +785,9 @@ const Quran = ({ src, toTop }) => {
               }}
             >
               {isReversed ? (
-                <SyncIcon className="text-primary" />
+                <SyncIcon className="text-warning" />
               ) : (
-                <SyncIcon className="text-white" />
+                <SyncIcon className="text-light" />
               )}
             </button>
           </div>

@@ -29,6 +29,9 @@ const Home = ({ onNavClick }) => {
     try {
       setHadithsLoading(true); // Start loading
 
+      // Reset localStorage keys that are language-dependent
+      localStorage.removeItem("last-category-limit");
+
       // Fetch categories in the selected language
       const categoriesResponse = await fetch(
         `https://hadeethenc.com/api/v1/categories/list/?language=${language}`
@@ -93,28 +96,35 @@ const Home = ({ onNavClick }) => {
       );
       const hadithDetails = await Promise.all(hadithDetailsPromises);
 
-      setSelectedHadiths((prevHadiths) => [
-        ...prevHadiths,
-        ...hadithDetails.filter((hadith) => hadith !== null),
-      ]);
+      // Update the selectedHadiths state with new Hadiths
+      setSelectedHadiths(hadithDetails.filter((hadith) => hadith !== null));
       setHadithsLoading(false);
-      console.log(hadithDetails);
     } catch (error) {
       console.error("Error fetching Hadiths:", error);
       setError(true);
-      toast.error(
-        language === "ar"
-          ? "هناك مشكلة بسيطة سيتم حلها قريبا"
-          : "Failed to load Hadiths. Please try again later."
-      );
       setHadithsLoading(false);
     }
     // eslint-disable-next-line
   }, [language]);
 
   useEffect(() => {
+    // Reset selectedHadiths when language changes
+    setSelectedHadiths([]);
     fetchHadiths();
-  }, [fetchHadiths]);
+  }, [fetchHadiths, language]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(
+        language === "ar"
+          ? "هناك مشكلة بسيطة سيتم حلها قريبا"
+          : "Failed to load Hadiths. Please try again later."
+      );
+    }
+    return () => {
+      setError(false);
+    };
+  }, [error, language]);
 
   const fetchHadithDetails = async (id) => {
     try {
@@ -196,11 +206,7 @@ const Home = ({ onNavClick }) => {
                 <div
                   className={`carousel-caption ${language === "en" && "en"}`}
                 >
-                  <div
-                    className={`p-3 ${
-                      language === "en ltr" && "text-start rtl"
-                    }`}
-                  >
+                  <div className={`p-3 ${language === "en" && "text-start"}`}>
                     <p
                       className={
                         language === "ar" ? "text-info rtl" : "text-info ltr"
@@ -229,6 +235,14 @@ const Home = ({ onNavClick }) => {
                       style={{ overflowX: "hidden" }}
                     >
                       <p
+                        className={`text-info text-center ${
+                          language === "ar" ? "rtl" : "ltr"
+                        }`}
+                      >
+                        {item.data?.title}
+                      </p>
+                      <hr />
+                      <p
                         className={
                           language === "ar"
                             ? "text-warning rtl"
@@ -237,13 +251,22 @@ const Home = ({ onNavClick }) => {
                       >
                         {item.data.hadeeth}
                       </p>
-                      <small className="text-white badge hadith-degree p-1 bg-success mt-1">
-                        {language === "ar"
-                          ? "درجة الحديث : "
-                          : "Hadith degree : "}{" "}
+                      <small className="badge hadith-degree p-2 text-light bg-success mt-1">
+                        {language === "ar" ? " حديث" : ""}{" "}
                         {item.data.grade.replace("hadith", "")}
+                        {" - "}{" "}
+                        <span className="text-purple">
+                          {item.data?.attribution}
+                        </span>
                       </small>
                       <hr />
+                      <p
+                        className={`text-info ${
+                          language === "ar" ? "rtl" : "ltr"
+                        }`}
+                      >
+                        {language === "ar" ? " الشرح" : "Explanation : "}{" "}
+                      </p>
                       <p
                         className={
                           language === "ar"
@@ -253,6 +276,28 @@ const Home = ({ onNavClick }) => {
                       >
                         {item.data.explanation}
                       </p>
+                      <hr />
+                      <p
+                        className={`text-info ${
+                          language === "ar" ? "rtl" : "ltr"
+                        }`}
+                      >
+                        {language === "ar" ? "تلميحات :" : "Hints :"}{" "}
+                      </p>
+                      <div
+                        className={`d-flex flex-column gap-2 ${
+                          language === "ar" ? "rtl" : "ltr"
+                        }`}
+                      >
+                        {item.data?.hints.map((h, idx) => (
+                          <p
+                            key={idx}
+                            className="text-coral bg-dark p-2 rounded-2"
+                          >
+                            {h}
+                          </p>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -268,7 +313,7 @@ const Home = ({ onNavClick }) => {
                     style={{ overflowX: "hidden" }}
                   >
                     <p className="text-warning">
-                      {translations.prophetSaid} : {translations.prophetHadith}
+                      {translations.prophetSaid} {translations.prophetHadith}
                     </p>
                     <small className="text-white hadith-degree p-1 mt-1">
                       {translations.hadithReference}

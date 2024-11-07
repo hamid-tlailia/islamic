@@ -218,7 +218,7 @@
   text-align: left;
   margin-bottom: 5px;
 }
-.data-container p {
+.data-container span {
   background-color: var(--search-card-bg);
   border-radius: 5px;
   padding: 4px 20px;
@@ -246,7 +246,7 @@
   padding: 0;
 }
 .btn-coral {
-  background-color: coral !important;
+  background-color: rgb(124, 45, 16) !important;
   border-radius: 18px;
 }
 .btn-filter {

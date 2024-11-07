@@ -131,18 +131,22 @@
 @keyframes flipLeft {
   from {
     left: -100vh;
+    opacity: 0;
   }
   to {
     left: 0;
+    opacity: 1;
   }
 }
 
 @keyframes flipRight {
   from {
     right: -100vh;
+    opacity: 0;
   }
   to {
     right: 0;
+    opacity: 1;
   }
 }
 .surahs-select {
