@@ -1172,11 +1172,11 @@ const BeMuslim = () => {
             </Typography>
           )}
 
-          <Typography level="body1" sx={{ marginBottom: 2 }}>
+          <p style={{ marginBottom: 2 }}>
             {Array.isArray(section.description[language])
               ? section.description[language][0]?.text
               : section.description[language]}
-          </Typography>
+          </p>
 
           <Typography
             level="body2"
@@ -1239,9 +1239,9 @@ const BeMuslim = () => {
                   </Typography>
                 ))
               ) : (
-                <Typography level="body1" sx={{ marginBottom: 2 }}>
+                <p style={{ marginBottom: 2 }}>
                   {selectedContent.description[language]}
-                </Typography>
+                </p>
               )}
               <Typography
                 level="body2"

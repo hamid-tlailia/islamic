@@ -129,12 +129,13 @@ body.brightness::before {
   z-index: 9999; /* Ensure it's above other elements */
 }
 body.fonts {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Scheherazade", serif;
 }
 body,
 html {
   width: 100%;
   height: 100%;
+  font-size: 16px;
   background-color: var(--bg-color);
   color: var(--text-color);
   transition: background-color 0.3s, color 0.3s;
@@ -147,7 +148,7 @@ body *::selection {
   background-color: #164119;
   color: #fff;
 }
-body * {
+body p {
   text-align: justify !important;
 }
 code {
@@ -175,15 +176,17 @@ body.en > div {
   direction: ltr !important;
 }
 body.sm {
-  font-size: 14px !important;
+  font-size: 16px !important;
 }
 body.md {
   font-size: 18px !important;
 }
 body.lg {
-  font-size: 24px !important;
+  font-size: 20px !important;
 }
-
+.css-nzfdzm-JoySelect-root {
+  direction: ltr !important;
+}
 .container-fluid {
   background-color: transparent;
 }
@@ -268,6 +271,14 @@ a {
 .error {
   color: #c41c1c !;
 }
+.file {
+  box-shadow: rgb(4, 4, 139) 0px 0px 0px 2px inset,
+    var(--card-color) 10px -10px 0px -3px, rgb(6, 124, 4) 10px -10px !important;
+  padding: 8px;
+  border-radius: 6px;
+  text-align: center;
+}
+
 .back-to-top {
   position: fixed !important;
   right: 10px;

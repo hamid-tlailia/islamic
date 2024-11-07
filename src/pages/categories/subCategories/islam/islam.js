@@ -98,9 +98,7 @@ const Islam = () => {
           <Mosque sx={{ mr: 1 }} /> {selectedContent.whatIsIslam.title}
         </Typography>
         <Divider />
-        <Typography level="body1" sx={{ mt: 2 }}>
-          {selectedContent.whatIsIslam.description}
-        </Typography>
+        <p style={{ mt: 2 }}>{selectedContent.whatIsIslam.description}</p>
 
         {/* Why Islam */}
         <Typography
@@ -111,9 +109,7 @@ const Islam = () => {
           <Favorite sx={{ mr: 1 }} /> {selectedContent.whyIslam.title}
         </Typography>
         <Divider />
-        <Typography level="body1" sx={{ mt: 2 }}>
-          {selectedContent.whyIslam.description}
-        </Typography>
+        <p style={{ mt: 2 }}>{selectedContent.whyIslam.description}</p>
 
         {/* The Messenger of Allah */}
         <Typography
@@ -124,9 +120,7 @@ const Islam = () => {
           <People sx={{ mr: 1 }} /> {selectedContent.prophet.title}
         </Typography>
         <Divider />
-        <Typography level="body1" sx={{ mt: 2 }}>
-          {selectedContent.prophet.description}
-        </Typography>
+        <p style={{ mt: 2 }}>{selectedContent.prophet.description}</p>
 
         {/* The Five Pillars of Islam */}
         <Typography
@@ -137,25 +131,19 @@ const Islam = () => {
           <Public sx={{ mr: 1 }} /> {selectedContent.fivePillars.title}
         </Typography>
         <Divider />
-        <Typography level="body1" sx={{ mt: 2 }}>
-          {selectedContent.fivePillars.description}
-        </Typography>
+        <p style={{ mt: 2 }}>{selectedContent.fivePillars.description}</p>
         {/* Islam social justice */}
         <Typography level="h3" component="div" sx={{ mt: 4, color: "navy" }}>
           <Public sx={{ mr: 1 }} /> {selectedContent.socialJustice.title}
         </Typography>
         <Divider />
-        <Typography level="body1" sx={{ mt: 2 }}>
-          {selectedContent.socialJustice.description}
-        </Typography>
+        <p style={{ mt: 2 }}>{selectedContent.socialJustice.description}</p>
         {/* Woman rights in islam */}
         <Typography level="h3" component="div" sx={{ mt: 4, color: "green" }}>
           <Public sx={{ mr: 1 }} /> {selectedContent.womenRights.title}
         </Typography>
         <Divider />
-        <Typography level="body1" sx={{ mt: 2 }}>
-          {selectedContent.womenRights.description}
-        </Typography>
+        <p style={{ mt: 2 }}>{selectedContent.womenRights.description}</p>
       </CardContent>
     </Card>
   );

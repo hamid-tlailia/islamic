@@ -522,7 +522,7 @@ const Header = ({ onNavClick, visibility, size }) => {
                   size(newValue);
                   setTextSize(newValue);
                 }}
-                value={textSize}
+                value={textSize || "sm"}
                 sx={{
                   width: 150,
                   backgroundColor: "var(--card-color)",
@@ -531,7 +531,7 @@ const Header = ({ onNavClick, visibility, size }) => {
                 className="lang-select"
               >
                 <Option value="sm">
-                  {language === "ar" ? "صغير" : "Small"}
+                  {language === "ar" ? "افتراضي" : "Default"}
                 </Option>
                 <Option value="md">
                   {language === "ar" ? "متوسط" : "Medium"}
@@ -557,10 +557,10 @@ const Header = ({ onNavClick, visibility, size }) => {
                     updatedBodyStyle(event, event.currentTarget.id)
                   }
                 >
-                  <p className="pe-none">
+                  <span className="pe-none">
                     {language === "ar" ? "تخفيف السطوع" : "Filter light"} <br />
                     <FilterBAndWOutlinedIcon />
-                  </p>
+                  </span>
                 </div>
                 <div
                   className={`image shadow tools ${
@@ -580,10 +580,10 @@ const Header = ({ onNavClick, visibility, size }) => {
                     updatedBodyStyle(event, event.currentTarget.id)
                   }
                 >
-                  <p className="pe-none">
+                  <span className="pe-none">
                     {language === "ar" ? "زيادة السطوع" : "Brightness"} <br />
                     <BrightnessAutoOutlinedIcon />
-                  </p>
+                  </span>
                 </div>
                 <div
                   className={`fonts shadow tools ${
@@ -594,10 +594,10 @@ const Header = ({ onNavClick, visibility, size }) => {
                     updatedBodyStyle(event, event.currentTarget.id)
                   }
                 >
-                  <p className="pe-none">
+                  <span className="pe-none">
                     {language === "ar" ? "نوع الخط" : "Fonts"} <br />
                     <FontDownloadOutlinedIcon />
-                  </p>
+                  </span>
                 </div>
               </div>
             </div>

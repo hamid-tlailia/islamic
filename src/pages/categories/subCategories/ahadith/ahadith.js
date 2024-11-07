@@ -772,13 +772,13 @@ const Ahadith = () => {
           className="card p-2 mb-2 border border-secondary d-flex flex-column gap-3"
           ref={resultSearch}
         >
-          <h5 className="hadith-heading fs-4">
+          <p className="hadith-heading fs-4">
             {hadithLangs === "ar"
               ? searchResult.hadithArabic
               : searchResult.hadithEnglish
               ? searchResult.hadithEnglish
               : "English version not available"}
-          </h5>
+          </p>
           <div className="d-flex flex-column flex-lg-row flex-md-row justify-content-between align-items-center gap-2">
             <Chip
               variant="outlined"
@@ -884,13 +884,13 @@ const Ahadith = () => {
               key={index}
               className="card p-2 mb-2 border border-secondary d-flex flex-column gap-3"
             >
-              <h5 className="hadith-heading fs-4">
+              <p className="hadith-heading fs-4">
                 {language === "ar"
                   ? hadith.hadithArabic
                   : hadith.hadithEnglish
                   ? hadith.hadithEnglish
                   : "English version not available"}
-              </h5>
+              </p>
               <div className="d-flex flex-column flex-lg-row flex-md-row justify-content-between align-items-center gap-2">
                 <Chip
                   variant="outlined"
