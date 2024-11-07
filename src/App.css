@@ -269,7 +269,7 @@ a {
   color: #c41c1c !important;
 }
 .error {
-  color: #c41c1c !;
+  color: #c41c1c !important;
 }
 .file {
   box-shadow: rgb(4, 4, 139) 0px 0px 0px 2px inset,

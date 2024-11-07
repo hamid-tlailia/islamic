@@ -255,10 +255,10 @@ const Home = ({ onNavClick }) => {
                         className="badge hadith-degree p-2 w-100 text-light bg-success mt-1"
                         style={{ whiteSpace: "normal" }}
                       >
-                        {language === "ar" ? " حديث" : ""}{" "}
+                        {language === "ar" && " حديث"}{" "}
                         {item.data.grade.replace("hadith", "")}
                         {" - "}{" "}
-                        <span className="text-purple">
+                        <span className="text-navy">
                           {item.data?.attribution}
                         </span>
                       </small>
@@ -269,7 +269,7 @@ const Home = ({ onNavClick }) => {
                           language === "ar" ? "rtl" : "ltr"
                         }`}
                       >
-                        {language === "ar" ? " الشرح" : "Explanation : "}{" "}
+                        {language === "ar" ? "الشرح :" : "Explanation : "}{" "}
                       </p>
                       <p
                         className={
@@ -289,16 +289,16 @@ const Home = ({ onNavClick }) => {
                         {language === "ar" ? "تلميحات :" : "Hints :"}{" "}
                       </p>
                       <div
-                        className={`d-flex flex-column gap-2 ${
+                        className={`d-flex flex-column gap-1 ${
                           language === "ar" ? "rtl" : "ltr"
                         }`}
                       >
                         {item.data?.hints.map((h, idx) => (
                           <p
                             key={idx}
-                            className="text-coral bg-dark p-2 rounded-2 fs-6"
+                            className="text-warning bg-dark p-2 rounded-2 hint"
                           >
-                            {h}
+                            {idx + 1} - {h}
                           </p>
                         ))}
                       </div>

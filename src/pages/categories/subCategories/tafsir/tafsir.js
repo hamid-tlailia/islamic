@@ -817,13 +817,13 @@ const Tafsir = ({ toTop, src, audioName }) => {
               </TafsirContainer>
             </>
           ) : (
-            <div className="w-100 my-5 p-4 text-center  border rounded shadow">
+            <div className="w-100 my-5 p-4 text-center  border rounded shadow d-flex flex-column">
               <span className="text-primary font-weight-bold">
                 {language === "ar"
                   ? "﴿وَاتَّقُوا اللَّهَ وَيُعَلِّمُكُمُ اللَّهُ وَاللَّهُ بِكُلِّ شَيْءٍ عَلِيمٌ﴾"
                   : "“And fear Allah. And Allah teaches you. And Allah is Knowing of all things.”"}
               </span>
-              <span>
+              <span className="mt-1">
                 {language === "ar"
                   ? "سورة البقرة، الآية 282"
                   : "Surah Al-Baqarah, Ayah 282"}

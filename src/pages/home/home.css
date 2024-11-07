@@ -194,6 +194,9 @@
 .text-coral {
   color: coral;
 }
-.text-purple {
+.text-navy {
   color: navy;
+}
+.hint {
+  font-size: 16px !important;
 }
