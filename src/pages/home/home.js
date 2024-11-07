@@ -251,7 +251,10 @@ const Home = ({ onNavClick }) => {
                       >
                         {item.data.hadeeth}
                       </p>
-                      <small className="badge hadith-degree p-2 text-light bg-success mt-1">
+                      <small
+                        className="badge hadith-degree p-2 w-100 text-light bg-success mt-1"
+                        style={{ whiteSpace: "normal" }}
+                      >
                         {language === "ar" ? " حديث" : ""}{" "}
                         {item.data.grade.replace("hadith", "")}
                         {" - "}{" "}
@@ -259,6 +262,7 @@ const Home = ({ onNavClick }) => {
                           {item.data?.attribution}
                         </span>
                       </small>
+
                       <hr />
                       <p
                         className={`text-info ${

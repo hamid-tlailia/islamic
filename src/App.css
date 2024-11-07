@@ -40,7 +40,7 @@ body.dark-mode {
   --bg-color: black;
   --text-color: #ffffff;
   --card-color: rgba(0, 0, 0, 0.956);
-  --border: 1px solid gold;
+  --border: 1px solid rgb(190, 187, 168);
   --nav-link-color: #1b87a5;
   --outlets-bg-color: #040303;
   --surah-border: 1px solid white;
@@ -67,7 +67,7 @@ body.light-filter {
   --bg-color: rgb(178, 174, 159);
   --text-color: rgb(3, 2, 1) !important;
   --card-color: rgb(178, 174, 159);
-  --border: 1px solid gold;
+  --border: 1px solid rgb(231, 227, 210);
   --nav-link-color: rgb(126, 101, 11);
   --outlets-bg-color: rgb(178, 174, 159);
   --surah-border: 1px solid white;
@@ -197,7 +197,7 @@ body.lg {
 /* width */
 /* width */
 ::-webkit-scrollbar {
-  width: 1px;
+  width: 1px !important;
 }
 
 /* Track */
