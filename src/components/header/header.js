@@ -23,6 +23,11 @@ import ChecklistRtlOutlinedIcon from "@mui/icons-material/ChecklistRtlOutlined";
 import RingVolumeOutlinedIcon from "@mui/icons-material/RingVolumeOutlined";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import emailjs from "emailjs-com";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import { Button, FormControl, FormLabel, CircularProgress } from "@mui/joy";
+import DOMPurify from "dompurify";
+import { useMediaQuery } from "@mui/material";
 
 const Header = ({ onNavClick, visibility, size }) => {
   const { changeLanguage, translations, language } = useTranslation();
@@ -31,7 +36,18 @@ const Header = ({ onNavClick, visibility, size }) => {
   const [textSize, setTextSize] = useState("");
   const [isOnline, setIsOnline] = useState(true); // State for network status
   const [isNetworkWeak, setIsNetworkWeak] = useState(false); // State for network strength
+  const [errorModalOpen, setErrorModalOpen] = useState(false); // State for error report modal
+  const [loading, setLoading] = useState(false); // Loading state for submit button
+  const [inputDirection, setInputDirection] = useState("rtl");
+
+  // State for form data
+  const [formData, setFormData] = useState({
+    category: "",
+    description: "",
+  });
+
   const mobileHeader = useRef(null);
+  const isBigScreen = useMediaQuery("(min-width:500px)");
 
   // Define the classes to check (excluding 'dark-mode' and 'light-mode')
   const classesToCheck = ["light-filter", "brightness", "image", "fonts"];
@@ -161,7 +177,7 @@ const Header = ({ onNavClick, visibility, size }) => {
         const effectiveType = connection.effectiveType;
 
         // Define what you consider as weak network types
-        const weakConnections = ["slow-2g", "2g", "3g"];
+        const weakConnections = ["slow-2g", "2g"];
 
         if (weakConnections.includes(effectiveType)) {
           setIsNetworkWeak(true);
@@ -369,6 +385,110 @@ const Header = ({ onNavClick, visibility, size }) => {
     // eslint-disable-next-line
   }, []);
 
+  // Error report categories
+  const errorCategories = [
+    {
+      value: "home_page",
+      label:
+        language === "ar" ? " أحاديث الصفحة الرئيسية " : "Home Page Hadiths",
+    },
+    {
+      value: "quran",
+      label: language === "ar" ? "القران الكريم " : "Holy Quran",
+    },
+    {
+      value: "tajweed",
+      label: language === "ar" ? "نص التجويد" : "Rules of Recitation",
+    },
+    {
+      value: "ahadiths",
+      label: language === "ar" ? "الاحاديث " : "Hadiths",
+    },
+    {
+      value: "tafsir",
+      label: language === "ar" ? "التفسير" : "Quran explanation",
+    },
+    {
+      value: "story",
+      label: language === "ar" ? "القصص" : "Stories",
+    },
+  ];
+
+  // Handle opening and closing of error modal
+  const openErrorModal = () => {
+    setErrorModalOpen(true);
+  };
+
+  const closeErrorModal = () => {
+    setErrorModalOpen(false);
+    setFormData({ category: "", description: "" });
+    if (language === "ar") setInputDirection("rtl");
+    else setInputDirection("ltr");
+  };
+
+  // Function to detect if text is Arabic
+  const isArabicText = (text) => {
+    // Arabic Unicode range: \u0600-\u06FF
+    return /[\u0600-\u06FF]/.test(text);
+  };
+
+  // Handle input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: DOMPurify.sanitize(value),
+    }));
+    // Detect language direction
+    if (value.length > 0) {
+      const isArabic = isArabicText(value);
+      if (isArabic) setInputDirection("rtl");
+      else setInputDirection("ltr");
+    } else {
+      if (language === "ar") setInputDirection("rtl");
+      else setInputDirection("ltr");
+    }
+  };
+
+  // Handle error report submission
+  const handleErrorReportSubmit = (e) => {
+    e.preventDefault();
+
+    setLoading(true); // Start loading
+
+    // EmailJS parameters
+    const serviceID = "service_wkwt0sq";
+    const templateID = "template_4cy5er2";
+    const userID = "JgnJY3IJDvvpSS4nX";
+
+    emailjs.send(serviceID, templateID, formData, userID).then(
+      (response) => {
+        toast.success(
+          language === "ar"
+            ? "تم إرسال تقرير الخطأ بنجاح!"
+            : "Error report sent successfully!"
+        );
+        setLoading(false); // Stop loading
+        closeErrorModal(); // Close modal and reset form
+      },
+      (err) => {
+        toast.error(
+          language === "ar"
+            ? "فشل في إرسال تقرير الخطأ."
+            : "Failed to send error report."
+        );
+        console.error("EmailJS Error:", err);
+        setLoading(false); // Stop loading
+      }
+    );
+  };
+
+  // Set input direction based on language
+  useEffect(() => {
+    if (language === "ar") setInputDirection("rtl");
+    else setInputDirection("ltr");
+  }, [language]);
+
   return (
     <div className="bg-transparent">
       <header
@@ -424,7 +544,26 @@ const Header = ({ onNavClick, visibility, size }) => {
           </div>
         </div>
       </header>
-
+      {isBigScreen && (
+        <HelpOutlineIcon
+          className="text-light fs-2"
+          onClick={openErrorModal}
+          style={{
+            position: "absolute",
+            top: "81%",
+            left: "10px",
+            zIndex: "1000",
+            backgroundColor: "red",
+            color: "white",
+            padding: "10px",
+            width: "40px",
+            height: "40px",
+            borderRadius: "50%",
+            fontSize: "30px",
+            cursor: "pointer",
+          }}
+        />
+      )}
       <div className="mobile-header" ref={mobileHeader}>
         <div className="black-left">
           <span className="p-2 text-light close fs-2">
@@ -470,6 +609,10 @@ const Header = ({ onNavClick, visibility, size }) => {
             {darkSwitched ? "🔆" : "🌙"}
           </label>
         </div>
+        <HelpOutlineIcon
+          className="text-danger notch-icon"
+          onClick={openErrorModal}
+        />
       </div>
 
       {/* Modal for Network Check */}
@@ -536,7 +679,11 @@ const Header = ({ onNavClick, visibility, size }) => {
               maxWidth: "95%",
             }}
           >
-            <ModalClose variant="plain" sx={{ m: 1, marginBottom: "20px" }} />
+            <ModalClose
+              variant="plain"
+              sx={{ m: 1, marginBottom: "20px" }}
+              onClick={() => setOpen(false)}
+            />
             <Typography
               component="h2"
               id="modal-title"
@@ -669,6 +816,140 @@ const Header = ({ onNavClick, visibility, size }) => {
           </Sheet>
         </Modal>
       </React.Fragment>
+
+      {/* Report Error Modal */}
+      <Modal
+        aria-labelledby="report-error-modal-title"
+        open={errorModalOpen}
+        onClose={closeErrorModal}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          overflowY: "auto",
+        }}
+      >
+        <Sheet
+          variant="outlined"
+          className="report-error-modal"
+          sx={{
+            borderRadius: "md",
+            p: 3,
+            boxShadow: "lg",
+            overflowY: "auto",
+            maxWidth: "95%",
+            minWidth: isBigScreen ? "50%" : "90%",
+            minHeight: "70%",
+            maxHeight: "95%",
+            backgroundColor: "var(--card-color)",
+            color: "var(--text-color)",
+          }}
+        >
+          <ModalClose
+            variant="plain"
+            sx={{ m: 1, marginBottom: "20px" }}
+            onClick={closeErrorModal}
+          />
+          <Typography
+            component="h2"
+            id="report-error-modal-title"
+            level="h4"
+            textColor="inherit"
+            className="ltr"
+            sx={{ fontWeight: "lg", mb: 1 }}
+          >
+            {language === "ar" ? "الإبلاغ عن خطأ" : "Report an error"}
+          </Typography>
+          <hr />
+          <form onSubmit={handleErrorReportSubmit}>
+            <div className="d-flex-flex-column justify-centent-center gap-3 w-100 ">
+              <div className="d-flex flex-row justify-content-between align-items-center gap-3 p-2 w-100">
+                <label htmlFor="category" className="text-primary fs-5">
+                  {language === "ar" ? "اختر الفئة : " : "Select category : "}
+                </label>
+                <div className="error-category w-auto">
+                  <Select
+                    name="category"
+                    placeholder={
+                      language === "ar" ? "اختر الفئة" : "Select category"
+                    }
+                    onChange={(event, newValue) =>
+                      setFormData((prev) => ({ ...prev, category: newValue }))
+                    }
+                    value={formData.category}
+                    sx={{
+                      width: 150,
+                      backgroundColor: "var(--card-color)",
+                      color: "var(--text-color)",
+                      "&:hover": {
+                        backgroundColor: "var(--card-color)",
+                      },
+                    }}
+                    className="error-category-select"
+                    required
+                  >
+                    {errorCategories.map((category) => (
+                      <Option key={category.value} value={category.label}>
+                        {category.label}
+                      </Option>
+                    ))}
+                  </Select>
+                </div>
+              </div>
+            </div>
+            <hr />
+            <div className="d-flex-flex-column justify-centent-center gap-3 w-100 mt-3">
+              <FormControl>
+                <FormLabel className="text-primary fs-5">
+                  {language === "ar" ? "تفاصيل الخطأ : " : "Error details : "}
+                </FormLabel>{" "}
+                <br />
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  placeholder={
+                    language === "ar" ? "تفاصيل الخطأ..." : "Error details..."
+                  }
+                  onChange={handleChange}
+                  required
+                  rows="9"
+                  style={{
+                    width: "100%",
+                    backgroundColor: "var(--card-color)",
+                    color: "var(--text-color)",
+                    border: "1px solid #ccc",
+                    borderRadius: 4,
+                    padding: "8px",
+                    outline: "none",
+                    resize: "none",
+                    direction: inputDirection,
+                  }}
+                ></textarea>
+              </FormControl>
+            </div>
+            <div className="d-flex justify-content-end mt-3">
+              <Button
+                type="submit"
+                variant="outlined"
+                sx={{
+                  border: "1px solid rgba(11,107,203,1)",
+                  width: "max-content",
+                  backgroundColor: "var(--card-color)",
+                }}
+                disabled={loading}
+              >
+                {loading ? (
+                  <CircularProgress size="sm" />
+                ) : language === "ar" ? (
+                  "التبليغ"
+                ) : (
+                  "Submit"
+                )}
+              </Button>
+            </div>
+          </form>
+        </Sheet>
+      </Modal>
     </div>
   );
 };

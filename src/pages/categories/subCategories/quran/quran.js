@@ -878,14 +878,14 @@ const Quran = ({ src, toTop }) => {
                 </div>
                 <div className="d-flex flex-column flex-lg-row flex-md-row justify-content-between align-items-center gap-2 my-2 p-2">
                   <div className="d-flex flex-row gap-3 justify-content-start align-items-center d-none d-lg-flex d-md-flex">
-                    <p className="quran-listen-btn">
+                    <div className="quran-listen-btn">
                       <SlowMotionVideoOutlinedIcon className="mx-2" />
                       <span style={{ textWrap: "nowrap" }}>
                         {language === "ar"
                           ? "سيتم تشغيل التلاوة بمجرد اختيار القارئ"
                           : "The recitation will start as soon as the reciter is selected"}
                       </span>
-                    </p>
+                    </div>
                   </div>
                   <div className="dropdown">
                     <select

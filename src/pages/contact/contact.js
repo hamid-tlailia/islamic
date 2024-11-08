@@ -20,7 +20,7 @@ import LinkIcon from "@mui/icons-material/Link";
 import emailjs from "emailjs-com";
 import { toast } from "react-toastify";
 
-const Contact = ({ top }) => {
+const Contact = () => {
   const { language } = useTranslation();
   const [formData, setFormData] = useState({
     name: "",
@@ -78,7 +78,6 @@ const Contact = ({ top }) => {
     const serviceID = "service_wkwt0sq";
     const templateID = "template_ceamp5d";
     const userID = "JgnJY3IJDvvpSS4nX";
-
     emailjs.send(serviceID, templateID, formData, userID).then(
       (response) => {
         toast.success(
