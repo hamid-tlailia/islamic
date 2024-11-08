@@ -27,7 +27,7 @@ const TafsirContainer = styled.div`
   border-radius: 5px;
 `;
 
-const TafsirContent = styled.div`
+const TafsirContent = styled.p`
   color: ${({ theme }) => theme.textColor};
   span.red {
     color: red;
