@@ -423,7 +423,10 @@ function App() {
                       />
                     }
                   />
-                  <Route path="/contact" element={<Contact />} />
+                  <Route
+                    path="/contact"
+                    element={<Contact top={backToTop} />}
+                  />
                   <Route path="/*" element={<Home />} />
                   {/* Path to APIs */}
                   <Route

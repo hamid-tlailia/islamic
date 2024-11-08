@@ -1549,6 +1549,7 @@ const Quran = ({ src, toTop }) => {
                                             textAlign: "center",
                                             color: "green",
                                           }}
+                                          className="mt-2"
                                         >
                                           ۝
                                           <span
@@ -1559,6 +1560,7 @@ const Quran = ({ src, toTop }) => {
                                               left: "50%",
                                               transform:
                                                 "translate(-50%, -50%)",
+                                              marginTop: "2px",
                                             }}
                                           >
                                             {index + 1 + indexOfFirstAyahModal}

@@ -21,6 +21,8 @@ import FontDownloadOutlinedIcon from "@mui/icons-material/FontDownloadOutlined";
 import PersonSearchOutlinedIcon from "@mui/icons-material/PersonSearchOutlined";
 import ChecklistRtlOutlinedIcon from "@mui/icons-material/ChecklistRtlOutlined";
 import RingVolumeOutlinedIcon from "@mui/icons-material/RingVolumeOutlined";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Header = ({ onNavClick, visibility, size }) => {
   const { changeLanguage, translations, language } = useTranslation();
@@ -28,6 +30,7 @@ const Header = ({ onNavClick, visibility, size }) => {
   const [open, setOpen] = useState(false);
   const [textSize, setTextSize] = useState("");
   const [isOnline, setIsOnline] = useState(true); // State for network status
+  const [isNetworkWeak, setIsNetworkWeak] = useState(false); // State for network strength
   const mobileHeader = useRef(null);
 
   // Define the classes to check (excluding 'dark-mode' and 'light-mode')
@@ -42,6 +45,9 @@ const Header = ({ onNavClick, visibility, size }) => {
   const dragStartPos = useRef({ x: 0, y: 0 });
   const isDraggingRef = useRef(false);
   const animationFrameRef = useRef(null);
+
+  // Define the margin from the top and bottom edges
+  const HEADER_MARGIN = 10; // You can adjust this value as needed
 
   const setTheme = (e) => {
     const body = document.body;
@@ -140,10 +146,32 @@ const Header = ({ onNavClick, visibility, size }) => {
     }
   }, []);
 
-  // Network detection
+  // Network detection and weak network detection
   useEffect(() => {
     const updateOnlineStatus = () => {
       setIsOnline(navigator.onLine);
+    };
+
+    const updateNetworkStrength = () => {
+      if ("connection" in navigator) {
+        const connection =
+          navigator.connection ||
+          navigator.mozConnection ||
+          navigator.webkitConnection;
+        const effectiveType = connection.effectiveType;
+
+        // Define what you consider as weak network types
+        const weakConnections = ["slow-2g", "2g", "3g"];
+
+        if (weakConnections.includes(effectiveType)) {
+          setIsNetworkWeak(true);
+        } else {
+          setIsNetworkWeak(false);
+        }
+
+        // Listen for changes in the network connection
+        connection.addEventListener("change", updateNetworkStrength);
+      }
     };
 
     window.addEventListener("online", updateOnlineStatus);
@@ -151,12 +179,48 @@ const Header = ({ onNavClick, visibility, size }) => {
 
     // Check the initial network status
     updateOnlineStatus();
+    updateNetworkStrength();
 
     return () => {
       window.removeEventListener("online", updateOnlineStatus);
       window.removeEventListener("offline", updateOnlineStatus);
+
+      if ("connection" in navigator) {
+        const connection =
+          navigator.connection ||
+          navigator.mozConnection ||
+          navigator.webkitConnection;
+        connection.removeEventListener("change", updateNetworkStrength);
+      }
     };
   }, []);
+
+  // Show toast notification when network is weak
+  useEffect(() => {
+    if (isNetworkWeak) {
+      toast.warn(
+        language === "ar"
+          ? "شبكة الإنترنت ضعيفة."
+          : "Your network connection is weak.",
+        {
+          position: "top-center",
+          autoClose: false,
+          closeOnClick: true,
+          draggable: true,
+        }
+      );
+    } else {
+      // Dismiss the toast if network is no longer weak
+      toast.dismiss();
+    }
+  }, [isNetworkWeak, language]);
+
+  // Show modal when offline
+  useEffect(() => {
+    if (!isOnline) {
+      setOpen(true); // Open the modal when offline
+    }
+  }, [isOnline]);
 
   const renderNavLinks = () => (
     <>
@@ -200,14 +264,14 @@ const Header = ({ onNavClick, visibility, size }) => {
     const notchWidth = notchNav ? notchNav.offsetWidth : 0;
     const notchHeight = notchNav ? notchNav.offsetHeight : 0;
 
-    // Apply constraints to keep the notch-nav within viewport
+    // Apply constraints to keep the notch-nav within viewport and with margins
     const constrainedX = Math.max(
       0,
       Math.min(newX, viewportWidth - notchWidth)
     );
     const constrainedY = Math.max(
-      0,
-      Math.min(newY, viewportHeight - notchHeight)
+      HEADER_MARGIN,
+      Math.min(newY, viewportHeight - notchHeight - HEADER_MARGIN)
     );
 
     setNotchNavPosition({ x: constrainedX, y: constrainedY });
@@ -375,7 +439,7 @@ const Header = ({ onNavClick, visibility, size }) => {
       </div>
 
       <div
-        className={`notch-nav ${visibility ? "hide" : ""}`}
+        className={`notch-nav  ${visibility ? "hide" : ""}`}
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
         style={{
@@ -446,6 +510,7 @@ const Header = ({ onNavClick, visibility, size }) => {
           </Sheet>
         </Modal>
       )}
+
       {/* Settings modal */}
       <React.Fragment>
         <Modal

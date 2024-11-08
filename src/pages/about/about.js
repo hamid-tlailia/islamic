@@ -143,6 +143,10 @@ const About = ({ onAboutClick }) => {
     onAboutClick();
   };
 
+  useEffect(() => {
+    document.body.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   return (
     <div className="about-container mt-2">
       <h1 className="about-title">{currentContent.title}</h1>

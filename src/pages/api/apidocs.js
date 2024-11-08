@@ -439,6 +439,10 @@ const Api = ({ showScrillBtn, hideScrollBtn, back }) => {
       });
   };
 
+  useEffect(() => {
+    document.body.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   return (
     <Box
       sx={{

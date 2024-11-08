@@ -183,6 +183,10 @@ const Home = ({ onNavClick }) => {
     localStorage.removeItem("last-category-position");
   }, []);
 
+  useEffect(() => {
+    document.body.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   return (
     <div className="home">
       <div className="carousel-container mt-5">

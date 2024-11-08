@@ -16,16 +16,37 @@ const Footer = ({ onFooterClick }) => {
         <div className="row text-md-left ">
           <div className="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
             <h5 className="text-uppercase mb-4 font-weight-bold text-warning">
-              {translations.about}
+              {language === "ar" ? "تذكير" : "Reminder"}
             </h5>
             <p>
-              {language === "en" ? "Welcome to" : "مرحبا بكم في"}{" "}
-              <span className="text-warning"> {translations.siteName} </span> ,
-              {language === "en"
-                ? `a place where we share Islamic
-              teachings, articles, and resources. Our mission is to spread
-              knowledge and inspire the Ummah.`
-                : "مكان نشارك فيه التعاليم الإسلامية والمقالات والموارد. مهمتنا هي نشر المعرفة وإلهام الأمة."}
+              {language === "en" ? (
+                <>
+                  <span>
+                    {" "}
+                    If you disbelieve, then know that Allah is truly not in need
+                    of you, nor does He approve of disbelief from His servants.
+                    But if you become grateful through faith, He will appreciate
+                    that from you...
+                  </span>
+                  <br />
+                  <small style={{ color: "greenYellow" }}>[Quran - 39:7]</small>
+                </>
+              ) : (
+                <>
+                  <span>
+                    {" "}
+                    إِن تَكْفُرُوا فَإِنَّ اللَّهَ غَنِيٌّ عَنكُمْ وَلَا
+                    يَرْضَىٰ لِعِبَادِهِ الْكُفْرَ ۖ وَإِن تَشْكُرُوا يَرْضَهُ
+                    لَكُمْ ۗ وَلَا تَزِرُ وَازِرَةٌ وِزْرَ أُخْرَىٰ ۗ ثُمَّ
+                    إِلَىٰ رَبِّكُمْ مَرْجِعُكُمْ فَيُنَبِّئُكُمْ بِمَا كُنتُمْ
+                    تَعْمَلُونَ ۚ إِنَّهُ عَلِيمٌ بِذَاتِ الصُّدُورِ
+                  </span>
+                  <br />
+                  <small style={{ color: "greenYellow" }}>
+                    [القرآن الكريم - سورة الزمر 39:7]
+                  </small>
+                </>
+              )}
             </p>
           </div>
 

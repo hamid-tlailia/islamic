@@ -20,7 +20,7 @@ import LinkIcon from "@mui/icons-material/Link";
 import emailjs from "emailjs-com";
 import { toast } from "react-toastify";
 
-const Contact = () => {
+const Contact = ({ top }) => {
   const { language } = useTranslation();
   const [formData, setFormData] = useState({
     name: "",
@@ -107,6 +107,10 @@ const Contact = () => {
     if (language === "ar") setInputDirection("rtl");
     else setInputDirection("ltr");
   }, [language]);
+
+  useEffect(() => {
+    document.body.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   return (
     <Box
