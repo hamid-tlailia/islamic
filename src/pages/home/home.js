@@ -24,6 +24,10 @@ const Home = ({ onNavClick }) => {
   const [hadithsLoading, setHadithsLoading] = useState(true);
   const [error, setError] = useState(false);
 
+  // Get the current limit from localStorage or start at 0
+  const storedLimit =
+    parseInt(localStorage.getItem("last-category-limit")) || 0;
+
   // Function to fetch Hadiths
   const fetchHadiths = useCallback(async () => {
     try {
@@ -40,19 +44,17 @@ const Home = ({ onNavClick }) => {
         throw new Error(`HTTP error! status: ${categoriesResponse.status}`);
       }
       const categoriesData = await categoriesResponse.json();
-
-      // Get the current limit from localStorage or start at 0
-      const storedLimit =
-        parseInt(localStorage.getItem("last-category-limit")) || 0;
-
       // Determine the new limit
       const newLimit = storedLimit + 5;
 
       // Slice the categories data based on the current limit
       const categoriesToFetch = categoriesData.slice(storedLimit, newLimit);
-
       // Update the limit in localStorage
-      localStorage.setItem("last-category-limit", newLimit);
+      if (newLimit > categoriesData.length) {
+        localStorage.setItem("last-category-limit", "0");
+      } else {
+        localStorage.setItem("last-category-limit", newLimit);
+      }
 
       let allHadithIds = [];
 

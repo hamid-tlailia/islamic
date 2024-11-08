@@ -403,6 +403,7 @@ const Quran = ({ src, toTop }) => {
       setCurrentPageModal(parseInt(savedModalPage), 10);
       setCurrentPageExplanation(parseInt(savedExplanationPage), 10);
     }
+    setIsOpen(false);
   };
 
   useEffect(() => {
@@ -726,6 +727,24 @@ const Quran = ({ src, toTop }) => {
     );
   };
 
+  // Options in both languages
+  const options = {
+    ar: [
+      { value: "Arabe", text: "🇸🇦 العربية" },
+      { value: "English", text: "🇬🇧 الإنجليزية" },
+      { value: "Together", text: " العربية + الإنجليزية 🌐" },
+    ],
+    en: [
+      { value: "Arabe", text: "🇸🇦 Arabic" },
+      { value: "English", text: "🇬🇧 English" },
+      { value: "Together", text: "🌐 Arabic + English" },
+    ],
+  };
+
+  // Determine which language to display
+  const currentOptions =
+    language === "ar" && quranLangs === "Arabe" ? options.ar : options.en;
+
   return (
     <div className="quran">
       {isLoading ? (
@@ -819,7 +838,7 @@ const Quran = ({ src, toTop }) => {
                         {language === "ar" ? surah.englishName : surah.name}
                       </h5>
                     </div>
-                    <div className="surah-infos pe-none mx-2">
+                    <div className="surah-infos pe-none mx-2 mt-2">
                       <p className="surah-ayahs mb-1">
                         <span> {surah.ayahs.length} </span>{" "}
                         {language === "ar" ? "آية" : "Ayahs"}
@@ -956,7 +975,7 @@ const Quran = ({ src, toTop }) => {
 
                   <TabPanel value={tabValue} index={0}>
                     {/* Reading Tab Content */}
-                    <div className="w-100 h-100">
+                    <div className="w-100 h-100 p-2">
                       <div className="w-100 text-center d-flex justify-content-between dr-rtl align-items-center langs gap-2 py-2">
                         <select
                           className="form-select"
@@ -966,12 +985,14 @@ const Quran = ({ src, toTop }) => {
                           }
                           style={{ minWidth: "220px" }}
                         >
-                          <option value="Arabe">العربية/Arabe</option>
-                          <option value="English">الانجليزية/English</option>
-                          <option value="Together">Together</option>
+                          {currentOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.text}
+                            </option>
+                          ))}
                         </select>
                         <button
-                          className="btn btn-outline-light text-primary"
+                          className="btn btn-transparent text-primary"
                           onClick={() => setLayout("fullscreen")}
                         >
                           <ZoomOutMapOutlinedIcon />
@@ -995,7 +1016,7 @@ const Quran = ({ src, toTop }) => {
                                 className={
                                   ayah.text ===
                                     "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ" &&
-                                  allAyahs.name !== "سُورَةُ ٱلْفَاتِحَةِ"
+                                  allAyahs.number !== 1
                                     ? "d-none"
                                     : quranLangs === "English"
                                     ? "ayah-text dr-ltr text-start"
@@ -1053,7 +1074,7 @@ const Quran = ({ src, toTop }) => {
                                 className={
                                   ayah.text ===
                                     "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ" &&
-                                  allAyahs.name !== "سُورَةُ ٱلْفَاتِحَةِ"
+                                  allAyahs.number !== 1
                                     ? "d-none"
                                     : quranLangs === "English"
                                     ? "ayah-text dr-ltr text-start"
@@ -1066,11 +1087,11 @@ const Quran = ({ src, toTop }) => {
                                   )
                                 }
                               >
-                                <p className="pe-none">
+                                <p className="pe-none mt-3">
                                   {quranLangs === "Arabe" ||
                                   quranLangs === "Together" ? (
                                     <>
-                                      {allAyahs.name !== "سُورَةُ ٱلْفَاتِحَةِ"
+                                      {allAyahs.number !== 1
                                         ? ayah.text.replace(
                                             "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
                                             ""
@@ -1157,8 +1178,17 @@ const Quran = ({ src, toTop }) => {
                           setTafseerLangs(event.target.value)
                         }
                       >
-                        <option value="arabe">العربية/Arabe</option>
-                        <option value="english">الانجليزية/English</option>
+                        <option value="arabe">
+                          {" "}
+                          {language === "ar" && tafseerLangs === "arabe"
+                            ? "🇸🇦 العربية"
+                            : "Arabic 🇸🇦"}{" "}
+                        </option>
+                        <option value="english">
+                          {language === "ar" && tafseerLangs === "arabe"
+                            ? "🇬🇧 الانجليزية"
+                            : "English 🇬🇧"}
+                        </option>
                       </select>
                       <select
                         className="form-select"
@@ -1225,7 +1255,7 @@ const Quran = ({ src, toTop }) => {
                                 }}
                               >
                                 <p
-                                  className="w-100 ayah-in-tafseer"
+                                  className="w-100 ayah-in-tafseer mt-3"
                                   ref={refs[index]}
                                 >
                                   ۞{" "}
@@ -1409,8 +1439,7 @@ const Quran = ({ src, toTop }) => {
                                       {quranLangs === "Arabe" ||
                                       quranLangs === "Together" ? (
                                         <>
-                                          {allAyahs.name !==
-                                          "سُورَةُ ٱلْفَاتِحَةِ"
+                                          {allAyahs.number !== 1
                                             ? ayah.text.replace(
                                                 "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
                                                 ""
@@ -1441,6 +1470,7 @@ const Quran = ({ src, toTop }) => {
                                             textAlign: "center",
                                             color: "green",
                                           }}
+                                          className="mt-1"
                                         >
                                           ۝
                                           <span
@@ -1451,6 +1481,7 @@ const Quran = ({ src, toTop }) => {
                                               left: "50%",
                                               transform:
                                                 "translate(-50%, -50%)",
+                                              marginTop: "2px",
                                             }}
                                           >
                                             {index + 1 + indexOfFirstAyahModal}
