@@ -1024,7 +1024,10 @@ const Quran = ({ src, toTop }) => {
                                 }
                                 style={{
                                   direction:
-                                    quranLangs === "Arabe" ? "rtl" : "ltr",
+                                    quranLangs === "Arabe" ||
+                                    quranLangs === "Together"
+                                      ? "rtl"
+                                      : "ltr",
                                 }}
                                 key={index}
                                 onClick={() =>
@@ -1081,9 +1084,16 @@ const Quran = ({ src, toTop }) => {
                                   allAyahs.number !== 1
                                     ? "d-none"
                                     : quranLangs === "English"
-                                    ? "ayah-text dr-ltr text-start"
+                                    ? "ayah-text"
                                     : "ayah-text"
                                 }
+                                style={{
+                                  direction:
+                                    quranLangs === "Arabe" ||
+                                    quranLangs === "Together"
+                                      ? "rtl"
+                                      : "ltr",
+                                }}
                                 key={index}
                                 onClick={() =>
                                   getSingleAyahTafsir(

@@ -412,3 +412,20 @@
   background-color: var(--card-color) !important;
   color: var(--text-color) !important;
 }
+.font-default {
+  font-family: inherit;
+}
+
+.font-arial {
+  font-family: "Scheherazade", serif;
+}
+
+.font-times {
+  font-family: "Times New Roman", Times, serif;
+}
+
+.font-courier {
+  font-family: "Courier New", Courier, monospace;
+}
+
+/* Add more font classes as needed */

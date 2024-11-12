@@ -133,7 +133,7 @@ const Islam = () => {
         <Divider />
         <p style={{ mt: 2 }}>{selectedContent.fivePillars.description}</p>
         {/* Islam social justice */}
-        <Typography level="h3" component="div" sx={{ mt: 4, color: "navy" }}>
+        <Typography level="h3" component="div" sx={{ mt: 4, color: "purple" }}>
           <Public sx={{ mr: 1 }} /> {selectedContent.socialJustice.title}
         </Typography>
         <Divider />

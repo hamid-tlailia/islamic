@@ -108,6 +108,28 @@ body.image {
   background: url("./components/images//bg4.avif") no-repeat center;
   background-size: cover;
 }
+body.sky {
+  --header-bg-color: rgb(11, 11, 53); /* Midnight Blue */
+  --header-text-color: rgb(255, 255, 255); /* White */
+  --bg-color: rgb(18, 18, 32); /* Dark background */
+  --text-color: rgb(230, 230, 250); /* Lavender */
+  --card-color: rgb(28, 28, 48); /* Slightly lighter than background */
+  --border: 1px solid rgb(70, 130, 180); /* Steel Blue */
+  --nav-link-color: rgb(32, 220, 29); /* Light Sky Blue */
+  --outlets-bg-color: rgb(18, 18, 32); /* Match background */
+  --surah-border: 1px solid rgb(70, 130, 180); /* Steel Blue */
+  --surah-hover-color: rgb(25, 25, 112); /* Midnight Blue */
+  --nav-color: rgba(40, 40, 64, 0.8); /* Semi-transparent Midnight Blue */
+  --ayah-text-color: rgb(230, 230, 250); /* Lavender */
+  --scrolled-ayah-bg: rgba(70, 130, 180, 0.3); /* Semi-transparent Steel Blue */
+  --scolled-ayah-color: rgb(255, 255, 255); /* White */
+  --dropdown-bg-color: rgb(28, 28, 48); /* Match card color */
+  --player-bg-color: rgb(25, 25, 112); /* Midnight Blue */
+  --tabs-bg-color: rgba(70, 130, 180, 0.5); /* Semi-transparent Steel Blue */
+  --main-color: rgb(135, 206, 250); /* Light Sky Blue */
+  --api-card: rgb(70, 130, 180); /* Steel Blue */
+  --names-color: rgb(135, 206, 250); /* Light Sky Blue */
+}
 
 /* Contrast mode styles */
 

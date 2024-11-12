@@ -17,7 +17,7 @@ import Typography from "@mui/joy/Typography";
 import Sheet from "@mui/joy/Sheet";
 import BrightnessAutoOutlinedIcon from "@mui/icons-material/BrightnessAutoOutlined";
 import FilterBAndWOutlinedIcon from "@mui/icons-material/FilterBAndWOutlined";
-import FontDownloadOutlinedIcon from "@mui/icons-material/FontDownloadOutlined";
+import NightsStayOutlinedIcon from "@mui/icons-material/NightsStayOutlined";
 import PersonSearchOutlinedIcon from "@mui/icons-material/PersonSearchOutlined";
 import ChecklistRtlOutlinedIcon from "@mui/icons-material/ChecklistRtlOutlined";
 import RingVolumeOutlinedIcon from "@mui/icons-material/RingVolumeOutlined";
@@ -39,6 +39,7 @@ const Header = ({ onNavClick, visibility, size }) => {
   const [errorModalOpen, setErrorModalOpen] = useState(false); // State for error report modal
   const [loading, setLoading] = useState(false); // Loading state for submit button
   const [inputDirection, setInputDirection] = useState("rtl");
+  const [fontTheme, setFontTheme] = useState(""); // State for font theme
 
   // State for form data
   const [formData, setFormData] = useState({
@@ -50,7 +51,7 @@ const Header = ({ onNavClick, visibility, size }) => {
   const isBigScreen = useMediaQuery("(min-width:500px)");
 
   // Define the classes to check (excluding 'dark-mode' and 'light-mode')
-  const classesToCheck = ["light-filter", "brightness", "image", "fonts"];
+  const classesToCheck = ["light-filter", "brightness", "image", "sky"];
 
   // State to keep track of the active background class
   const [activeClass, setActiveClass] = useState("");
@@ -85,7 +86,7 @@ const Header = ({ onNavClick, visibility, size }) => {
     }
   };
 
-  // Initialize theme, background class, and notch-nav position from localStorage
+  // Initialize theme, background class, font theme, and notch-nav position from localStorage
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     const body = document.body;
@@ -110,6 +111,17 @@ const Header = ({ onNavClick, visibility, size }) => {
       setActiveClass(""); // No active background class
     }
 
+    // Initialize font theme from localStorage
+    const savedFontTheme = localStorage.getItem("fontTheme");
+    if (savedFontTheme) {
+      setFontTheme(savedFontTheme);
+      body.classList.add(savedFontTheme);
+    } else {
+      // default font theme
+      setFontTheme("font-default");
+      body.classList.add("font-default");
+    }
+
     // Initialize notch-nav position from localStorage
     const savedPosition = localStorage.getItem("notchNavPosition");
     if (savedPosition) {
@@ -119,6 +131,22 @@ const Header = ({ onNavClick, visibility, size }) => {
     }
     // eslint-disable-next-line
   }, []);
+
+  // Update font theme when fontTheme state changes
+  useEffect(() => {
+    const body = document.body;
+    // Remove all font classes
+    body.classList.remove(
+      "font-default",
+      "font-arial",
+      "font-times",
+      "font-courier"
+    );
+    // Add the selected font theme class
+    if (fontTheme) {
+      body.classList.add(fontTheme);
+    }
+  }, [fontTheme]);
 
   // Function to handle background class toggling
   const updatedBodyStyle = (event, className) => {
@@ -749,6 +777,35 @@ const Header = ({ onNavClick, visibility, size }) => {
               </Select>
             </div>
             <hr />
+            <div className="settings-elements font-theme">
+              <p>{language === "ar" ? "نوع الخط" : "Font Theme"}</p>
+              <Select
+                placeholder={language === "ar" ? "نوع الخط" : "Font Theme"}
+                onChange={(event, newValue) => {
+                  setFontTheme(newValue);
+                  localStorage.setItem("fontTheme", newValue);
+                }}
+                value={fontTheme || "font-default"}
+                sx={{
+                  width: 150,
+                  backgroundColor: "var(--card-color)",
+                  color: "var(--text-color)",
+                }}
+                className="lang-select"
+              >
+                <Option value="font-default">
+                  {language === "ar" ? "افتراضي" : "Default"}
+                </Option>
+                <Option value="font-arial">
+                  {language === "ar" ? "أميري" : "Amiri"}
+                </Option>
+                <Option value="font-courier">
+                  {language === "ar" ? "كوريير نيو" : "Courier New"}
+                </Option>
+                {/* Add more font options as needed */}
+              </Select>
+            </div>
+            <hr />
             <div className="settings-others bgs">
               <p>
                 {language === "ar" ? "الخلفية و المزيد" : "Background and more"}
@@ -796,14 +853,14 @@ const Header = ({ onNavClick, visibility, size }) => {
                   className={`fonts shadow tools ${
                     activeClass === "fonts" ? "active" : ""
                   }`}
-                  id="fonts"
+                  id="sky"
                   onClick={(event) =>
                     updatedBodyStyle(event, event.currentTarget.id)
                   }
                 >
                   <span className="pe-none">
-                    {language === "ar" ? "نوع الخط" : "Fonts"} <br />
-                    <FontDownloadOutlinedIcon />
+                    {language === "ar" ? "منتصف الليل" : "Midnight"} <br />
+                    <NightsStayOutlinedIcon />
                   </span>
                 </div>
               </div>
