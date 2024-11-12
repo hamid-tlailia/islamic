@@ -97,6 +97,7 @@
   grid-template-columns: repeat(auto-fit, minmax(auto, auto));
   gap: 10px;
   padding: 5px;
+  direction: rtl;
 }
 .modal-text {
   display: grid;

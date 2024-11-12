@@ -451,7 +451,6 @@ const Ahadith = () => {
     setLoader(true);
     setHadithExplanation(null);
     setOpenHadithModal(true);
-
     try {
       const response = await fetch(proxyUrl);
       if (!response.ok) {
@@ -462,7 +461,6 @@ const Ahadith = () => {
       const data = await response.json();
       const parsedData = JSON.parse(data.contents); // Since data comes as a string
       const explanation = parsedData.ahadith?.result || "No explanation found.";
-
       const cleanContent = DOMPurify.sanitize(explanation);
       setHadithExplanation(cleanContent);
       setLoader(false);
@@ -1159,7 +1157,7 @@ const Ahadith = () => {
               }}
             >
               {loader ? (
-                <Button loading variant="plain">
+                <Button loading variant="plain" className="w-100 text-center">
                   Plain
                 </Button>
               ) : (

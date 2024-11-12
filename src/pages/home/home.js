@@ -275,7 +275,7 @@ const Home = ({ onNavClick }) => {
                           language === "ar" ? "rtl" : "ltr"
                         }`}
                       >
-                        {language === "ar" ? "الشرح :" : "Explanation : "}{" "}
+                        {language === "ar" ? "شرح الحديث :" : "Explanation : "}{" "}
                       </p>
                       <p
                         className={
@@ -292,21 +292,32 @@ const Home = ({ onNavClick }) => {
                           language === "ar" ? "rtl" : "ltr"
                         }`}
                       >
-                        {language === "ar" ? "تلميحات :" : "Hints :"}{" "}
+                        {item.data.hints && language === "ar"
+                          ? "ما يستفاد من الحديث :"
+                          : "Hints :"}
                       </p>
                       <div
                         className={`d-flex flex-column gap-1 ${
                           language === "ar" ? "rtl" : "ltr"
                         }`}
                       >
-                        {item.data?.hints.map((h, idx) => (
-                          <p
-                            key={idx}
-                            className="text-warning bg-dark p-2 rounded-2 hint"
-                          >
-                            {idx + 1} - {h}
-                          </p>
-                        ))}
+                        {item.data?.hints.map((h, idx) =>
+                          item.data?.hints.length > 1 ? (
+                            <p
+                              key={idx}
+                              className="text-warning bg-dark p-2 rounded-2 hint"
+                            >
+                              {idx + 1} - {h}
+                            </p>
+                          ) : (
+                            <p
+                              key={idx}
+                              className="text-warning bg-dark p-2 rounded-2 hint"
+                            >
+                              {h}
+                            </p>
+                          )
+                        )}
                       </div>
                     </div>
                   </div>

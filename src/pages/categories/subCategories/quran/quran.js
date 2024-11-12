@@ -1019,9 +1019,13 @@ const Quran = ({ src, toTop }) => {
                                   allAyahs.number !== 1
                                     ? "d-none"
                                     : quranLangs === "English"
-                                    ? "ayah-text dr-ltr text-start"
+                                    ? "ayah-text"
                                     : "ayah-text"
                                 }
+                                style={{
+                                  direction:
+                                    quranLangs === "Arabe" ? "rtl" : "ltr",
+                                }}
                                 key={index}
                                 onClick={() =>
                                   getSingleAyahTafsir(
@@ -1061,9 +1065,9 @@ const Quran = ({ src, toTop }) => {
                                 </p>
 
                                 <p
-                                  className={`ayah-number ${
+                                  className={`ayah-number  ${
                                     quranLangs === "English" && "ltr"
-                                  } ${language === "en" && "ltr"}`}
+                                  }`}
                                 >
                                   {index + 1 + indexOfFirstAyahReading}
                                 </p>
@@ -1121,7 +1125,7 @@ const Quran = ({ src, toTop }) => {
                                 <p
                                   className={`ayah-number ${
                                     quranLangs === "English" && "ltr"
-                                  } ${language === "en" && "ltr"}`}
+                                  }`}
                                 >
                                   {index + 1 + indexOfFirstAyahReading}
                                 </p>
@@ -1250,8 +1254,8 @@ const Quran = ({ src, toTop }) => {
                               <div
                                 className="ayah-text mb-3"
                                 style={{
-                                  textAlign:
-                                    tafseerLangs === "arabe" ? "right" : "left",
+                                  direction:
+                                    tafseerLangs === "arabe" ? "rtl" : "ltr",
                                 }}
                               >
                                 <p
@@ -1260,7 +1264,7 @@ const Quran = ({ src, toTop }) => {
                                 >
                                   ۞{" "}
                                   {tafseerLangs === "arabe" &&
-                                  allAyahs.name !== "سُورَةُ ٱلْفَاتِحَةِ"
+                                  allAyahs.number !== 1
                                     ? allAyahs?.ayahs[
                                         globalIndex
                                       ]?.text.replace(
@@ -1277,8 +1281,8 @@ const Quran = ({ src, toTop }) => {
                                 </p>
                                 <p
                                   className={`ayah-number ${
-                                    tafseerLangs === "english" && "ltr"
-                                  } ${language === "en" && "ltr"}`}
+                                    tafseerLangs === "english" ? "ltr" : "rtl"
+                                  }`}
                                 >
                                   {globalIndex + 1}
                                 </p>

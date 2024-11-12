@@ -231,13 +231,6 @@ const Header = ({ onNavClick, visibility, size }) => {
     }
   }, [isNetworkWeak, language]);
 
-  // Show modal when offline
-  useEffect(() => {
-    if (!isOnline) {
-      setOpen(true); // Open the modal when offline
-    }
-  }, [isOnline]);
-
   const renderNavLinks = () => (
     <>
       <li className="nav-item">
@@ -633,6 +626,7 @@ const Header = ({ onNavClick, visibility, size }) => {
               alignItems: "center",
               backgroundColor: "var(--card-color)",
               color: "var(--text-color)",
+              border: "1px solid white",
             }}
           >
             <ModalClose variant="plain" sx={{ m: 1 }} />
@@ -677,6 +671,7 @@ const Header = ({ onNavClick, visibility, size }) => {
               boxShadow: "lg",
               overflowY: "auto",
               maxWidth: "95%",
+              border: "1px solid white",
             }}
           >
             <ModalClose
@@ -843,6 +838,7 @@ const Header = ({ onNavClick, visibility, size }) => {
             maxHeight: "95%",
             backgroundColor: "var(--card-color)",
             color: "var(--text-color)",
+            border: "1px solid white",
           }}
         >
           <ModalClose

@@ -778,6 +778,9 @@ const Tafsir = ({ toTop, src, audioName }) => {
                         <TafsirContent
                           key={index + indexOfFirstItem}
                           className={alignmentClass}
+                          style={{
+                            direction: langs === "arabic" ? "rtl" : "ltr",
+                          }}
                           dangerouslySetInnerHTML={{ __html: tafsirText }}
                         />
                       ))}

@@ -220,7 +220,7 @@
   text-align: center;
   gap: 8px;
   z-index: 15;
-  box-shadow: rgba(6, 65, 132, 0.3) 0px 0px 0px 3px;
+  box-shadow: rgba(245, 246, 247, 0.3) 0px 0px 0px 1px;
   overflow: clip;
   transition: 0.5s;
 }

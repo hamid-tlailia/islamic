@@ -4,7 +4,7 @@ import { useTranslation } from "../../../../components/languages/provider";
 import { Tabs, Tab, TabList, TabPanel } from "@mui/joy";
 import Card from "@mui/joy/Card";
 import CircularProgress from "@mui/joy/CircularProgress";
-import adhkarData from "./adhkar.json"; // Importing the adhkar data
+import adhkarData from "./json/adhkar.json"; // Importing the adhkar data
 
 const Adhkar = () => {
   const { language } = useTranslation();
@@ -107,7 +107,9 @@ const Adhkar = () => {
                   )}
                   <p>{item.zekr}</p>
                   {item.repeat && (
-                    <p className="badge bg-primary text-light">{`التكرار: ${item.repeat}`}</p>
+                    <p className="badge bg-primary text-light">{`${
+                      language === "ar" ? "التكرار: " : "Repeat : "
+                    } ${item.repeat}`}</p>
                   )}
                 </div>
               </Card>
@@ -140,7 +142,9 @@ const Adhkar = () => {
                   )}
                   <p>{item.zekr}</p>
                   {item.repeat && (
-                    <p className="badge bg-primary text-light">{`التكرار: ${item.repeat}`}</p>
+                    <p className="badge bg-primary text-light">{`${
+                      language === "ar" ? "التكرار: " : "Repeat : "
+                    } ${item.repeat}`}</p>
                   )}
                 </div>
               </Card>
@@ -173,7 +177,9 @@ const Adhkar = () => {
                   )}
                   <p>{item.zekr}</p>
                   {item.repeat && (
-                    <p className="badge bg-primary text-light">{`التكرار: ${item.repeat}`}</p>
+                    <p className="badge bg-primary text-light">{`${
+                      language === "ar" ? "التكرار: " : "Repeat : "
+                    } ${item.repeat}`}</p>
                   )}
                 </div>
               </Card>

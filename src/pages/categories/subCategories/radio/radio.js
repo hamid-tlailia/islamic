@@ -158,8 +158,8 @@ const Radio = ({ src, audioName, isPlaying, toTop }) => {
       )}
       {loading ? (
         <div className="radios-grid">
-          {Array.from(new Array(10)).map((_, index) => (
-            <div key={index} className="radio-card">
+          {Array.from(new Array(15)).map((_, index) => (
+            <div key={index} className="sketlon-card">
               <div className="radio-image-container">
                 <Skeleton variant="rectangular" className="radio-image" />
               </div>
