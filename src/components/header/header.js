@@ -850,8 +850,8 @@ const Header = ({ onNavClick, visibility, size }) => {
                   </span>
                 </div>
                 <div
-                  className={`fonts shadow tools ${
-                    activeClass === "fonts" ? "active" : ""
+                  className={`sky shadow tools ${
+                    activeClass === "sky" ? "active" : ""
                   }`}
                   id="sky"
                   onClick={(event) =>

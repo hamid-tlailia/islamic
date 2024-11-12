@@ -124,7 +124,7 @@ body.sky {
   --scrolled-ayah-bg: rgba(70, 130, 180, 0.3); /* Semi-transparent Steel Blue */
   --scolled-ayah-color: rgb(255, 255, 255); /* White */
   --dropdown-bg-color: rgb(28, 28, 48); /* Match card color */
-  --player-bg-color: rgb(25, 25, 112); /* Midnight Blue */
+  --player-bg-color: rgb(11, 11, 53); /* Midnight Blue */
   --tabs-bg-color: rgba(70, 130, 180, 0.5); /* Semi-transparent Steel Blue */
   --main-color: rgb(135, 206, 250); /* Light Sky Blue */
   --api-card: rgb(70, 130, 180); /* Steel Blue */
@@ -150,9 +150,7 @@ body.brightness::before {
   pointer-events: none;
   z-index: 9999; /* Ensure it's above other elements */
 }
-body.fonts {
-  font-family: "Scheherazade", serif;
-}
+
 body,
 html {
   width: 100%;
