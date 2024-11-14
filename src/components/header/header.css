@@ -412,12 +412,39 @@
   background-color: var(--card-color) !important;
   color: var(--text-color) !important;
 }
+/* Default font */
 .font-default {
-  font-family: inherit;
+  font-family: inherit !important;
 }
 
-.font-arial {
+/* Arabic fonts */
+.font-scheherazade {
   font-family: "Scheherazade", serif;
+}
+
+.font-amiri {
+  font-family: "Amiri", serif;
+}
+
+.font-lateef {
+  font-family: "Lateef", cursive;
+}
+
+.font-dubai {
+  font-family: "Dubai", sans-serif;
+}
+
+.font-noto-arabic {
+  font-family: "Noto Naskh Arabic", serif;
+}
+
+.font-uthmanic {
+  font-family: "Uthman Taha Naskh", serif;
+}
+
+/* English fonts */
+.font-arial {
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .font-times {
@@ -426,6 +453,30 @@
 
 .font-courier {
   font-family: "Courier New", Courier, monospace;
+}
+
+.font-roboto {
+  font-family: "Roboto", sans-serif;
+}
+
+.font-georgia {
+  font-family: Georgia, serif;
+}
+
+.font-tahoma {
+  font-family: Tahoma, Geneva, sans-serif;
+}
+
+.font-verdana {
+  font-family: Verdana, Geneva, sans-serif;
+}
+
+.font-calibri {
+  font-family: Calibri, sans-serif;
+}
+
+.font-trebuchet {
+  font-family: "Trebuchet MS", Helvetica, sans-serif;
 }
 
 /* Add more font classes as needed */

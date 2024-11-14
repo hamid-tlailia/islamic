@@ -292,9 +292,11 @@ const Home = ({ onNavClick }) => {
                           language === "ar" ? "rtl" : "ltr"
                         }`}
                       >
-                        {item.data.hints && language === "ar"
-                          ? "ما يستفاد من الحديث :"
-                          : "Hints :"}
+                        {item.data.hints.length > 0
+                          ? language === "ar"
+                            ? "ما يستفاد من الحديث :"
+                            : "Hints :"
+                          : null}
                       </p>
                       <div
                         className={`d-flex flex-column gap-1 ${

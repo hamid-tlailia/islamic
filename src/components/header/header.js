@@ -113,13 +113,14 @@ const Header = ({ onNavClick, visibility, size }) => {
 
     // Initialize font theme from localStorage
     const savedFontTheme = localStorage.getItem("fontTheme");
-    if (savedFontTheme) {
+    if (savedFontTheme && savedFontTheme !== null) {
       setFontTheme(savedFontTheme);
       body.classList.add(savedFontTheme);
     } else {
       // default font theme
       setFontTheme("font-default");
       body.classList.add("font-default");
+      localStorage.setItem("fontTheme", "font-default");
     }
 
     // Initialize notch-nav position from localStorage
@@ -793,16 +794,31 @@ const Header = ({ onNavClick, visibility, size }) => {
                 }}
                 className="lang-select"
               >
-                <Option value="font-default">
-                  {language === "ar" ? "افتراضي" : "Default"}
-                </Option>
-                <Option value="font-arial">
-                  {language === "ar" ? "أميري" : "Amiri"}
-                </Option>
-                <Option value="font-courier">
-                  {language === "ar" ? "كوريير نيو" : "Courier New"}
-                </Option>
-                {/* Add more font options as needed */}
+                {/* Conditionally render options based on language */}
+                {language === "ar" ? (
+                  <>
+                    <Option value="font-default">افتراضي</Option>
+                    <Option value="font-scheherazade">شهرزاد</Option>
+                    <Option value="font-amiri">أميري</Option>
+                    <Option value="font-lateef">لطيف</Option>
+                    <Option value="font-dubai">دبي</Option>
+                    <Option value="font-noto-arabic">نوتو نسخ عربي</Option>
+                    <Option value="font-uthmanic">عثماني نسخ</Option>
+                  </>
+                ) : (
+                  <>
+                    <Option value="font-default">Default</Option>
+                    <Option value="font-arial">Arial</Option>
+                    <Option value="font-courier">Courier New</Option>
+                    <Option value="font-times">Times New Roman</Option>
+                    <Option value="font-roboto">Roboto</Option>
+                    <Option value="font-georgia">Georgia</Option>
+                    <Option value="font-tahoma">Tahoma</Option>
+                    <Option value="font-verdana">Verdana</Option>
+                    <Option value="font-calibri">Calibri</Option>
+                    <Option value="font-trebuchet">Trebuchet MS</Option>
+                  </>
+                )}
               </Select>
             </div>
             <hr />

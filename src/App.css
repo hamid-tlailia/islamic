@@ -118,7 +118,7 @@ body.sky {
   --nav-link-color: rgb(32, 220, 29); /* Light Sky Blue */
   --outlets-bg-color: rgb(18, 18, 32); /* Match background */
   --surah-border: 1px solid rgb(70, 130, 180); /* Steel Blue */
-  --surah-hover-color: rgb(25, 25, 112); /* Midnight Blue */
+  --surah-hover-color: rgb(226, 26, 110); /* Midnight Blue */
   --nav-color: rgba(40, 40, 64, 0.8); /* Semi-transparent Midnight Blue */
   --ayah-text-color: rgb(230, 230, 250); /* Lavender */
   --scrolled-ayah-bg: rgba(70, 130, 180, 0.3); /* Semi-transparent Steel Blue */
@@ -127,7 +127,7 @@ body.sky {
   --player-bg-color: rgb(11, 11, 53); /* Midnight Blue */
   --tabs-bg-color: rgba(70, 130, 180, 0.5); /* Semi-transparent Steel Blue */
   --main-color: rgb(135, 206, 250); /* Light Sky Blue */
-  --api-card: rgb(70, 130, 180); /* Steel Blue */
+  --api-card: rgb(7, 30, 49); /* Steel Blue */
   --names-color: rgb(135, 206, 250); /* Light Sky Blue */
 }
 
