@@ -4,7 +4,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import ManageSearchOutlinedIcon from "@mui/icons-material/ManageSearchOutlined";
-import GridViewOutlinedIcon from "@mui/icons-material/GridViewOutlined";
+import ChecklistRtlOutlinedIcon from "@mui/icons-material/ChecklistRtlOutlined";
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "../../components/languages/provider";
 import { toast } from "react-toastify";
@@ -417,7 +417,7 @@ const Home = ({ onNavClick }) => {
               onClick={onNavClick}
             >
               <button className="btn btn-outline-primary">
-                <GridViewOutlinedIcon className="home-short-icon" />{" "}
+                <ChecklistRtlOutlinedIcon className="home-short-icon" />{" "}
                 {translations.categoriesBtn}
               </button>
             </NavLink>

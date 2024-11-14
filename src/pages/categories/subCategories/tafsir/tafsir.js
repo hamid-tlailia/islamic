@@ -889,7 +889,7 @@ const Tafsir = ({ toTop, src, audioName }) => {
                           onClick={() =>
                             handlePlayAudio(item.url, item.name, item.id)
                           }
-                          className={`audio-tafsir-container  d-flex flex-row gap-2 ${
+                          className={`audio-tafsir-container  d-flex flex-row p-1 gap-2 ${
                             item.id === activeAudioCardId ? "active" : ""
                           }`}
                         >

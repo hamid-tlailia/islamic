@@ -163,7 +163,7 @@
     height: 40vh;
   }
   .home-btns button {
-    width: 140px;
+    width: 170px;
     height: 120px;
     display: flex;
     flex-direction: column;
@@ -173,7 +173,18 @@
     font-size: 30px;
   }
 }
-
+@media screen and (max-width: 372px) {
+  .home-btns button {
+    width: max-content;
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-size: 26px;
+  }
+}
 .icons {
   width: 50px;
   height: 50px;
