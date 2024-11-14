@@ -829,7 +829,6 @@ const Header = ({ onNavClick, visibility, size }) => {
                   <>
                     <Option value="font-default">Default</Option>
                     <Option value="font-arial">Arial</Option>
-                    <Option value="font-courier">Courier New</Option>
                     <Option value="font-times">Times New Roman</Option>
                     <Option value="font-roboto">Roboto</Option>
                     <Option value="font-georgia">Georgia</Option>
