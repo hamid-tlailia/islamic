@@ -1180,7 +1180,7 @@ const BeMuslim = () => {
 
           <Typography
             level="body2"
-            sx={{ fontStyle: "italic", color: "purple" }}
+            sx={{ fontStyle: "italic", color: "#008f7a" }}
           >
             {section.proof ? section.proof[language] : ""}
           </Typography>
@@ -1245,7 +1245,7 @@ const BeMuslim = () => {
               )}
               <Typography
                 level="body2"
-                sx={{ fontStyle: "italic", color: "purple" }}
+                sx={{ fontStyle: "italic", color: "#008f7a" }}
               >
                 {selectedContent.proof?.[language]}
               </Typography>

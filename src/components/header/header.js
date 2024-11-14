@@ -133,16 +133,32 @@ const Header = ({ onNavClick, visibility, size }) => {
     // eslint-disable-next-line
   }, []);
 
-  // Update font theme when fontTheme state changes
   useEffect(() => {
     const body = document.body;
-    // Remove all font classes
-    body.classList.remove(
+
+    // Get all font-related classes dynamically
+    const allFontClasses = [
       "font-default",
       "font-arial",
       "font-times",
-      "font-courier"
-    );
+      "font-courier",
+      "font-scheherazade",
+      "font-amiri",
+      "font-lateef",
+      "font-dubai",
+      "font-noto-arabic",
+      "font-uthmanic",
+      "font-roboto",
+      "font-georgia",
+      "font-tahoma",
+      "font-verdana",
+      "font-calibri",
+      "font-trebuchet",
+    ];
+
+    // Remove all font-related classes from body
+    body.classList.remove(...allFontClasses);
+
     // Add the selected font theme class
     if (fontTheme) {
       body.classList.add(fontTheme);
@@ -420,19 +436,23 @@ const Header = ({ onNavClick, visibility, size }) => {
     },
     {
       value: "tajweed",
-      label: language === "ar" ? "نص التجويد" : "Rules of Recitation",
+      label: language === "ar" ? "أحكام التلاوة" : "Rules of Recitation",
     },
     {
       value: "ahadiths",
-      label: language === "ar" ? "الاحاديث " : "Hadiths",
+      label: language === "ar" ? "الأحاديث " : "Hadiths",
     },
     {
       value: "tafsir",
-      label: language === "ar" ? "التفسير" : "Quran explanation",
+      label: language === "ar" ? "تفسير القران" : "Quran Interpretation",
     },
     {
       value: "story",
       label: language === "ar" ? "القصص" : "Stories",
+    },
+    {
+      value: "api",
+      label: language === "ar" ? "خدمة API" : "API docs",
     },
   ];
 
@@ -934,14 +954,12 @@ const Header = ({ onNavClick, visibility, size }) => {
             <div className="d-flex-flex-column justify-centent-center gap-3 w-100 ">
               <div className="d-flex flex-row justify-content-between align-items-center gap-3 p-2 w-100">
                 <label htmlFor="category" className="text-primary fs-5">
-                  {language === "ar" ? "اختر الفئة : " : "Select category : "}
+                  {language === "ar" ? "مكان الخطأ : " : "Error location : "}
                 </label>
                 <div className="error-category w-auto">
                   <Select
                     name="category"
-                    placeholder={
-                      language === "ar" ? "اختر الفئة" : "Select category"
-                    }
+                    placeholder={language === "ar" ? "أين؟" : "Where ?"}
                     onChange={(event, newValue) =>
                       setFormData((prev) => ({ ...prev, category: newValue }))
                     }
@@ -969,7 +987,7 @@ const Header = ({ onNavClick, visibility, size }) => {
             <hr />
             <div className="d-flex-flex-column justify-centent-center gap-3 w-100 mt-3">
               <FormControl>
-                <FormLabel className="text-primary fs-5">
+                <FormLabel className="text-primary fw-normal fs-5">
                   {language === "ar" ? "تفاصيل الخطأ : " : "Error details : "}
                 </FormLabel>{" "}
                 <br />
@@ -977,7 +995,9 @@ const Header = ({ onNavClick, visibility, size }) => {
                   name="description"
                   value={formData.description}
                   placeholder={
-                    language === "ar" ? "تفاصيل الخطأ..." : "Error details..."
+                    language === "ar"
+                      ? "الرجاء توضيح تفاصيل الخطأ ..."
+                      : "Please write more about error details... "
                   }
                   onChange={handleChange}
                   required
@@ -1010,9 +1030,9 @@ const Header = ({ onNavClick, visibility, size }) => {
                 {loading ? (
                   <CircularProgress size="sm" />
                 ) : language === "ar" ? (
-                  "التبليغ"
+                  "ارسال التقرير"
                 ) : (
-                  "Submit"
+                  "Send Report"
                 )}
               </Button>
             </div>
