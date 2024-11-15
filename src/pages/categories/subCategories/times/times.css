@@ -4,12 +4,7 @@
   justify-content: center !important;
   align-items: center !important;
 }
-.times div {
-  background-color: var(--card-color) !important;
-  color: var(--text-color);
-  justify-content: center !important;
-  align-items: center !important;
-}
+
 .loader-manager {
   display: flex;
   justify-content: center !important;

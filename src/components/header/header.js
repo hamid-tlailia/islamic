@@ -835,7 +835,7 @@ const Header = ({ onNavClick, visibility, size }) => {
                     <Option value="font-tahoma">Tahoma</Option>
                     <Option value="font-verdana">Verdana</Option>
                     <Option value="font-calibri">Calibri</Option>
-                    <Option value="font-trebuchet">Trebuchet MS</Option>
+                    <Option value="font-lateef">Cute</Option>
                   </>
                 )}
               </Select>

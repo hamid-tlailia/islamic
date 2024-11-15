@@ -171,10 +171,7 @@ body *::selection {
 body p {
   text-align: justify !important;
 }
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
-}
+
 /* For Firefox */
 body *::-moz-selection {
   background-color: #164119;
@@ -345,4 +342,8 @@ a {
   overflow: hidden;
   background-color: var(--card-color) !important;
   border: 1px solid white;
+}
+.Toastify__toast button {
+  color: var(--text-color) !important;
+  opacity: 1 !important;
 }
