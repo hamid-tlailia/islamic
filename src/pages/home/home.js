@@ -352,11 +352,11 @@ const Home = ({ onNavClick }) => {
 
       {/* Description */}
       <div
-        className="container-fluid d-flex justify-content-center align-items-center card home-content"
+        className="container-fluid d-flex justify-content-center align-items-center card home-content p-0"
         style={{ marginTop: selectedHadiths.length === 0 ? "0" : "-8vh" }}
       >
         <div
-          className={`row w-100 site-map ${
+          className={`row w-100 site-map p-0 ${
             language === "ar" ? "rtl" : "ltr en"
           }`}
         >
@@ -416,7 +416,7 @@ const Home = ({ onNavClick }) => {
               className="home-shortcut-href"
               onClick={onNavClick}
             >
-              <button className="btn btn-outline-primary">
+              <button className="btn btn-primary">
                 <ChecklistRtlOutlinedIcon className="home-short-icon" />{" "}
                 {translations.categoriesBtn}
               </button>

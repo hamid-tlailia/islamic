@@ -133,8 +133,8 @@ const Footer = ({ onFooterClick }) => {
             <p className="text-white">
               © {year}{" "}
               {language === "en"
-                ? "All rights reserved by:"
-                : "كل الحقوق محفوظة :"}
+                ? "All rights reserved by : "
+                : "كل الحقوق محفوظة : "}
               <a href="!#" style={{ textDecoration: "none" }}>
                 <strong className="text-warning">
                   {" "}

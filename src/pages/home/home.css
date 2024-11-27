@@ -144,6 +144,7 @@
   width: 95%;
   border: var(--border);
   background-color: var(--card-color);
+  border-radius: 22px 22px 0 0;
 }
 @media screen and (max-width: 754px) {
   .home-btns {

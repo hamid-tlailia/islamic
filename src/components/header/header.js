@@ -818,22 +818,16 @@ const Header = ({ onNavClick, visibility, size }) => {
                 {language === "ar" ? (
                   <>
                     <Option value="font-default">افتراضي</Option>
-                    <Option value="font-scheherazade">شهرزاد</Option>
                     <Option value="font-amiri">أميري</Option>
-                    <Option value="font-lateef">لطيف</Option>
-                    <Option value="font-dubai">دبي</Option>
-                    <Option value="font-noto-arabic">نوتو نسخ عربي</Option>
-                    <Option value="font-uthmanic">عثماني نسخ</Option>
+                    <Option value="font-dubai">لطيف</Option>
+                    <Option value="font-noto-arabic"> نسخ عربي</Option>
                   </>
                 ) : (
                   <>
                     <Option value="font-default">Default</Option>
-                    <Option value="font-arial">Arial</Option>
                     <Option value="font-times">Times New Roman</Option>
                     <Option value="font-roboto">Roboto</Option>
                     <Option value="font-georgia">Georgia</Option>
-                    <Option value="font-tahoma">Tahoma</Option>
-                    <Option value="font-verdana">Verdana</Option>
                     <Option value="font-calibri">Calibri</Option>
                     <Option value="font-lateef">Cute</Option>
                   </>

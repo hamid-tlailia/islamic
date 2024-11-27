@@ -87,7 +87,6 @@ function App() {
   const [playingSurah, setPlayingSurah] = useState("");
   const [hideHeader, setHideHeader] = useState(false);
   const [lastScroll, setLastScroll] = useState(0);
-  const [activeStyle, setActiveStyle] = useState([]);
   const [scrollToTop, setScrollToTop] = useState(false);
   const [show, setShow] = useState(false);
   const [backToTop, setBackToTop] = useState(false);
@@ -218,41 +217,6 @@ function App() {
     }
   };
 
-  // Function to handle adding/removing styles
-  const adjustStyle = (event, style) => {
-    const body = document.body;
-
-    if (event.target.classList.contains("active")) {
-      // If it is active, remove the 'active' class and the style from the state
-      event.target.classList.remove("active");
-      body.classList.remove(style);
-
-      // Remove the style from the activeStyle state
-      setActiveStyle((prevStyles) =>
-        prevStyles.filter((active) => active !== style)
-      );
-    } else {
-      // If it is not active, add the 'active' class and the style to the state
-      event.target.classList.add("active");
-      body.classList.add(style);
-
-      // Add the style to the activeStyle state
-      setActiveStyle((prevStyles) => {
-        // Ensure the style is not already present before adding
-        if (!prevStyles.includes(style)) {
-          return [...prevStyles, style];
-        }
-        return prevStyles;
-      });
-    }
-  };
-
-  // Clear all body styles when toggle to dark mode
-
-  const clearBodyStyles = () => {
-    setActiveStyle([]);
-  };
-
   // Show hide header on categories scroll
   const headerON = () => {
     setHideHeader(false);
@@ -284,9 +248,6 @@ function App() {
                 onNavClick={triggerAnimation}
                 visibility={hideHeader}
                 size={handleSize}
-                bodyStyle={adjustStyle}
-                active={activeStyle}
-                clearThemes={clearBodyStyles}
               />
               <div
                 className={`lazy-component-wrapper ${isLoaded ? "loaded" : ""}`}
