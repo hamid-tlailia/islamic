@@ -338,6 +338,7 @@
   background-color: var(--card-color) !important;
   color: var(--text-color) !important;
   max-height: 95%;
+  border: none !important;
 }
 @media screen and (max-width: 412px) {
   .settings-modal {
@@ -414,20 +415,20 @@
 }
 /* Default font */
 .font-default {
-  font-family: inherit !important;
+  font-family: "Cairo", sans-serif !important;
 }
 
 /* Arabic fonts */
 .font-scheherazade {
-  font-family: "Scheherazade", serif;
+  font-family: "Scheherazade", serif !important;
 }
 
 .font-amiri {
-  font-family: "Amiri", serif;
+  font-family: "Amiri", serif !important;
 }
 
 .font-lateef {
-  font-family: "Lateef", cursive;
+  font-family: "Lateef", cursive !important;
 }
 
 .font-dubai {
@@ -476,3 +477,6 @@
 }
 
 /* Add more font classes as needed */
+.report-error-modal {
+  border: none !important;
+}

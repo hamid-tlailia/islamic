@@ -44,19 +44,19 @@ const combinedTasbihAndIstighfar = [
   {
     ar: "اللهم صل وسلم على نبينا محمد",
     en: "O Allah, send Your peace and blessings upon our Prophet Muhammad.",
-    total: 100,
+    total: 10,
     description: {
       ar: "قال رسول الله صلى الله عليه وسلم: من صلى عليّ حين يصبح وحين يمسي أدركته شفاعتي يوم القيامة. (رواه الطبراني)",
       en: "The Messenger of Allah (PBUH) said: 'Whoever sends peace upon me in the morning and in the evening will receive my intercession on the Day of Judgment.' (Narrated by Al-Tabarani)",
     },
   },
   {
-    ar: "سبحان الله العظيم وبحمده",
-    en: "Subhan Allah Al-Azeem wa bihamdihi",
-    total: 1,
+    ar: "سبحان الله وبحمده",
+    en: "Subhan Allah wa bihamdihi",
+    total: 100,
     description: {
-      ar: "قال رسول الله صلى الله عليه وسلم: من قال سبحان الله العظيم وبحمده غُرست له نخلة في الجنة. (رواه الترمذي)",
-      en: "The Messenger of Allah (PBUH) said: 'Whoever says Subhan Allah Al-Azeem wa bihamdihi, a palm tree will be planted for them in Paradise.' (Narrated by Tirmidhi)",
+      ar: "قال رسول الله صلى الله عليه وسلم: من قال سبحان الله وبحمده مائة مرة حُطت خطاياه وإن كانت مثل زبد البحر. (رواه البخاري ومسلم)",
+      en: "The Messenger of Allah (PBUH) said: 'Whoever says Subhan Allah wa bihamdihi one hundred times, their sins will be forgiven, even if they are as much as the foam of the sea.' (Narrated by Bukhari and Muslim)",
     },
   },
   {
@@ -81,7 +81,7 @@ const combinedTasbihAndIstighfar = [
   {
     ar: "أستغفر الله العظيم الذي لا إله إلا هو الحي القيوم وأتوب إليه",
     en: "I seek forgiveness from Allah the Great, there is no god but He, the Ever-Living, the Sustainer, and I repent to Him.",
-    total: 1,
+    total: 3,
     description: {
       ar: "قال رسول الله صلى الله عليه وسلم: من قالها غفر له وإن كان فر من الزحف. (رواه الترمذي)",
       en: "The Messenger of Allah (PBUH) said: 'Whoever says this will be forgiven even if they had fled from the battlefield.' (Narrated by Tirmidhi)",
@@ -99,7 +99,7 @@ const combinedTasbihAndIstighfar = [
   {
     ar: "أستغفر الله وأتوب إليه",
     en: "I seek Allah’s forgiveness and repent to Him.",
-    total: 100,
+    total: 70,
     description: {
       ar: "قال رسول الله صلى الله عليه وسلم: إني لأستغفر الله وأتوب إليه في اليوم مائة مرة. (رواه مسلم)",
       en: "The Messenger of Allah (PBUH) said: 'Indeed, I seek Allah's forgiveness and repent to Him one hundred times a day.' (Narrated by Muslim)",
