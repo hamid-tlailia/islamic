@@ -135,12 +135,12 @@ const Footer = ({ onFooterClick }) => {
               {language === "en"
                 ? "All rights reserved by : "
                 : "كل الحقوق محفوظة : "}
-              <a href="!#" style={{ textDecoration: "none" }}>
+              <span style={{ textDecoration: "none" }}>
                 <strong className="text-warning">
                   {" "}
                   {translations.siteName}{" "}
                 </strong>
-              </a>
+              </span>
             </p>
           </div>
         </div>
