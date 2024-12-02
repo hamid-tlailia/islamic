@@ -230,7 +230,7 @@ const Ahadith = () => {
         setAhadith(data.hadiths.data);
         setTotalPages(data.hadiths.last_page || 1);
         setSearchResult(null);
-
+        console.log(data.hadiths.data);
         // If page is not selected, default to 1 if multiple pages exist
         if (!page && data.hadiths.last_page > 1) {
           setPage(1);
@@ -391,6 +391,8 @@ const Ahadith = () => {
     const result = resultSearch.current;
     if (!selectedBook) {
       if (respAria) {
+        respAria.style.border = "2px solid red";
+        respAria.style.padding = "5px";
         if (language === "ar") {
           respAria.innerHTML = "الرجاء اختيار الكتاب";
         } else {
@@ -399,6 +401,8 @@ const Ahadith = () => {
       }
     } else if (hadithNumber > Number(hadithsCounts.trim())) {
       if (respAria) {
+        respAria.style.border = "2px solid red";
+        respAria.style.padding = "5px";
         if (language === "ar") {
           respAria.innerHTML = `رقم الحديث غير موجود , اخر حديث رقم : ${hadithsCounts}`;
         } else {
@@ -882,6 +886,19 @@ const Ahadith = () => {
               key={index}
               className="card p-2 mb-2 border border-secondary d-flex flex-column gap-3"
             >
+              {language === "ar"
+                ? hadith.headingArabic !== null && (
+                    <p className="text-success m-0 border-bottom pb-1 w-100 text-center fw-bold fs-5">
+                      {" "}
+                      {hadith.headingArabic}{" "}
+                    </p>
+                  )
+                : hadith.headingEnglish !== null && (
+                    <p className="text-success m-0 border-bottom pb-1 w-100 text-center fw-bold fs-5">
+                      {" "}
+                      {hadith.headingEnglish}{" "}
+                    </p>
+                  )}
               <p className="hadith-heading fs-4">
                 {language === "ar"
                   ? hadith.hadithArabic
@@ -889,28 +906,12 @@ const Ahadith = () => {
                   ? hadith.hadithEnglish
                   : "English version not available"}
               </p>
+
               <div className="d-flex flex-column flex-lg-row flex-md-row justify-content-between align-items-center gap-2">
-                <Chip
-                  variant="outlined"
-                  color="success"
-                  style={{
-                    color: getDegreeColor(hadith.status),
-                    borderRadius: "5px",
-                    backgroundColor: "transparent",
-                  }}
-                >
+                <p className="hadith-number text-success">
                   {language === "ar"
-                    ? `درجة الحديث : ${
-                        hadith.status === "Sahih" || hadith.status === "sahih"
-                          ? "صحيح"
-                          : hadith.status
-                      }`
-                    : `Hadith Status : ${hadith.status}`}
-                </Chip>
-                <p className="hadith-number">
-                  {language === "ar"
-                    ? `رقم الحديث: ${hadith.hadithNumber}`
-                    : `Hadith Number: ${hadith.hadithNumber}`}
+                    ? `رقم الحديث :  ${hadith.hadithNumber}`
+                    : `Hadith Number : ${hadith.hadithNumber}`}
                 </p>
                 <div className="hadith-options d-flex flex-row gap-2 mb-4">
                   <Button
@@ -937,7 +938,11 @@ const Ahadith = () => {
                   <Button
                     variant="outlined"
                     color="success"
-                    onClick={() => fetchHadithExplanation(hadith?.hadithArabic)}
+                    onClick={() =>
+                      fetchHadithExplanation(
+                        hadith.hadithArabic.split(":").at(-1).trim()
+                      )
+                    }
                   >
                     <MenuBookOutlinedIcon />
                   </Button>
@@ -946,7 +951,10 @@ const Ahadith = () => {
                     color="warning"
                     component="a"
                     target="_blank"
-                    href={`https://dorar.net/hadith/search?q=${hadith?.hadithArabic}`}
+                    href={`https://dorar.net/hadith/search?q=${hadith.hadithArabic
+                      .split(":")
+                      .at(-1)
+                      .trim()}`}
                   >
                     <SearchRoundedIcon />
                   </Button>
@@ -974,7 +982,10 @@ const Ahadith = () => {
             }}
             className="w-100"
           >
-            <div ref={response} className="text-danger w-100 text-center"></div>
+            <Typography
+              ref={response}
+              className="text-danger w-100 text-center"
+            ></Typography>
             <Typography
               className="w-100 text-center text-success"
               component="h2"

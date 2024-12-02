@@ -578,7 +578,7 @@ const Header = ({ onNavClick, visibility, size }) => {
               id="darkModeSwitchFst"
             />
             <label
-              className="form-check-label fs-3"
+              className="form-check-label fs-3 "
               htmlFor="darkModeSwitchFst"
             >
               {darkSwitched ? "🔆" : "🌙"}
@@ -632,11 +632,11 @@ const Header = ({ onNavClick, visibility, size }) => {
         }}
       >
         <WidgetsOutlinedIcon
-          className="text-warning notch-icon"
+          className="text-primary notch-icon"
           onClick={showNavbar}
         />
         <SettingsOutlinedIcon
-          className="settings text-light"
+          className="settings text-white p-1"
           onClick={() => setOpen(true)}
         />
         <div className="p-2">
@@ -647,12 +647,12 @@ const Header = ({ onNavClick, visibility, size }) => {
             checked={darkSwitched}
             id="darkModeSwitch"
           />
-          <label className="check-label fs-3" htmlFor="darkModeSwitch">
+          <label className="check-label fs-5 p-1" htmlFor="darkModeSwitch">
             {darkSwitched ? "🔆" : "🌙"}
           </label>
         </div>
         <HelpOutlineIcon
-          className="text-danger notch-icon"
+          className="text-danger notch-icon p-1"
           onClick={openErrorModal}
         />
       </div>
