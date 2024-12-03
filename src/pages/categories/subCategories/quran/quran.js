@@ -1150,7 +1150,7 @@ const Quran = ({ src, toTop }) => {
                           style={{
                             direction:
                               language === "ar" && quranLangs === "Arabe"
-                                ? "rlt"
+                                ? "rtl"
                                 : "ltr",
                           }}
                         >

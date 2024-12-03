@@ -830,9 +830,33 @@ const Ahadith = () => {
               <Button
                 variant="outlined"
                 color="success"
-                onClick={() =>
-                  fetchHadithExplanation(searchResult?.hadithArabic)
-                }
+                onClick={() => {
+                  const hadithText = searchResult?.hadithArabic;
+                  // Array of phrases that might precede the matn
+                  const phrases = [
+                    "قَالَ رَسُولُ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ:",
+                    "سَمِعْتُ رَسُولَ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ يَقُولُ:",
+                    "عَنْ النَّبِيِّ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ قَالَ:",
+                    "يَقُولُ:",
+                    " ّرَسُولَ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ:",
+                    // Add more phrases as needed
+                  ];
+
+                  let matn = null;
+
+                  for (let phrase of phrases) {
+                    if (hadithText.includes(phrase)) {
+                      matn = hadithText.split(phrase)[1].trim();
+                      break;
+                    }
+                  }
+
+                  if (matn) {
+                    fetchHadithExplanation(matn);
+                  } else {
+                    fetchHadithExplanation(searchResult?.hadithArabic);
+                  }
+                }}
               >
                 <MenuBookOutlinedIcon />
               </Button>
@@ -841,7 +865,45 @@ const Ahadith = () => {
                 color="warning"
                 component="a"
                 target="_blank"
-                href={`https://dorar.net/hadith/search?q=${searchResult?.hadithArabic}`}
+                href={`https://dorar.net/hadith/search?q=${(() => {
+                  const hadithText = searchResult.hadithArabic;
+                  const phrases = [
+                    "قَالَ رَسُولُ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ:",
+                    "سَمِعْتُ رَسُولَ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ يَقُولُ:",
+                    "عَنْ النَّبِيِّ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ قَالَ:",
+                    "يَقُولُ:",
+                    "قَالَ:",
+                    " ّرَسُولَ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ:",
+                    // Add more phrases as needed
+                  ];
+
+                  let matn = "";
+
+                  // Iterate over the phrases to find the matn
+                  for (let phrase of phrases) {
+                    if (hadithText.includes(phrase)) {
+                      const parts = hadithText.split(phrase);
+                      if (parts.length > 1) {
+                        matn = parts[1].trim();
+                        break;
+                      }
+                    }
+                  }
+
+                  // Fallback if no phrase is found
+                  if (!matn) {
+                    const lastColonIndex = hadithText.lastIndexOf(":");
+                    if (lastColonIndex !== -1) {
+                      matn = hadithText.substring(lastColonIndex + 1).trim();
+                    } else {
+                      // If no colon is found, use the entire text
+                      matn = hadithText.trim();
+                    }
+                  }
+
+                  // Encode the matn for URL safety
+                  return encodeURIComponent(matn);
+                })()}`}
               >
                 <SearchRoundedIcon />
               </Button>
@@ -938,23 +1000,83 @@ const Ahadith = () => {
                   <Button
                     variant="outlined"
                     color="success"
-                    onClick={() =>
-                      fetchHadithExplanation(
-                        hadith.hadithArabic.split(":").at(-1).trim()
-                      )
-                    }
+                    onClick={() => {
+                      const hadithText = hadith?.hadithArabic;
+                      // Array of phrases that might precede the matn
+                      const phrases = [
+                        "قَالَ رَسُولُ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ:",
+                        "سَمِعْتُ رَسُولَ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ يَقُولُ:",
+                        "عَنْ النَّبِيِّ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ قَالَ:",
+                        "يَقُولُ:",
+                        " ّرَسُولَ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ:",
+                        // Add more phrases as needed
+                      ];
+
+                      let matn = null;
+
+                      for (let phrase of phrases) {
+                        if (hadithText.includes(phrase)) {
+                          matn = hadithText.split(phrase)[1].trim();
+                          break;
+                        }
+                      }
+
+                      if (matn) {
+                        fetchHadithExplanation(matn);
+                      } else {
+                        fetchHadithExplanation(hadith?.hadithArabic);
+                      }
+                    }}
                   >
                     <MenuBookOutlinedIcon />
                   </Button>
+
                   <Button
                     variant="outlined"
                     color="warning"
                     component="a"
                     target="_blank"
-                    href={`https://dorar.net/hadith/search?q=${hadith.hadithArabic
-                      .split(":")
-                      .at(-1)
-                      .trim()}`}
+                    href={`https://dorar.net/hadith/search?q=${(() => {
+                      const hadithText = hadith.hadithArabic;
+                      const phrases = [
+                        "قَالَ رَسُولُ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ:",
+                        "سَمِعْتُ رَسُولَ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ يَقُولُ:",
+                        "عَنْ النَّبِيِّ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ قَالَ:",
+                        "يَقُولُ:",
+                        "قَالَ:",
+                        " ّرَسُولَ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ:",
+                        // Add more phrases as needed
+                      ];
+
+                      let matn = "";
+
+                      // Iterate over the phrases to find the matn
+                      for (let phrase of phrases) {
+                        if (hadithText.includes(phrase)) {
+                          const parts = hadithText.split(phrase);
+                          if (parts.length > 1) {
+                            matn = parts[1].trim();
+                            break;
+                          }
+                        }
+                      }
+
+                      // Fallback if no phrase is found
+                      if (!matn) {
+                        const lastColonIndex = hadithText.lastIndexOf(":");
+                        if (lastColonIndex !== -1) {
+                          matn = hadithText
+                            .substring(lastColonIndex + 1)
+                            .trim();
+                        } else {
+                          // If no colon is found, use the entire text
+                          matn = hadithText.trim();
+                        }
+                      }
+
+                      // Encode the matn for URL safety
+                      return encodeURIComponent(matn);
+                    })()}`}
                   >
                     <SearchRoundedIcon />
                   </Button>
