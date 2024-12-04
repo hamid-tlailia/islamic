@@ -20,7 +20,7 @@
   --tabs-bg-color: rgba(0, 0, 0, 0.153);
   --ayah-text-color: navy;
   --dropdown-bg-color: white;
-  --player-bg-color: #314159;
+  --player-bg-color: #0b494e;
   --primary-color: #2a9d8f;
   --secondary-color: #e76f51;
   --tertiary-color: #264653;
@@ -309,6 +309,7 @@ a {
   background-color: #0b494e;
   color: white !important;
   z-index: 999 !important;
+  border: 1px solid white;
 }
 .back-to-top:hover {
   background-color: #1b87a5;

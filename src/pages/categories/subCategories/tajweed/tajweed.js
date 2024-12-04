@@ -603,9 +603,7 @@ const Tajweed = ({ audioName, documentName }) => {
     <Box
       {...swipeHandlers}
       sx={{
-        p: 0,
         width: "100%",
-        backgroundColor: "var(--card-color)",
         color: "var(--text-color)",
       }}
     >
@@ -664,6 +662,7 @@ const Tajweed = ({ audioName, documentName }) => {
               border: "none",
               outline: "none",
               direction: "ltr",
+              margin: "3px",
             }}
             min="1"
             max="606"
@@ -777,7 +776,7 @@ const Tajweed = ({ audioName, documentName }) => {
               fontSize: "2rem",
               textAlign: "justify",
             }}
-            className="tajweed-parent "
+            className="tajweed-parent"
           >
             {quranData.map((ayah, index) => (
               <React.Fragment key={ayah.id}>

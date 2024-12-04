@@ -865,45 +865,7 @@ const Ahadith = () => {
                 color="warning"
                 component="a"
                 target="_blank"
-                href={`https://dorar.net/hadith/search?q=${(() => {
-                  const hadithText = searchResult.hadithArabic;
-                  const phrases = [
-                    "قَالَ رَسُولُ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ:",
-                    "سَمِعْتُ رَسُولَ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ يَقُولُ:",
-                    "عَنْ النَّبِيِّ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ قَالَ:",
-                    "يَقُولُ:",
-                    "قَالَ:",
-                    " ّرَسُولَ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ:",
-                    // Add more phrases as needed
-                  ];
-
-                  let matn = "";
-
-                  // Iterate over the phrases to find the matn
-                  for (let phrase of phrases) {
-                    if (hadithText.includes(phrase)) {
-                      const parts = hadithText.split(phrase);
-                      if (parts.length > 1) {
-                        matn = parts[1].trim();
-                        break;
-                      }
-                    }
-                  }
-
-                  // Fallback if no phrase is found
-                  if (!matn) {
-                    const lastColonIndex = hadithText.lastIndexOf(":");
-                    if (lastColonIndex !== -1) {
-                      matn = hadithText.substring(lastColonIndex + 1).trim();
-                    } else {
-                      // If no colon is found, use the entire text
-                      matn = hadithText.trim();
-                    }
-                  }
-
-                  // Encode the matn for URL safety
-                  return encodeURIComponent(matn);
-                })()}`}
+                href={`https://dorar.net/hadith/search?q=${searchResult?.hadithArabic}`}
               >
                 <SearchRoundedIcon />
               </Button>
@@ -1036,47 +998,7 @@ const Ahadith = () => {
                     color="warning"
                     component="a"
                     target="_blank"
-                    href={`https://dorar.net/hadith/search?q=${(() => {
-                      const hadithText = hadith.hadithArabic;
-                      const phrases = [
-                        "قَالَ رَسُولُ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ:",
-                        "سَمِعْتُ رَسُولَ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ يَقُولُ:",
-                        "عَنْ النَّبِيِّ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ قَالَ:",
-                        "يَقُولُ:",
-                        "قَالَ:",
-                        " ّرَسُولَ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ:",
-                        // Add more phrases as needed
-                      ];
-
-                      let matn = "";
-
-                      // Iterate over the phrases to find the matn
-                      for (let phrase of phrases) {
-                        if (hadithText.includes(phrase)) {
-                          const parts = hadithText.split(phrase);
-                          if (parts.length > 1) {
-                            matn = parts[1].trim();
-                            break;
-                          }
-                        }
-                      }
-
-                      // Fallback if no phrase is found
-                      if (!matn) {
-                        const lastColonIndex = hadithText.lastIndexOf(":");
-                        if (lastColonIndex !== -1) {
-                          matn = hadithText
-                            .substring(lastColonIndex + 1)
-                            .trim();
-                        } else {
-                          // If no colon is found, use the entire text
-                          matn = hadithText.trim();
-                        }
-                      }
-
-                      // Encode the matn for URL safety
-                      return encodeURIComponent(matn);
-                    })()}`}
+                    href={`https://dorar.net/hadith/search?q=${hadith?.hadithArabic}`}
                   >
                     <SearchRoundedIcon />
                   </Button>
