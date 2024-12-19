@@ -1491,7 +1491,7 @@ const Quran = ({ src, toTop }) => {
                                             style={{
                                               position: "absolute",
                                               fontSize: "0.75rem",
-                                              top: "50%",
+                                              top: "51%",
                                               left: "50%",
                                               transform:
                                                 "translate(-50%, -50%)",

@@ -425,6 +425,7 @@
 .modal-ayah {
   color: var(--ayah-text-color);
   padding: 5px;
+  font-family: "amiri", sans-serif;
 }
 .modal-ayah:hover {
   background-color: #00275c;
