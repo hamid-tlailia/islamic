@@ -104,7 +104,7 @@ function App() {
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     window.OneSignalDeferred.push(async (OneSignal) => {
       await OneSignal.init({
-        appId: "7a0e352840-c3e0-4551-8119-75c1f47e1f2f",
+        appId: "0e352840-c3e0-4551-8119-75c1f47e1f2f",
         allowLocalhostAsSecureOrigin: true,
         notifyButton: { enable: true },
         serviceWorker: {
