@@ -96,6 +96,7 @@ function App() {
   // OneSingle push notifications service 
 
   // const frontend_id = "7a5671a9-c995-4c78-b039-960390e43623"; // ✅ هذا هو ID الخاص بك
+  
   const backend_id = "0e352840-c3e0-4551-8119-75c1f47e1f2f";
   useEffect(() => {
     OneSignal.init({
