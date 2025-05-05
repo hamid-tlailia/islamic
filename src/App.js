@@ -98,32 +98,25 @@ function App() {
   // const frontend_id = "7a5671a9-c995-4c78-b039-960390e43623"; // ✅ هذا هو ID الخاص بك
 
   useEffect(() => {
-    // ✅ تأكد أن OneSignal لم يتم تهيئته مسبقًا
     if (window.OneSignalInitialized) return;
-
     window.OneSignalInitialized = true;
-
-    // ✅ تهيئة OneSignal بشكل آمن
+  
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     window.OneSignalDeferred.push(async (OneSignal) => {
       await OneSignal.init({
-        appId: "0e352840-c3e0-4551-8119-75c1f47e1f2f",
+        appId: "7a0e352840-c3e0-4551-8119-75c1f47e1f2f",
         allowLocalhostAsSecureOrigin: true,
-        notifyButton: {
-          enable: true,
-        },
+        notifyButton: { enable: true },
         serviceWorker: {
           path: "/OneSignalSDKWorker.js",
           updaterPath: "/OneSignalSDKUpdaterWorker.js",
         },
         promptOptions: {
-          /* 👇 هذا هو المكان الوحيد لتعريف اللغة */
           slidedown: {
             enabled: true,
             prompts: [
               {
                 type: "push",
-                autoPrompt: true,
                 text: {
                   actionMessage:
                     "نود إرسال إشعارات لمواقيت الصلاة. هل ترغب بالسماح؟",
@@ -137,6 +130,7 @@ function App() {
       });
     });
   }, []);
+  
 
   // Get current page title
   useEffect(() => {
@@ -283,6 +277,8 @@ function App() {
   const nowPlayingName = (audioName) => {
     setPlayingSurah(audioName);
   };
+
+  
   return (
     <TranslationProvider>
       <div className="App custom-cursor">
