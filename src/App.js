@@ -134,35 +134,51 @@ function App() {
     if (window.OneSignalInitialized) return;
     window.OneSignalInitialized = true;
 
+    // 1) حمّل الـSDK إن لم يكن موجوداً فى index.html
+    const sdkUrl =
+      "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
+    if (!document.querySelector(`script[src="${sdkUrl}"]`)) {
+      const s = document.createElement("script");
+      s.src = sdkUrl;
+      s.async = true;
+      document.head.appendChild(s);
+    }
+
+    // 2) Queue init حتى يجهز SDK
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     window.OneSignalDeferred.push(async (OneSignal) => {
       await OneSignal.init({
         appId: "0e352840-c3e0-4551-8119-75c1f47e1f2f",
         allowLocalhostAsSecureOrigin: true,
-        notifyButton: { enable: true },
+        notifyButton: { enable: true }, // جرس الإشعارات
         serviceWorker: {
           path: "/OneSignalSDKWorker.js",
           updaterPath: "/OneSignalSDKUpdaterWorker.js",
         },
-        promptOptions: {
-          slidedown: {
-            enabled: true,
-            prompts: [
-              {
-                type: "push",
-                text: {
-                  actionMessage:
-                    "نود إرسال إشعارات لمواقيت الصلاة. هل ترغب بالسماح؟",
-                  acceptButton: "نعم",
-                  cancelButton: "لاحقًا",
-                },
-              },
-            ],
-          },
-        },
       });
+
+      /* 3) اطبع معلومات التصريح للمراجعة */
+      const perm = await OneSignal.Notifications.permission;
+      console.log("Notification permission:", perm); // default | granted | denied
+
+      /* 4) إذا لم يُمنح الإذن بعد، اطلبه */
+      if (perm === "default") {
+        // Mobile Chrome غالباً يفضّل الطلب الأصلي
+        await OneSignal.showNativePrompt();          // يفتح dialogue المتصفِّح
+        // أو use Slidedown:
+        // await OneSignal.Slidedown.promptPush({ force: true });
+      } else if (perm === "denied") {
+        console.warn(
+          "المستخدم حظر الإذن سابقاً. اطلب منه تفعيل الإشعارات من إعدادات المتصفِّح."
+        );
+      }
+
+      /* 5) سجّل Player ID للتأكّد من الاشتراك */
+      const playerId = await OneSignal.User.PushSubscription.getId();
+      console.log("Player ID:", playerId);
     });
   }, []);
+
 
   // Get current page title
   useEffect(() => {
