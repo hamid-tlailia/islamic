@@ -10,7 +10,7 @@ import {
 import { TranslationProvider } from "./components/languages/provider";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import OneSignal from 'react-onesignal';
+// import OneSignal from "react-onesignal";
 import KeyboardDoubleArrowUpOutlinedIcon from "@mui/icons-material/KeyboardDoubleArrowUpOutlined";
 // Lazy load components
 const Header = lazy(() => import("./components/header/header"));
@@ -93,27 +93,51 @@ function App() {
   const [backToTop, setBackToTop] = useState(false);
   const [pageTitle, setPageTitle] = useState(null);
   const [currentLanguage, setCurrentLanguage] = useState();
-  // OneSingle push notifications service 
+  // OneSingle push notifications service
 
   // const frontend_id = "7a5671a9-c995-4c78-b039-960390e43623"; // ✅ هذا هو ID الخاص بك
-  
-  const backend_id = "0e352840-c3e0-4551-8119-75c1f47e1f2f";
+
   useEffect(() => {
-    OneSignal.init({
-      appId: backend_id,
-      allowLocalhostAsSecureOrigin: true,
-      notifyButton: {
-        enable: true,
-      },
-    });
-  
-    // تعيين اللغة بشكل آمن بعد تحميل SDK
-    window.OneSignal = window.OneSignal || [];
-    window.OneSignal.push(() => {
-      window.OneSignal.setLanguage?.("ar"); // أو "en"
+    // ✅ تأكد أن OneSignal لم يتم تهيئته مسبقًا
+    if (window.OneSignalInitialized) return;
+
+    window.OneSignalInitialized = true;
+
+    // ✅ تهيئة OneSignal بشكل آمن
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    window.OneSignalDeferred.push(async (OneSignal) => {
+      await OneSignal.init({
+        appId: "0e352840-c3e0-4551-8119-75c1f47e1f2f",
+        allowLocalhostAsSecureOrigin: true,
+        notifyButton: {
+          enable: true,
+        },
+        serviceWorker: {
+          path: "/OneSignalSDKWorker.js",
+          updaterPath: "/OneSignalSDKUpdaterWorker.js",
+        },
+        promptOptions: {
+          /* 👇 هذا هو المكان الوحيد لتعريف اللغة */
+          slidedown: {
+            enabled: true,
+            prompts: [
+              {
+                type: "push",
+                autoPrompt: true,
+                text: {
+                  actionMessage:
+                    "نود إرسال إشعارات لمواقيت الصلاة. هل ترغب بالسماح؟",
+                  acceptButton: "نعم",
+                  cancelButton: "لاحقًا",
+                },
+              },
+            ],
+          },
+        },
+      });
     });
   }, []);
-  
+
   // Get current page title
   useEffect(() => {
     setPageTitle(document.title);
