@@ -78,7 +78,33 @@ const Tajweed = lazy(() =>
   import("./pages/categories/subCategories/tajweed/tajweed")
 );
 const Player = lazy(() => import("./components/player/player"));
+/**
+ * تُسجِّل موقع المستخدم في الخادم لتفعيل إشعارات مواقيت الصلاة
+ * @returns {Promise<void>}
+ */
+const registerUserLocation = async () => {
+  try {
+    const res = await fetch(
+      "https://islamic-notifs-backend.onrender.com/register",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
+    /* fetch تُعيد Promise تحلّ إلى Response. نتحقق من حالة HTTP أولاً */
+    if (!res.ok) throw new Error(`Server responded ${res.status}`);
+
+    const data = await res.json(); // { message, city, country }
+    console.log("🔔 Location registered:", data);
+
+    /* يمكنك هنا تخزين city / country في الـ state أو الـ context إن احتجتها */
+  } catch (err) {
+    console.error("❌ Could not register location:", err.message);
+  }
+};
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
   // Loader state
@@ -94,13 +120,20 @@ function App() {
   const [pageTitle, setPageTitle] = useState(null);
   const [currentLanguage, setCurrentLanguage] = useState();
   // OneSingle push notifications service
-
+  useEffect(() => {
+    /* 🔐 نتأكد أن المتصفِّح يدعم Push + ServiceWorker قبل التسجيل */
+    if ("serviceWorker" in navigator && "PushManager" in window) {
+      registerUserLocation();
+    } else {
+      console.warn("Push notifications are not supported in this browser.");
+    }
+  }, []);
   // const frontend_id = "7a5671a9-c995-4c78-b039-960390e43623"; // ✅ هذا هو ID الخاص بك
 
   useEffect(() => {
     if (window.OneSignalInitialized) return;
     window.OneSignalInitialized = true;
-  
+
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     window.OneSignalDeferred.push(async (OneSignal) => {
       await OneSignal.init({
@@ -130,7 +163,6 @@ function App() {
       });
     });
   }, []);
-  
 
   // Get current page title
   useEffect(() => {
@@ -278,7 +310,6 @@ function App() {
     setPlayingSurah(audioName);
   };
 
-  
   return (
     <TranslationProvider>
       <div className="App custom-cursor">
