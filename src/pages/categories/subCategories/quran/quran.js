@@ -18,6 +18,7 @@ import DOMPurify from "dompurify";
 import { toast } from "react-toastify";
 import en_al_jalalayn from "./tafsirs/en-al-jalalayn.json";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import Select from "react-select";
 
 const Quran = ({ src, toTop }) => {
   const [surahs, setSurahs] = useState([]);
@@ -745,6 +746,28 @@ const Quran = ({ src, toTop }) => {
   const currentOptions =
     language === "ar" && quranLangs === "Arabe" ? options.ar : options.en;
 
+  // Filter reciters options
+  const recitersOptions = reciters
+    ?.filter((reciter) =>
+      reciter.moshaf[0].surah_list.split(",").includes(String(selectedSurah))
+    )
+    .map((reciter) => {
+      const surahIndex =
+        selectedSurah < 10 ? "00" : selectedSurah < 100 ? "0" : "";
+      const surahUrl = `${reciter.moshaf[0].server}${surahIndex}${selectedSurah}.mp3`;
+
+      const reciterName =
+        language === "en"
+          ? reciterNameMap[reciter.name] || reciter.name
+          : `${reciter.name} - ${reciter.moshaf[0].name}`;
+
+      return {
+        value: surahUrl,
+        label: reciterName,
+        name: language === "ar" ? allAyahs.name : allAyahs.englishName,
+      };
+    });
+
   return (
     <div className="quran">
       {isLoading ? (
@@ -888,53 +911,36 @@ const Quran = ({ src, toTop }) => {
                     </div>
                   </div>
                   <div className="dropdown">
-                    <select
-                      className="form-select"
-                      style={{ minWidth: "310px", width: "100%" }}
+                    <Select
+                      options={loading ? [] : recitersOptions} // لا نعرض الخيارات أثناء التحميل
+                      isLoading={loading} // يعرض سبينر التحميل تلقائيًا
                       onChange={src}
-                      ref={selectReciter}
-                    >
-                      <option className="pe-none" value="default">
-                        {language === "ar" ? "اختر القارئ" : "Choose reciter"}
-                      </option>
-                      {!loading &&
-                        reciters?.map((reciter, index) => {
-                          const surahIndex = `${
-                            selectedSurah < 10
-                              ? "00"
-                              : selectedSurah < 100
-                              ? "0"
-                              : ""
-                          }${selectedSurah}`;
-                          const surahUrl = `${reciter.moshaf[0].server}${surahIndex}.mp3`;
-
-                          if (
-                            reciter.moshaf[0].surah_list
-                              .split(",")
-                              .includes(String(selectedSurah))
-                          ) {
-                            const reciterName =
-                              language === "en"
-                                ? reciterNameMap[reciter.name] || reciter.name
-                                : `${reciter.name} - ${reciter.moshaf[0].name}`;
-
-                            return (
-                              <option
-                                key={index}
-                                value={surahUrl}
-                                data-name={
-                                  language === "ar"
-                                    ? allAyahs.name
-                                    : allAyahs.englishName
-                                }
-                              >
-                                {reciterName}
-                              </option>
-                            );
-                          }
-                          return null;
-                        })}
-                    </select>
+                      placeholder={
+                        loading
+                          ? language === "ar"
+                            ? "⏳ الرجاء الانتظار..."
+                            : "⏳ Please wait..."
+                          : language === "ar"
+                          ? "اختر القارئ"
+                          : "Choose reciter"
+                      }
+                      noOptionsMessage={() =>
+                        loading
+                          ? language === "ar"
+                            ? "جاري التحميل..."
+                            : "Loading..."
+                          : language === "ar"
+                          ? "لا توجد نتائج"
+                          : "No options"
+                      }
+                      styles={{
+                        container: (provided) => ({
+                          ...provided,
+                          minWidth: "310px",
+                          width: "100%",
+                        }),
+                      }}
+                    />
                   </div>
                 </div>
                 <Box className="my-2 w-100">

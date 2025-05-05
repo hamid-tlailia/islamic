@@ -12,6 +12,8 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Typography from "@mui/material/Typography";
 import { NavLink } from "react-router-dom";
 import ReactPlayer from "react-player";
+import defaultImage from "../images/public-img.avif";
+import Skeleton from "@mui/material/Skeleton";
 
 const Prophets = ({ scrollUp }) => {
   const { language } = useTranslation();
@@ -19,6 +21,8 @@ const Prophets = ({ scrollUp }) => {
   const [showModal, setShowModal] = useState(false); // Track modal visibility
   const [selectedCardIndex, setSelectedCardIndex] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const content = useRef(null);
 
   const suggests = useRef(null);
@@ -142,19 +146,37 @@ const Prophets = ({ scrollUp }) => {
             onClick={(e) => handleStoryClick(e, prophet, index)} // Update selected story on click
           >
             <section
-              className="item w-100 pe-none"
+              className="item w-100 pe-none position-relative"
               title={language === "ar" ? prophet.name.ar : prophet.name.en}
             >
-              <div className="w-100">
+              <div className="w-100 position-relative">
+                {!isLoaded && (
+                  <Skeleton
+                    variant="rectangular"
+                    width="100%"
+                    height={200}
+                    className="rounded-3"
+                  />
+                )}
+
                 <img
                   loading="lazy"
                   className="story-img img-fluid rounded-3"
-                  src={prophet.image}
+                  src={hasError ? defaultImage : prophet.image}
                   alt="storyLogo"
+                  onLoad={() => setIsLoaded(true)}
+                  onError={(e) => {
+                    setHasError(true);
+                    setIsLoaded(true);
+                  }}
                   style={{
                     opacity: selectedCardIndex === index ? 0.5 : 1,
+                    visibility: isLoaded ? "visible" : "hidden",
+                    transition: "opacity 0.3s ease-in-out",
+                    width: "100%",
                   }}
                 />
+
                 <hr />
               </div>
               <h2 className="title">

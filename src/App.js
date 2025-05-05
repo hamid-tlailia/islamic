@@ -10,6 +10,7 @@ import {
 import { TranslationProvider } from "./components/languages/provider";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import OneSignal from 'react-onesignal';
 import KeyboardDoubleArrowUpOutlinedIcon from "@mui/icons-material/KeyboardDoubleArrowUpOutlined";
 // Lazy load components
 const Header = lazy(() => import("./components/header/header"));
@@ -91,13 +92,33 @@ function App() {
   const [show, setShow] = useState(false);
   const [backToTop, setBackToTop] = useState(false);
   const [pageTitle, setPageTitle] = useState(null);
-  const [language, setLanguage] = useState();
+  const [currentLanguage, setCurrentLanguage] = useState();
+  // OneSingle push notifications service 
+
+  // const frontend_id = "7a5671a9-c995-4c78-b039-960390e43623"; // ✅ هذا هو ID الخاص بك
+  const backend_id = "0e352840-c3e0-4551-8119-75c1f47e1f2f";
+  useEffect(() => {
+    OneSignal.init({
+      appId: backend_id,
+      allowLocalhostAsSecureOrigin: true,
+      notifyButton: {
+        enable: true,
+      },
+    });
+  
+    // تعيين اللغة بشكل آمن بعد تحميل SDK
+    window.OneSignal = window.OneSignal || [];
+    window.OneSignal.push(() => {
+      window.OneSignal.setLanguage?.("ar"); // أو "en"
+    });
+  }, []);
+  
   // Get current page title
   useEffect(() => {
     setPageTitle(document.title);
     const savedLanguage = localStorage.getItem("language");
-    if (savedLanguage) setLanguage(savedLanguage);
-    else setLanguage("ar");
+    if (savedLanguage) setCurrentLanguage(savedLanguage);
+    else setCurrentLanguage("ar");
   }, [lastScroll]);
   //  Add animation for components
 
@@ -131,14 +152,15 @@ function App() {
     setPlayingSurah("");
   };
 
-  const audioSRC = (e) => {
-    const src = e.target.value;
+  const audioSRC = (selectedOption) => {
+    const src = selectedOption.value;
     if (src && src !== "default") setNewSRC(src);
-    const selectedElement = e.target.options[e.target.selectedIndex];
-    const surah_name = selectedElement.getAttribute("data-name");
+
+    const surah_name = selectedOption.name;
     setPlayingSurah(surah_name);
     setIsNowPlaying(true);
   };
+
   const playerSrc = (src) => {
     setNewSRC(src ? src : null);
     setIsNowPlaying(true);
@@ -433,7 +455,7 @@ function App() {
           position="top-center"
           style={{
             zIndex: "99999",
-            textAlign: language === "ar" ? "right" : "left",
+            textAlign: currentLanguage === "ar" ? "right" : "left",
           }}
         ></ToastContainer>
         {/* Back to top */}
