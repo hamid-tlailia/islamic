@@ -131,54 +131,35 @@ function App() {
   // const frontend_id = "7a5671a9-c995-4c78-b039-960390e43623"; // ✅ هذا هو ID الخاص بك
 
   useEffect(() => {
-    if (window.OneSignalInitialized) return;
+    if (typeof window === "undefined") return; // لمنع التنفيذ في SSR
+    if (window.OneSignalInitialized) return; // منع التهيئة المكرّرة
     window.OneSignalInitialized = true;
 
-    // 1) حمّل الـSDK إن لم يكن موجوداً فى index.html
-    const sdkUrl =
-      "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
-    if (!document.querySelector(`script[src="${sdkUrl}"]`)) {
-      const s = document.createElement("script");
-      s.src = sdkUrl;
-      s.async = true;
-      document.head.appendChild(s);
-    }
+    // 1️⃣  استدعِ OneSignal مباشرة لأن SDK موجود بالفعل في index.html
+    const OneSignal = window.OneSignal || [];
 
-    // 2) Queue init حتى يجهز SDK
-    window.OneSignalDeferred = window.OneSignalDeferred || [];
-    window.OneSignalDeferred.push(async (OneSignal) => {
-      await OneSignal.init({
+    // 2️⃣  Queue التهيئة داخل push (نفس فكرة deferred)
+    OneSignal.push(function () {
+      OneSignal.init({
         appId: "0e352840-c3e0-4551-8119-75c1f47e1f2f",
-        allowLocalhostAsSecureOrigin: true,
-        notifyButton: { enable: true }, // جرس الإشعارات
+        allowLocalhostAsSecureOrigin: true, // للتجربة على localhost
+        notifyButton: { enable: true },
         serviceWorker: {
           path: "/OneSignalSDKWorker.js",
           updaterPath: "/OneSignalSDKUpdaterWorker.js",
         },
+      }).then(async () => {
+        // 4️⃣  اطبع PlayerID حسب إصدار SDK
+        let playerId = null;
+        if (OneSignal.User?.PushSubscription?.getId) {
+          playerId = await OneSignal.User.PushSubscription.getId(); // v16
+        } else if (OneSignal.getUserId) {
+          playerId = await OneSignal.getUserId(); // ≤ v15
+        }
+        console.log(playerId);
       });
-
-      /* 3) اطبع معلومات التصريح للمراجعة */
-      const perm = await OneSignal.Notifications.permission;
-      console.log("Notification permission:", perm); // default | granted | denied
-
-      /* 4) إذا لم يُمنح الإذن بعد، اطلبه */
-      if (perm === "default") {
-        // Mobile Chrome غالباً يفضّل الطلب الأصلي
-        await OneSignal.showNativePrompt();          // يفتح dialogue المتصفِّح
-        // أو use Slidedown:
-        // await OneSignal.Slidedown.promptPush({ force: true });
-      } else if (perm === "denied") {
-        console.warn(
-          "المستخدم حظر الإذن سابقاً. اطلب منه تفعيل الإشعارات من إعدادات المتصفِّح."
-        );
-      }
-
-      /* 5) سجّل Player ID للتأكّد من الاشتراك */
-      const playerId = await OneSignal.User.PushSubscription.getId();
-      console.log("Player ID:", playerId);
     });
   }, []);
-
 
   // Get current page title
   useEffect(() => {
