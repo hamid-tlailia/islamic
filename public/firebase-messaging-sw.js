@@ -4,7 +4,6 @@ importScripts(
 importScripts(
   "https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js"
 );
-import icon from "../src/pages/images/quran.png";
 
 firebase.initializeApp({
   apiKey: "AIzaSyB_RZPaSTSKyQFs53p1aAmj29qtsQhWGzw",
@@ -27,8 +26,8 @@ messaging.onBackgroundMessage((payload) => {
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: icon, // Replace with your Islamic app icon
-    // badge: "./badge.png",       // Optional badge icon
+    icon: "./search.png", // Replace with your Islamic app icon
+    badge: "./search.png", // Optional badge icon
     priority: "high",
     data: {
       url: payload?.data?.url || "https://myislam-steel.vercel.app", // fallback URL
