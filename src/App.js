@@ -20,6 +20,7 @@ const Home = lazy(() => import("./pages/home/home"));
 const Categories = lazy(() => import("./pages/categories/categories"));
 const About = lazy(() => import("./pages/about/about"));
 const API = lazy(() => import("./pages/api/apidocs"));
+const Modal = lazy(() => import("./components/tokenModal/modal"));
 const Contact = lazy(() => import("./pages/contact/contact"));
 const Islam = lazy(() =>
   import("./pages/categories/subCategories/islam/islam")
@@ -78,33 +79,7 @@ const Tajweed = lazy(() =>
   import("./pages/categories/subCategories/tajweed/tajweed")
 );
 const Player = lazy(() => import("./components/player/player"));
-/**
- * تُسجِّل موقع المستخدم في الخادم لتفعيل إشعارات مواقيت الصلاة
- * @returns {Promise<void>}
- */
-const registerUserLocation = async () => {
-  try {
-    const res = await fetch(
-      "https://islamic-notifs-backend.onrender.com/register",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
 
-    /* fetch تُعيد Promise تحلّ إلى Response. نتحقق من حالة HTTP أولاً */
-    if (!res.ok) throw new Error(`Server responded ${res.status}`);
-
-    const data = await res.json(); // { message, city, country }
-    console.log("🔔 Location registered:", data);
-
-    /* يمكنك هنا تخزين city / country في الـ state أو الـ context إن احتجتها */
-  } catch (err) {
-    console.error("❌ Could not register location:", err.message);
-  }
-};
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
   // Loader state
@@ -119,47 +94,6 @@ function App() {
   const [backToTop, setBackToTop] = useState(false);
   const [pageTitle, setPageTitle] = useState(null);
   const [currentLanguage, setCurrentLanguage] = useState();
-  // OneSingle push notifications service
-  useEffect(() => {
-    /* 🔐 نتأكد أن المتصفِّح يدعم Push + ServiceWorker قبل التسجيل */
-    if ("serviceWorker" in navigator && "PushManager" in window) {
-      registerUserLocation();
-    } else {
-      console.warn("Push notifications are not supported in this browser.");
-    }
-  }, []);
-  // const frontend_id = "7a5671a9-c995-4c78-b039-960390e43623"; // ✅ هذا هو ID الخاص بك
-
-  useEffect(() => {
-    if (typeof window === "undefined") return; // لمنع التنفيذ في SSR
-    if (window.OneSignalInitialized) return; // منع التهيئة المكرّرة
-    window.OneSignalInitialized = true;
-
-    // 1️⃣  استدعِ OneSignal مباشرة لأن SDK موجود بالفعل في index.html
-    const OneSignal = window.OneSignal || [];
-
-    // 2️⃣  Queue التهيئة داخل push (نفس فكرة deferred)
-    OneSignal.push(function () {
-      OneSignal.init({
-        appId: "0e352840-c3e0-4551-8119-75c1f47e1f2f",
-        allowLocalhostAsSecureOrigin: true, // للتجربة على localhost
-        notifyButton: { enable: true },
-        serviceWorker: {
-          path: "/OneSignalSDKWorker.js",
-          updaterPath: "/OneSignalSDKUpdaterWorker.js",
-        },
-      }).then(async () => {
-        // 4️⃣  اطبع PlayerID حسب إصدار SDK
-        let playerId = null;
-        if (OneSignal.User?.PushSubscription?.getId) {
-          playerId = await OneSignal.User.PushSubscription.getId(); // v16
-        } else if (OneSignal.getUserId) {
-          playerId = await OneSignal.getUserId(); // ≤ v15
-        }
-        console.log(playerId);
-      });
-    });
-  }, []);
 
   // Get current page title
   useEffect(() => {
@@ -310,6 +244,7 @@ function App() {
   return (
     <TranslationProvider>
       <div className="App custom-cursor">
+        <Modal />
         {isLoading ? (
           <Loader />
         ) : (

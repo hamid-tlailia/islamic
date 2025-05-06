@@ -13,7 +13,7 @@ import { precacheAndRoute, createHandlerBoundToURL } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
 import { StaleWhileRevalidate } from "workbox-strategies";
 
-import favIcon from "./pages/public/images/official.png";
+import favIcon from "./pages/images/quran.png";
 
 clientsClaim();
 
@@ -45,7 +45,7 @@ registerRoute(
 
     return true;
   },
-  createHandlerBoundToURL(process.env.PUBLIC_URL + "/index.html")
+  createHandlerBoundToURL("/index.html")
 );
 
 // An example runtime caching route for requests that aren't handled by the
@@ -81,7 +81,15 @@ self.addEventListener("push", function (event) {
   };
   event.waitUntil(self.registration.showNotification("Title", options));
 });
+
 self.addEventListener("notificationclick", function (event) {
-  // Close the notification
   event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type: "window" }).then(function (clientList) {
+      for (const client of clientList) {
+        if (client.url === "/" && "focus" in client) return client.focus();
+      }
+      if (clients.openWindow) return clients.openWindow("/");
+    })
+  );
 });
