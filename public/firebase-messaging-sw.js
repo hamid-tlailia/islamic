@@ -7,12 +7,13 @@ importScripts(
 import icon from "../src/pages/images/quran.png";
 
 firebase.initializeApp({
-  apiKey: "AIzaSyCNYvDi7lQdSmnmnwiQX4fHkWSRJZYxS0A",
-  authDomain: "my-islam-9c165.firebaseapp.com",
-  projectId: "my-islam-9c165",
-  storageBucket: "my-islam-9c165.firebasestorage.app",
-  messagingSenderId: "201721918025",
-  appId: "1:201721918025:web:6126bde4f558e1f8624598",
+  apiKey: "AIzaSyB_RZPaSTSKyQFs53p1aAmj29qtsQhWGzw",
+  authDomain: "islamic-app-90797.firebaseapp.com",
+  projectId: "islamic-app-90797",
+  storageBucket: "islamic-app-90797.firebasestorage.app",
+  messagingSenderId: "638328114408",
+  appId: "1:638328114408:web:e19eb1f1abd71b67160d5d",
+  measurementId: "G-2KV5EGH6D9",
 });
 
 const messaging = firebase.messaging();
