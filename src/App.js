@@ -10,6 +10,7 @@ import {
 import { TranslationProvider } from "./components/languages/provider";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { registerDeviceToken } from "./components/tokenModal/modal";
 // import OneSignal from "react-onesignal";
 import KeyboardDoubleArrowUpOutlinedIcon from "@mui/icons-material/KeyboardDoubleArrowUpOutlined";
 // Lazy load components
@@ -20,7 +21,6 @@ const Home = lazy(() => import("./pages/home/home"));
 const Categories = lazy(() => import("./pages/categories/categories"));
 const About = lazy(() => import("./pages/about/about"));
 const API = lazy(() => import("./pages/api/apidocs"));
-const Modal = lazy(() => import("./components/tokenModal/modal"));
 const Contact = lazy(() => import("./pages/contact/contact"));
 const Islam = lazy(() =>
   import("./pages/categories/subCategories/islam/islam")
@@ -94,7 +94,10 @@ function App() {
   const [backToTop, setBackToTop] = useState(false);
   const [pageTitle, setPageTitle] = useState(null);
   const [currentLanguage, setCurrentLanguage] = useState();
-
+  // Register device token if not already
+  useEffect(() => {
+    registerDeviceToken();
+  }, []);
   // Get current page title
   useEffect(() => {
     setPageTitle(document.title);
@@ -244,7 +247,6 @@ function App() {
   return (
     <TranslationProvider>
       <div className="App custom-cursor">
-        <Modal />
         {isLoading ? (
           <Loader />
         ) : (
