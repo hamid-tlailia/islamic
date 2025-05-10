@@ -43,6 +43,8 @@ const Quran = ({ src, toTop }) => {
   const [tabValue, setTabValue] = useState(0);
   const [allSurahTafseer, setAllSurahTafseer] = useState([]);
   const isSmallScreen = useMediaQuery("(max-width:500px)");
+  const selectedSurahRef = useRef(null);
+
   const reciterNameMap = {
     "إبراهيم الأخضر": "Ibrahim Al-Akhdar",
     "أكرم العلاقمي": "Akram Al-Alaqmi",
@@ -431,6 +433,15 @@ const Quran = ({ src, toTop }) => {
     setCurrentPageReading(1); // Reset pagination when going back
     setCurrentPageModal(1);
     setCurrentPageExplanation(1);
+    // 🔽 Scroll to selected
+    setTimeout(() => {
+      if (selectedSurahRef.current) {
+        selectedSurahRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+    }, 200); // Delay to ensure list is rendered
   };
 
   const toggleVisibility = () => setIsOpen(!isOpen);
@@ -767,6 +778,16 @@ const Quran = ({ src, toTop }) => {
         name: language === "ar" ? allAyahs.name : allAyahs.englishName,
       };
     });
+  // Scroll to selected surah / last visited surah
+  useEffect(() => {
+    if (surahsRef.current && selectedSurahRef.current) {
+      selectedSurahRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+    // eslint-disable-next-line
+  }, [surahsRef.current]); // or trigger manually after goBack
 
   return (
     <div className="quran">
@@ -844,9 +865,16 @@ const Quran = ({ src, toTop }) => {
               (isReversed ? [...surahs].reverse() : surahs).map(
                 (surah, index) => (
                   <div
-                    className="surah"
+                    className={`surah ${
+                      selectedSurah === surah.number ? "selected-surah" : ""
+                    }`}
                     key={index}
                     data-name={index + 1}
+                    ref={
+                      selectedSurah === surah.number
+                        ? (el) => (selectedSurahRef.current = el)
+                        : null
+                    }
                     onClick={(e) => handleSurahClick(e, surah)}
                   >
                     <div className="surah-number pe-none"> {surah.number} </div>

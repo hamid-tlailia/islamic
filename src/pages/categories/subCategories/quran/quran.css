@@ -72,6 +72,16 @@
 .surah:hover .surah-number {
   background-color: var(--surah-hover-color);
 }
+.surah.selected-surah {
+  border: 1px solid var(--surah-hover-color) !important;
+}
+.surah.selected-surah .surah-english-name,
+.surah.selected-surah .surah-infos {
+  color: var(--surah-hover-color);
+}
+.surah.selected-surah .surah-number {
+  background-color: var(--surah-hover-color);
+}
 
 .quran .ayahs {
   position: absolute; /* Changed from absolute to fixed to make it relative to the viewport */
