@@ -94,7 +94,7 @@ function App() {
   const [backToTop, setBackToTop] = useState(false);
   const [pageTitle, setPageTitle] = useState(null);
   const [currentLanguage, setCurrentLanguage] = useState();
-  const [appTheme, setAppTheme] = useState("light");
+
   // Register device token if not already
   useEffect(() => {
     registerDeviceToken();
