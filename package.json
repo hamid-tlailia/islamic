@@ -48,11 +48,11 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "dev": "react-scripts start",
     "build": "react-scripts build",
-    "serve": "serve -s build",
+    "start": "serve -s build",
     "predeploy": "npm run build",
-    "deploy": "npm run serve"
+    "deploy": "npm run start"
   },
   "eslintConfig": {
     "extends": [
