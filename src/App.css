@@ -35,20 +35,20 @@
 }
 
 body.dark-mode {
-  --header-bg-color: #040101;
+  --header-bg-color: #181a1b;
   --header-text-color: #ffffff;
-  --bg-color: black;
+  --bg-color: #181a1b;
   --text-color: #ffffff;
-  --card-color: rgba(0, 0, 0, 0.956);
+  --card-color: #181a1b;
   --border: 1px solid rgb(190, 187, 168);
   --nav-link-color: #1b87a5;
-  --outlets-bg-color: #040303;
+  --outlets-bg-color: #181a1b;
   --surah-border: 1px solid white;
   --surah-hover-color: #1b87a5;
   --nav-color: rgba(128, 128, 128, 0.158);
   --ayah-text-color: rgb(241, 170, 18);
-  --dropdown-bg-color: rgba(0, 0, 0, 0.153);
-  --player-bg-color: rgb(8, 27, 42);
+  --dropdown-bg-color: #181a1b;
+  --player-bg-color: #181a1b;
   --primary-color: #107996;
   --secondary-color: #6d200b;
   --tertiary-color: #128b6d;
@@ -58,7 +58,7 @@ body.dark-mode {
   --main-color: coral;
   --shadow-primary-color: rgb(31, 103, 167);
   --shadow-secondary-color: rgba(255, 255, 255, 0.5);
-  --api-card: #010e01;
+  --api-card: #181a1b;
   --names-color: gold;
 }
 body.light-filter {

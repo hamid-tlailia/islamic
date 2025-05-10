@@ -102,8 +102,8 @@ a {
 .single_story .suggest section .title,
 .stories .stories_container section .title {
   display: -webkit-box;
-  font-size: 20px;
-  margin: 10px 0;
+  font-size: 25px;
+  margin-bottom: 15px;
   overflow: hidden;
   color: var(--text-color);
 }

@@ -94,6 +94,7 @@ function App() {
   const [backToTop, setBackToTop] = useState(false);
   const [pageTitle, setPageTitle] = useState(null);
   const [currentLanguage, setCurrentLanguage] = useState();
+  const [appTheme, setAppTheme] = useState("light");
   // Register device token if not already
   useEffect(() => {
     registerDeviceToken();
@@ -124,9 +125,14 @@ function App() {
   // Add loader 1s when load page
 
   useEffect(() => {
+    const appTheme = localStorage.getItem("theme");
     const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
+      if (appTheme !== null) {
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
+      }
+    }, 100);
 
     return () => clearTimeout(timer);
   }, []);

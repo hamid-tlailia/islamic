@@ -910,19 +910,23 @@ const Quran = ({ src, toTop }) => {
                       </span>
                     </div>
                   </div>
-                  <div className="dropdown">
+                  <div
+                    className="dropdown"
+                    style={{ background: "var(--card-color)" }}
+                  >
                     <Select
-                      options={loading ? [] : recitersOptions} // لا نعرض الخيارات أثناء التحميل
-                      isLoading={loading} // يعرض سبينر التحميل تلقائيًا
+                      options={loading ? [] : recitersOptions}
+                      isLoading={loading}
                       onChange={src}
+                      className="reciters-select"
                       placeholder={
                         loading
                           ? language === "ar"
                             ? "⏳ الرجاء الانتظار..."
                             : "⏳ Please wait..."
                           : language === "ar"
-                          ? "اختر القارئ"
-                          : "Choose reciter"
+                          ? "اختر القارئ..."
+                          : "Choose reciter..."
                       }
                       noOptionsMessage={() =>
                         loading
@@ -938,6 +942,37 @@ const Quran = ({ src, toTop }) => {
                           ...provided,
                           minWidth: "310px",
                           width: "100%",
+                        }),
+                        control: (provided) => ({
+                          ...provided,
+                          backgroundColor: "var(--card-color)",
+                          color: "var(--text-color)",
+                        }),
+                        menu: (provided) => ({
+                          ...provided,
+                          backgroundColor: "var(--card-color)",
+                        }),
+                        option: (provided, state) => ({
+                          ...provided,
+                          backgroundColor: state.isSelected
+                            ? "#2a9d8f" // selected item background
+                            : state.isFocused
+                            ? "#DEB887" // hovered item background
+                            : "var(--card-color)", // default background
+                          fontWeight: state.isSelected ? "bold" : "normal",
+                          color: state.isSelected
+                            ? "white"
+                            : state.isFocused
+                            ? "var(--text-color)"
+                            : "var(--text-color)",
+                        }),
+                        singleValue: (provided) => ({
+                          ...provided,
+                          color: "var(--text-color)",
+                        }),
+                        placeholder: (provided) => ({
+                          ...provided,
+                          color: "var(--text-color)",
                         }),
                       }}
                     />

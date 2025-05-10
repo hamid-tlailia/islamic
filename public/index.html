@@ -48,6 +48,31 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <!-- Bootstrap js CDN -->
+    <script>
+      (function () {
+        try {
+          const theme = localStorage.getItem("theme"); // "dark" or "light"
+          const bodyClass = localStorage.getItem("bodyClass"); // e.g., "sky", "image", etc.
+          const fontTheme = localStorage.getItem("fontTheme") || "font-default";
+
+          const body = document.body;
+
+          if (theme === "dark") {
+            body.classList.add("dark-mode");
+          } else {
+            body.classList.add("light-mode");
+          }
+
+          if (bodyClass) {
+            body.classList.add(bodyClass);
+          }
+
+          body.classList.add(fontTheme);
+        } catch (e) {
+          console.warn("Theme preload failed:", e);
+        }
+      })();
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script

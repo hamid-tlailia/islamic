@@ -362,7 +362,6 @@
 }
 .close-modal {
   color: crimson !important;
-
   width: 15px;
   height: 15px;
   border-radius: 50% !important;
@@ -370,6 +369,7 @@
     rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
   background-color: var(--card-color) !important;
 }
+
 .surah-title {
   color: rgb(5, 95, 36);
   -webkit-text-stroke: 0.5px rgb(15, 54, 31);
