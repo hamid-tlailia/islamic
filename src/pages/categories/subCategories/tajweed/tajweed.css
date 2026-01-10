@@ -69,6 +69,11 @@
 }
 .tajweed-parent {
   position: relative;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  font-size: 2rem;
+  text-align: justify;
+  padding: 0 !important;
 }
 /* Increased font size for Ayahs */
 .tajweed-text {

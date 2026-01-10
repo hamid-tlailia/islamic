@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import "./categories.css";
+
 import quran from "../images/quran.png";
 import ahadith from "../images/ahadith.png";
 import fatawa from "../images/fatawa.png";
@@ -20,98 +21,58 @@ import arabic from "../images/arabic.png";
 import topics from "../images/topics.png";
 import sira from "../images/sira.png";
 import tajweed from "../images/tajweed.png";
-import { Outlet, NavLink } from "react-router-dom";
+
+import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "../../components/languages/provider";
-import { useNavigate, useLocation } from "react-router-dom";
 import throttle from "lodash.throttle";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import { useMediaQuery } from "@mui/material";
 
 const navLinks = [
-  {
-    path: "islam",
-    title: "whatIsIslam",
-  },
-  {
-    path: "beMuslim",
-    title: "beAMuslim",
-  },
-  {
-    path: "quran",
-    title: "quran",
-  },
-  {
-    path: "tafsir",
-    title: "quranInterpretationCat",
-  },
-  {
-    path: "ahadith",
-    title: "hadiths",
-  },
-  {
-    path: "times",
-    title: "prayerTimes",
-  },
-  {
-    path: "adhkar",
-    title: "azkar",
-  },
-  {
-    path: "names",
-    title: "asmaaHusna",
-  },
-  {
-    path: "tasbih",
-    title: "tasbeeh",
-  },
-  {
-    path: "prophets",
-    title: "prophetsStories",
-  },
-  {
-    path: "animals",
-    title: "animalsStories",
-  },
-  {
-    path: "fatawa",
-    title: "contemporaryFatwas",
-  },
-  {
-    path: "library",
-    title: "wisdomAndAdmonitions",
-  },
-  {
-    path: "radio",
-    title: "QuranRadio",
-  },
-  {
-    path: "fiqh",
-    title: "fiqhIslam",
-  },
-  {
-    path: "historic",
-    title: "islamicHistory",
-  },
-  {
-    path: "arabic",
-    title: "arabicLanguage",
-  },
-  {
-    path: "knowledge",
-    title: "OtherTopics",
-  },
-  {
-    path: "sira",
-    title: "alSira",
-  },
-  {
-    path: "tajweed",
-    title: "alTajweed",
-  },
-  {
-    path: "questions",
-    title: "askAQuestion",
-  },
+  { path: "islam", title: "whatIsIslam" },
+  { path: "beMuslim", title: "beAMuslim" },
+  { path: "quran", title: "quran" },
+  { path: "tafsir", title: "quranInterpretationCat" },
+  { path: "ahadith", title: "hadiths" },
+  { path: "times", title: "prayerTimes" },
+  { path: "adhkar", title: "azkar" },
+  { path: "names", title: "asmaaHusna" },
+  { path: "tasbih", title: "tasbeeh" },
+  { path: "prophets", title: "prophetsStories" },
+  { path: "animals", title: "animalsStories" },
+  { path: "fatawa", title: "contemporaryFatwas" },
+  { path: "library", title: "wisdomAndAdmonitions" },
+  { path: "radio", title: "QuranRadio" },
+  { path: "fiqh", title: "fiqhIslam" },
+  { path: "historic", title: "islamicHistory" },
+  { path: "arabic", title: "arabicLanguage" },
+  { path: "knowledge", title: "OtherTopics" },
+  { path: "sira", title: "alSira" },
+  { path: "tajweed", title: "alTajweed" },
+  { path: "questions", title: "askAQuestion" },
+];
+
+const CATEGORIES = [
+  { to: "islam", img: islam, id: "whatIsIslam" },
+  { to: "beMuslim", img: be, id: "beAMuslim" },
+  { to: "quran", img: quran, id: "quran" },
+  { to: "tafsir", img: tafsir, id: "quranInterpretationCat" },
+  { to: "ahadith", img: ahadith, id: "hadiths" },
+  { to: "times", img: salat, id: "prayerTimes" },
+  { to: "adhkar", img: adhkar, id: "azkar" },
+  { to: "names", img: asma2, id: "asmaaHusna" },
+  { to: "tasbih", img: tasbih, id: "tasbeeh" },
+  { to: "prophets", img: qisas, id: "prophetsStories" },
+  { to: "animals", img: animals, id: "animalsStories" },
+  { to: "fatawa", img: fatawa, id: "contemporaryFatwas" },
+  { to: "library", img: wasia, id: "wisdomAndAdmonitions" },
+  { to: "radio", img: radio, id: "QuranRadio", imgClass: "wideImg" },
+  { to: "fiqh", img: fiqh, id: "fiqhIslam" },
+  { to: "historic", img: history, id: "islamicHistory" },
+  { to: "arabic", img: arabic, id: "arabicLanguage" },
+  { to: "knowledge", img: topics, id: "OtherTopics" },
+  { to: "sira", img: sira, id: "alSira" },
+  { to: "tajweed", img: tajweed, id: "alTajweed" },
 ];
 
 const Categories = ({
@@ -124,26 +85,26 @@ const Categories = ({
   scrollTop,
   hasError,
 }) => {
-  // Define sub component title
   const [subTitle, setSubTitle] = useState("");
-  // Handle scrolling state
   const [currentScroll, setCurrentScroll] = useState(0);
   const [checkTitle, setCheckTitle] = useState(false);
   const [isRadio, setIsRadio] = useState(false);
-  // State to store the selected category position
   const [selectedCategoryPosition, setSelectedCategoryPosition] = useState(0);
+
   const { language, translations } = useTranslation();
-  // Get outlets area
   const navigate = useNavigate();
   const location = useLocation();
+
   const categoriesRef = useRef(null);
   const outletsRef = useRef(null);
   const contentRef = useRef(null);
+
   const isSmallScreen = useMediaQuery("(max-width:500px)");
-  // Change page title
+
+  // Page title
   useEffect(() => {
     if (location.pathname.startsWith("/categories/")) {
-      document.title = translations[subTitle];
+      document.title = translations[subTitle] || "Categories";
     } else {
       document.title =
         language === "ar"
@@ -152,116 +113,112 @@ const Categories = ({
     }
     // eslint-disable-next-line
   }, [subTitle, language, location]);
-  // get component title from local storage
+
+  // Load subtitle + last position
   useEffect(() => {
     const currentComponentTitle = localStorage.getItem("component-title");
-    if (currentComponentTitle) setSubTitle(currentComponentTitle);
-    else setSubTitle("الأقسام");
-    const savedPosition = localStorage.getItem("last-category-position");
+    setSubTitle(currentComponentTitle || "الأقسام");
+
+    const savedPosition = Number(
+      localStorage.getItem("last-category-position") || 0
+    );
     setSelectedCategoryPosition(savedPosition);
+
     if (location.pathname.startsWith("/categories/")) scrollTop();
     // eslint-disable-next-line
   }, [location.pathname, checkTitle]);
 
-  // Event handler for clicks on categories
+  // Click handler (delegated)
   const handleCategoryClick = (event) => {
     const target = event.target.closest(".div");
-    document.body.scrollTo({
-      top: selectedCategoryPosition,
-    });
-    if (target) {
-      const componentTitleId = target.querySelector("span")?.id; // Get the ID from the span element
-      if (componentTitleId) {
-        setSubTitle(componentTitleId); // Set the subtitle for the outlet
-        localStorage.setItem("component-title", componentTitleId);
-        // Save the clicked category's position relative to the scrollable content
-        if (contentRef.current) {
-          const categoryPosition = target.offsetTop;
-          localStorage.setItem("last-category-position", categoryPosition);
-        }
+    if (!target) return;
 
-        if (outletsRef.current) {
-          outletsRef.current.classList.add("active");
-          categoriesRef.current.classList.add("hide");
-          if (contentRef.current) {
-            contentRef.current.scrollTo({
-              top: 0,
-              behavior: "smooth",
-            });
-          }
-        }
-      }
+    // store position BEFORE leaving
+    if (contentRef.current) {
+      localStorage.setItem("last-category-position", String(target.offsetTop));
     }
+
+    const componentTitleId = target.querySelector("span")?.id;
+    if (componentTitleId) {
+      setSubTitle(componentTitleId);
+      localStorage.setItem("component-title", componentTitleId);
+    }
+
+    outletsRef.current?.classList.add("active");
+    categoriesRef.current?.classList.add("hide");
+
+    // go top inside scroll container
+    contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Add event listener for category clicks
   useEffect(() => {
-    const categoryElement = categoriesRef.current;
-    if (categoryElement) {
-      categoryElement.addEventListener("click", handleCategoryClick);
-    }
-
-    // Cleanup event listener on component unmount
-    return () => {
-      if (categoryElement) {
-        categoryElement.removeEventListener("click", handleCategoryClick);
-      }
-    };
+    const el = categoriesRef.current;
+    if (!el) return;
+    el.addEventListener("click", handleCategoryClick);
+    return () => el.removeEventListener("click", handleCategoryClick);
     // eslint-disable-next-line
   }, []);
 
-  // Handle outlet closing
+  // Close outlet
   const closeOutlet = () => {
-    if (outletsRef.current) outletsRef.current.classList.remove("active");
-    navigate("/categories");
-    categoriesRef.current.classList.remove("hide");
+    outletsRef.current?.classList.remove("active");
+    categoriesRef.current?.classList.remove("hide");
+
     setIsRadio(false);
-    // Delay scrolling to ensure the categories are visible
-    if (contentRef.current) {
-      document.body.scrollTo({
-        top: selectedCategoryPosition,
-      });
-    }
+    navigate("/categories");
+
+    // restore scroll position
+    requestAnimationFrame(() => {
+      if (contentRef.current) {
+        contentRef.current.scrollTo({
+          top: selectedCategoryPosition,
+          behavior: "smooth",
+        });
+      }
+    });
   };
 
-  // Updated useEffect to handle pathname changes
+  // Handle pathname changes (open outlet when direct route)
   useEffect(() => {
     if (location.pathname.startsWith("/categories/")) {
       outletsRef.current?.classList.add("active");
       categoriesRef.current?.classList.add("hide");
-      // Extract the category segment after "/categories/"
+
       const categoryPath = location.pathname
         .replace("/categories/", "")
         .split("/")[0]
-        .toLowerCase(); // Optional: normalize to lowercase if needed
+        .toLowerCase();
 
-      // Find the matching navigation link based on the categoryPath
       const matchedLink = navLinks.find(
         (link) => link.path.toLowerCase() === categoryPath
       );
 
-      if (matchedLink) {
-        // Save the title to localStorage
-        localStorage.setItem("component-title", matchedLink.title);
-      } else {
-        // Optionally, handle the case where no matching category is found
-        const defaultTitle = language === "ar" ? "الأقسام" : "Categories";
-        localStorage.setItem("component-title", defaultTitle);
-      }
+      const nextTitle =
+        matchedLink?.title || (language === "ar" ? "الأقسام" : "Categories");
+
+      localStorage.setItem("component-title", nextTitle);
+      setSubTitle(nextTitle);
+
       setCheckTitle(true);
       scrollTop();
     } else {
-      outletsRef.current.classList.remove("active");
-      categoriesRef.current.classList.remove("hide");
-      document.body.scrollTo({
-        top: selectedCategoryPosition,
-      });
+      outletsRef.current?.classList.remove("active");
+      categoriesRef.current?.classList.remove("hide");
+
       setCheckTitle(false);
+
+      requestAnimationFrame(() => {
+        contentRef.current?.scrollTo({
+          top: selectedCategoryPosition,
+          behavior: "smooth",
+        });
+      });
     }
     // eslint-disable-next-line
-  }, [location.pathname, selectedCategoryPosition]); // Depend on location.pathname to run the effect when the path changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname, selectedCategoryPosition]);
 
-  // Function to handle scrolling and show/hide button
+  // Scroll behavior
   // eslint-disable-next-line
   const checkScrollTop = useCallback(
     throttle((e) => {
@@ -269,50 +226,30 @@ const Categories = ({
       const threshold = 300;
       const isScrollingDown = scrollTop > currentScroll;
 
-      // Handle header visibility immediately
-      if (isScrollingDown) {
-        hideHeader();
-      } else {
-        showHeader();
-      }
+      if (isScrollingDown) hideHeader();
+      else showHeader();
 
-      // Handle button display throttled
-      if (scrollTop > threshold) {
-        displayButton();
-      } else {
-        hideButton();
-      }
+      if (scrollTop > threshold) displayButton();
+      else hideButton();
 
-      // Update current scroll position
       setCurrentScroll(scrollTop);
-    }, 300), // Throttle delay of 300ms
+    }, 250),
+    // eslint-disable-next-line
     [currentScroll]
   );
 
-  const handleScroll = (e) => {
-    checkScrollTop(e);
-  };
+  const handleScroll = (e) => checkScrollTop(e);
+
   useEffect(() => {
-    if (subTitle === "QuranRadio") setIsRadio(true);
-    else setIsRadio(false);
+    setIsRadio(subTitle === "QuranRadio");
   }, [subTitle]);
-  // Function to scroll back to the top
+
   useEffect(() => {
-    if (contentRef.current) {
-      contentRef.current.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    }
+    contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   }, [backTop, checkTitle]);
 
   useEffect(() => {
-    if (contentRef.current) {
-      contentRef.current.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    }
+    contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   }, [backToTop]);
 
   return (
@@ -323,124 +260,46 @@ const Categories = ({
       >
         <div className="card content" ref={contentRef} onScroll={handleScroll}>
           <div className="card-header p-1 d-flex justify-content-center align-items-center">
-            <p
-              className="w-100 text-center  fw-bold mt-2"
-              style={{ color: "rgb(81, 85, 27)" }}
-            >
+            <p className="w-100 text-center fw-bold mt-2 catHeaderTitle">
               {translations.prayerKnowledge}
             </p>
           </div>
+
           <div className="card-body p-0">
             {/* Categories */}
             <div className="divisions" ref={categoriesRef}>
-              <NavLink className="div" to="islam">
-                <img src={islam} alt="divs" />
-                <span id="whatIsIslam"> {translations.whatIsIslam}</span>
-              </NavLink>
-              <NavLink className="div" to="beMuslim">
-                <img src={be} alt="divs" />
-                <span id="beAMuslim"> {translations.beAMuslim}</span>
-              </NavLink>
-              <NavLink className="div" to="quran">
-                <img src={quran} alt="divs" />
-                <span id="quran"> {translations.quran}</span>
-              </NavLink>
-              <NavLink className="div" to="tafsir">
-                <img src={tafsir} alt="divs" />
-                <span id="quranInterpretationCat">
-                  {" "}
-                  {translations.quranInterpretationCat}
-                </span>
-              </NavLink>
-              <NavLink className="div" to="ahadith">
-                <img src={ahadith} alt="divs" />
-                <span id="hadiths">{translations.hadiths}</span>
-              </NavLink>
-              <NavLink className="div" to="times">
-                <img src={salat} alt="divs" />
-                <span id="prayerTimes"> {translations.prayerTimes}</span>
-              </NavLink>
-              <NavLink className="div" to="adhkar">
-                <img src={adhkar} alt="divs" />
-                <span id="azkar">{translations.azkar}</span>
-              </NavLink>
-              <NavLink className="div" to="names">
-                <img src={asma2} alt="divs" />
-                <span id="asmaaHusna"> {translations.asmaaHusna}</span>
-              </NavLink>
-              <NavLink className="div" to="tasbih">
-                <img src={tasbih} alt="divs" />
-                <span id="tasbeeh">{translations.tasbeeh}</span>
-              </NavLink>
-              <NavLink className="div" to="prophets">
-                <img src={qisas} alt="divs" />
-                <span id="prophetsStories">
-                  {" "}
-                  {translations.prophetsStories}
-                </span>
-              </NavLink>
-              <NavLink className="div" to="animals">
-                <img src={animals} alt="divs" />
-                <span id="animalsStories"> {translations.animalsStories}</span>
-              </NavLink>
-              <NavLink className="div" to="fatawa">
-                <img src={fatawa} alt="divs" />
-                <span id="contemporaryFatwas">
-                  {" "}
-                  {translations.contemporaryFatwas}
-                </span>
-              </NavLink>
-              <NavLink className="div" to="library">
-                <img src={wasia} alt="divs" />
-                <span id="wisdomAndAdmonitions">
-                  {" "}
-                  {translations.wisdomAndAdmonitions}
-                </span>
-              </NavLink>
-              <NavLink className="div" to="radio">
-                <img src={radio} className="w-100" alt="divs" />
-                <span id="QuranRadio"> {translations.QuranRadio}</span>
-              </NavLink>
-              <NavLink className="div" to="fiqh">
-                <img src={fiqh} alt="divs" />
-                <span id="fiqhIslam"> {translations.fiqhIslam}</span>
-              </NavLink>
-              <NavLink className="div" to="historic">
-                <img src={history} alt="divs" />
-                <span id="islamicHistory"> {translations.islamicHistory}</span>
-              </NavLink>
-              <NavLink className="div" to="arabic">
-                <img src={arabic} alt="divs" />
-                <span id="arabicLanguage"> {translations.arabicLanguage}</span>
-              </NavLink>
-              <NavLink className="div" to="knowledge">
-                <img src={topics} alt="divs" />
-                <span id="OtherTopics"> {translations.OtherTopics}</span>
-              </NavLink>
-              <NavLink className="div" to="sira">
-                <img src={sira} alt="divs" />
-                <span id="alSira"> {translations.alSira}</span>
-              </NavLink>
-              <NavLink className="div" to="tajweed">
-                <img src={tajweed} alt="divs" />
-                <span id="alTajweed"> {translations.alTajweed}</span>
-              </NavLink>
+              {CATEGORIES.map((c) => (
+                <NavLink key={c.to} className="div" to={c.to}>
+                  <div className="catIcon">
+                    <img
+                      src={c.img}
+                      className={c.imgClass || ""}
+                      alt="category"
+                      loading="lazy"
+                      draggable="false"
+                    />
+                  </div>
+                  <span id={c.id}>{translations[c.id]}</span>
+                </NavLink>
+              ))}
             </div>
           </div>
-          {/* Categories result area */}
+
+          {/* Outlet */}
           <div className="outlets card" ref={outletsRef}>
             <div
               className="card-header outlets-top"
-              style={{ borderRadius: isSmallScreen && "0" }}
+              style={{ borderRadius: isSmallScreen ? "0" : undefined }}
             >
               <p>
-                {" "}
-                <MenuBookOutlinedIcon /> {translations[subTitle]}{" "}
+                <MenuBookOutlinedIcon /> {translations[subTitle]}
               </p>
-              <p onClick={closeOutlet} className="back">
-                X
-              </p>
+
+              <button type="button" onClick={closeOutlet} className="backBtn">
+                ✕
+              </button>
             </div>
+
             <div className="card-body outlets-body">
               {hasError ? "Error occurred!" : <Outlet />}
             </div>

@@ -615,6 +615,8 @@ const Tajweed = ({ audioName, documentName }) => {
           mb: 2,
           flexWrap: "wrap",
           gap: 2,
+          padding
+          : "0",
         }}
       >
         {savedPageChanged && (
@@ -705,6 +707,7 @@ const Tajweed = ({ audioName, documentName }) => {
           alignItems: "center",
           mb: 2,
           gap: 2,
+          padding: "0",
           flexWrap: "wrap",
         }}
       >
@@ -743,8 +746,7 @@ const Tajweed = ({ audioName, documentName }) => {
           mb: 2,
           overflowY: "auto",
           position: "relative",
-          border: "1px solid #ddd",
-          padding: "1em",
+          padding: "0.8em",
           borderRadius: "8px",
           backgroundColor: "var(--card-color)",
           maxHeight: "max-content",
@@ -770,12 +772,6 @@ const Tajweed = ({ audioName, documentName }) => {
 
         {!loading && !error && (
           <div
-            style={{
-              borderRadius: "4px",
-              whiteSpace: "pre-wrap",
-              fontSize: "2rem",
-              textAlign: "justify",
-            }}
             className="tajweed-parent"
           >
             {quranData.map((ayah, index) => (
