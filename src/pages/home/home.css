@@ -246,7 +246,7 @@
 .homeui-content {
   width: min(1150px, 100%);
   margin-inline: auto;
-  border-radius: 0;
+  border-radius: 5px;
   background: var(--card-color);
   border: var(--border);
   box-shadow: rgba(0, 0, 0, 0.18) 0 14px 30px;
@@ -419,8 +419,7 @@
 
 .homeui-ctaCard.primary {
   background: color-mix(in srgb, #917125 18%, transparent);
-  box-shadow: color-mix(in srgb, #917125 22%, transparent) 0 0 0
-      1px inset,
+  box-shadow: color-mix(in srgb, #917125 22%, transparent) 0 0 0 1px inset,
     rgba(0, 0, 0, 0.18) 0 12px 24px;
 }
 
