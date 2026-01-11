@@ -180,9 +180,7 @@ const Home = ({ onNavClick }) => {
 
             <div
               className="homeui-scroll"
-              onWheel={(e) => e.stopPropagation()}
-              onTouchMove={(e) => e.stopPropagation()}
-              onTouchStart={(e) => e.stopPropagation()}
+      
             >
               <p className={`homeui-hadith ${dirClass}`}>{h?.hadeeth}</p>
 
@@ -224,7 +222,7 @@ const Home = ({ onNavClick }) => {
     );
   };
 
-  const homeContentMarginTop = selectedHadiths.length === 0 ? "0" : "-5vh";
+  const homeContentMarginTop = selectedHadiths.length === 0 ? "0" : "-4vh";
 
   return (
     <div className={`homeui ${language === "ar" ? "rtl" : "ltr"}`}>

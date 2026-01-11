@@ -5,6 +5,7 @@
   flex-direction: column;
   gap: 16px;
   padding: 0;
+    margin-top: 0 !important;
 }
 
 .homeui.rtl {
@@ -37,7 +38,7 @@
 @media (max-width: 700px) {
   .homeui-img {
     height: 62vh;
-    border-radius: 16px;
+    border-radius: 0;
   }
 }
 
@@ -232,20 +233,20 @@
 
 /* Slick dots */
 .homeui-sliderWrap .slick-dots {
-  bottom: 10px;
+  margin-bottom: 41px !important;
 }
 .homeui-sliderWrap .slick-dots li button:before {
-  color: rgba(255, 255, 255, 0.65);
+  color: rgb(255, 255, 255);
 }
 .homeui-sliderWrap .slick-dots li.slick-active button:before {
-  color: rgba(255, 255, 255, 0.95);
+  color: #917125;
 }
 
 /* ================= Content section ================= */
 .homeui-content {
-  width: min(1150px, 96%);
+  width: min(1150px, 100%);
   margin-inline: auto;
-  border-radius: 22px;
+  border-radius: 0;
   background: var(--card-color);
   border: var(--border);
   box-shadow: rgba(0, 0, 0, 0.18) 0 14px 30px;
@@ -287,7 +288,7 @@
   margin: 0;
   font-weight: 1000;
   font-size: 34px;
-  color: var(--nav-link-color);
+  color: #917125;
   text-align: center;
 }
 
@@ -351,7 +352,7 @@
 .homeui-featureText h3 {
   margin: 0;
   font-weight: 1000;
-  color: var(--nav-link-color);
+  color: #917125;
   font-size: 18px;
 }
 
@@ -417,15 +418,15 @@
 }
 
 .homeui-ctaCard.primary {
-  background: color-mix(in srgb, var(--nav-link-color) 18%, transparent);
-  box-shadow: color-mix(in srgb, var(--nav-link-color) 22%, transparent) 0 0 0
+  background: color-mix(in srgb, #917125 18%, transparent);
+  box-shadow: color-mix(in srgb, #917125 22%, transparent) 0 0 0
       1px inset,
     rgba(0, 0, 0, 0.18) 0 12px 24px;
 }
 
 .homeui-ctaIcon {
   font-size: 42px !important;
-  color: var(--nav-link-color);
+  color: #917125;
 }
 
 .homeui-ctaCard.primary .homeui-ctaIcon {

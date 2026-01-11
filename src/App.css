@@ -147,6 +147,8 @@ body.light-filter {
 
   --shadow-primary-color: rgba(2, 6, 23, 0.16);
   --shadow-secondary-color: rgba(255, 255, 255, 0.28);
+  --settings-ui__section-bg: rgb(50 44 44 / 0%);
+  --settings-ui__toggle-bg: rgba(255, 255, 255, 0.1);
 }
 
 /* =========================================================
@@ -188,7 +190,8 @@ body.image {
 
   --shadow-primary-color: rgba(0, 0, 0, 0.55);
   --shadow-secondary-color: rgba(255, 255, 255, 0.08);
-
+  --settings-ui__section-bg: rgb(50 44 44 / 0%);
+  --settings-ui__toggle-bg: rgba(255, 255, 255, 0.1);
   background: url("./components/images//bg4.avif") no-repeat center;
   background-size: cover;
 }
@@ -231,6 +234,8 @@ body.sky {
 
   --shadow-primary-color: rgba(0, 0, 0, 0.55);
   --shadow-secondary-color: rgba(255, 255, 255, 0.07);
+  --settings-ui__section-bg: rgb(50 44 44 / 0%);
+  --settings-ui__toggle-bg: rgba(255, 255, 255, 0.1);
 }
 
 /* Contrast mode styles */
@@ -378,9 +383,7 @@ a {
 .rtl {
   direction: rtl !important;
 }
-.custom-cursor {
-  cursor: url("./components//images/logo.png") !important; /* Add your custom cursor image */
-}
+
 .primary {
   color: rgba(11, 107, 203, 1) !important ;
 }
