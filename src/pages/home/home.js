@@ -224,7 +224,7 @@ const Home = ({ onNavClick }) => {
     );
   };
 
-  const homeContentMarginTop = selectedHadiths.length === 0 ? "0" : "-8vh";
+  const homeContentMarginTop = selectedHadiths.length === 0 ? "0" : "-5vh";
 
   return (
     <div className={`homeui ${language === "ar" ? "rtl" : "ltr"}`}>
