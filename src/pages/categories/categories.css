@@ -22,11 +22,12 @@
   margin-top: auto;
   width: 90%;
   border: var(--search-border);
-  padding: 0 !important;
   overflow-y: auto;
   height: 100%;
   border-radius: 10px; /* a bit more modern */
   background-color: var(--search-card-bg);
+  /* want hide scroll bar */
+  scrollbar-width: none; /* Firefox */
 }
 
 @media screen and (max-width: 754px) {
@@ -102,7 +103,8 @@
 
 /* بدل height:755px (تسبب مشاكل في شاشات مختلفة) */
 .divisions.hide {
-  visibility: hidden;
+  height: 723px !important;
+  overflow: clip;
 }
 
 /* =========================================================
@@ -112,22 +114,22 @@
   border: var(--search-border);
   border-radius: 12px;
   background-color: var(--search-card-bg);
-
-  padding: 12px;
+  padding: 8px;
   cursor: pointer;
   text-decoration: none;
-
-  /* consistent tile size */
   aspect-ratio: 1 / 1;
   min-height: 150px;
   width: 100%;
-
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   justify-content: space-between;
-  align-items: center;
-
+  align-items: baseline;
   transition: transform 160ms ease, filter 160ms ease;
+  flex-wrap: nowrap;
+}
+.divisions .div .catIcon {
+  width: 80%;
+  height: 80%;
 }
 
 /* minimal hover (no shadows) */
@@ -154,9 +156,9 @@
   text-align: center;
 
   font-weight: 800;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.2;
-
+  margin-bottom: 6px;
   padding-top: 6px;
   pointer-events: none;
 }
@@ -191,13 +193,16 @@
   z-index: 10;
   pointer-events: none;
 }
-
+.outlets-body {
+  height: max-content !important;
+  padding: 5px 0 !important;
+  overflow-y: auto;
+}
 /* Final state when loaded */
 .outlets.active {
   animation: scaleUpRotate 0.2s ease-out forwards;
   opacity: 1;
   transition: 0.2s ease-out;
-  padding: 0 !important;
   pointer-events: auto;
 }
 
@@ -209,6 +214,7 @@
   align-items: center;
   text-align: center;
   gap: 10px;
+  z-index: 10;
   padding-block: 8px !important;
   padding-inline: 10px !important;
   border-bottom: var(--search-border);
@@ -245,7 +251,7 @@
 }
 
 /* close button */
-.back {
+.backBtn {
   position: relative;
   left: 0;
   top: 0;

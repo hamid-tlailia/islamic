@@ -1,82 +1,165 @@
-/* About.css */
-
-.about-container {
-  background-color: var(--card-color);
+.about-page {
+  padding: 22px;
   color: var(--text-color);
-  padding: 40px 20px;
-  max-width: 98%; /* Constrain the container width */
-  margin: 0 auto; /* Center the container */
-  border: 1px solid white;
+}
+
+.about-page.rtl {
+  direction: rtl;
+}
+.about-page.ltr {
+  direction: ltr;
+}
+
+.about-hero {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto 18px auto;
+  padding: 18px;
+  border-radius: 18px;
+
+  background: color-mix(in srgb, var(--card-color) 85%, transparent);
+  box-shadow: rgba(255, 255, 255, 0.08) 0 0 0 1px inset,
+    rgba(0, 0, 0, 0.25) 0 10px 30px;
+
+  backdrop-filter: blur(10px);
 }
 
 .about-title {
-  color: #169777;
   text-align: center;
-  margin-bottom: 20px;
-  font-size: 2.5em;
+  font-weight: 900;
+  letter-spacing: 0.2px;
+  margin: 0;
+  color: var(--text-color);
 }
 
 .about-description {
   text-align: center;
-  font-size: 1.2em;
-  margin-bottom: 50px;
+  opacity: 0.85;
+  margin: 10px auto 0 auto;
+  max-width: 900px;
+  line-height: 1.8;
+  color: var(--text-color);
 }
 
-.topics-container {
+/* Grid wrapper */
+.topics-wrap {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.topics-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 columns */
-  gap: 20px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
 }
 
+@media (max-width: 992px) {
+  .topics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .topics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Topic card */
 .topic-card {
+  text-decoration: none;
+  color: var(--text-color);
+
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 18px;
+
+  background: color-mix(in srgb, var(--card-color) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text-color) 14%, transparent);
+
+  box-shadow: rgba(0, 0, 0, 0.22) 0 10px 24px;
+  transition: 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.topic-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--nav-link-color) 40%, transparent);
+}
+
+.topic-card:active {
+  transform: translateY(0px);
+}
+
+/* Icon */
+.topic-icon {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  border-radius: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: color-mix(in srgb, var(--text-color) 10%, transparent);
+  box-shadow: color-mix(in srgb, var(--text-color) 12%, transparent) 0 0 0 1px
+    inset;
+
+  color: #917125 !important;
+  font-size: 22px;
+}
+
+.topic-body {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--card-color);
-  color: var(--text-color);
-  border-radius: 8px;
-  padding: 10px;
-  text-align: center;
-  border: 1px solid white;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
-}
-
-.topic-icon {
-  font-size: 3em;
-  color: #169777;
-  margin-bottom: 15px;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
 }
 
 .topic-name {
-  color: #169777;
-  margin-bottom: 10px;
-  font-size: 1.4em;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--text-color);
+  opacity: 0.98;
 }
 
 .topic-description {
-  font-size: 1em;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+  opacity: 0.82;
+  color: var(--text-color);
+
+  display: -webkit-box;
+  --webkit-line-clamp: 3;
+  --webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 992px) {
-  .topics-container {
-    grid-template-columns: repeat(2, 1fr); /* 2 columns for medium screens */
-  }
+.topic-arrow {
+  width: 36px;
+  height: 36px;
+  border-radius: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: color-mix(in srgb, var(--text-color) 8%, transparent);
+  color: #917125 !important;
+  font-weight: 900;
+
+  box-shadow: color-mix(in srgb, var(--text-color) 12%, transparent) 0 0 0 1px
+    inset;
+  transition: 0.2s;
 }
 
-@media (max-width: 600px) {
-  .topics-container {
-    grid-template-columns: 1fr; /* 1 column for small screens */
-  }
-}
-
-/* RTL Support */
-[lang="ar"] .about-container {
-  direction: rtl;
-}
-
-[lang="ar"] .topic-card {
-  text-align: right;
+.topic-card:hover .topic-arrow {
+  transform: translateY(-1px);
 }

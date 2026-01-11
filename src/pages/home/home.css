@@ -1,217 +1,449 @@
-.home {
+.homeui {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: start;
-  align-items: flex-start;
-  text-align: right !important;
-  gap: 20px;
+  gap: 16px;
   padding: 0;
-  margin-top: 0;
-  margin-bottom: 0;
-}
-.carousel-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  margin-top: 0 !important;
 }
 
-.carousel-item img {
+.homeui.rtl {
+  direction: rtl;
+}
+.homeui.ltr {
+  direction: ltr;
+}
+
+/* ================= Slider ================= */
+.homeui-sliderWrap {
+  position: relative;
+  width: 100%;
+  padding: 0;
+}
+
+.homeui-slide {
+  position: relative;
+  width: 100%;
+}
+
+.homeui-img {
   width: 100%;
   height: 70vh;
   object-fit: cover;
-  border-radius: 5px 5px 0 0;
+  border-radius: 18px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0 14px 35px;
 }
 
-.carousel-caption {
+@media (max-width: 700px) {
+  .homeui-img {
+    height: 62vh;
+    border-radius: 16px;
+  }
+}
+
+/* Overlay */
+.homeui-overlay {
   position: absolute;
-  bottom: 80px;
-  right: 15%;
-  background: rgba(0, 0, 0, 0.615);
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 14px;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: center;
+}
+
+.homeui-overlayCard {
+  width: min(980px, 92%);
+  max-height: 82vh; /* ✅ أعلى من قبل */
+  overflow: hidden;
+
+  border-radius: 18px;
+  background: color-mix(in srgb, #000 55%, transparent);
   color: #fff;
-  padding: 5px;
-  border-radius: 8px;
-  text-align: right;
-  width: 70%;
-  max-height: 80%;
-  overflow: auto;
-  z-index: 1000;
+
+  box-shadow: rgba(0, 0, 0, 0.4) 0 14px 35px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+
+  padding: 12px;
+  display: flex; /* ✅ */
+  flex-direction: column; /* ✅ */
 }
-.carousel-caption.en {
-  position: absolute;
-  bottom: 80px;
-  left: 15%;
-  background: rgba(0, 0, 0, 0.759);
+
+.homeui-scroll {
+  flex: 1; /* ✅ يخليها تاخذ الباقي */
+  max-height: none; /* ✅ */
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding: 0 10px 18px 0; /* ✅ padding-bottom باش آخر سطر ما يتقصش */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+
+  touch-action: pan-y; /* ✅ مهم جداً للموبايل */
+  scrollbar-gutter: stable;
+}
+.homeui.rtl .homeui-scroll {
+  padding: 0 0 18px 10px;
+}
+.homeui.ltr .homeui-scroll {
+  padding: 0 10px 18px 0;
+}
+
+.homeui-title {
+  margin: 0;
+  font-weight: 900;
+  font-size: 16px;
+  color: #a7f3d0;
+  text-align: center;
+}
+
+.homeui-hadith {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #ffd166;
+}
+
+.homeui-loading {
+  margin: 0;
+  font-weight: 900;
+  color: #a7f3d0;
+  text-align: center;
+}
+
+.homeui-subTitle {
+  margin: 0;
+  font-weight: 900;
+  color: #a7f3d0;
+}
+
+.homeui-text {
+  margin: 8px 0 0 0;
+  opacity: 0.95;
+  line-height: 1.7;
   color: #fff;
-  padding: 5px;
-  border-radius: 8px;
-  text-align: left;
-  width: 70%;
 }
-.slick-prev {
-  position: relative;
-  z-index: 100;
-  position: relative;
-  margin-left: 20px;
-  width: 50px !important;
-  height: 50px !important;
-  border-radius: 0 50% 50% 0;
-  padding: 15px;
-  background-color: var(--bg-color) !important;
+
+.homeui-divider {
+  height: 1px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.14);
+  margin: 10px 0;
 }
-.slick-prev::before {
-  content: "<";
+
+/* Hints */
+.homeui-hints {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 90%;
+}
+
+.homeui-hint {
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffd166;
+  line-height: 1.55;
+}
+
+/* Badges */
+.homeui-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.homeui-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: rgba(46, 204, 113, 0.22);
+  border: 1px solid rgba(46, 204, 113, 0.25);
+  color: #fff;
+  font-weight: 900;
+  font-size: 12px;
+}
+
+.homeui-badge.soft {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  opacity: 0.95;
+}
+
+/* Arrows */
+.homeui-arrows {
   position: absolute;
-  color: var(--text-color) !important;
-  left: 5px;
-  top: 10px;
-  padding: 8px;
-  background-color: transparent;
-  width: 30px;
-  height: 30px;
+  inset-inline: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
-.slick-next {
-  z-index: 100;
-  margin-right: 20px;
-  width: 50px !important;
-  height: 50px !important;
-  border-radius: 50% 0 0 50%;
-  padding: 15px;
-  background-color: var(--bg-color) !important;
-}
-.slick-next::before {
-  content: ">";
+
+.homeui-arrow {
+  pointer-events: auto;
   position: absolute;
-  color: var(--text-color) !important;
-  right: 8px;
-  top: 10px;
-  padding: 8px;
-  background-color: transparent;
-  width: 30px;
-  height: 30px;
-}
-.hadith-intro {
-  color: #08cf5e; /* Blue color for the introduction phrase */
-  font-weight: bold;
-}
-.container .card,
-.row {
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+
+  background: color-mix(in srgb, var(--bg-color) 80%, transparent);
   color: var(--text-color);
+  box-shadow: rgba(0, 0, 0, 0.22) 0 10px 24px,
+    color-mix(in srgb, var(--text-color) 12%, transparent) 0 0 0 1px inset;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: 0.2s;
+}
+
+.homeui-arrow:hover {
+  transform: translateY(-50%) scale(1.04);
+}
+
+.homeui-prev {
+  left: 14px;
+}
+.homeui-next {
+  right: 14px;
+}
+
+@media (max-width: 520px) {
+  .homeui-prev {
+    left: 10px;
+  }
+  .homeui-next {
+    right: 10px;
+  }
+}
+
+/* Slick dots */
+.homeui-sliderWrap .slick-dots {
+  bottom: 10px;
+}
+.homeui-sliderWrap .slick-dots li button:before {
+  color: rgba(255, 255, 255, 0.65);
+}
+.homeui-sliderWrap .slick-dots li.slick-active button:before {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* ================= Content section ================= */
+.homeui-content {
+  width: min(1150px, 96%);
+  margin-inline: auto;
+  border-radius: 22px;
+  background: var(--card-color);
+  border: var(--border);
+  box-shadow: rgba(0, 0, 0, 0.18) 0 14px 30px;
+  z-index: 100;
+  padding: 16px;
+}
+
+.homeui-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 14px;
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .homeui-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Left panel */
+.homeui-panel {
+  border-radius: 20px;
+  padding: 14px;
+  background: color-mix(in srgb, var(--card-color) 88%, transparent);
+  box-shadow: color-mix(in srgb, var(--text-color) 10%, transparent) 0 0 0 1px
+    inset;
+}
+
+.homeui-hero {
+  padding: 14px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--text-color) 6%, transparent);
+  box-shadow: color-mix(in srgb, var(--text-color) 10%, transparent) 0 0 0 1px
+    inset;
+}
+
+.homeui-siteName {
+  margin: 0;
+  font-weight: 1000;
+  font-size: 34px;
+  color: var(--nav-link-color);
+  text-align: center;
+}
+
+.homeui-siteDesc {
+  margin-top: 8px;
+  text-align: center;
+  color: var(--text-color);
+  opacity: 0.9;
+  line-height: 1.7;
+}
+
+/* Features */
+.homeui-features {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.homeui-feature {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+
+  padding: 12px;
+  border-radius: 18px;
+
+  background: color-mix(in srgb, var(--text-color) 6%, transparent);
+  box-shadow: color-mix(in srgb, var(--text-color) 10%, transparent) 0 0 0 1px
+    inset;
+
+  transition: 0.2s;
+}
+
+.homeui-feature:hover {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--text-color) 8%, transparent);
+}
+
+.homeui-featureIcon {
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: color-mix(in srgb, var(--text-color) 10%, transparent);
+  box-shadow: color-mix(in srgb, var(--text-color) 12%, transparent) 0 0 0 1px
+    inset;
+  flex: 0 0 auto;
+}
+
+.homeui-featureIcon img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.homeui-featureText h3 {
+  margin: 0;
+  font-weight: 1000;
+  color: var(--nav-link-color);
+  font-size: 18px;
+}
+
+.homeui-featureText p {
+  margin: 6px 0 0 0;
+  color: var(--text-color);
+  opacity: 0.9;
+  line-height: 1.7;
+}
+
+/* Right CTA */
+.homeui-cta {
+  border-radius: 20px;
+  padding: 14px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  background: color-mix(in srgb, var(--card-color) 88%, transparent);
+  box-shadow: color-mix(in srgb, var(--text-color) 10%, transparent) 0 0 0 1px
+    inset;
+}
+
+@media (max-width: 900px) {
+  .homeui-cta {
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 520px) {
+  .homeui-cta {
+    flex-direction: column;
+  }
+}
+
+.homeui-link {
+  text-decoration: none;
   width: 100%;
 }
-.site-name {
-  color: rgb(22, 136, 244);
-}
-.feature {
-  margin-block: 5px;
-}
-.feature h2 {
-  color: #169777;
-  margin-bottom: 15px;
-  font-size: 25px !important;
+
+.homeui-ctaCard {
+  width: 100%;
+  padding: 14px;
+  border-radius: 20px;
+
   display: flex;
-  flex-direction: row;
-  justify-content: start;
   align-items: center;
-  gap: 10px;
-}
-.home-btns {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  gap: 10px;
-  height: 80vh;
-}
-.home-btns button {
-  width: 170px;
-  height: 120px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  font-size: 30px;
-}
-.hadith-degree {
-  flex-wrap: wrap;
-}
-.home-content {
-  margin-top: -8vh !important;
-  width: 95%;
-  border: var(--border);
-  background-color: var(--card-color);
-  border-radius: 22px 22px 0 0;
-}
-@media screen and (max-width: 754px) {
-  .home-btns {
-    margin-bottom: 8px;
-    padding-top: 8px;
-    height: max-content;
-  }
-  .home-content {
-    width: 98%;
-  }
-  .home-btns {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: row;
-    gap: 10px;
-    height: 40vh;
-  }
-  .home-btns button {
-    width: 170px;
-    height: 120px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    font-size: 30px;
-  }
-}
-@media screen and (max-width: 372px) {
-  .home-btns button {
-    width: max-content;
-    height: 120px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    font-size: 26px;
-  }
-}
-.icons {
-  width: 50px;
-  height: 50px;
-}
-.home-short-icon {
-  font-size: 40px !important;
-}
-.home-shortcut-href {
-  text-decoration: none;
+  gap: 12px;
+
+  background: color-mix(in srgb, var(--text-color) 6%, transparent);
+  box-shadow: color-mix(in srgb, var(--text-color) 10%, transparent) 0 0 0 1px
+      inset,
+    rgba(0, 0, 0, 0.18) 0 12px 24px;
+
+  color: var(--text-color);
+  transition: 0.2s;
 }
 
-.site-map.en div {
-  text-align: left !important;
+.homeui-ctaCard:hover {
+  transform: translateY(-2px);
+  background: color-mix(in srgb, var(--text-color) 8%, transparent);
 }
-.site-map.en div p {
-  text-align: left !important;
+
+.homeui-ctaCard.primary {
+  background: color-mix(in srgb, var(--nav-link-color) 18%, transparent);
+  box-shadow: color-mix(in srgb, var(--nav-link-color) 22%, transparent) 0 0 0
+      1px inset,
+    rgba(0, 0, 0, 0.18) 0 12px 24px;
 }
-.text-coral {
-  color: coral;
+
+.homeui-ctaIcon {
+  font-size: 42px !important;
+  color: var(--nav-link-color);
 }
-.text-navy {
-  color: navy;
+
+.homeui-ctaCard.primary .homeui-ctaIcon {
+  color: var(--text-color);
 }
-.hint {
-  font-size: 16px !important;
+
+.homeui-ctaText {
+  display: flex;
+  flex-direction: column;
 }
-.description {
-  font-size: 18px !important;
+
+.homeui-ctaTitle {
+  font-weight: 1000;
+  font-size: 18px;
+}
+
+.homeui-ctaSub {
+  margin-top: 4px;
+  font-size: 13px;
+  opacity: 0.9;
 }

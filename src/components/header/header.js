@@ -31,17 +31,22 @@ import { useMediaQuery } from "@mui/material";
 
 const Header = ({ onNavClick, visibility, size }) => {
   const { changeLanguage, translations, language } = useTranslation();
+
   const [darkSwitched, setDarkSwitched] = useState(false);
   const [open, setOpen] = useState(false);
   const [textSize, setTextSize] = useState("");
-  const [isOnline, setIsOnline] = useState(true); // State for network status
-  const [isNetworkWeak, setIsNetworkWeak] = useState(false); // State for network strength
-  const [errorModalOpen, setErrorModalOpen] = useState(false); // State for error report modal
-  const [loading, setLoading] = useState(false); // Loading state for submit button
+  const [isOnline, setIsOnline] = useState(true);
+  const [isNetworkWeak, setIsNetworkWeak] = useState(false);
+  const [errorModalOpen, setErrorModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [inputDirection, setInputDirection] = useState("rtl");
-  const [fontTheme, setFontTheme] = useState(""); // State for font theme
+  const [fontTheme, setFontTheme] = useState("");
+  const [activeClass, setActiveClass] = useState("");
 
-  // State for form data
+  // ✅ NEW: drawer state to hide header while mobile nav is open
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+
+  // form data
   const [formData, setFormData] = useState({
     category: "",
     description: "",
@@ -50,28 +55,25 @@ const Header = ({ onNavClick, visibility, size }) => {
   const mobileHeader = useRef(null);
   const isBigScreen = useMediaQuery("(min-width:500px)");
 
-  // Define the classes to check (excluding 'dark-mode' and 'light-mode')
+  // Define classes to check (excluding dark-mode/light-mode)
   const classesToCheck = ["light-filter", "brightness", "image", "sky"];
 
-  // State to keep track of the active background class
-  const [activeClass, setActiveClass] = useState("");
-
-  // State and refs for draggable notch-nav
+  // notch drag
   const [notchNavPosition, setNotchNavPosition] = useState({ x: 100, y: 100 });
   const positionRef = useRef({ x: 100, y: 100 });
   const dragStartPos = useRef({ x: 0, y: 0 });
   const isDraggingRef = useRef(false);
   const animationFrameRef = useRef(null);
+  // ✅ Replace your current margin with these:
+  const EDGE_MARGIN = 12; // left/right safe space
+  const TOP_MARGIN = 16; // keep notch a bit away from the very top
+  const BOTTOM_MARGIN = 16; // keep notch a bit away from bottom
 
-  // Define the margin from the top and bottom edges
-  const HEADER_MARGIN = 10; // You can adjust this value as needed
-
+  // -------------------- THEME --------------------
   const setTheme = (e) => {
     const body = document.body;
-    // Remove all background classes and theme classes
     body.classList.remove("dark-mode", "light-mode", ...classesToCheck);
 
-    // Reset the active background class
     setActiveClass("");
     localStorage.removeItem("bodyClass");
 
@@ -86,7 +88,7 @@ const Header = ({ onNavClick, visibility, size }) => {
     }
   };
 
-  // Initialize theme, background class, font theme, and notch-nav position from localStorage
+  // Init theme + bg + font + notch position
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     const body = document.body;
@@ -101,29 +103,24 @@ const Header = ({ onNavClick, visibility, size }) => {
 
     const savedBodyClass = localStorage.getItem("bodyClass");
     if (savedBodyClass && classesToCheck.includes(savedBodyClass)) {
-      // Remove other background classes
       body.classList.remove(...classesToCheck);
       body.classList.add(savedBodyClass);
-      setActiveClass(savedBodyClass); // Set the activeClass state
+      setActiveClass(savedBodyClass);
     } else {
-      // Ensure only the theme class is present
       body.classList.remove(...classesToCheck);
-      setActiveClass(""); // No active background class
+      setActiveClass("");
     }
 
-    // Initialize font theme from localStorage
     const savedFontTheme = localStorage.getItem("fontTheme");
-    if (savedFontTheme && savedFontTheme !== null) {
+    if (savedFontTheme) {
       setFontTheme(savedFontTheme);
       body.classList.add(savedFontTheme);
     } else {
-      // default font theme
       setFontTheme("font-default");
       body.classList.add("font-default");
       localStorage.setItem("fontTheme", "font-default");
     }
 
-    // Initialize notch-nav position from localStorage
     const savedPosition = localStorage.getItem("notchNavPosition");
     if (savedPosition) {
       const parsedPosition = JSON.parse(savedPosition);
@@ -133,10 +130,10 @@ const Header = ({ onNavClick, visibility, size }) => {
     // eslint-disable-next-line
   }, []);
 
+  // Apply font theme
   useEffect(() => {
     const body = document.body;
 
-    // Get all font-related classes dynamically
     const allFontClasses = [
       "font-default",
       "font-arial",
@@ -156,62 +153,48 @@ const Header = ({ onNavClick, visibility, size }) => {
       "font-trebuchet",
     ];
 
-    // Remove all font-related classes from body
     body.classList.remove(...allFontClasses);
 
-    // Add the selected font theme class
-    if (fontTheme) {
-      body.classList.add(fontTheme);
-    }
+    if (fontTheme) body.classList.add(fontTheme);
   }, [fontTheme]);
 
-  // Function to handle background class toggling
+  // background toggling
   const updatedBodyStyle = (event, className) => {
     const body = document.body;
     const bodyClasses = Array.from(body.classList);
 
-    // Check if the body already has the class
     if (bodyClasses.includes(className)) {
-      // Remove the class and reapply the theme class
       body.classList.remove(className);
       setActiveClass("");
       localStorage.removeItem("bodyClass");
     } else {
-      // Remove all background classes
       body.classList.remove(...classesToCheck);
-
-      // Apply the clicked class
       body.classList.add(className);
       setActiveClass(className);
       localStorage.setItem("bodyClass", className);
     }
 
-    // Reapply theme class
     const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "dark") {
-      body.classList.add("dark-mode");
-    } else {
-      body.classList.add("light-mode");
-    }
+    if (savedTheme === "dark") body.classList.add("dark-mode");
+    else body.classList.add("light-mode");
   };
 
-  const showNavbar = () => {
+  // -------------------- MOBILE NAV OPEN/CLOSE --------------------
+  const showNavbar = (e) => {
+    e?.stopPropagation?.();
     if (mobileHeader.current) mobileHeader.current.classList.add("active");
+    setIsMobileNavOpen(true);
   };
 
-  useEffect(() => {
-    if (mobileHeader.current) {
-      mobileHeader.current.addEventListener("click", () => {
-        mobileHeader.current.classList.remove("active");
-      });
-    }
-  }, []);
+  const closeNavbar = (e) => {
+    e?.stopPropagation?.();
+    if (mobileHeader.current) mobileHeader.current.classList.remove("active");
+    setIsMobileNavOpen(false);
+  };
 
-  // Network detection and weak network detection
+  // -------------------- NETWORK --------------------
   useEffect(() => {
-    const updateOnlineStatus = () => {
-      setIsOnline(navigator.onLine);
-    };
+    const updateOnlineStatus = () => setIsOnline(navigator.onLine);
 
     const updateNetworkStrength = () => {
       if ("connection" in navigator) {
@@ -219,18 +202,11 @@ const Header = ({ onNavClick, visibility, size }) => {
           navigator.connection ||
           navigator.mozConnection ||
           navigator.webkitConnection;
+
         const effectiveType = connection.effectiveType;
-
-        // Define what you consider as weak network types
         const weakConnections = ["slow-2g", "2g"];
+        setIsNetworkWeak(weakConnections.includes(effectiveType));
 
-        if (weakConnections.includes(effectiveType)) {
-          setIsNetworkWeak(true);
-        } else {
-          setIsNetworkWeak(false);
-        }
-
-        // Listen for changes in the network connection
         connection.addEventListener("change", updateNetworkStrength);
       }
     };
@@ -238,7 +214,6 @@ const Header = ({ onNavClick, visibility, size }) => {
     window.addEventListener("online", updateOnlineStatus);
     window.addEventListener("offline", updateOnlineStatus);
 
-    // Check the initial network status
     updateOnlineStatus();
     updateNetworkStrength();
 
@@ -256,7 +231,6 @@ const Header = ({ onNavClick, visibility, size }) => {
     };
   }, []);
 
-  // Show toast notification when network is weak
   useEffect(() => {
     if (isNetworkWeak) {
       toast.warn(
@@ -271,68 +245,95 @@ const Header = ({ onNavClick, visibility, size }) => {
         }
       );
     } else {
-      // Dismiss the toast if network is no longer weak
       toast.dismiss();
     }
   }, [isNetworkWeak, language]);
 
+  // -------------------- LINKS --------------------
+  const handleNavItemClick = (e) => {
+    onNavClick?.(e);
+    // ✅ close drawer after navigation
+    if (isMobileNavOpen) closeNavbar(e);
+  };
+
   const renderNavLinks = () => (
     <>
       <li className="nav-item">
-        <NavLink className="nav-link" to="/" onClick={onNavClick}>
+        <NavLink className="nav-link" to="/" onClick={handleNavItemClick}>
           <HomeOutlinedIcon className="mx-1" /> {translations.home}
         </NavLink>
       </li>
+
       <li className="nav-item">
-        <NavLink className="nav-link" to="/categories" onClick={onNavClick}>
+        <NavLink
+          className="nav-link"
+          to="/categories"
+          onClick={handleNavItemClick}
+        >
           <ChecklistRtlOutlinedIcon className="mx-1" />{" "}
           {translations.categories}
         </NavLink>
       </li>
+
       <li className="nav-item">
-        <NavLink className="nav-link" to="/about" onClick={onNavClick}>
+        <NavLink className="nav-link" to="/about" onClick={handleNavItemClick}>
           <PersonSearchOutlinedIcon className="mx-1" /> {translations.about}
         </NavLink>
       </li>
+
       <li className="nav-item">
-        <NavLink className="nav-link" to="/api-docs" onClick={onNavClick}>
+        <NavLink
+          className="nav-link"
+          to="/api-docs"
+          onClick={handleNavItemClick}
+        >
           <ApiOutlinedIcon className="mx-1" /> {translations.APIdocs}
         </NavLink>
       </li>
+
       <li className="nav-item">
-        <NavLink className="nav-link" to="/contact" onClick={onNavClick}>
+        <NavLink
+          className="nav-link"
+          to="/contact"
+          onClick={handleNavItemClick}
+        >
           <RingVolumeOutlinedIcon className="mx-1" /> {translations.contact}
         </NavLink>
       </li>
     </>
   );
 
-  // Helper function to update position with constraints
+  // -------------------- NOTCH DRAG --------------------
+
   const updatePosition = (newX, newY) => {
-    // Get viewport dimensions
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
-    // Get notch-nav dimensions
     const notchNav = document.querySelector(".notch-nav");
     const notchWidth = notchNav ? notchNav.offsetWidth : 0;
     const notchHeight = notchNav ? notchNav.offsetHeight : 0;
 
-    // Apply constraints to keep the notch-nav within viewport and with margins
-    const constrainedX = Math.max(
-      0,
-      Math.min(newX, viewportWidth - notchWidth)
+    // ✅ left / right margin
+    const minX = EDGE_MARGIN;
+    const maxX = Math.max(
+      EDGE_MARGIN,
+      viewportWidth - notchWidth - EDGE_MARGIN
     );
-    const constrainedY = Math.max(
-      HEADER_MARGIN,
-      Math.min(newY, viewportHeight - notchHeight - HEADER_MARGIN)
+
+    // ✅ top / bottom margin
+    const minY = TOP_MARGIN;
+    const maxY = Math.max(
+      TOP_MARGIN,
+      viewportHeight - notchHeight - BOTTOM_MARGIN
     );
+
+    const constrainedX = Math.max(minX, Math.min(newX, maxX));
+    const constrainedY = Math.max(minY, Math.min(newY, maxY));
 
     setNotchNavPosition({ x: constrainedX, y: constrainedY });
     positionRef.current = { x: constrainedX, y: constrainedY };
   };
 
-  // Dragging event handlers for mouse events
   const handleMouseDown = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -350,13 +351,11 @@ const Header = ({ onNavClick, visibility, size }) => {
     const newX = e.clientX - dragStartPos.current.x;
     const newY = e.clientY - dragStartPos.current.y;
 
-    // Use requestAnimationFrame for smoother updates
-    if (animationFrameRef.current) {
+    if (animationFrameRef.current)
       cancelAnimationFrame(animationFrameRef.current);
-    }
-    animationFrameRef.current = requestAnimationFrame(() => {
-      updatePosition(newX, newY);
-    });
+    animationFrameRef.current = requestAnimationFrame(() =>
+      updatePosition(newX, newY)
+    );
   };
 
   const handleMouseUp = () => {
@@ -369,7 +368,6 @@ const Header = ({ onNavClick, visibility, size }) => {
     window.removeEventListener("mouseup", handleMouseUp);
   };
 
-  // Dragging event handlers for touch events
   const handleTouchStart = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -390,13 +388,11 @@ const Header = ({ onNavClick, visibility, size }) => {
     const newX = touch.clientX - dragStartPos.current.x;
     const newY = touch.clientY - dragStartPos.current.y;
 
-    // Use requestAnimationFrame for smoother updates
-    if (animationFrameRef.current) {
+    if (animationFrameRef.current)
       cancelAnimationFrame(animationFrameRef.current);
-    }
-    animationFrameRef.current = requestAnimationFrame(() => {
-      updatePosition(newX, newY);
-    });
+    animationFrameRef.current = requestAnimationFrame(() =>
+      updatePosition(newX, newY)
+    );
   };
 
   const handleTouchEnd = () => {
@@ -409,21 +405,19 @@ const Header = ({ onNavClick, visibility, size }) => {
     window.removeEventListener("touchend", handleTouchEnd);
   };
 
-  // Cleanup event listeners on unmount
   useEffect(() => {
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleTouchEnd);
-      if (animationFrameRef.current) {
+      if (animationFrameRef.current)
         cancelAnimationFrame(animationFrameRef.current);
-      }
     };
     // eslint-disable-next-line
   }, []);
 
-  // Error report categories
+  // -------------------- ERROR MODAL --------------------
   const errorCategories = [
     {
       value: "home_page",
@@ -438,80 +432,51 @@ const Header = ({ onNavClick, visibility, size }) => {
       value: "tajweed",
       label: language === "ar" ? "أحكام التلاوة" : "Rules of Recitation",
     },
-    {
-      value: "ahadiths",
-      label: language === "ar" ? "الأحاديث " : "Hadiths",
-    },
+    { value: "ahadiths", label: language === "ar" ? "الأحاديث " : "Hadiths" },
     {
       value: "tafsir",
       label: language === "ar" ? "تفسير القران" : "Quran Interpretation",
     },
-    {
-      value: "story",
-      label: language === "ar" ? "القصص" : "Stories",
-    },
-    {
-      value: "api",
-      label: language === "ar" ? "خدمة API" : "API docs",
-    },
+    { value: "story", label: language === "ar" ? "القصص" : "Stories" },
+    { value: "api", label: language === "ar" ? "خدمة API" : "API docs" },
   ];
 
-  // Handle opening and closing of error modal
-  const openErrorModal = () => {
-    setErrorModalOpen(true);
-  };
+  const openErrorModal = () => setErrorModalOpen(true);
 
   const closeErrorModal = () => {
     setErrorModalOpen(false);
     setFormData({ category: "", description: "" });
-    if (language === "ar") setInputDirection("rtl");
-    else setInputDirection("ltr");
+    setInputDirection(language === "ar" ? "rtl" : "ltr");
   };
 
-  // Function to detect if text is Arabic
-  const isArabicText = (text) => {
-    // Arabic Unicode range: \u0600-\u06FF
-    return /[\u0600-\u06FF]/.test(text);
-  };
+  const isArabicText = (text) => /[\u0600-\u06FF]/.test(text);
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: DOMPurify.sanitize(value),
-    }));
-    // Detect language direction
-    if (value.length > 0) {
-      const isArabic = isArabicText(value);
-      if (isArabic) setInputDirection("rtl");
-      else setInputDirection("ltr");
-    } else {
-      if (language === "ar") setInputDirection("rtl");
-      else setInputDirection("ltr");
-    }
+    setFormData((prev) => ({ ...prev, [name]: DOMPurify.sanitize(value) }));
+
+    if (value.length > 0)
+      setInputDirection(isArabicText(value) ? "rtl" : "ltr");
+    else setInputDirection(language === "ar" ? "rtl" : "ltr");
   };
 
-  // Handle error report submission
   const handleErrorReportSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    setLoading(true); // Start loading
-
-    // EmailJS parameters
     const serviceID = "service_wkwt0sq";
     const templateID = "template_4cy5er2";
     const userID = "JgnJY3IJDvvpSS4nX";
 
     emailjs.send(serviceID, templateID, formData, userID).then(
-      (response) => {
+      () => {
         toast.success(
           language === "ar"
             ? "تم إرسال تقرير الخطأ بنجاح!"
             : "Error report sent successfully!"
         );
-        setLoading(false); // Stop loading
-        closeErrorModal(); // Close modal and reset form
+        setLoading(false);
+        closeErrorModal();
       },
       (err) => {
         toast.error(
@@ -520,107 +485,186 @@ const Header = ({ onNavClick, visibility, size }) => {
             : "Failed to send error report."
         );
         console.error("EmailJS Error:", err);
-        setLoading(false); // Stop loading
+        setLoading(false);
       }
     );
   };
 
-  // Set input direction based on language
   useEffect(() => {
-    if (language === "ar") setInputDirection("rtl");
-    else setInputDirection("ltr");
+    setInputDirection(language === "ar" ? "rtl" : "ltr");
   }, [language]);
 
+  // -------------------- UI --------------------
   return (
     <div className="bg-transparent">
+      {/* Modern AppBar */}
       <header
-        className={`navbar navbar-expand-lg bg-light fixed-top ${
-          language === "en" ? "ltr" : "rtl"
-        } ${visibility ? "hide" : ""}`}
+        className={`appbar ${language === "en" ? "ltr" : "rtl"} ${
+          visibility ? "hide" : ""
+        } ${isMobileNavOpen ? "drawer-open" : ""}`}
       >
-        <div
-          className={`container-fluid bg-transparent ${
-            language === "ar" ? "rtl" : "ltr"
-          }`}
-        >
-          <span className="navbar-brand">
-            <img className="ms-3" src={logo} alt="Logo" height="40" />
-          </span>
-          <span
-            className={`d-block d-lg-none mobile-header-icon ${
-              visibility ? "hide" : ""
-            }`}
-          >
-            <WidgetsOutlinedIcon
-              className="text-warning"
+        <div className="appbar-inner">
+          <div className="appbar-left">
+            <button
+              className="icon-btn d-lg-none"
+              type="button"
               onClick={showNavbar}
-            />
-          </span>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul
-              className={`navbar-nav ms-auto mb-2 mb-lg-0 ${
-                language === "ar" ? "rtl" : "ltr"
-              }`}
+              aria-label="Open menu"
             >
+              <WidgetsOutlinedIcon className="icon" />
+            </button>
+
+            <NavLink to="/" className="brand" onClick={handleNavItemClick}>
+              <img src={logo} alt="Logo" className="brand-logo" />
+              <span className="brand-title">
+                {language === "ar" ? "دين الله" : "God's Religion"}
+              </span>
+            </NavLink>
+          </div>
+
+          <nav className="appbar-nav d-none d-lg-flex">
+            <ul className={`nav-list ${language === "ar" ? "rtl" : "ltr"}`}>
               {renderNavLinks()}
             </ul>
-          </div>
-          <SettingsOutlinedIcon
-            className={`local-settings ${language === "en" && "margin"}`}
-            onClick={() => setOpen(true)}
-          />
-          <div className={`form-switch ${language === "en" ? "en" : ""}`}>
-            <input
-              type="checkbox"
-              className="d-none"
-              onChange={setTheme}
-              checked={darkSwitched}
-              id="darkModeSwitchFst"
-            />
-            <label
-              className="form-check-label fs-3 "
-              htmlFor="darkModeSwitchFst"
+          </nav>
+
+          <div className="appbar-right">
+            <button
+              type="button"
+              className="icon-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpen(true);
+              }}
+              aria-label="Open settings"
+              title={language === "ar" ? "الإعدادات" : "Settings"}
             >
-              {darkSwitched ? "🔆" : "🌙"}
-            </label>
+              <SettingsOutlinedIcon className="icon" />
+            </button>
+
+            <div className="theme-toggle">
+              <input
+                type="checkbox"
+                className="d-none"
+                onChange={setTheme}
+                checked={darkSwitched}
+                id="darkModeSwitchFst"
+              />
+              <label className="theme-pill" htmlFor="darkModeSwitchFst">
+                <span className="theme-emoji">
+                  {darkSwitched ? "🌙" : "🔆"}
+                </span>
+                <span className="theme-text d-none d-md-inline">
+                  {darkSwitched
+                    ? language === "ar"
+                      ? "داكن"
+                      : "Dark"
+                    : language === "ar"
+                    ? "فاتح"
+                    : "Light"}
+                </span>
+              </label>
+            </div>
+
+            {isBigScreen && (
+              <button
+                type="button"
+                className="help-fab"
+                onClick={openErrorModal}
+                aria-label="Report error"
+              >
+                <HelpOutlineIcon />
+              </button>
+            )}
           </div>
         </div>
       </header>
-      {isBigScreen && (
-        <HelpOutlineIcon
-          className="text-light fs-2"
-          onClick={openErrorModal}
-          style={{
-            position: "absolute",
-            top: "81%",
-            left: "10px",
-            zIndex: "1000",
-            backgroundColor: "red",
-            color: "white",
-            padding: "10px",
-            width: "40px",
-            height: "40px",
-            borderRadius: "50%",
-            fontSize: "30px",
-            cursor: "pointer",
-          }}
-        />
-      )}
+
+      {/* Mobile Drawer */}
       <div className="mobile-header" ref={mobileHeader}>
-        <div className="black-left">
-          <span className="p-2 text-light close fs-2">
+        {/* overlay closes drawer */}
+        <div className="black-left" onClick={closeNavbar}>
+          <button
+            type="button"
+            className="drawer-close"
+            aria-label="Close menu"
+            onClick={closeNavbar}
+          >
             <CloseOutlinedIcon />
-          </span>
+          </button>
         </div>
-        <div className={language === "ar" ? "right-nav" : "right-nav en"}>
+
+        {/* drawer panel - prevent overlay close */}
+        <div
+          className={language === "ar" ? "right-nav" : "right-nav en"}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="drawer-top">
+            <div className="drawer-brand">
+              <img src={logo} alt="Logo" className="drawer-logo" />
+              <div className="drawer-title">
+                {language === "ar" ? "القائمة" : "Menu"}
+                <span className="drawer-sub">
+                  {!isOnline
+                    ? language === "ar"
+                      ? "غير متصل"
+                      : "Offline"
+                    : isNetworkWeak
+                    ? language === "ar"
+                      ? "شبكة ضعيفة"
+                      : "Weak network"
+                    : language === "ar"
+                    ? "متصل"
+                    : "Online"}
+                </span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="drawer-settings"
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpen(true);
+              }}
+            >
+              <SettingsOutlinedIcon />
+            </button>
+          </div>
+
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
             {renderNavLinks()}
           </ul>
+
+          <div className="drawer-bottom">
+            <button
+              type="button"
+              className="drawer-action"
+              onClick={(e) => {
+                e.stopPropagation();
+                closeNavbar(e);
+                openErrorModal();
+              }}
+            >
+              <HelpOutlineIcon />
+              {language === "ar" ? "الإبلاغ عن خطأ" : "Report error"}
+            </button>
+
+            <div className="drawer-theme">
+              <span className="drawer-theme-label">
+                {language === "ar" ? "المظهر" : "Theme"}
+              </span>
+              <label className="drawer-theme-pill" htmlFor="darkModeSwitchFst">
+                {darkSwitched ? "🌙" : "🔆"}
+              </label>
+            </div>
+          </div>
         </div>
       </div>
 
+      {/* Draggable notch-nav */}
       <div
-        className={`notch-nav  ${visibility ? "hide" : ""}`}
+        className={`notch-nav ${visibility ? "hide" : ""}`}
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
         style={{
@@ -631,15 +675,22 @@ const Header = ({ onNavClick, visibility, size }) => {
           touchAction: "none",
         }}
       >
-        <WidgetsOutlinedIcon
-          className="text-primary notch-icon"
-          onClick={showNavbar}
-        />
-        <SettingsOutlinedIcon
-          className="settings text-white p-1"
-          onClick={() => setOpen(true)}
-        />
-        <div className="p-2">
+        <button type="button" className="notch-btn" onClick={showNavbar}>
+          <WidgetsOutlinedIcon />
+        </button>
+
+        <button
+          type="button"
+          className="notch-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpen(true);
+          }}
+        >
+          <SettingsOutlinedIcon />
+        </button>
+
+        <div>
           <input
             type="checkbox"
             className="d-none"
@@ -647,14 +698,18 @@ const Header = ({ onNavClick, visibility, size }) => {
             checked={darkSwitched}
             id="darkModeSwitch"
           />
-          <label className="check-label fs-5 p-1" htmlFor="darkModeSwitch">
-            {darkSwitched ? "🔆" : "🌙"}
+          <label className="notch-btn" htmlFor="darkModeSwitch">
+            {darkSwitched ? "🌙" : "🔆"}
           </label>
         </div>
-        <HelpOutlineIcon
-          className="text-danger notch-icon p-1"
+
+        <button
+          type="button"
+          className="notch-btn danger"
           onClick={openErrorModal}
-        />
+        >
+          <HelpOutlineIcon />
+        </button>
       </div>
 
       {/* Modal for Network Check */}
@@ -662,7 +717,7 @@ const Header = ({ onNavClick, visibility, size }) => {
         <Modal
           aria-labelledby="network-modal-title"
           open={!isOnline}
-          onClose={() => setIsOnline(true)} // Close the modal manually
+          onClose={() => setIsOnline(true)}
         >
           <Sheet
             sx={{
@@ -698,205 +753,350 @@ const Header = ({ onNavClick, visibility, size }) => {
       )}
 
       {/* Settings modal */}
-      <React.Fragment>
-        <Modal
-          aria-labelledby="modal-title"
-          aria-describedby="modal-desc"
-          open={open}
-          onClose={() => setOpen(false)}
+
+      <Modal
+        aria-labelledby="modal-title"
+        aria-describedby="modal-desc"
+        open={open}
+        onClose={() => setOpen(false)}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          direction: language === "ar" ? "rtl" : "ltr",
+          p: 1.5,
+        }}
+      >
+        <Sheet
+          variant="outlined"
+          className="settings-modal settings-ui"
+          onClick={(e) => e.stopPropagation()}
           sx={{
+            width: "100%",
+            height: "100vh", // ✅ full height
+            maxHeight: "90vh",
+            borderRadius: { xs: "10px", sm: "18px" },
+            maxWidth: { xs: "90%", sm: 650 },
+            overflow: "auto", // ✅ prevent body scroll
+            boxShadow: "lg",
+            border: "1px solid rgba(255,255,255,0.18)",
+            backgroundColor: "var(--card-color)",
+            color: "var(--text-color)",
             display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            overflowY: "auto",
+            flexDirection: "column",
           }}
         >
-          <Sheet
-            variant="outlined"
-            className="settings-modal"
-            sx={{
-              borderRadius: "md",
-              p: 3,
-              boxShadow: "lg",
-              overflowY: "auto",
-              maxWidth: "95%",
-              border: "1px solid white",
-            }}
-          >
+          {/* Top bar */}
+          <div className="settings-ui__top">
+            <div className="settings-ui__title">
+              <div className="settings-ui__icon">
+                <SettingsOutlinedIcon />
+              </div>
+              <div>
+                <Typography
+                  component="h2"
+                  id="modal-title"
+                  level="h4"
+                  sx={{ fontWeight: 800, m: 0, lineHeight: 1.1 }}
+                >
+                  {language === "ar" ? "الإعدادات" : "Settings"}
+                </Typography>
+                <Typography level="body2" sx={{ opacity: 0.75, mt: 0.4 }}>
+                  {language === "ar"
+                    ? "خصّص المظهر والخط والخلفية بسهولة"
+                    : "Customize theme, font and background"}
+                </Typography>
+              </div>
+            </div>
+
             <ModalClose
               variant="plain"
-              sx={{ m: 1, marginBottom: "20px" }}
               onClick={() => setOpen(false)}
+              sx={{
+                m: 1,
+                position: "absolute",
+                top: 10,
+                right: language === "ar" ? "auto" : 10,
+                left: language === "ar" ? 10 : "auto",
+                borderRadius: "12px",
+                "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
+              }}
             />
-            <Typography
-              component="h2"
-              id="modal-title"
-              level="h4"
-              textColor="inherit"
-              className="ltr"
-              sx={{ fontWeight: "lg", mb: 1 }}
-            >
-              <SettingsOutlinedIcon />{" "}
-              {language === "ar" ? "الاعدادت" : "Settings"}
-            </Typography>
-            <hr />
-            <div className="d-flex-flex-column justify-centent-center gap-3 w-100 ">
-              <div className="d-flex flex-row justify-content-between align-items-center p-2 w-100">
-                <label htmlFor="language">
-                  {language === "ar" ? "اختر اللغة" : "Select language"}
-                </label>
-                <div className="language w-auto">
-                  <Select
-                    placeholder={
-                      language === "ar" ? "اختر اللغة" : "Select language"
-                    }
-                    onChange={(event, newValue) => changeLanguage(newValue)}
-                    value={language}
-                    sx={{
-                      width: 150,
-                      backgroundColor: "var(--card-color)",
-                      color: "var(--text-color)",
-                    }}
-                    className="lang-select"
-                  >
-                    <Option value="ar">
-                      {language === "ar" ? "العربية" : "Arabic"}
-                    </Option>
-                    <Option value="en">
-                      {language === "ar" ? "الانجليزية" : "English"}
-                    </Option>
-                  </Select>
+          </div>
+
+          {/* Content */}
+          <div className="settings-ui__body">
+            {/* Quick toggles */}
+            <div className="settings-ui__section">
+              <div className="settings-ui__sectionHead">
+                <Typography level="title-md" sx={{ fontWeight: 800 }}>
+                  {language === "ar" ? "سريع" : "Quick"}
+                </Typography>
+                <Typography level="body2" sx={{ opacity: 0.7 }}>
+                  {language === "ar"
+                    ? "تبديل سريع للمظهر"
+                    : "Fast appearance toggle"}
+                </Typography>
+              </div>
+
+              <div className="settings-ui__row">
+                <div className="settings-ui__rowInfo">
+                  <Typography level="title-sm" sx={{ fontWeight: 800 }}>
+                    {language === "ar" ? "الوضع الليلي" : "Dark mode"}
+                  </Typography>
+                  <Typography level="body2" sx={{ opacity: 0.75 }}>
+                    {darkSwitched
+                      ? language === "ar"
+                        ? "مفعّل"
+                        : "Enabled"
+                      : language === "ar"
+                      ? "غير مفعّل"
+                      : "Disabled"}
+                  </Typography>
                 </div>
+
+                {/* Using your existing checkbox */}
+                <label
+                  className="settings-ui__toggle"
+                  htmlFor="darkModeSwitchFst"
+                >
+                  <span className="settings-ui__toggleEmoji">
+                    {darkSwitched ? "🌙" : "🔆"}
+                  </span>
+                  <span className="settings-ui__toggleText">
+                    {darkSwitched
+                      ? language === "ar"
+                        ? "داكن"
+                        : "Dark"
+                      : language === "ar"
+                      ? "فاتح"
+                      : "Light"}
+                  </span>
+                </label>
               </div>
             </div>
-            <hr />
-            <div className="settings-elements size">
-              <p>{language === "ar" ? "حجم الخط" : "Text size"}</p>
-              <Select
-                placeholder={language === "ar" ? "حجم الخط" : "Text size"}
-                onChange={(event, newValue) => {
-                  size(newValue);
-                  setTextSize(newValue);
-                }}
-                value={textSize || "sm"}
-                sx={{
-                  width: 150,
-                  backgroundColor: "var(--card-color)",
-                  color: "var(--text-color)",
-                }}
-                className="lang-select"
-              >
-                <Option value="sm">
-                  {language === "ar" ? "افتراضي" : "Default"}
-                </Option>
-                <Option value="md">
-                  {language === "ar" ? "متوسط" : "Medium"}
-                </Option>
-                <Option value="lg">
-                  {language === "ar" ? "كبير" : "Large"}
-                </Option>
-              </Select>
+
+            {/* Language + Text size */}
+            <div className="settings-ui__grid2">
+              <div className="settings-ui__card">
+                <Typography level="title-sm" sx={{ fontWeight: 800, mb: 0.6 }}>
+                  {language === "ar" ? "اللغة" : "Language"}
+                </Typography>
+                <Typography level="body2" sx={{ opacity: 0.75, mb: 1 }}>
+                  {language === "ar"
+                    ? "اختر لغة الواجهة"
+                    : "Choose UI language"}
+                </Typography>
+
+                <Select
+                  placeholder={
+                    language === "ar" ? "اختر اللغة" : "Select language"
+                  }
+                  onChange={(event, newValue) => changeLanguage(newValue)}
+                  value={language}
+                  sx={{
+                    width: "100%",
+                    backgroundColor: "rgba(255,255,255,0.06)",
+                    color: "var(--text-color)",
+                    borderRadius: "14px",
+                    border: "1px solid rgba(255,255,255,0.12)",
+                    "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
+                  }}
+                >
+                  <Option value="ar">
+                    {language === "ar" ? "العربية" : "Arabic"}
+                  </Option>
+                  <Option value="en">
+                    {language === "ar" ? "الإنجليزية" : "English"}
+                  </Option>
+                </Select>
+              </div>
+
+              <div className="settings-ui__card">
+                <Typography level="title-sm" sx={{ fontWeight: 800, mb: 0.6 }}>
+                  {language === "ar" ? "حجم الخط" : "Text size"}
+                </Typography>
+                <Typography level="body2" sx={{ opacity: 0.75, mb: 1 }}>
+                  {language === "ar"
+                    ? "غيّر حجم النص بسهولة"
+                    : "Adjust reading size"}
+                </Typography>
+
+                <Select
+                  placeholder={language === "ar" ? "حجم الخط" : "Text size"}
+                  onChange={(event, newValue) => {
+                    size(newValue);
+                    setTextSize(newValue);
+                  }}
+                  value={textSize || "sm"}
+                  sx={{
+                    width: "100%",
+                    backgroundColor: "rgba(255,255,255,0.06)",
+                    color: "var(--text-color)",
+                    borderRadius: "14px",
+                    border: "1px solid rgba(255,255,255,0.12)",
+                    "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
+                  }}
+                >
+                  <Option value="sm">
+                    {language === "ar" ? "افتراضي" : "Default"}
+                  </Option>
+                  <Option value="md">
+                    {language === "ar" ? "متوسط" : "Medium"}
+                  </Option>
+                  <Option value="lg">
+                    {language === "ar" ? "كبير" : "Large"}
+                  </Option>
+                </Select>
+              </div>
             </div>
-            <hr />
-            <div className="settings-elements font-theme">
-              <p>{language === "ar" ? "نوع الخط" : "Font Theme"}</p>
-              <Select
-                placeholder={language === "ar" ? "نوع الخط" : "Font Theme"}
-                onChange={(event, newValue) => {
-                  setFontTheme(newValue);
-                  localStorage.setItem("fontTheme", newValue);
-                }}
-                value={fontTheme || "font-default"}
-                sx={{
-                  width: 150,
-                  backgroundColor: "var(--card-color)",
-                  color: "var(--text-color)",
-                }}
-                className="lang-select"
-              >
-                {/* Conditionally render options based on language */}
-                {language === "ar" ? (
-                  <>
-                    <Option value="font-default">افتراضي</Option>
-                    <Option value="font-amiri">أميري</Option>
-                    <Option value="font-dubai">لطيف</Option>
-                    <Option value="font-noto-arabic"> نسخ عربي</Option>
-                  </>
-                ) : (
-                  <>
-                    <Option value="font-default">Default</Option>
-                    <Option value="font-times">Times New Roman</Option>
-                    <Option value="font-roboto">Roboto</Option>
-                    <Option value="font-georgia">Georgia</Option>
-                    <Option value="font-calibri">Calibri</Option>
-                    <Option value="font-lateef">Cute</Option>
-                  </>
-                )}
-              </Select>
+
+            {/* Font theme */}
+            <div className="settings-ui__section">
+              <div className="settings-ui__sectionHead">
+                <Typography level="title-md" sx={{ fontWeight: 800 }}>
+                  {language === "ar" ? "نوع الخط" : "Font theme"}
+                </Typography>
+                <Typography level="body2" sx={{ opacity: 0.7 }}>
+                  {language === "ar"
+                    ? "اختيار خط مناسب للقراءة"
+                    : "Choose a comfortable font"}
+                </Typography>
+              </div>
+
+              <div className="settings-ui__row">
+                <Select
+                  placeholder={language === "ar" ? "نوع الخط" : "Font theme"}
+                  onChange={(event, newValue) => {
+                    setFontTheme(newValue);
+                    localStorage.setItem("fontTheme", newValue);
+                  }}
+                  value={fontTheme || "font-default"}
+                  sx={{
+                    width: "100%",
+                    backgroundColor: "rgba(255,255,255,0.06)",
+                    color: "var(--text-color)",
+                    borderRadius: "14px",
+                    border: "1px solid rgba(255,255,255,0.12)",
+                    "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
+                  }}
+                >
+                  {language === "ar" ? (
+                    <>
+                      <Option value="font-default">افتراضي</Option>
+                      <Option value="font-amiri">أميري</Option>
+                      <Option value="font-dubai">دبي</Option>
+                      <Option value="font-noto-arabic">نسخ عربي</Option>
+                    </>
+                  ) : (
+                    <>
+                      <Option value="font-default">Default</Option>
+                      <Option value="font-times">Times New Roman</Option>
+                      <Option value="font-roboto">Roboto</Option>
+                      <Option value="font-georgia">Georgia</Option>
+                      <Option value="font-calibri">Calibri</Option>
+                      <Option value="font-lateef">Cute</Option>
+                    </>
+                  )}
+                </Select>
+              </div>
             </div>
-            <hr />
-            <div className="settings-others bgs">
-              <p>
-                {language === "ar" ? "الخلفية و المزيد" : "Background and more"}
-              </p>
-              <br />
-              <div className="others w-100">
-                <div
-                  className={`light-filter shadow tools ${
+
+            {/* Background cards */}
+            <div className="settings-ui__section">
+              <div className="settings-ui__sectionHead">
+                <Typography level="title-md" sx={{ fontWeight: 800 }}>
+                  {language === "ar" ? "الخلفية" : "Background"}
+                </Typography>
+                <Typography level="body2" sx={{ opacity: 0.7 }}>
+                  {language === "ar"
+                    ? "اختر تأثير خلفية لطيف"
+                    : "Pick a subtle background style"}
+                </Typography>
+              </div>
+
+              <div className="settings-ui__bgs">
+                <button
+                  type="button"
+                  className={`bg-card ${
                     activeClass === "light-filter" ? "active" : ""
                   }`}
-                  id="light-filter"
-                  onClick={(event) =>
-                    updatedBodyStyle(event, event.currentTarget.id)
-                  }
+                  onClick={(event) => updatedBodyStyle(event, "light-filter")}
                 >
-                  <span className="pe-none">
-                    {language === "ar" ? "تخفيف السطوع" : "Filter light"} <br />
+                  <div className="bg-card__icon">
                     <FilterBAndWOutlinedIcon />
-                  </span>
-                </div>
-                <div
-                  className={`image shadow tools ${
-                    activeClass === "image" ? "active" : ""
-                  }`}
-                  id="image"
-                  onClick={(event) =>
-                    updatedBodyStyle(event, event.currentTarget.id)
-                  }
-                ></div>
-                <div
-                  className={`brightness shadow tools ${
+                  </div>
+                  <div className="bg-card__text">
+                    <div className="bg-card__title">
+                      {language === "ar" ? "تخفيف السطوع" : "Filter light"}
+                    </div>
+                    <div className="bg-card__sub">
+                      {language === "ar" ? "مريح للعين" : "Eye comfort"}
+                    </div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  className={`bg-card ${
                     activeClass === "brightness" ? "active" : ""
                   }`}
-                  id="brightness"
-                  onClick={(event) =>
-                    updatedBodyStyle(event, event.currentTarget.id)
-                  }
+                  onClick={(event) => updatedBodyStyle(event, "brightness")}
                 >
-                  <span className="pe-none">
-                    {language === "ar" ? "زيادة السطوع" : "Brightness"} <br />
+                  <div className="bg-card__icon">
                     <BrightnessAutoOutlinedIcon />
-                  </span>
-                </div>
-                <div
-                  className={`sky shadow tools ${
-                    activeClass === "sky" ? "active" : ""
-                  }`}
-                  id="sky"
-                  onClick={(event) =>
-                    updatedBodyStyle(event, event.currentTarget.id)
-                  }
+                  </div>
+                  <div className="bg-card__text">
+                    <div className="bg-card__title">
+                      {language === "ar" ? "زيادة السطوع" : "Brightness"}
+                    </div>
+                    <div className="bg-card__sub">
+                      {language === "ar" ? "تباين أوضح" : "More contrast"}
+                    </div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  className={`bg-card ${activeClass === "sky" ? "active" : ""}`}
+                  onClick={(event) => updatedBodyStyle(event, "sky")}
                 >
-                  <span className="pe-none">
-                    {language === "ar" ? "منتصف الليل" : "Midnight"} <br />
+                  <div className="bg-card__icon">
                     <NightsStayOutlinedIcon />
-                  </span>
-                </div>
+                  </div>
+                  <div className="bg-card__text">
+                    <div className="bg-card__title">
+                      {language === "ar" ? "منتصف الليل" : "Midnight"}
+                    </div>
+                    <div className="bg-card__sub">
+                      {language === "ar" ? "هدوء بصري" : "Calm mood"}
+                    </div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  className={`bg-card bg-card--img ${
+                    activeClass === "image" ? "active" : ""
+                  }`}
+                  onClick={(event) => updatedBodyStyle(event, "image")}
+                  aria-label="Image background"
+                  title={language === "ar" ? "خلفية صورة" : "Image background"}
+                >
+                  <div className="bg-card__overlay">
+                    <div className="bg-card__title">
+                      {language === "ar" ? "خلفية صورة" : "Image"}
+                    </div>
+                    <div className="bg-card__sub">
+                      {language === "ar" ? "مظهر جميل" : "Nice look"}
+                    </div>
+                  </div>
+                </button>
               </div>
             </div>
-          </Sheet>
-        </Modal>
-      </React.Fragment>
+          </div>
+        </Sheet>
+      </Modal>
 
       {/* Report Error Modal */}
       <Modal
@@ -908,6 +1108,8 @@ const Header = ({ onNavClick, visibility, size }) => {
           justifyContent: "center",
           alignItems: "center",
           overflowY: "auto",
+          direction: language === "ar" ? "rtl" : "ltr",
+          p: 1.5,
         }}
       >
         <Sheet
@@ -942,13 +1144,16 @@ const Header = ({ onNavClick, visibility, size }) => {
           >
             {language === "ar" ? "الإبلاغ عن خطأ" : "Report an error"}
           </Typography>
+
           <hr />
+
           <form onSubmit={handleErrorReportSubmit}>
             <div className="d-flex-flex-column justify-centent-center gap-3 w-100 ">
               <div className="d-flex flex-row justify-content-between align-items-center gap-3 p-2 w-100">
                 <label htmlFor="category" className="text-primary fs-5">
                   {language === "ar" ? "مكان الخطأ : " : "Error location : "}
                 </label>
+
                 <div className="error-category w-auto">
                   <Select
                     name="category"
@@ -961,9 +1166,7 @@ const Header = ({ onNavClick, visibility, size }) => {
                       width: 150,
                       backgroundColor: "var(--card-color)",
                       color: "var(--text-color)",
-                      "&:hover": {
-                        backgroundColor: "var(--card-color)",
-                      },
+                      "&:hover": { backgroundColor: "var(--card-color)" },
                     }}
                     className="error-category-select"
                     required
@@ -977,12 +1180,14 @@ const Header = ({ onNavClick, visibility, size }) => {
                 </div>
               </div>
             </div>
+
             <hr />
+
             <div className="d-flex-flex-column justify-centent-center gap-3 w-100 mt-3">
               <FormControl>
                 <FormLabel className="text-primary fw-normal fs-5">
                   {language === "ar" ? "تفاصيل الخطأ : " : "Error details : "}
-                </FormLabel>{" "}
+                </FormLabel>
                 <br />
                 <textarea
                   name="description"
@@ -1006,9 +1211,10 @@ const Header = ({ onNavClick, visibility, size }) => {
                     resize: "none",
                     direction: inputDirection,
                   }}
-                ></textarea>
+                />
               </FormControl>
             </div>
+
             <div className="d-flex justify-content-end mt-3">
               <Button
                 type="submit"

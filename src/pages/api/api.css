@@ -1,0 +1,299 @@
+.apiui-page {
+  padding: 10px;
+}
+
+.apiui-page.rtl {
+  direction: rtl;
+}
+.apiui-page.ltr {
+  direction: ltr;
+}
+
+/* Hero */
+.apiui-hero {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto 10px auto;
+  padding: 14px;
+  border-radius: 18px;
+
+  background: color-mix(in srgb, var(--card-color) 85%, transparent);
+  box-shadow: rgba(255, 255, 255, 0.08) 0 0 0 1px inset,
+    rgba(0, 0, 0, 0.25) 0 10px 30px;
+
+  backdrop-filter: blur(10px);
+}
+
+.apiui-heroTop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.apiui-heroIcon {
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: color-mix(in srgb, var(--text-color) 10%, transparent);
+  box-shadow: color-mix(in srgb, var(--text-color) 12%, transparent) 0 0 0 1px
+    inset;
+
+  color: #917125 !important;
+}
+
+.apiui-title {
+  margin: 0;
+  color: var(--text-color);
+  font-weight: 900;
+}
+
+.apiui-sub {
+  margin-top: 4px;
+  opacity: 0.85;
+  color: var(--text-color);
+}
+
+.apiui-search {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.apiui-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 999px;
+
+  background: color-mix(in srgb, var(--text-color) 8%, transparent);
+  box-shadow: color-mix(in srgb, var(--text-color) 12%, transparent) 0 0 0 1px
+    inset;
+  color: var(--text-color);
+  white-space: nowrap;
+}
+
+.apiui-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #917125 !important;
+  box-shadow: color-mix(in srgb, #917125 35%, transparent) 0 0 0 6px;
+}
+
+.apiui-countText {
+  font-size: 12px;
+  font-weight: 900;
+  opacity: 0.9;
+}
+
+/* List */
+.apiui-list {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-bottom: 10px;
+}
+
+/* Card */
+.apiui-card {
+  margin: 10px 0;
+  padding: 14px;
+  background: color-mix(in srgb, var(--api-card) 92%, transparent);
+  box-shadow: rgba(0, 0, 0, 0.22) 0 10px 24px;
+}
+
+/* Head */
+.apiui-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.apiui-badge {
+  width: 42px;
+  height: 42px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: color-mix(in srgb, var(--text-color) 10%, transparent);
+  box-shadow: color-mix(in srgb, var(--text-color) 12%, transparent) 0 0 0 1px
+    inset;
+
+  color: #917125 !important;
+  font-weight: 900;
+}
+
+.apiui-headTitle {
+  margin: 0;
+  font-weight: 900;
+  color: var(--text-color);
+}
+
+.apiui-desc {
+  margin-top: 4px;
+  opacity: 0.85;
+  color: var(--text-color);
+}
+
+/* Sections */
+.apiui-section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid color-mix(in srgb, var(--text-color) 12%, transparent);
+}
+
+.apiui-sectionTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 900;
+  margin-bottom: 10px;
+  color: var(--text-color);
+  opacity: 0.95;
+}
+
+.apiui-secIcon {
+  color: #917125 !important;
+}
+
+/* URL row */
+.apiui-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  padding: 10px 12px;
+  border-radius: 16px;
+
+  background: color-mix(in srgb, var(--text-color) 6%, transparent);
+  box-shadow: color-mix(in srgb, var(--text-color) 12%, transparent) 0 0 0 1px
+    inset;
+}
+
+.apiui-url {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.apiui-urlIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: color-mix(in srgb, var(--text-color) 10%, transparent);
+  box-shadow: color-mix(in srgb, var(--text-color) 12%, transparent) 0 0 0 1px
+    inset;
+
+  color: #917125 !important;
+  flex: 0 0 auto;
+}
+
+.apiui-copyBtn {
+  border: none;
+  outline: none;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 12px;
+  border-radius: 14px;
+
+  background: color-mix(in srgb, #917125 18%, transparent);
+  color: var(--text-color);
+  box-shadow: color-mix(in srgb, #917125 22%, transparent) 0 0 0 1px inset;
+
+  transition: 0.2s;
+  white-space: nowrap;
+}
+
+.apiui-copyBtn:hover {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, #917125 26%, transparent);
+}
+
+.apiui-copyText {
+  font-weight: 900;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+/* Sub cards */
+.apiui-subCards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 720px) {
+  .apiui-subCards {
+    grid-template-columns: 1fr;
+  }
+
+  .apiui-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .apiui-copyBtn {
+    justify-content: center;
+  }
+}
+
+.apiui-subCard {
+  padding: 12px;
+  border-radius: 16px;
+
+  background: color-mix(in srgb, var(--card-color) 80%, transparent);
+  box-shadow: color-mix(in srgb, var(--text-color) 10%, transparent) 0 0 0 1px
+    inset;
+}
+
+.apiui-subTitle {
+  margin: 0;
+  font-weight: 900;
+  color: var(--text-color);
+}
+
+.apiui-subDesc {
+  margin-top: 6px;
+  opacity: 0.85;
+  color: var(--text-color);
+}
+
+/* Empty state */
+.apiui-empty {
+  width: 100%;
+  max-width: 1100px;
+  margin: 18px auto 0 auto;
+  padding: 18px;
+  border-radius: 18px;
+
+  background: color-mix(in srgb, var(--text-color) 6%, transparent);
+  box-shadow: color-mix(in srgb, var(--text-color) 10%, transparent) 0 0 0 1px
+    inset;
+  text-align: center;
+}
+
+.apiui-emptySub {
+  margin-top: 6px;
+  opacity: 0.85;
+  color: var(--text-color);
+}

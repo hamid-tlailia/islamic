@@ -1,8 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Box, Typography, Card, List, ListItem, Link } from "@mui/joy";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Box, Typography, Card, List, ListItem, Link, Input } from "@mui/joy";
 import { useTranslation } from "../../components/languages/provider";
 import { toast } from "react-toastify";
-
+import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import LinkRoundedIcon from "@mui/icons-material/LinkRounded";
+import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
+import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
+import "./api.css";
+/* ✅ Keep your apiList EXACTLY as you have it */
 const apiList = [
   {
     id: 1,
@@ -10,7 +16,6 @@ const apiList = [
     name_ar: "واجهة برمجة تطبيقات اختيار القارئ",
     description_en: "Get details of a specific reciter.",
     description_ar: "الحصول على تفاصيل قارئ معين و يليها قائمة جمييع القراء.",
-    // eslint-disable-next-line
     url: "https://www.mp3quran.net/api/v3/reciters?reciter={reciter_id}",
   },
   {
@@ -164,7 +169,6 @@ const apiList = [
     name_ar: "الحصول على جميع الأحاديث في باب من كتاب الحديث",
     description_en: "Get all Hadiths in a specific chapter and specific book.",
     description_ar: "الحصول على جميع الأحاديث في كتاب محدد و باب محدد",
-    // eslint-disable-next-line
     url: "https://hadithapi.com/api/hadiths?&apiKey={API_KEY}&book={bookSlug}&chapter={chapter_number}",
   },
   {
@@ -173,7 +177,6 @@ const apiList = [
     name_ar: "واجهة برمجة تطبيقات معلومات الحديث",
     description_en: "Get information about a Hadith.",
     description_ar: "الحصول على معلومات عن حديث.",
-    // eslint-disable-next-line
     url: "https://dorar.net/dorar_api.json?skey={hadithText}",
   },
   {
@@ -182,7 +185,6 @@ const apiList = [
     name_ar: "واجهة برمجة تطبيقات نص حديث مفرد",
     description_en: "Get the text of a single Hadith.",
     description_ar: "الحصول على نص حديث مفرد.",
-    // eslint-disable-next-line
     url: "https://hadithapi.com/api/hadiths?apiKey={API_KEY}&book={bookSlug}&hadithNumber={hadithNumber}",
   },
   {
@@ -191,7 +193,6 @@ const apiList = [
     name_ar: "واجهة برمجة تطبيقات الحصول على جميع الأحاديث لكل صفحة",
     description_en: "Get all Hadiths per page in a book and chapter.",
     description_ar: "الحصول على جميع الأحاديث لكل صفحة في كتاب وباب.",
-    // eslint-disable-next-line
     url: "https://hadithapi.com/api/hadiths?&apiKey={API_KEY}&book={bookSlug}&chapter={chapter_number}&page={page_number}",
   },
   {
@@ -200,7 +201,6 @@ const apiList = [
     name_ar: "واجهة برمجة تطبيقات الحصول على جميع أبواب كتاب",
     description_en: "Get all chapters of a Hadith book.",
     description_ar: "الحصول على جميع الأبواب في كتاب حديث.",
-    // eslint-disable-next-line
     url: "https://hadithapi.com/api/{bookSlug}/chapters?&apiKey={API_KEY}",
   },
   {
@@ -209,7 +209,6 @@ const apiList = [
     name_ar: "الحصول على جميع كتب الأحاديث",
     description_en: "Get all Hadith books.",
     description_ar: "الحصول على جميع كتب الأحاديث.",
-    // eslint-disable-next-line
     url: "https://hadithapi.com/api/books?apiKey={API_KEY}",
   },
   {
@@ -218,7 +217,6 @@ const apiList = [
     name_ar: "أحاديث مع الشرح",
     description_en: "Get Hadiths with interpretation.",
     description_ar: "الحصول على  أحاديث مع الشرح.",
-    // eslint-disable-next-line
     url: "https://hadeethenc.com/api/v1/categories/list/?language={language}",
   },
   {
@@ -227,7 +225,6 @@ const apiList = [
     name_ar: "الحصول على آيات السورة",
     description_en: "Get Ayahs of a Surah with Tafsir.",
     description_ar: "الحصول على آيات سورة مع التفسير.",
-    // eslint-disable-next-line
     url: "http://api.quran-tafseer.com/tafseer/{tafsir_id}/{surah_number}/ayah_from/ayah_to",
   },
   {
@@ -236,7 +233,6 @@ const apiList = [
     name_ar: "الحصول على  سورة باللغة الإنجليزية",
     description_en: "Get a Surah text with English translation.",
     description_ar: "الحصول على نص سورة مع الترجمة الإنجليزية.",
-    // eslint-disable-next-line
     url: "https://api.alquran.cloud/v1/surah/{surah_number}/en.asad",
   },
   {
@@ -271,7 +267,6 @@ const apiList = [
       "Access to an audio file of a specific Ayah in the voice of Sheikh Mishary Rashid Alafasy..",
     description_ar:
       "الوصول إلى ملف صوتي لآية معينة بصوت الشيخ مشاري راشد العفاسي.",
-    // eslint-disable-next-line
     url: "https://cdn.islamic.network/quran/audio/128/ar.alafasy/{ayah_Id}.mp3",
   },
   {
@@ -281,7 +276,6 @@ const apiList = [
     description_en:
       "Get the simplified interpretation of a specific Surah in Arabic.",
     description_ar: "الحصول على التفسير الميسر لسورة معينة باللغة العربية",
-    // eslint-disable-next-line
     url: "https://api.alquran.cloud/v1/surah/{surah_number}/editions/ar.muyassar",
   },
   {
@@ -379,32 +373,24 @@ const apiList = [
 const Api = ({ showScrillBtn, hideScrollBtn, back }) => {
   const { language } = useTranslation();
   const [isReady, setIsReady] = useState(false);
+  const [query, setQuery] = useState("");
+
   useEffect(() => {
     localStorage.removeItem("last-category-position");
   }, []);
 
   useEffect(() => {
-    // Set a new title and store it in localStorage
     const newTitle =
       language === "ar"
         ? "دين الله | واجهة التطبيقات"
         : "God's religion | API Docs";
-
-    // Always update the title (to ensure it's consistent with your desired page title)
     document.title = newTitle;
-
-    // Store the title in localStorage so it persists across reloads
     localStorage.setItem("pageTitle", newTitle);
-  }, [isReady, language]); // Keep the empty dependency array
+  }, [isReady, language]);
 
   useEffect(() => {
     setIsReady(true);
   }, []);
-  const scrollApis = (e) => {
-    const scrollTop = e.target.scrollTop > 300;
-    if (scrollTop) showScrillBtn();
-    else hideScrollBtn();
-  };
 
   const apiListRef = useRef(null);
 
@@ -415,13 +401,62 @@ const Api = ({ showScrillBtn, hideScrollBtn, back }) => {
     }
   }, [back]);
 
-  // Function to copy text to clipboard
+  const scrollApis = (e) => {
+    const isDown = e.target.scrollTop > 300;
+    if (isDown) showScrillBtn?.();
+    else hideScrollBtn?.();
+  };
+
+  const normalize = (s) => (s || "").toString().toLowerCase().trim();
+
+  const filteredApis = useMemo(() => {
+    const q = normalize(query);
+    if (!q) return apiList;
+
+    return apiList.filter((api) => {
+      const base =
+        `${api.id} ${api.name_en} ${api.name_ar} ${api.description_en} ${api.description_ar} ${api.url}`.toLowerCase();
+
+      const extraUrls =
+        api.additional_urls
+          ?.map(
+            (x) =>
+              `${x.name_en} ${x.name_ar} ${x.description_en} ${x.description_ar} ${x.url}`
+          )
+          .join(" ") || "";
+
+      const tafsirs =
+        api.tafsirs
+          ?.map(
+            (t) =>
+              `${t.name_en} ${t.name_ar} ${t.description_en} ${t.description_ar} ${t.url}`
+          )
+          .join(" ") || "";
+
+      const adhkar =
+        api.adhkar
+          ?.map((a) => `${a.name_en} ${a.name_ar} ${a.url}`)
+          .join(" ") || "";
+
+      return normalize(
+        base + " " + extraUrls + " " + tafsirs + " " + adhkar
+      ).includes(q);
+    });
+  }, [query]);
+
+  const buildUrl = (text) => {
+    if (!text) return "";
+    if (text.startsWith("/")) {
+      return `${window.location.href.replace("/api-docs", "")}${text}`;
+    }
+    return text;
+  };
+
   const copyToClipboard = (text) => {
-    const full_url = text.startsWith("/")
-      ? `${window.location.href.replace("/api-docs", "")}${text}`
-      : text;
+    const fullUrl = buildUrl(text);
+
     navigator.clipboard
-      .writeText(full_url)
+      .writeText(fullUrl)
       .then(() => {
         toast.success(
           language === "ar"
@@ -443,199 +478,248 @@ const Api = ({ showScrillBtn, hideScrollBtn, back }) => {
     document.body.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
+  const renderUrlRow = ({ label, url }) => {
+    if (!url) return null;
+    return (
+      <div className="apiui-row">
+        <div className="apiui-url">
+          <span className="apiui-urlIcon">
+            <LinkRoundedIcon />
+          </span>
+          <Link
+            href={buildUrl(url)}
+            target={url?.startsWith("/") ? "_self" : "_blank"}
+            rel="noopener noreferrer"
+            sx={{ wordBreak: "break-all", color: "var(--text-color)" }}
+          >
+            {url}
+          </Link>
+        </div>
+
+        <button
+          className="apiui-copyBtn"
+          type="button"
+          onClick={() => copyToClipboard(url)}
+        >
+          <ContentCopyRoundedIcon />
+          <span className="apiui-copyText">
+            {language === "ar" ? "نسخ" : "Copy"}
+          </span>
+        </button>
+      </div>
+    );
+  };
+
   return (
     <Box
+      className={`apiui-page ${language === "ar" ? "rtl" : "ltr"}`}
       sx={{
-        p: 1,
         backgroundColor: "var(--card-color)",
         color: "var(--text-color)",
         maxHeight: "100%",
-        overflowY: "auto",
-        direction: language === "ar" ? "rtl" : "ltr",
+        height: "100%",
+        overflow: "hidden",
       }}
     >
-      <Typography
-        level="h4"
-        sx={{ mb: 2, textAlign: "center", color: "var(--main-color)" }}
-      >
-        {language === "ar"
-          ? "توثيق واستخدام واجهات برمجة التطبيقات"
-          : "API Documentation and Usage"}
-      </Typography>
+      {/* Hero + Search (sticky) */}
+      <div className="apiui-hero">
+        <div className="apiui-heroTop">
+          <div className="apiui-heroIcon" aria-hidden="true">
+            <MenuBookRoundedIcon />
+          </div>
+          <div className="apiui-heroText">
+            <Typography level="h3" className="apiui-title">
+              {language === "ar"
+                ? "توثيق واجهات برمجة التطبيقات"
+                : "API Documentation"}
+            </Typography>
+            <Typography level="body-sm" className="apiui-sub">
+              {language === "ar"
+                ? "ابحث عن API، انسخ الرابط بسرعة، واستعمله في مشروعك."
+                : "Search APIs, copy URLs instantly, and use them in your project."}
+            </Typography>
+          </div>
+        </div>
 
+        <div className="apiui-search">
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={
+              language === "ar"
+                ? "ابحث بالاسم أو الوصف أو الرابط..."
+                : "Search by name, description, or URL..."
+            }
+            startDecorator={<SearchRoundedIcon />}
+            sx={{
+              width: "100%",
+              backgroundColor: "var(--card-color)",
+              color: "var(--text-color)",
+              border:
+                "1px solid color-mix(in srgb, var(--text-color) 14%, transparent)",
+              boxShadow: "rgba(0,0,0,0.15) 0 10px 24px",
+              "--Input-radius": "16px",
+            }}
+          />
+          <div className="apiui-count">
+            <span className="apiui-dot" />
+            <span className="apiui-countText">
+              {language === "ar"
+                ? `النتائج: ${filteredApis.length}`
+                : `Results: ${filteredApis.length}`}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Scrollable list */}
       <List
-        sx={{
-          maxHeight: "100%",
-          overflowY: "auto",
-          backgroundColor: "var(--card-color)",
-          color: "var(--text-color)",
-          borderRadius: "8px",
-          p: 0,
-          width: "100%",
-        }}
-        onScroll={scrollApis}
         ref={apiListRef}
+        onScroll={scrollApis}
+        className="apiui-list"
+        sx={{
+          p: 0,
+          m: 0,
+          height: "calc(100% - 168px)",
+          overflowY: "auto",
+          backgroundColor: "transparent",
+        }}
       >
-        {apiList.map((api) => (
-          <ListItem key={api.id} sx={{ mb: 2 }}>
+        {filteredApis.map((api) => (
+          <ListItem key={api.id} sx={{ p: 0, m: 0 }}>
             <Card
               variant="outlined"
+              className="apiui-card"
               sx={{
-                p: 2,
                 width: "100%",
                 backgroundColor: "var(--api-card)",
                 color: "var(--text-color)",
-                borderRadius: "8px",
+                borderRadius: "18px",
+                border:
+                  "1px solid color-mix(in srgb, var(--text-color) 14%, transparent)",
               }}
             >
-              <Typography level="h5" sx={{ mb: 1, color: "#169777" }}>
-                {language === "ar"
-                  ? `${api.id}: ${api.name_ar}`
-                  : `${api.id}: ${api.name_en}`}
-              </Typography>
-              <Typography sx={{ mb: 1, color: "var(--text-color)" }}>
-                {language === "ar" ? api.description_ar : api.description_en}
-              </Typography>
-
-              {/* Main API URL */}
-              {api.url && (
-                <Link
-                  onClick={() => copyToClipboard(api.url)}
-                  sx={{
-                    wordBreak: "break-all",
-                    display: "block",
-                    mb: 1,
-                    cursor: "pointer",
-                  }}
-                >
-                  {api.url}
-                </Link>
-              )}
-              {/* Render additional URLs if any */}
-              {api.additional_urls && api.additional_urls.length > 0 && (
-                <div>
-                  <Typography
-                    sx={{ fontWeight: "bold", mt: 2, color: "#169777" }}
-                  ></Typography>
-                  {api.additional_urls.map((item, index) => (
-                    <div key={index}>
-                      <Typography
-                        sx={{
-                          fontWeight: "bold",
-                          color: "#169777",
-                        }}
-                      >
-                        {language === "ar" ? item.name_ar : item.name_en}:
-                      </Typography>
-                      <Typography sx={{ mb: 1, color: "var(--text-color)" }}>
-                        {language === "ar"
-                          ? item.description_ar
-                          : item.description_en}
-                      </Typography>
-                      <Link
-                        onClick={() => copyToClipboard(item.url)}
-                        sx={{
-                          wordBreak: "break-all",
-                          display: "block",
-                          mb: 1,
-                          ml: language === "ar" ? 0 : 2,
-                          mr: language === "ar" ? 2 : 0,
-                          cursor: "pointer",
-                        }}
-                      >
-                        {item.url}
-                      </Link>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {/* Render tafsirs if any */}
-              {api.tafsirs && api.tafsirs.length > 0 && (
-                <div>
-                  <Typography
-                    sx={{ fontWeight: "bold", mt: 2, color: "#169777" }}
-                  >
+              <div className="apiui-head">
+                <div className="apiui-badge">{api.id}</div>
+                <div className="apiui-headText">
+                  <Typography level="title-lg" className="apiui-headTitle">
+                    {language === "ar" ? api.name_ar : api.name_en}
+                  </Typography>
+                  <Typography level="body-sm" className="apiui-desc">
                     {language === "ar"
-                      ? "التفاسير المختارة"
-                      : "Selected Tafsir"}{" "}
-                    :
+                      ? api.description_ar
+                      : api.description_en}
                   </Typography>
-                  {api.tafsirs.map((tafsir, index) => (
-                    <Card
-                      key={index}
-                      variant="outlined"
-                      sx={{
-                        p: 2,
-                        mt: 1,
-                        backgroundColor: "var(--card-color)",
-                        color: "var(--text-color)",
-                        borderRadius: "8px",
-                      }}
-                    >
-                      <Typography level="h6" sx={{ mb: 1, color: "#169777" }}>
-                        {language === "ar" ? tafsir.name_ar : tafsir.name_en}
-                      </Typography>
-                      <Typography sx={{ mb: 1, color: "var(--text-color)" }}>
-                        {language === "ar"
-                          ? tafsir.description_ar
-                          : tafsir.description_en}
-                      </Typography>
-                      <Link
-                        onClick={() => copyToClipboard(tafsir.url)}
-                        sx={{
-                          wordBreak: "break-all",
-                          display: "block",
-                          mb: 1,
-                          cursor: "pointer",
-                        }}
-                      >
-                        {tafsir.url}
-                      </Link>
-                    </Card>
-                  ))}
+                </div>
+              </div>
+
+              {/* Main URL */}
+              {api.url && (
+                <div className="apiui-section">
+                  <div className="apiui-sectionTitle">
+                    <InfoRoundedIcon className="apiui-secIcon" />
+                    <span>
+                      {language === "ar" ? "الرابط الأساسي" : "Main URL"}
+                    </span>
+                  </div>
+                  {renderUrlRow({ url: api.url })}
                 </div>
               )}
 
-              {/* Render Adhkar if any */}
-              {api.adhkar && api.adhkar.length > 0 && (
-                <div>
-                  <Typography
-                    sx={{ fontWeight: "bold", mt: 2, color: "#169777" }}
-                  >
-                    {language === "ar" ? "الأذكار" : "Adhkar"} :
-                  </Typography>
-                  {api.adhkar.map((adhkarItem, index) => (
-                    <div key={index}>
-                      <Typography
-                        sx={{
-                          fontWeight: "bold",
-                          color: "var(--text-color)",
-                        }}
-                      >
-                        {language === "ar"
-                          ? adhkarItem.name_ar
-                          : adhkarItem.name_en}
-                      </Typography>
-                      <Link
-                        onClick={() => copyToClipboard(adhkarItem.url)}
-                        sx={{
-                          wordBreak: "break-all",
-                          display: "block",
-                          mb: 1,
-                          ml: language === "ar" ? 0 : 2,
-                          mr: language === "ar" ? 2 : 0,
-                          cursor: "pointer",
-                        }}
-                      >
-                        {adhkarItem.url}
-                      </Link>
-                    </div>
-                  ))}
+              {/* Additional URLs */}
+              {api.additional_urls?.length > 0 && (
+                <div className="apiui-section">
+                  <div className="apiui-sectionTitle">
+                    <InfoRoundedIcon className="apiui-secIcon" />
+                    <span>
+                      {language === "ar" ? "روابط إضافية" : "Additional URLs"}
+                    </span>
+                  </div>
+
+                  <div className="apiui-subCards">
+                    {api.additional_urls.map((item, idx) => (
+                      <div key={idx} className="apiui-subCard">
+                        <Typography level="title-sm" className="apiui-subTitle">
+                          {language === "ar" ? item.name_ar : item.name_en}
+                        </Typography>
+                        <Typography level="body-sm" className="apiui-subDesc">
+                          {language === "ar"
+                            ? item.description_ar
+                            : item.description_en}
+                        </Typography>
+                        {renderUrlRow({ url: item.url })}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Tafsir */}
+              {api.tafsirs?.length > 0 && (
+                <div className="apiui-section">
+                  <div className="apiui-sectionTitle">
+                    <InfoRoundedIcon className="apiui-secIcon" />
+                    <span>
+                      {language === "ar"
+                        ? "التفاسير المختارة"
+                        : "Selected Tafsir"}
+                    </span>
+                  </div>
+
+                  <div className="apiui-subCards">
+                    {api.tafsirs.map((t, idx) => (
+                      <div key={idx} className="apiui-subCard">
+                        <Typography level="title-sm" className="apiui-subTitle">
+                          {language === "ar" ? t.name_ar : t.name_en}
+                        </Typography>
+                        <Typography level="body-sm" className="apiui-subDesc">
+                          {language === "ar"
+                            ? t.description_ar
+                            : t.description_en}
+                        </Typography>
+                        {renderUrlRow({ url: t.url })}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Adhkar */}
+              {api.adhkar?.length > 0 && (
+                <div className="apiui-section">
+                  <div className="apiui-sectionTitle">
+                    <InfoRoundedIcon className="apiui-secIcon" />
+                    <span>{language === "ar" ? "الأذكار" : "Adhkar"}</span>
+                  </div>
+
+                  <div className="apiui-subCards">
+                    {api.adhkar.map((a, idx) => (
+                      <div key={idx} className="apiui-subCard">
+                        <Typography level="title-sm" className="apiui-subTitle">
+                          {language === "ar" ? a.name_ar : a.name_en}
+                        </Typography>
+                        {renderUrlRow({ url: a.url })}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </Card>
           </ListItem>
         ))}
+
+        {filteredApis.length === 0 && (
+          <div className="apiui-empty">
+            <Typography level="title-lg">
+              {language === "ar" ? "لا توجد نتائج" : "No results"}
+            </Typography>
+            <Typography level="body-sm" className="apiui-emptySub">
+              {language === "ar"
+                ? "جرّب كلمات أخرى مثل: قرآن، حديث، Tafsir..."
+                : "Try different keywords like: quran, hadith, tafsir..."}
+            </Typography>
+          </div>
+        )}
       </List>
     </Box>
   );

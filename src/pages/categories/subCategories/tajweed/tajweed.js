@@ -615,8 +615,7 @@ const Tajweed = ({ audioName, documentName }) => {
           mb: 2,
           flexWrap: "wrap",
           gap: 2,
-          padding
-          : "0",
+          padding: "0",
         }}
       >
         {savedPageChanged && (
@@ -708,6 +707,7 @@ const Tajweed = ({ audioName, documentName }) => {
           mb: 2,
           gap: 2,
           padding: "0",
+          maxHeight: "max-content",
           flexWrap: "wrap",
         }}
       >
@@ -771,9 +771,7 @@ const Tajweed = ({ audioName, documentName }) => {
         )}
 
         {!loading && !error && (
-          <div
-            className="tajweed-parent"
-          >
+          <div className="tajweed-parent">
             {quranData.map((ayah, index) => (
               <React.Fragment key={ayah.id}>
                 {renderSurahName(ayah, index)}
@@ -820,8 +818,8 @@ const Tajweed = ({ audioName, documentName }) => {
         >
           <Box
             sx={{
-              position: "sticky",
-              top: 0,
+              position: "relative",
+              top: "0",
               backgroundColor: "var(--card-color)",
               color: "var(--text-color)",
               zIndex: 1,

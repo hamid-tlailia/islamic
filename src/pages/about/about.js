@@ -8,32 +8,28 @@ import {
   FaFeatherAlt,
   FaMicrophone,
 } from "react-icons/fa";
-import "./about.css"; // Import the CSS file for styling
+import "./about.css";
 import { NavLink } from "react-router-dom";
 
 const About = ({ onAboutClick }) => {
   const { language } = useTranslation();
   const [isReady, setIsReady] = useState(false);
+
   useEffect(() => {
     localStorage.removeItem("last-category-position");
   }, []);
 
   useEffect(() => {
-    // Set a new title and store it in localStorage
     const newTitle =
       language === "ar" ? "دين الله | من نحن" : "God's religion | About Us";
-
-    // Always update the title (to ensure it's consistent with your desired page title)
     document.title = newTitle;
-
-    // Store the title in localStorage so it persists across reloads
     localStorage.setItem("pageTitle", newTitle);
-  }, [isReady, language]); // Keep the empty dependency array
+  }, [isReady, language]);
 
   useEffect(() => {
     setIsReady(true);
   }, []);
-  // Content in both languages
+
   const content = {
     en: {
       title: "About Us",
@@ -138,9 +134,10 @@ const About = ({ onAboutClick }) => {
   };
 
   const currentContent = content[language] || content.en;
+
   const changeCategorieTitle = (title) => {
     localStorage.setItem("component-title", title);
-    onAboutClick();
+    onAboutClick?.();
   };
 
   useEffect(() => {
@@ -148,22 +145,36 @@ const About = ({ onAboutClick }) => {
   }, []);
 
   return (
-    <div className="about-container mt-2">
-      <h1 className="about-title">{currentContent.title}</h1>
-      <p className="about-description">{currentContent.description}</p>
-      <div className="topics-container">
-        {currentContent.topics.map((topic) => (
-          <NavLink
-            className="topic-card"
-            key={topic?.name}
-            to={topic?.url}
-            onClick={() => changeCategorieTitle(topic?.title)}
-          >
-            <div className="topic-icon">{topic?.icon}</div>
-            <h2 className="topic-name">{topic?.name}</h2>
-            <p className="topic-description">{topic?.description}</p>
-          </NavLink>
-        ))}
+    <div className={`about-page ${language === "ar" ? "rtl" : "ltr"} mt-2`}>
+      {/* Hero */}
+      <div className="about-hero">
+        <h1 className="about-title">{currentContent.title}</h1>
+        <p className="about-description">{currentContent.description}</p>
+      </div>
+
+      {/* Topics */}
+      <div className="topics-wrap">
+        <div className="topics-grid">
+          {currentContent.topics.map((topic) => (
+            <NavLink
+              className="topic-card"
+              key={topic?.name}
+              to={topic?.url}
+              onClick={() => changeCategorieTitle(topic?.title)}
+            >
+              <div className="topic-icon">{topic?.icon}</div>
+
+              <div className="topic-body">
+                <h2 className="topic-name">{topic?.name}</h2>
+                <p className="topic-description">{topic?.description}</p>
+              </div>
+
+              <div className="topic-arrow" aria-hidden="true">
+                ↗
+              </div>
+            </NavLink>
+          ))}
+        </div>
       </div>
     </div>
   );

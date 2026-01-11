@@ -75,6 +75,9 @@ const CATEGORIES = [
   { to: "tajweed", img: tajweed, id: "alTajweed" },
 ];
 
+const LS_TITLE_KEY = "component-title";
+const LS_POS_KEY = "last-category-position"; // we will store ABSOLUTE page Y now
+
 const Categories = ({
   showHeader,
   hideHeader,
@@ -101,6 +104,18 @@ const Categories = ({
 
   const isSmallScreen = useMediaQuery("(max-width:500px)");
 
+  // ✅ scroll helper that works in ALL browsers/layouts
+  const scrollPageTo = (top, behavior = "auto") => {
+    const y = Math.max(0, Number(top) || 0);
+
+    // window
+    window.scrollTo({ top: y, behavior });
+
+    // fallback for layouts where the scrolling element is html/body
+    document.documentElement.scrollTop = y;
+    document.body.scrollTop = y;
+  };
+
   // Page title
   useEffect(() => {
     if (location.pathname.startsWith("/categories/")) {
@@ -114,41 +129,51 @@ const Categories = ({
     // eslint-disable-next-line
   }, [subTitle, language, location]);
 
-  // Load subtitle + last position
+  // Load subtitle + last saved position
   useEffect(() => {
-    const currentComponentTitle = localStorage.getItem("component-title");
-    setSubTitle(currentComponentTitle || "الأقسام");
-
-    const savedPosition = Number(
-      localStorage.getItem("last-category-position") || 0
+    const currentComponentTitle = localStorage.getItem(LS_TITLE_KEY);
+    setSubTitle(
+      currentComponentTitle || (language === "ar" ? "الأقسام" : "Categories")
     );
-    setSelectedCategoryPosition(savedPosition);
 
-    if (location.pathname.startsWith("/categories/")) scrollTop();
+    const saved = Number(localStorage.getItem(LS_POS_KEY) || 0);
+    setSelectedCategoryPosition(saved);
+
+    // ⚠️ If your parent scrollTop() scrolls window to top ALWAYS, it can kill restore.
+    // Keep it only for outlet (like you had).
+    if (location.pathname.startsWith("/categories/")) scrollTop?.();
     // eslint-disable-next-line
   }, [location.pathname, checkTitle]);
 
-  // Click handler (delegated)
+  // Event handler for clicks on categories
   const handleCategoryClick = (event) => {
     const target = event.target.closest(".div");
-    if (!target) return;
+    document.body.scrollTo({
+      top: selectedCategoryPosition,
+    });
+    if (target) {
+      const componentTitleId = target.querySelector("span")?.id; // Get the ID from the span element
+      if (componentTitleId) {
+        setSubTitle(componentTitleId); // Set the subtitle for the outlet
+        localStorage.setItem("component-title", componentTitleId);
+        // Save the clicked category's position relative to the scrollable content
+        if (contentRef.current) {
+          const categoryPosition = target.offsetTop;
+          localStorage.setItem("last-category-position", categoryPosition);
+        }
 
-    // store position BEFORE leaving
-    if (contentRef.current) {
-      localStorage.setItem("last-category-position", String(target.offsetTop));
+        if (outletsRef.current) {
+          outletsRef.current.classList.add("active");
+          categoriesRef.current.classList.add("hide");
+          if (contentRef.current) {
+            contentRef.current.scrollTo({
+              top: 0,
+              behavior: "smooth",
+            });
+          }
+        }
+      }
     }
-
-    const componentTitleId = target.querySelector("span")?.id;
-    if (componentTitleId) {
-      setSubTitle(componentTitleId);
-      localStorage.setItem("component-title", componentTitleId);
-    }
-
-    outletsRef.current?.classList.add("active");
-    categoriesRef.current?.classList.add("hide");
-
-    // go top inside scroll container
-    contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -161,26 +186,26 @@ const Categories = ({
 
   // Close outlet
   const closeOutlet = () => {
-    outletsRef.current?.classList.remove("active");
-    categoriesRef.current?.classList.remove("hide");
-
-    setIsRadio(false);
+    if (outletsRef.current) outletsRef.current.classList.remove("active");
     navigate("/categories");
+    categoriesRef.current.classList.remove("hide");
 
-    // restore scroll position
-    requestAnimationFrame(() => {
-      if (contentRef.current) {
-        contentRef.current.scrollTo({
-          top: selectedCategoryPosition,
-          behavior: "smooth",
-        });
-      }
-    });
+    // Delay scrolling to ensure the categories are visible
+    if (contentRef.current) {
+      document.body.scrollTo({
+        top: selectedCategoryPosition,
+      });
+    }
   };
 
-  // Handle pathname changes (open outlet when direct route)
+  // Handle pathname changes (direct route, back button)
   useEffect(() => {
-    if (location.pathname.startsWith("/categories/")) {
+    const isOutlet =
+      location.pathname.startsWith("/categories/") &&
+      location.pathname !== "/categories" &&
+      location.pathname !== "/categories/";
+
+    if (isOutlet) {
       outletsRef.current?.classList.add("active");
       categoriesRef.current?.classList.add("hide");
 
@@ -196,41 +221,42 @@ const Categories = ({
       const nextTitle =
         matchedLink?.title || (language === "ar" ? "الأقسام" : "Categories");
 
-      localStorage.setItem("component-title", nextTitle);
+      localStorage.setItem(LS_TITLE_KEY, nextTitle);
       setSubTitle(nextTitle);
 
       setCheckTitle(true);
-      scrollTop();
+      scrollTop?.();
+      scrollPageTo(0, "auto");
     } else {
       outletsRef.current?.classList.remove("active");
       categoriesRef.current?.classList.remove("hide");
-
       setCheckTitle(false);
 
+      const saved = Number(
+        localStorage.getItem(LS_POS_KEY) || selectedCategoryPosition || 0
+      );
       requestAnimationFrame(() => {
-        contentRef.current?.scrollTo({
-          top: selectedCategoryPosition,
-          behavior: "smooth",
+        requestAnimationFrame(() => {
+          scrollPageTo(saved, "auto");
         });
       });
     }
-    // eslint-disable-next-line
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname, selectedCategoryPosition]);
+  }, [location.pathname]);
 
   // Scroll behavior
-  // eslint-disable-next-line
+   // eslint-disable-next-line
   const checkScrollTop = useCallback(
     throttle((e) => {
       const { scrollTop } = e.target;
       const threshold = 300;
       const isScrollingDown = scrollTop > currentScroll;
 
-      if (isScrollingDown) hideHeader();
-      else showHeader();
+      if (isScrollingDown) hideHeader?.();
+      else showHeader?.();
 
-      if (scrollTop > threshold) displayButton();
-      else hideButton();
+      if (scrollTop > threshold) displayButton?.();
+      else hideButton?.();
 
       setCurrentScroll(scrollTop);
     }, 250),
@@ -266,7 +292,6 @@ const Categories = ({
           </div>
 
           <div className="card-body p-0">
-            {/* Categories */}
             <div className="divisions" ref={categoriesRef}>
               {CATEGORIES.map((c) => (
                 <NavLink key={c.to} className="div" to={c.to}>
@@ -285,7 +310,6 @@ const Categories = ({
             </div>
           </div>
 
-          {/* Outlet */}
           <div className="outlets card" ref={outletsRef}>
             <div
               className="card-header outlets-top"
