@@ -615,7 +615,7 @@ const Tajweed = ({ audioName, documentName }) => {
           mb: 2,
           flexWrap: "wrap",
           gap: 2,
-          padding: "0",
+          padding: "10px",
         }}
       >
         {savedPageChanged && (

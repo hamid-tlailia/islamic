@@ -1,3 +1,4 @@
+// Header.jsx
 import React, { useEffect, useRef, useState } from "react";
 import "./header.css";
 import logo from "../images/logo.png";
@@ -43,7 +44,7 @@ const Header = ({ onNavClick, visibility, size }) => {
   const [fontTheme, setFontTheme] = useState("");
   const [activeClass, setActiveClass] = useState("");
 
-  // ✅ NEW: drawer state to hide header while mobile nav is open
+  // ✅ drawer state to hide header while mobile nav is open
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
   // form data
@@ -58,16 +59,176 @@ const Header = ({ onNavClick, visibility, size }) => {
   // Define classes to check (excluding dark-mode/light-mode)
   const classesToCheck = ["light-filter", "brightness", "image", "sky"];
 
-  // notch drag
-  const [notchNavPosition, setNotchNavPosition] = useState({ x: 100, y: 100 });
-  const positionRef = useRef({ x: 100, y: 100 });
+  // -------------------- NOTCH DRAG (RESPONSIVE) --------------------
+  const notchRef = useRef(null);
+
+  // store ratios 0..1 so it scales with screen
+  const [, setNotchRatio] = useState({ x: 1, y: 0.5 }); // ✅ default: middle-right
+  const ratioRef = useRef({ x: 1, y: 0.5 });
+
+  // render pixels
+  const [notchNavPosition, setNotchNavPosition] = useState({ x: 0, y: 0 });
+  const positionRef = useRef({ x: 0, y: 0 });
+
   const dragStartPos = useRef({ x: 0, y: 0 });
   const isDraggingRef = useRef(false);
   const animationFrameRef = useRef(null);
-  // ✅ Replace your current margin with these:
+
+  // margins
   const EDGE_MARGIN = 12; // left/right safe space
-  const TOP_MARGIN = 16; // keep notch a bit away from the very top
-  const BOTTOM_MARGIN = 16; // keep notch a bit away from bottom
+  const TOP_MARGIN = 16; // keep notch away from top
+  const BOTTOM_MARGIN = 16; // keep notch away from bottom
+
+  const clamp = (v, min, max) => Math.max(min, Math.min(v, max));
+
+  const getBounds = () => {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    const w = notchRef.current?.offsetWidth || 0;
+    const h = notchRef.current?.offsetHeight || 0;
+
+    const minX = EDGE_MARGIN;
+    const maxX = Math.max(EDGE_MARGIN, vw - w - EDGE_MARGIN);
+
+    const minY = TOP_MARGIN;
+    const maxY = Math.max(TOP_MARGIN, vh - h - BOTTOM_MARGIN);
+
+    return { minX, maxX, minY, maxY };
+  };
+
+  const ratioToPx = (ratio) => {
+    const { minX, maxX, minY, maxY } = getBounds();
+    const x = minX + ratio.x * (maxX - minX);
+    const y = minY + ratio.y * (maxY - minY);
+    return { x, y };
+  };
+
+  const pxToRatio = (px) => {
+    const { minX, maxX, minY, maxY } = getBounds();
+
+    const safeX = clamp(px.x, minX, maxX);
+    const safeY = clamp(px.y, minY, maxY);
+
+    const rx = maxX === minX ? 0 : (safeX - minX) / (maxX - minX);
+    const ry = maxY === minY ? 0 : (safeY - minY) / (maxY - minY);
+
+    return { x: clamp(rx, 0, 1), y: clamp(ry, 0, 1) };
+  };
+
+  const applyRatio = (ratio) => {
+    const px = ratioToPx(ratio);
+    setNotchNavPosition(px);
+    positionRef.current = px;
+
+    setNotchRatio(ratio);
+    ratioRef.current = ratio;
+  };
+
+  const updatePositionPx = (newX, newY) => {
+    const { minX, maxX, minY, maxY } = getBounds();
+
+    const constrainedX = clamp(newX, minX, maxX);
+    const constrainedY = clamp(newY, minY, maxY);
+
+    const px = { x: constrainedX, y: constrainedY };
+    setNotchNavPosition(px);
+    positionRef.current = px;
+
+    const nextRatio = pxToRatio(px);
+    setNotchRatio(nextRatio);
+    ratioRef.current = nextRatio;
+  };
+
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    isDraggingRef.current = true;
+    dragStartPos.current = {
+      x: e.clientX - positionRef.current.x,
+      y: e.clientY - positionRef.current.y,
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDraggingRef.current) return;
+
+    const newX = e.clientX - dragStartPos.current.x;
+    const newY = e.clientY - dragStartPos.current.y;
+
+    if (animationFrameRef.current)
+      cancelAnimationFrame(animationFrameRef.current);
+    animationFrameRef.current = requestAnimationFrame(() =>
+      updatePositionPx(newX, newY)
+    );
+  };
+
+  const handleMouseUp = () => {
+    isDraggingRef.current = false;
+
+    // ✅ save ratio (not pixels)
+    localStorage.setItem("notchNavRatio", JSON.stringify(ratioRef.current));
+
+    window.removeEventListener("mousemove", handleMouseMove);
+    window.removeEventListener("mouseup", handleMouseUp);
+  };
+
+  const handleTouchStart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    isDraggingRef.current = true;
+    const touch = e.touches[0];
+
+    dragStartPos.current = {
+      x: touch.clientX - positionRef.current.x,
+      y: touch.clientY - positionRef.current.y,
+    };
+
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
+    window.addEventListener("touchend", handleTouchEnd, { passive: false });
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDraggingRef.current) return;
+    e.preventDefault();
+
+    const touch = e.touches[0];
+    const newX = touch.clientX - dragStartPos.current.x;
+    const newY = touch.clientY - dragStartPos.current.y;
+
+    if (animationFrameRef.current)
+      cancelAnimationFrame(animationFrameRef.current);
+    animationFrameRef.current = requestAnimationFrame(() =>
+      updatePositionPx(newX, newY)
+    );
+  };
+
+  const handleTouchEnd = () => {
+    isDraggingRef.current = false;
+
+    // ✅ save ratio (not pixels)
+    localStorage.setItem("notchNavRatio", JSON.stringify(ratioRef.current));
+
+    window.removeEventListener("touchmove", handleTouchMove);
+    window.removeEventListener("touchend", handleTouchEnd);
+  };
+
+  useEffect(() => {
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
+      if (animationFrameRef.current)
+        cancelAnimationFrame(animationFrameRef.current);
+    };
+    // eslint-disable-next-line
+  }, []);
 
   // -------------------- THEME --------------------
   const setTheme = (e) => {
@@ -88,7 +249,7 @@ const Header = ({ onNavClick, visibility, size }) => {
     }
   };
 
-  // Init theme + bg + font + notch position
+  // Init theme + bg + font + notch position (ratio)
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     const body = document.body;
@@ -121,12 +282,45 @@ const Header = ({ onNavClick, visibility, size }) => {
       localStorage.setItem("fontTheme", "font-default");
     }
 
-    const savedPosition = localStorage.getItem("notchNavPosition");
-    if (savedPosition) {
-      const parsedPosition = JSON.parse(savedPosition);
-      setNotchNavPosition(parsedPosition);
-      positionRef.current = parsedPosition;
+    // ✅ load notch ratio
+    const savedRatio = localStorage.getItem("notchNavRatio");
+    if (savedRatio) {
+      try {
+        const parsed = JSON.parse(savedRatio);
+        ratioRef.current = {
+          x: typeof parsed.x === "number" ? clamp(parsed.x, 0, 1) : 1,
+          y: typeof parsed.y === "number" ? clamp(parsed.y, 0, 1) : 0.5,
+        };
+      } catch {
+        ratioRef.current = { x: 1, y: 0.5 };
+      }
+    } else {
+      // default: middle-right
+      ratioRef.current = { x: 1, y: 0.5 };
     }
+    // eslint-disable-next-line
+  }, []);
+
+  // ✅ apply ratio after mount + on resize
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => applyRatio(ratioRef.current));
+
+    const onResize = () => {
+      if (animationFrameRef.current)
+        cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = requestAnimationFrame(() => {
+        applyRatio(ratioRef.current);
+      });
+    };
+
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", onResize);
+      if (animationFrameRef.current)
+        cancelAnimationFrame(animationFrameRef.current);
+    };
     // eslint-disable-next-line
   }, []);
 
@@ -154,7 +348,6 @@ const Header = ({ onNavClick, visibility, size }) => {
     ];
 
     body.classList.remove(...allFontClasses);
-
     if (fontTheme) body.classList.add(fontTheme);
   }, [fontTheme]);
 
@@ -252,7 +445,6 @@ const Header = ({ onNavClick, visibility, size }) => {
   // -------------------- LINKS --------------------
   const handleNavItemClick = (e) => {
     onNavClick?.(e);
-    // ✅ close drawer after navigation
     if (isMobileNavOpen) closeNavbar(e);
   };
 
@@ -302,120 +494,6 @@ const Header = ({ onNavClick, visibility, size }) => {
       </li>
     </>
   );
-
-  // -------------------- NOTCH DRAG --------------------
-
-  const updatePosition = (newX, newY) => {
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-
-    const notchNav = document.querySelector(".notch-nav");
-    const notchWidth = notchNav ? notchNav.offsetWidth : 0;
-    const notchHeight = notchNav ? notchNav.offsetHeight : 0;
-
-    // ✅ left / right margin
-    const minX = EDGE_MARGIN;
-    const maxX = Math.max(
-      EDGE_MARGIN,
-      viewportWidth - notchWidth - EDGE_MARGIN
-    );
-
-    // ✅ top / bottom margin
-    const minY = TOP_MARGIN;
-    const maxY = Math.max(
-      TOP_MARGIN,
-      viewportHeight - notchHeight - BOTTOM_MARGIN
-    );
-
-    const constrainedX = Math.max(minX, Math.min(newX, maxX));
-    const constrainedY = Math.max(minY, Math.min(newY, maxY));
-
-    setNotchNavPosition({ x: constrainedX, y: constrainedY });
-    positionRef.current = { x: constrainedX, y: constrainedY };
-  };
-
-  const handleMouseDown = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    isDraggingRef.current = true;
-    dragStartPos.current = {
-      x: e.clientX - positionRef.current.x,
-      y: e.clientY - positionRef.current.y,
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
-  };
-
-  const handleMouseMove = (e) => {
-    if (!isDraggingRef.current) return;
-    const newX = e.clientX - dragStartPos.current.x;
-    const newY = e.clientY - dragStartPos.current.y;
-
-    if (animationFrameRef.current)
-      cancelAnimationFrame(animationFrameRef.current);
-    animationFrameRef.current = requestAnimationFrame(() =>
-      updatePosition(newX, newY)
-    );
-  };
-
-  const handleMouseUp = () => {
-    isDraggingRef.current = false;
-    localStorage.setItem(
-      "notchNavPosition",
-      JSON.stringify(positionRef.current)
-    );
-    window.removeEventListener("mousemove", handleMouseMove);
-    window.removeEventListener("mouseup", handleMouseUp);
-  };
-
-  const handleTouchStart = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    isDraggingRef.current = true;
-    const touch = e.touches[0];
-    dragStartPos.current = {
-      x: touch.clientX - positionRef.current.x,
-      y: touch.clientY - positionRef.current.y,
-    };
-    window.addEventListener("touchmove", handleTouchMove, { passive: false });
-    window.addEventListener("touchend", handleTouchEnd, { passive: false });
-  };
-
-  const handleTouchMove = (e) => {
-    if (!isDraggingRef.current) return;
-    e.preventDefault();
-    const touch = e.touches[0];
-    const newX = touch.clientX - dragStartPos.current.x;
-    const newY = touch.clientY - dragStartPos.current.y;
-
-    if (animationFrameRef.current)
-      cancelAnimationFrame(animationFrameRef.current);
-    animationFrameRef.current = requestAnimationFrame(() =>
-      updatePosition(newX, newY)
-    );
-  };
-
-  const handleTouchEnd = () => {
-    isDraggingRef.current = false;
-    localStorage.setItem(
-      "notchNavPosition",
-      JSON.stringify(positionRef.current)
-    );
-    window.removeEventListener("touchmove", handleTouchMove);
-    window.removeEventListener("touchend", handleTouchEnd);
-  };
-
-  useEffect(() => {
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
-      window.removeEventListener("touchmove", handleTouchMove);
-      window.removeEventListener("touchend", handleTouchEnd);
-      if (animationFrameRef.current)
-        cancelAnimationFrame(animationFrameRef.current);
-    };
-    // eslint-disable-next-line
-  }, []);
 
   // -------------------- ERROR MODAL --------------------
   const errorCategories = [
@@ -499,19 +577,19 @@ const Header = ({ onNavClick, visibility, size }) => {
     <div className="bg-transparent">
       {/* Modern AppBar */}
       <header
-        className={`appbar ${language === "en" ? "ltr" : "rtl"} ${
-          visibility ? "hide" : ""
-        } ${isMobileNavOpen ? "drawer-open" : ""}`}
+        className={`appbar ${language === "en" ? "ltr" : "rtl"}  ${
+          isMobileNavOpen ? "drawer-open" : ""
+        }`}
       >
         <div className="appbar-inner">
           <div className="appbar-left">
             <button
-              className="icon-btn d-lg-none"
+              className="appbar-icon-btn d-lg-none"
               type="button"
               onClick={showNavbar}
               aria-label="Open menu"
             >
-              <WidgetsOutlinedIcon className="icon" />
+              <WidgetsOutlinedIcon />
             </button>
 
             <NavLink to="/" className="brand" onClick={handleNavItemClick}>
@@ -531,7 +609,7 @@ const Header = ({ onNavClick, visibility, size }) => {
           <div className="appbar-right">
             <button
               type="button"
-              className="icon-btn"
+              className="appbar-icon-btn"
               onClick={(e) => {
                 e.stopPropagation();
                 setOpen(true);
@@ -539,7 +617,7 @@ const Header = ({ onNavClick, visibility, size }) => {
               aria-label="Open settings"
               title={language === "ar" ? "الإعدادات" : "Settings"}
             >
-              <SettingsOutlinedIcon className="icon" />
+              <SettingsOutlinedIcon />
             </button>
 
             <div className="theme-toggle">
@@ -582,7 +660,6 @@ const Header = ({ onNavClick, visibility, size }) => {
 
       {/* Mobile Drawer */}
       <div className="mobile-header" ref={mobileHeader}>
-        {/* overlay closes drawer */}
         <div className="black-left" onClick={closeNavbar}>
           <button
             type="button"
@@ -594,7 +671,6 @@ const Header = ({ onNavClick, visibility, size }) => {
           </button>
         </div>
 
-        {/* drawer panel - prevent overlay close */}
         <div
           className={language === "ar" ? "right-nav" : "right-nav en"}
           onClick={(e) => e.stopPropagation()}
@@ -663,25 +739,36 @@ const Header = ({ onNavClick, visibility, size }) => {
       </div>
 
       {/* Draggable notch-nav */}
+      {/* Draggable notch-nav */}
       <div
+        ref={notchRef}
         className={`notch-nav ${visibility ? "hide" : ""}`}
-        onMouseDown={handleMouseDown}
-        onTouchStart={handleTouchStart}
+        onMouseDownCapture={handleMouseDown} // ✅ optional
+        onTouchStartCapture={handleTouchStart} // ✅ FIX mobile
         style={{
-          position: "absolute",
+          position: "fixed",
           left: notchNavPosition.x,
           top: notchNavPosition.y,
           cursor: "move",
           touchAction: "none",
+          zIndex: 9999,
         }}
       >
-        <button type="button" className="notch-btn" onClick={showNavbar}>
+        <button
+          type="button"
+          className="notch-btn"
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          onClick={showNavbar}
+        >
           <WidgetsOutlinedIcon />
         </button>
 
         <button
           type="button"
           className="notch-btn"
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
           onClick={(e) => {
             e.stopPropagation();
             setOpen(true);
@@ -690,7 +777,10 @@ const Header = ({ onNavClick, visibility, size }) => {
           <SettingsOutlinedIcon />
         </button>
 
-        <div>
+        <div
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+        >
           <input
             type="checkbox"
             className="d-none"
@@ -706,6 +796,8 @@ const Header = ({ onNavClick, visibility, size }) => {
         <button
           type="button"
           className="notch-btn danger"
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
           onClick={openErrorModal}
         >
           <HelpOutlineIcon />
@@ -753,7 +845,6 @@ const Header = ({ onNavClick, visibility, size }) => {
       )}
 
       {/* Settings modal */}
-
       <Modal
         aria-labelledby="modal-title"
         aria-describedby="modal-desc"
@@ -773,11 +864,11 @@ const Header = ({ onNavClick, visibility, size }) => {
           onClick={(e) => e.stopPropagation()}
           sx={{
             width: "100%",
-            height: "100vh", // ✅ full height
+            height: "100vh",
             maxHeight: "90vh",
             borderRadius: { xs: "10px", sm: "18px" },
             maxWidth: { xs: "90%", sm: 650 },
-            overflow: "auto", // ✅ prevent body scroll
+            overflow: "auto",
             boxShadow: "lg",
             border: "1px solid rgba(255,255,255,0.18)",
             backgroundColor: "var(--card-color)",
@@ -855,7 +946,6 @@ const Header = ({ onNavClick, visibility, size }) => {
                   </Typography>
                 </div>
 
-                {/* Using your existing checkbox */}
                 <label
                   className="settings-ui__toggle"
                   htmlFor="darkModeSwitchFst"

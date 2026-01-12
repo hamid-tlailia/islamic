@@ -245,7 +245,7 @@ const Categories = ({
   }, [location.pathname]);
 
   // Scroll behavior
-   // eslint-disable-next-line
+  // eslint-disable-next-line
   const checkScrollTop = useCallback(
     throttle((e) => {
       const { scrollTop } = e.target;

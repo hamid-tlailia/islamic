@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+// Player.jsx
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./player.css";
 import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
 import PauseOutlinedIcon from "@mui/icons-material/PauseOutlined";
@@ -6,6 +7,8 @@ import VolumeUpOutlinedIcon from "@mui/icons-material/VolumeUpOutlined";
 import VolumeOffOutlinedIcon from "@mui/icons-material/VolumeOffOutlined";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
+import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
+import MusicNoteOutlinedIcon from "@mui/icons-material/MusicNoteOutlined";
 import { toast } from "react-toastify";
 import { useTranslation } from "../languages/provider";
 
@@ -15,114 +18,205 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
+
+  // ✅ loader flag (true = show spinner)
   const [loaded, setLoaded] = useState(false);
+
+  // ✅ minimized: only floating icon
+  const [isMinimized, setIsMinimized] = useState(false);
+
   const audioRef = useRef(null);
   const progressRef = useRef(null);
   const { language } = useTranslation();
 
+  // ✅ resume key
+  const resumeKey = useMemo(() => {
+    const base = src || "";
+    const name = surah_name || "";
+    return `player_resume::${name}::${base}`;
+  }, [src, surah_name]);
+
+  const saveThrottleRef = useRef(0);
+  const rafRef = useRef(null);
+
   useEffect(() => {
-    if (isPlaying && surah_name) {
-      document.title = surah_name;
-    } else {
-      document.title = title;
-    }
+    if (isPlaying && surah_name) document.title = surah_name;
+    else document.title = title;
   }, [isPlaying, surah_name, title]);
 
+  // -------------------- audio listeners --------------------
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
+
     const updateProgress = () => {
       setCurrentTime(audio.currentTime);
       setDuration(audio.duration);
-      if (progressRef.current && isFinite(audio.duration)) {
+
+      if (
+        progressRef.current &&
+        isFinite(audio.duration) &&
+        audio.duration > 0
+      ) {
         progressRef.current.value = (audio.currentTime / audio.duration) * 100;
+      }
+
+      // ✅ resume save (every ~2s)
+      const now = Date.now();
+      if (!isLiveStream && isFinite(audio.duration) && audio.duration > 0) {
+        if (now - saveThrottleRef.current > 2000) {
+          saveThrottleRef.current = now;
+          localStorage.setItem(
+            resumeKey,
+            JSON.stringify({
+              t: Math.floor(audio.currentTime),
+              d: Math.floor(audio.duration),
+              at: now,
+            })
+          );
+        }
       }
     };
 
+    // ✅ NOTE: loadeddata fires early; DON'T hide loader here
     const handleLoadedData = () => {
       setDuration(audio.duration);
-      setLoaded(false);
-      if (isNaN(audio.duration) || !isFinite(audio.duration)) {
-        // Live stream detected
-        setIsLiveStream(true);
-      } else {
-        setIsLiveStream(false);
+
+      const live = isNaN(audio.duration) || !isFinite(audio.duration);
+      setIsLiveStream(live);
+
+      // ✅ Resume seek (only for normal files)
+      if (!live && isFinite(audio.duration) && audio.duration > 0) {
+        try {
+          const saved = localStorage.getItem(resumeKey);
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            const savedT = Number(parsed?.t ?? 0);
+
+            if (savedT > 3 && savedT < audio.duration - 2) {
+              audio.currentTime = savedT;
+              setCurrentTime(savedT);
+              if (progressRef.current) {
+                progressRef.current.value = (savedT / audio.duration) * 100;
+              }
+            }
+          }
+        } catch {}
       }
+
       updateProgress();
     };
 
     const handleLoadStart = () => {
-      setLoaded(true);
+      setLoaded(true); // ✅ show loader on first load
       setCurrentTime(0);
       setDuration(0);
-      if (progressRef.current) {
-        progressRef.current.value = 0;
-      }
+      setIsLiveStream(false);
+      if (progressRef.current) progressRef.current.value = 0;
     };
 
-    const handleWaiting = () => {
-      setLoaded(true);
-    };
+    const handleWaiting = () => setLoaded(true);
 
-    const handlePlaying = () => {
-      setLoaded(false);
+    // ✅ “actually ready to play” events
+    const handleCanPlay = () => setLoaded(false);
+    const handlePlaying = () => setLoaded(false);
+
+    // ✅ seek events (progress bar)
+    const handleSeeking = () => {
+      // show loader while seeking if not live
+      if (!isLiveStream) setLoaded(true);
     };
+    const handleSeeked = () => setLoaded(false);
 
     const handleEnded = () => {
       audio.currentTime = 0;
       audio.pause();
       setIsPlaying(false);
+      setLoaded(false);
+      try {
+        localStorage.removeItem(resumeKey);
+      } catch {}
     };
 
-    const handlePauseFromExternal = () => {
-      setIsPlaying(false);
-    };
+    const handlePauseExternal = () => setIsPlaying(false);
+    const handlePlayExternal = () => setIsPlaying(true);
 
-    const handlePlayFromExternal = () => {
-      setIsPlaying(true);
-    };
-
-    // Add event listeners
     audio.addEventListener("timeupdate", updateProgress);
     audio.addEventListener("loadeddata", handleLoadedData);
     audio.addEventListener("loadstart", handleLoadStart);
     audio.addEventListener("waiting", handleWaiting);
-    audio.addEventListener("playing", handlePlaying);
-    audio.addEventListener("ended", handleEnded);
-    audio.addEventListener("pause", handlePauseFromExternal);
-    audio.addEventListener("play", handlePlayFromExternal);
 
-    // Clean up event listeners
+    audio.addEventListener("canplay", handleCanPlay);
+    audio.addEventListener("playing", handlePlaying);
+
+    audio.addEventListener("seeking", handleSeeking);
+    audio.addEventListener("seeked", handleSeeked);
+
+    audio.addEventListener("ended", handleEnded);
+    audio.addEventListener("pause", handlePauseExternal);
+    audio.addEventListener("play", handlePlayExternal);
+
     return () => {
       audio.removeEventListener("timeupdate", updateProgress);
       audio.removeEventListener("loadeddata", handleLoadedData);
       audio.removeEventListener("loadstart", handleLoadStart);
       audio.removeEventListener("waiting", handleWaiting);
-      audio.removeEventListener("playing", handlePlaying);
-      audio.removeEventListener("ended", handleEnded);
-      audio.removeEventListener("pause", handlePauseFromExternal);
-      audio.removeEventListener("play", handlePlayFromExternal);
-    };
-  }, []);
 
+      audio.removeEventListener("canplay", handleCanPlay);
+      audio.removeEventListener("playing", handlePlaying);
+
+      audio.removeEventListener("seeking", handleSeeking);
+      audio.removeEventListener("seeked", handleSeeked);
+
+      audio.removeEventListener("ended", handleEnded);
+      audio.removeEventListener("pause", handlePauseExternal);
+      audio.removeEventListener("play", handlePlayExternal);
+
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [resumeKey, isLiveStream]);
+
+  // -------------------- load/unload src --------------------
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
     if (show && src) {
+      setLoaded(true); // ✅ show loader immediately when opening player
+
       audio.src = src;
+
+      // ✅ Force audible defaults
+      audio.muted = isMuted;
+      audio.volume = 1;
+
       audio.load();
       setIsPlaying(true);
-      audio
-        .play()
-        .catch((error) => console.error("Play was interrupted:", error));
+
+      // play may be blocked
+      audio.play().catch((err) => {
+        console.warn("Autoplay blocked:", err);
+        setIsPlaying(false);
+        // keep loader off if blocked (no buffering happening)
+        setLoaded(false);
+      });
     } else if (!show) {
       audio.pause();
       audio.currentTime = 0;
       setIsPlaying(false);
+      setLoaded(false);
       audio.src = "";
+      setIsMinimized(false);
     }
+    // eslint-disable-next-line
   }, [show, src]);
+
+  // keep audio muted in sync
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.muted = isMuted;
+  }, [isMuted]);
 
   const togglePlayPause = () => {
     const audio = audioRef.current;
@@ -130,28 +224,40 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
 
     if (isPlaying) {
       audio.pause();
-    } else {
-      audio
-        .play()
-        .catch((error) => console.error("Play was interrupted:", error));
+      return;
     }
-    setIsPlaying(!isPlaying);
+
+    // show loader while starting (until canplay/playing)
+    setLoaded(true);
+
+    audio.muted = isMuted;
+    if (audio.volume === 0) audio.volume = 1;
+
+    audio.play().catch((err) => {
+      console.warn("Play blocked:", err);
+      setIsPlaying(false);
+      setLoaded(false);
+    });
   };
 
-  const handleVolumeToggle = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    audio.muted = !isMuted;
-    setIsMuted(!isMuted);
-  };
+  const handleVolumeToggle = () => setIsMuted((m) => !m);
 
   const handleProgressChange = (e) => {
     const audio = audioRef.current;
     if (!audio || isLiveStream) return;
 
-    const progress = e.target.value;
-    audio.currentTime = (progress / 100) * audio.duration;
+    const progress = Number(e.target.value);
+
+    // ✅ show loader immediately on seek
+    setLoaded(true);
+
+    const nextTime = (progress / 100) * audio.duration;
+
+    // requestAnimationFrame prevents some mobile glitching
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      audio.currentTime = nextTime;
+    });
   };
 
   const formatTime = (time) => {
@@ -164,6 +270,7 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
   const handleDownload = async () => {
     const audioUrl = audioRef?.current?.src;
     if (!audioUrl) return;
+
     try {
       const response = await fetch(audioUrl);
       if (!response.ok) throw new Error("CORS issue or network error");
@@ -178,8 +285,7 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(blobUrl);
-    } catch (error) {
-      // If there's a CORS error, set the link directly to the audio URL
+    } catch {
       const link = document.createElement("a");
       link.setAttribute("target", "_blank");
       link.href = audioUrl;
@@ -188,7 +294,6 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
       link.click();
       document.body.removeChild(link);
 
-      // Show a message if needed
       toast.info(
         language === "ar"
           ? "الملف غير متوفر للتحميل، تم استخدام الرابط المباشر"
@@ -200,96 +305,163 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
   const handleClosePlayer = () => {
     const restoreDocumentTitle = localStorage.getItem("pageTitle");
     document.title = restoreDocumentTitle ? restoreDocumentTitle : "دين الله";
+
+    setIsMinimized(false);
     hidePlayer();
   };
 
+  const minimize = () => setIsMinimized(true);
+  const expand = () => setIsMinimized(false);
+
+  const showFab = show && isMinimized;
+
   return (
-    <div
-      className={
-        show
-          ? "quran-player d-flex flex-column justify-content-center align-items-center active"
-          : "quran-player d-flex flex-column justify-content-center align-items-center"
-      }
-    >
-      <div className="text-center surah-name mb-1">
-        {surah_name && `✧ ${surah_name} ✧`}
-      </div>
-      <audio
-        ref={audioRef}
-        className="d-none"
-        preload="auto"
-        onLoadedData={() => setLoaded(false)}
-      ></audio>
-      <div className="player-controls">
-        {loaded ? (
-          <div className="dot-spinner">
-            <div className="dot-spinner__dot"></div>
-            <div className="dot-spinner__dot"></div>
-            <div className="dot-spinner__dot"></div>
-            <div className="dot-spinner__dot"></div>
-            <div className="dot-spinner__dot"></div>
-            <div className="dot-spinner__dot"></div>
-            <div className="dot-spinner__dot"></div>
-            <div className="dot-spinner__dot"></div>
-          </div>
-        ) : (
-          <div className="d-flex flex-row justify-content-center align-items-center gap-2">
-            <button
-              className="btn btn-gold text-primary p-0"
-              onClick={togglePlayPause}
-            >
-              {isPlaying ? <PauseOutlinedIcon /> : <PlayArrowOutlinedIcon />}
-            </button>
-            <button
-              className="btn btn-gold text-primary p-0"
-              onClick={handleVolumeToggle}
-            >
-              {isMuted ? <VolumeOffOutlinedIcon /> : <VolumeUpOutlinedIcon />}
-            </button>
+    <>
+      {/* ✅ Floating music icon when minimized */}
+      {showFab && (
+        <button
+          className="player-fab"
+          onClick={expand}
+          aria-label="Open player"
+          title={language === "ar" ? "فتح المشغل" : "Open player"}
+        >
+          <MusicNoteOutlinedIcon />
+        </button>
+      )}
+
+      <div
+        className={`quran-player ${show ? "active" : ""} ${
+          isMinimized ? "min" : ""
+        }`}
+      >
+        {/* IMPORTANT: audio must stay mounted always */}
+        <audio ref={audioRef} className="d-none" preload="auto" playsInline />
+
+        {/* Full UI hidden when minimized */}
+        {!isMinimized && (
+          <div className="player-shell">
+            <div className="player-top">
+              <div className="player-titleWrap">
+                <span className={`player-badge ${isLiveStream ? "live" : ""}`}>
+                  {isLiveStream
+                    ? language === "ar"
+                      ? "مباشر"
+                      : "Live"
+                    : language === "ar"
+                    ? "تشغيل"
+                    : "Playing"}
+                  {isLiveStream && <span className="record-dot" />}
+                </span>
+
+                <div className="player-title" title={surah_name || ""}>
+                  {surah_name ? `✧ ${surah_name} ✧` : ""}
+                </div>
+              </div>
+
+              <div className="player-actions">
+                <button
+                  className="pbtn"
+                  onClick={minimize}
+                  aria-label="Minimize"
+                  title={language === "ar" ? "تصغير" : "Minimize"}
+                >
+                  <ExpandMoreOutlinedIcon />
+                </button>
+
+                {!loaded && !isLiveStream && (
+                  <button
+                    className="pbtn"
+                    onClick={handleDownload}
+                    aria-label="Download"
+                    title={language === "ar" ? "تحميل" : "Download"}
+                  >
+                    <DownloadOutlinedIcon />
+                  </button>
+                )}
+
+                <button
+                  className="pbtn danger"
+                  onClick={handleClosePlayer}
+                  aria-label="Close"
+                  title={language === "ar" ? "إغلاق" : "Close"}
+                >
+                  <CloseOutlinedIcon />
+                </button>
+              </div>
+            </div>
+
+            <div className="player-mid">
+              <div className="player-leftControls">
+                {loaded ? (
+                  <div className="dot-spinner" aria-label="Loading">
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                    <div className="dot-spinner__dot"></div>
+                  </div>
+                ) : (
+                  <>
+                    <button
+                      className="pbtn main"
+                      onClick={togglePlayPause}
+                      aria-label={isPlaying ? "Pause" : "Play"}
+                    >
+                      {isPlaying ? (
+                        <PauseOutlinedIcon />
+                      ) : (
+                        <PlayArrowOutlinedIcon />
+                      )}
+                    </button>
+
+                    <button
+                      className="pbtn"
+                      onClick={handleVolumeToggle}
+                      aria-label={isMuted ? "Unmute" : "Mute"}
+                    >
+                      {isMuted ? (
+                        <VolumeOffOutlinedIcon />
+                      ) : (
+                        <VolumeUpOutlinedIcon />
+                      )}
+                    </button>
+                  </>
+                )}
+              </div>
+
+              <div className="player-progress">
+                <div className="time-row">
+                  <span className="time">{formatTime(currentTime)}</span>
+                  <span className="time">
+                    {isLiveStream
+                      ? "-:-"
+                      : loaded
+                      ? "-:-"
+                      : formatTime(duration)}
+                  </span>
+                </div>
+
+                <input
+                  type="range"
+                  className={`bar ${loaded || isLiveStream ? "pe-none" : ""}`}
+                  ref={progressRef}
+                  // ✅ onInput works better on mobile (continuous)
+                  onInput={handleProgressChange}
+                  // ✅ keep onChange too (desktop / fallback)
+                  onChange={handleProgressChange}
+                  min="0"
+                  max="100"
+                  defaultValue="0"
+                />
+              </div>
+            </div>
           </div>
         )}
-        <span className="current-time mt-1">{formatTime(currentTime)}</span>
-        <input
-          type="range"
-          id="range"
-          className={`${
-            loaded || isLiveStream ? "pe-none" : ""
-          } w-100 bar mt-1`}
-          ref={progressRef}
-          onChange={handleProgressChange}
-          min="0"
-          max="100"
-        />
-        <div className="duration">
-          {isLiveStream ? (
-            <div className="live-indicator d-flex flex-row-reverse justify-content-center align-items-center gap-2">
-              {language === "ar" ? "مباشر" : "Live"}
-              <pspan className="record-dot"></pspan>
-            </div>
-          ) : loaded ? (
-            "-:-"
-          ) : (
-            formatTime(duration)
-          )}
-        </div>
-        <div className="buttons">
-          {!loaded && !isLiveStream && (
-            <button
-              className="btn btn-gold text-primary p-0"
-              onClick={handleDownload}
-            >
-              <DownloadOutlinedIcon />
-            </button>
-          )}
-          <button
-            className="btn btn-gold text-danger p-0"
-            onClick={handleClosePlayer}
-          >
-            <CloseOutlinedIcon />
-          </button>
-        </div>
       </div>
-    </div>
+    </>
   );
 };
 

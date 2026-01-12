@@ -218,11 +218,11 @@
   padding-block: 8px !important;
   padding-inline: 10px !important;
   border-bottom: var(--search-border);
-  background-color: var(--search-card-bg);
+  background-color: var(--search-card-bg) !important;
 }
 
 .outlets-top p:nth-child(1) {
-  color: rgb(93, 24, 240);
+  color: rgb(150, 121, 44);
   font-size: 18px; /* smaller = modern */
   letter-spacing: 1px;
   margin-top: 2px;

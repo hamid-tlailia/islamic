@@ -20,7 +20,7 @@
   --surah-border: 1px solid rgba(0, 0, 0, 0.18);
 
   /* soft glass for headers/cards used in many places */
-  --search-card-bg: rgba(255, 255, 255, 0.55);
+  --search-card-bg: rgba(255, 255, 255, 0.977);
   --dropdown-bg-color: rgba(255, 255, 255, 0.92);
 
   /* ====== Brand colors ====== */
@@ -40,7 +40,7 @@
   --tabs-bg-color: rgba(0, 0, 0, 0.12);
 
   /* ====== Player / API cards ====== */
-  --player-bg-color: #0b494e;
+  --player-bg-color: #7e90d666;
   --api-card: #ddeedf;
 
   /* ====== Highlight states ====== */
@@ -79,7 +79,7 @@ body.dark-mode {
   --search-border: 1px solid rgba(255, 255, 255, 0.16);
   --surah-border: 1px solid rgba(255, 255, 255, 0.14);
 
-  --search-card-bg: rgba(255, 255, 255, 0.06);
+  --search-card-bg: rgba(9, 6, 7, 0.956);
   --dropdown-bg-color: rgba(24, 26, 27, 0.95);
 
   --nav-link-color: #27c2d8;
@@ -89,7 +89,7 @@ body.dark-mode {
   --ayah-text-color: rgb(241, 170, 18);
   --surah-hover-color: #27c2d8;
 
-  --player-bg-color: #141718;
+  --player-bg-color: #1417185d;
 
   --primary-color: #1aa7c8;
   --secondary-color: #a03a1e;
@@ -129,7 +129,7 @@ body.light-filter {
   --search-border: 1px solid rgba(3, 2, 1, 0.28);
   --surah-border: 1px solid rgba(255, 255, 255, 0.8);
 
-  --search-card-bg: rgba(255, 255, 255, 0.22);
+  --search-card-bg: rgb(68, 71, 27);
   --dropdown-bg-color: rgba(178, 174, 159, 0.95);
 
   --nav-link-color: rgb(27, 230, 24);
@@ -139,7 +139,7 @@ body.light-filter {
   --ayah-text-color: #253987;
   --surah-hover-color: rgb(7, 24, 73);
 
-  --player-bg-color: rgb(81, 85, 27);
+  --player-bg-color: rgba(62, 65, 26, 0.663);
 
   --main-color: rgb(70, 17, 182);
   --api-card: #ddeedf;
@@ -155,20 +155,20 @@ body.light-filter {
    IMAGE THEME (body.image)
    ========================================================= */
 body.image {
-  --header-bg-color: rgba(0, 0, 0, 0.88);
+  --header-bg-color: rgb(32 32 32);
   --header-text-color: rgba(255, 255, 255, 0.9);
 
   --bg-color: rgba(0, 0, 0, 0.45);
   --text-color: rgba(255, 255, 255, 0.92);
 
-  --card-color: rgba(0, 0, 0, 0.55);
+  --card-color: rgba(0, 0, 0, 0.773);
   --outlets-bg-color: rgba(0, 0, 0, 0.72);
 
   --border: 1px solid rgba(255, 255, 255, 0.16);
   --search-border: 1px solid rgba(255, 255, 255, 0.22);
   --surah-border: 1px solid rgba(255, 255, 255, 0.2);
 
-  --search-card-bg: rgba(255, 255, 255, 0.08);
+  --search-card-bg: rgba(0, 0, 0, 0.896);
   --dropdown-bg-color: rgba(0, 0, 0, 0.55);
 
   --nav-link-color: #1ec832;
@@ -178,7 +178,7 @@ body.image {
   --ayah-text-color: #0aa4a4;
   --surah-hover-color: #ffcc00;
 
-  --player-bg-color: rgb(8, 27, 42);
+  --player-bg-color: rgba(8, 27, 42, 0.652);
 
   --scrolled-ayah-bg: rgba(15, 163, 213, 0.18);
   --scolled-ayah-color: gold;
@@ -213,7 +213,7 @@ body.sky {
   --search-border: 1px solid rgba(70, 130, 180, 0.3);
   --surah-border: 1px solid rgba(70, 130, 180, 0.3);
 
-  --search-card-bg: rgba(255, 255, 255, 0.06);
+  --search-card-bg: rgba(11, 11, 53, 0.944);
   --dropdown-bg-color: rgba(28, 28, 48, 0.95);
 
   --nav-link-color: rgb(32, 220, 29);
@@ -223,7 +223,7 @@ body.sky {
   --ayah-text-color: rgba(230, 230, 250, 0.92);
   --surah-hover-color: rgb(226, 26, 110);
 
-  --player-bg-color: rgb(11, 11, 53);
+  --player-bg-color: rgba(11, 11, 53, 0.648);
 
   --scrolled-ayah-bg: rgba(70, 130, 180, 0.16);
   --scolled-ayah-color: rgba(255, 255, 255, 0.92);
