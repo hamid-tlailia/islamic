@@ -71,6 +71,7 @@
 
 .time-card--active {
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.18) !important;
+  color: white !important;
 }
 
 .time-icon {
@@ -85,8 +86,11 @@
 
 .time-icon--active {
   background: rgba(255, 152, 0, 0.18);
+  color: white;
 }
-
+.time-label--active {
+  color: white !important;
+}
 .time-value {
   margin-top: 10px !important;
   font-variant-numeric: tabular-nums;

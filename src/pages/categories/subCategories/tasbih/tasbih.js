@@ -254,6 +254,7 @@ const Tasbih = () => {
       // ignore
     }
   };
+  const isRTL = language === "ar";
 
   return (
     <div className={`tasbih-page ${isAr ? "rtl" : ""}`}>
@@ -317,7 +318,10 @@ const Tasbih = () => {
                 justifyContent="space-between"
               >
                 <Stack gap={0.3}>
-                  <Typography level="title-lg" sx={{ opacity: 0.9 }}>
+                  <Typography
+                    level="title-lg"
+                    sx={{ opacity: 0.9, color: "var(--text-color)" }}
+                  >
                     {isAr ? "التقدم" : "Progress"}
                   </Typography>
                   <Stack
@@ -502,10 +506,18 @@ const Tasbih = () => {
                     : count}
                 </Button>
 
-                <Stack direction="row" gap={1} sx={{ mt: 0.5 }}>
+                <Stack
+                  direction={isRTL ? "row-reverse" : "row"}
+                  gap={1}
+                  sx={{
+                    mt: 0.5,
+                    direction: isRTL ? "rtl" : "ltr",
+                    justifyContent: "space-between",
+                  }}
+                >
                   <Button
                     variant="soft"
-                    startDecorator={<PrevIcon />}
+                    startDecorator={isRTL ? <NextIcon /> : <PrevIcon />}
                     onClick={goPrev}
                     disabled={currentTasbihIndex === 0}
                     sx={{
@@ -514,12 +526,11 @@ const Tasbih = () => {
                       border: "1px solid rgba(127,127,127,0.18)",
                     }}
                   >
-                    {prevLabel}
+                    {isRTL ? nextLabel : prevLabel}
                   </Button>
-
                   <Button
                     variant="soft"
-                    endDecorator={<NextIcon />}
+                    endDecorator={isRTL ? <PrevIcon /> : <NextIcon />}
                     onClick={goNext}
                     disabled={
                       currentTasbihIndex + 1 >=
@@ -531,7 +542,7 @@ const Tasbih = () => {
                       border: "1px solid rgba(127,127,127,0.18)",
                     }}
                   >
-                    {nextLabel}
+                    {isRTL ? prevLabel : nextLabel}
                   </Button>
                 </Stack>
 
@@ -555,7 +566,7 @@ const Tasbih = () => {
                     <Button
                       variant="plain"
                       size="sm"
-                      onClick={() => setShowDesc((s) => !s)}
+                      onClick={() => setShowDesc(!showDesc)}
                       endDecorator={
                         showDesc ? (
                           <ExpandLessRoundedIcon />

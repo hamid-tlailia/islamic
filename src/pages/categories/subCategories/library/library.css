@@ -141,7 +141,7 @@
   color: rgb(126, 132, 5) !important; /* Delete */
 }
 .libActionBtn:nth-child(3) {
-  color: rgb(20, 5, 132) !important; /* Delete */
+  color: rgb(5, 56, 132) !important; /* Delete */
 }
 .libActionBtn:hover {
   transform: translateY(-1px);

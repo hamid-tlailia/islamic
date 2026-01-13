@@ -273,6 +273,37 @@
   z-index: 250 !important;
 }
 
+.d-md-none {
+  @media (min-width: 768px) {
+    display: none !important;
+  }
+}
+.d-lg-block {
+  @media (min-width: 992px) {
+    display: block !important;
+  }
+}
+.d-md-block {
+  @media (min-width: 768px) {
+    display: block !important;
+  }
+}
+.d-lg-none {
+  @media (min-width: 992px) {
+    display: none !important;
+  }
+}
+.d-xl-none {
+  @media (min-width: 1200px) {
+    display: none !important;
+  }
+}
+.d-block {
+  display: block !important;
+}
+.f-flex {
+  display: flex !important;
+}
 .mobile-header .black-left {
   background-color: rgba(0, 0, 0, 0.78);
   width: 0;

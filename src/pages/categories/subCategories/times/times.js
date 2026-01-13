@@ -590,7 +590,7 @@ const Times = () => {
                       backgroundColor: !isActive
                         ? "var(--card-color)"
                         : "rgb(101 87 22 / 92%)",
-                      color: "var(--text-color)",
+                      color: isActive && "white",
                       border: isActive
                         ? "1px solid rgba(255, 152, 0, 0.55)"
                         : "1px solid rgba(127,127,127,0.25)",
@@ -614,7 +614,12 @@ const Times = () => {
                           <Typography
                             level="title-lg"
                             fontWeight="lg"
-                            sx={{ color: "var(--text-color)" }}
+                            className={
+                              isActive ? "time-label--active" : "time-label"
+                            }
+                            sx={{
+                              color: "var(--text-color)",
+                            }}
                           >
                             {item.label}
                           </Typography>
@@ -626,7 +631,7 @@ const Times = () => {
                             variant="soft"
                             sx={{
                               backgroundColor: "rgba(255,152,0,0.15)",
-                              color: "var(--text-color)",
+                              color: "white",
                               border: "1px solid rgba(255,152,0,0.35)",
                             }}
                           >
@@ -638,7 +643,7 @@ const Times = () => {
                       <Typography
                         level="h2"
                         className="time-value"
-                        sx={{ color: "var(--text-color)" }}
+                        sx={{ color: isActive ? "white" : "var(--text-color)" }}
                       >
                         {item.time}
                       </Typography>

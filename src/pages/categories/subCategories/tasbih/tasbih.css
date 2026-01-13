@@ -30,10 +30,21 @@
   content: "";
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(900px 420px at 10% 10%, rgba(255, 152, 0, 0.10), transparent 55%),
-    radial-gradient(800px 420px at 95% 20%, rgba(33, 150, 243, 0.10), transparent 55%),
-    radial-gradient(700px 420px at 40% 90%, rgba(76, 175, 80, 0.08), transparent 55%);
+  background: radial-gradient(
+      900px 420px at 10% 10%,
+      rgba(255, 152, 0, 0.1),
+      transparent 55%
+    ),
+    radial-gradient(
+      800px 420px at 95% 20%,
+      rgba(33, 150, 243, 0.1),
+      transparent 55%
+    ),
+    radial-gradient(
+      700px 420px at 40% 90%,
+      rgba(76, 175, 80, 0.08),
+      transparent 55%
+    );
   pointer-events: none;
 }
 
@@ -65,13 +76,13 @@
 }
 
 .tasbih-desc {
-  max-height: 84px;
+  max-height: 0 !important;
   overflow: hidden;
   transition: max-height 240ms ease;
 }
 
 .tasbih-desc.open {
-  max-height: 420px;
+  max-height: max-content !important;
 }
 
 @media (max-width: 420px) {
