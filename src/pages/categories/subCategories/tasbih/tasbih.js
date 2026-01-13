@@ -1,8 +1,27 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useTranslation } from "../../../../components/languages/provider";
+import "./tasbih.css";
 import Card from "@mui/joy/Card";
+import CardContent from "@mui/joy/CardContent";
+import Typography from "@mui/joy/Typography";
 import CircularProgress from "@mui/joy/CircularProgress";
 import Button from "@mui/joy/Button";
+import IconButton from "@mui/joy/IconButton";
+import Chip from "@mui/joy/Chip";
+import Divider from "@mui/joy/Divider";
+import Stack from "@mui/joy/Stack";
+import LinearProgress from "@mui/joy/LinearProgress";
+import Alert from "@mui/joy/Alert";
+import Tooltip from "@mui/joy/Tooltip";
+
+import ReplayRoundedIcon from "@mui/icons-material/ReplayRounded";
+import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
+import ExpandLessRoundedIcon from "@mui/icons-material/ExpandLessRounded";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 
 const combinedTasbihAndIstighfar = [
   {
@@ -77,7 +96,6 @@ const combinedTasbihAndIstighfar = [
       en: "The Messenger of Allah (PBUH) said: 'Whoever says this with certainty during the day and dies before the evening will be among the people of Paradise, and whoever says it at night and dies before morning will be among the people of Paradise.' (Narrated by Bukhari)",
     },
   },
-
   {
     ar: "أستغفر الله العظيم الذي لا إله إلا هو الحي القيوم وأتوب إليه",
     en: "I seek forgiveness from Allah the Great, there is no god but He, the Ever-Living, the Sustainer, and I repent to Him.",
@@ -118,175 +136,464 @@ const combinedTasbihAndIstighfar = [
 
 const Tasbih = () => {
   const { language } = useTranslation();
+  const isAr = language === "ar";
+
   const [currentTasbihIndex, setCurrentTasbihIndex] = useState(0);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [finishedAllTasbihs, setFinishedAllTasbihs] = useState(false);
 
-  // Ref to track if it's the initial render
+  const [showDesc, setShowDesc] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  // Direction-aware icons
+  const PrevIcon = isAr ? ArrowForwardRoundedIcon : ArrowBackRoundedIcon;
+  const NextIcon = isAr ? ArrowBackRoundedIcon : ArrowForwardRoundedIcon;
+
+  // Direction-aware labels (optional)
+  const prevLabel = isAr ? "التالي" : "Back";
+  const nextLabel = isAr ? "السابق" : "Next";
+
   const isInitialRender = useRef(true);
 
   useEffect(() => {
-    // Load saved state from localStorage if it exists
     const savedState = localStorage.getItem("tasbihState");
     if (savedState) {
-      const { currentTasbihIndex, count, finishedAllTasbihs } =
-        JSON.parse(savedState);
-      setCurrentTasbihIndex(currentTasbihIndex);
-      setCount(count);
-      setFinishedAllTasbihs(finishedAllTasbihs);
+      const parsed = JSON.parse(savedState);
+      setCurrentTasbihIndex(parsed.currentTasbihIndex ?? 0);
+      setCount(parsed.count ?? 0);
+      setFinishedAllTasbihs(parsed.finishedAllTasbihs ?? false);
     }
     setLoading(false);
   }, []);
 
   useEffect(() => {
-    // Skip saving to localStorage during the initial render
     if (isInitialRender.current) {
       isInitialRender.current = false;
       return;
     }
-    // Save state to localStorage whenever it changes
-    const stateToSave = {
-      currentTasbihIndex,
-      count,
-      finishedAllTasbihs,
-    };
+    const stateToSave = { currentTasbihIndex, count, finishedAllTasbihs };
     localStorage.setItem("tasbihState", JSON.stringify(stateToSave));
   }, [currentTasbihIndex, count, finishedAllTasbihs]);
 
   useEffect(() => {
-    if (finishedAllTasbihs) {
-      localStorage.removeItem("tasbihState");
-    }
+    if (finishedAllTasbihs) localStorage.removeItem("tasbihState");
   }, [finishedAllTasbihs]);
 
   const currentTasbih = combinedTasbihAndIstighfar[currentTasbihIndex];
 
-  // Handle button click to increase count
+  const totalForCurrent = Math.max(1, currentTasbih.total || 1);
+  const progressValue = Math.min(
+    100,
+    Math.round((count / totalForCurrent) * 100)
+  );
+  const remaining = Math.max(0, totalForCurrent - count);
+
+  const titleText = useMemo(() => {
+    const text = isAr ? currentTasbih.ar : currentTasbih.en;
+    const timesLabel =
+      totalForCurrent < 2
+        ? isAr
+          ? "(مرة واحدة)"
+          : "(one time)"
+        : isAr
+        ? `(${totalForCurrent} مرة)`
+        : `(${totalForCurrent} times)`;
+    return `${text} ${timesLabel}`;
+  }, [currentTasbih, isAr, totalForCurrent]);
+
   const handleTasbihClick = () => {
-    // Trigger a short vibration (e.g., 50ms)
-    if (navigator.vibrate) {
-      navigator.vibrate(50);
-    }
+    if (navigator.vibrate) navigator.vibrate(35);
 
-    if (count < currentTasbih.total) {
-      setCount(count + 1);
-    }
+    if (count < totalForCurrent) setCount((c) => c + 1);
 
-    if (count + 1 === currentTasbih.total) {
+    if (count + 1 === totalForCurrent) {
       setTimeout(() => {
         if (currentTasbihIndex + 1 < combinedTasbihAndIstighfar.length) {
-          // Move to the next tasbih if not at the last one
-          setCurrentTasbihIndex(currentTasbihIndex + 1);
-          setCount(0); // Reset count for the new tasbih
+          setCurrentTasbihIndex((i) => i + 1);
+          setCount(0);
+          setShowDesc(false);
         } else {
-          // If all tasbihs are completed, show the success message
           setFinishedAllTasbihs(true);
         }
-      }, 1000); // Small delay for user feedback
+      }, 650);
+    }
+  };
+
+  const goNext = () => {
+    if (currentTasbihIndex + 1 < combinedTasbihAndIstighfar.length) {
+      setCurrentTasbihIndex((i) => i + 1);
+      setCount(0);
+      setShowDesc(false);
+    }
+  };
+
+  const goPrev = () => {
+    if (currentTasbihIndex > 0) {
+      setCurrentTasbihIndex((i) => i - 1);
+      setCount(0);
+      setShowDesc(false);
+    }
+  };
+
+  const resetToday = () => {
+    localStorage.removeItem("tasbihState");
+    setCurrentTasbihIndex(0);
+    setCount(0);
+    setFinishedAllTasbihs(false);
+    setShowDesc(false);
+  };
+
+  const copyText = async () => {
+    try {
+      const text = isAr ? currentTasbih.ar : currentTasbih.en;
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1200);
+    } catch {
+      // ignore
     }
   };
 
   return (
-    <div className="tasbih-container">
+    <div className={`tasbih-page ${isAr ? "rtl" : ""}`}>
       {loading ? (
-        <div className="w-100 text-center loader-manager mt-5">
+        <div className="loader-manager">
           <CircularProgress />
+          <Typography
+            level="body-sm"
+            sx={{ mt: 1, opacity: 0.8, color: "var(--text-color)" }}
+          >
+            {isAr ? "جاري التحميل..." : "Loading..."}
+          </Typography>
         </div>
       ) : finishedAllTasbihs ? (
-        <div
-          className="success-message"
-          style={{
-            textAlign: "center",
-            color: "#388e3c",
-            fontSize: "24px",
-            padding: "20px",
-          }}
-        >
-          {language === "ar"
-            ? "تهانينا! لقد أكملت جميع التسبيحات لهذا اليوم."
-            : "Congratulations! You have completed all tasbihs for today."}
-        </div>
-      ) : (
         <Card
-          variant="outlined"
+          variant="soft"
+          className="tasbih-card"
           sx={{
-            padding: 2,
-            textAlign: "center",
-            fontWeight: "bold",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "space-between",
-            height: "100%",
             backgroundColor: "var(--card-color)",
             color: "var(--text-color)",
+            border: "1px solid rgba(127,127,127,0.25)",
           }}
         >
-          {/* Tasbih Word */}
-          <div
-            className="tasbih-word"
-            style={{ color: "#00695c", fontSize: "20px", marginBottom: "20px" }}
-          >
-            {language === "ar"
-              ? currentTasbih.total < 2
-                ? `${currentTasbih.ar} (مرة واحدة)`
-                : `${currentTasbih.ar} (${currentTasbih.total} مرة)`
-              : currentTasbih.total < 2
-              ? `${currentTasbih.en} (one time)`
-              : `${currentTasbih.en} (${currentTasbih.total} times)`}
-          </div>
+          <CardContent sx={{ textAlign: "center" }}>
+            <CheckCircleRoundedIcon className="done-icon" />
+            <Typography level="h2" sx={{ mt: 1 }}>
+              {isAr ? "تم بحمد الله ✅" : "Completed ✅"}
+            </Typography>
+            <Typography level="body-lg" sx={{ mt: 1, opacity: 0.9 }}>
+              {isAr
+                ? "تهانينا! لقد أكملت جميع التسبيحات لهذا اليوم."
+                : "Congratulations! You have completed all tasbihs for today."}
+            </Typography>
 
-          {/* Tasbih Button */}
-          <Button
-            variant="contained"
-            onClick={handleTasbihClick}
-            sx={{
-              width: "150px",
-              height: "150px",
-              borderRadius: "50%",
-              backgroundColor:
-                count < currentTasbih.total ? "#909090" : "green",
-              color:
-                count < currentTasbih.total && count < 1 ? "crimson" : "blue",
-              fontSize: "50px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              margin: "20px auto",
-              pointerEvents: count < currentTasbih.total ? "all" : "none",
-              border: "1px solid #909090",
-            }}
-          >
-            {count < currentTasbih.total
-              ? count < 1
-                ? language === "ar"
-                  ? "ابدأ"
-                  : "Start"
-                : count
-              : language === "ar"
-              ? "تم"
-              : "End"}
-          </Button>
-
-          {/* Tasbih Description */}
-          <div
-            className="tasbih-description"
-            style={{
-              color: "#455a64",
-              fontSize: "16px",
-              marginBottom: "20px",
-              maxHeight: "max-content",
-              overflow: "hidden",
-              lineHeight: "1.8em",
-              textAlign: "justify",
-            }}
-          >
-            {language === "ar"
-              ? currentTasbih.description.ar
-              : currentTasbih.description.en}
-          </div>
+            <Button
+              sx={{ mt: 2 }}
+              startDecorator={<ReplayRoundedIcon />}
+              onClick={resetToday}
+            >
+              {isAr ? "إعادة من البداية" : "Start again"}
+            </Button>
+          </CardContent>
         </Card>
+      ) : (
+        <div className="tasbih-shell">
+          {/* header */}
+          <Card
+            variant="soft"
+            className="tasbih-hero"
+            sx={{
+              backgroundColor: "var(--card-color)",
+              color: "var(--text-color)",
+              border: "1px solid rgba(127,127,127,0.25)",
+            }}
+          >
+            <CardContent>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                gap={1.2}
+                alignItems={{ sm: "center" }}
+                justifyContent="space-between"
+              >
+                <Stack gap={0.3}>
+                  <Typography level="title-lg" sx={{ opacity: 0.9 }}>
+                    {isAr ? "التقدم" : "Progress"}
+                  </Typography>
+                  <Stack
+                    direction="row"
+                    gap={1}
+                    alignItems="center"
+                    flexWrap="wrap"
+                  >
+                    <Chip
+                      variant="soft"
+                      sx={{
+                        backgroundColor: "rgba(127,127,127,0.12)",
+                        color: "var(--text-color)",
+                        border: "1px solid rgba(127,127,127,0.18)",
+                      }}
+                    >
+                      {isAr ? "الذكر" : "Item"}: {currentTasbihIndex + 1} /{" "}
+                      {combinedTasbihAndIstighfar.length}
+                    </Chip>
+
+                    <Chip
+                      variant="soft"
+                      sx={{
+                        backgroundColor: "rgba(127,127,127,0.12)",
+                        color: "var(--text-color)",
+                        border: "1px solid rgba(127,127,127,0.18)",
+                      }}
+                    >
+                      {isAr ? "المتبقي" : "Remaining"}: {remaining}
+                    </Chip>
+                  </Stack>
+                </Stack>
+
+                <Stack
+                  direction="row"
+                  gap={1}
+                  alignItems="center"
+                  justifyContent="flex-end"
+                >
+                  <Tooltip title={isAr ? "نسخ الذكر" : "Copy dhikr"}>
+                    <IconButton
+                      variant="soft"
+                      onClick={copyText}
+                      sx={{
+                        backgroundColor: "rgba(127,127,127,0.12)",
+                        color: "var(--text-color)",
+                        border: "1px solid rgba(127,127,127,0.18)",
+                      }}
+                    >
+                      <ContentCopyRoundedIcon />
+                    </IconButton>
+                  </Tooltip>
+
+                  <Tooltip title={isAr ? "إعادة ضبط اليوم" : "Reset today"}>
+                    <IconButton
+                      variant="soft"
+                      onClick={resetToday}
+                      sx={{
+                        backgroundColor: "rgba(127,127,127,0.12)",
+                        color: "var(--text-color)",
+                        border: "1px solid rgba(127,127,127,0.18)",
+                      }}
+                    >
+                      <ReplayRoundedIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
+              </Stack>
+
+              {copied && (
+                <Alert
+                  variant="soft"
+                  color="success"
+                  sx={{ mt: 1.2, backgroundColor: "rgba(76,175,80,0.14)" }}
+                >
+                  {isAr ? "تم النسخ ✅" : "Copied ✅"}
+                </Alert>
+              )}
+
+              <Divider sx={{ my: 1.5, opacity: 0.25 }} />
+
+              <Stack direction="row" alignItems="center" gap={1.5}>
+                <CircularProgress
+                  determinate
+                  value={progressValue}
+                  size="lg"
+                  sx={{
+                    "--CircularProgress-trackThickness": "8px",
+                    "--CircularProgress-progressThickness": "8px",
+                    color: "rgba(255,152,0,0.95)",
+                  }}
+                >
+                  <Typography
+                    level="body-sm"
+                    sx={{ color: "var(--text-color)" }}
+                  >
+                    {progressValue}%
+                  </Typography>
+                </CircularProgress>
+
+                <Stack sx={{ flex: 1 }}>
+                  <Typography
+                    level="title-lg"
+                    sx={{ color: "var(--text-color)" }}
+                  >
+                    {titleText}
+                  </Typography>
+
+                  <LinearProgress
+                    determinate
+                    value={progressValue}
+                    sx={{
+                      mt: 1,
+                      backgroundColor: "rgba(127,127,127,0.16)",
+                    }}
+                  />
+                </Stack>
+              </Stack>
+            </CardContent>
+          </Card>
+
+          {/* main */}
+          <Card
+            variant="outlined"
+            className="tasbih-card"
+            sx={{
+              mt: 2,
+              backgroundColor: "var(--card-color)",
+              color: "var(--text-color)",
+              border: "1px solid rgba(127,127,127,0.25)",
+            }}
+          >
+            <CardContent>
+              <Stack gap={1.2} alignItems="center">
+                <Typography
+                  level="h3"
+                  className="tasbih-main-text"
+                  sx={{ textAlign: "center", color: "var(--text-color)" }}
+                >
+                  {isAr ? currentTasbih.ar : currentTasbih.en}
+                </Typography>
+
+                <Typography
+                  level="body-sm"
+                  sx={{ opacity: 0.8, textAlign: "center" }}
+                >
+                  {isAr
+                    ? "اضغط على الزر للتسبيح — يتم الحفظ تلقائيًا"
+                    : "Tap the button to count — progress is saved automatically"}
+                </Typography>
+
+                <Button
+                  onClick={handleTasbihClick}
+                  className="tasbih-button"
+                  disabled={count >= totalForCurrent}
+                  sx={{
+                    width: { xs: 160, sm: 190 },
+                    height: { xs: 160, sm: 190 },
+                    borderRadius: "50%",
+                    fontSize: 44,
+                    mt: 1,
+                    backgroundColor: "rgba(127,127,127,0.14)",
+                    color: "var(--text-color)",
+                    border: "1px solid rgba(127,127,127,0.25)",
+                    "&:hover": {
+                      backgroundColor: "rgba(127,127,127,0.20)",
+                    },
+                    "&:disabled": {
+                      opacity: 0.65,
+                      color: "var(--text-color)",
+                    },
+                  }}
+                >
+                  {count < 1
+                    ? isAr
+                      ? "ابدأ"
+                      : "Start"
+                    : count >= totalForCurrent
+                    ? isAr
+                      ? "تم"
+                      : "Done"
+                    : count}
+                </Button>
+
+                <Stack direction="row" gap={1} sx={{ mt: 0.5 }}>
+                  <Button
+                    variant="soft"
+                    startDecorator={<PrevIcon />}
+                    onClick={goPrev}
+                    disabled={currentTasbihIndex === 0}
+                    sx={{
+                      backgroundColor: "rgba(127,127,127,0.12)",
+                      color: "var(--text-color)",
+                      border: "1px solid rgba(127,127,127,0.18)",
+                    }}
+                  >
+                    {prevLabel}
+                  </Button>
+
+                  <Button
+                    variant="soft"
+                    endDecorator={<NextIcon />}
+                    onClick={goNext}
+                    disabled={
+                      currentTasbihIndex + 1 >=
+                      combinedTasbihAndIstighfar.length
+                    }
+                    sx={{
+                      backgroundColor: "rgba(127,127,127,0.12)",
+                      color: "var(--text-color)",
+                      border: "1px solid rgba(127,127,127,0.18)",
+                    }}
+                  >
+                    {nextLabel}
+                  </Button>
+                </Stack>
+
+                <Divider sx={{ my: 1.5, opacity: 0.25, width: "100%" }} />
+
+                {/* Description */}
+                <Stack sx={{ width: "100%" }} gap={0.8}>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    gap={1}
+                  >
+                    <Stack direction="row" gap={1} alignItems="center">
+                      <InfoOutlinedIcon fontSize="small" />
+                      <Typography level="title-md">
+                        {isAr ? "الشرح / الدليل" : "Description / Proof"}
+                      </Typography>
+                    </Stack>
+
+                    <Button
+                      variant="plain"
+                      size="sm"
+                      onClick={() => setShowDesc((s) => !s)}
+                      endDecorator={
+                        showDesc ? (
+                          <ExpandLessRoundedIcon />
+                        ) : (
+                          <ExpandMoreRoundedIcon />
+                        )
+                      }
+                      sx={{ color: "var(--text-color)" }}
+                    >
+                      {showDesc
+                        ? isAr
+                          ? "إخفاء"
+                          : "Hide"
+                        : isAr
+                        ? "عرض"
+                        : "Show"}
+                    </Button>
+                  </Stack>
+
+                  <Typography
+                    level="body-md"
+                    className={`tasbih-desc ${showDesc ? "open" : ""}`}
+                    sx={{
+                      color: "var(--text-color)",
+                      opacity: 0.9,
+                      lineHeight: 1.9,
+                      textAlign: isAr ? "right" : "left",
+                    }}
+                  >
+                    {isAr
+                      ? currentTasbih.description.ar
+                      : currentTasbih.description.en}
+                  </Typography>
+                </Stack>
+              </Stack>
+            </CardContent>
+          </Card>
+        </div>
       )}
     </div>
   );

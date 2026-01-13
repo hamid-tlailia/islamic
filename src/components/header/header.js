@@ -542,9 +542,9 @@ const Header = ({ onNavClick, visibility, size }) => {
     e.preventDefault();
     setLoading(true);
 
-    const serviceID = "service_wkwt0sq";
-    const templateID = "template_4cy5er2";
-    const userID = "JgnJY3IJDvvpSS4nX";
+    const serviceID = "service_q9ux1k2";
+    const templateID = "template_2lguhoe";
+    const userID = "an4QUGfU0CzKLoFMB";
 
     emailjs.send(serviceID, templateID, formData, userID).then(
       () => {
@@ -702,6 +702,7 @@ const Header = ({ onNavClick, visibility, size }) => {
               onClick={(e) => {
                 e.stopPropagation();
                 setOpen(true);
+                closeNavbar(e);
               }}
             >
               <SettingsOutlinedIcon />
@@ -739,7 +740,6 @@ const Header = ({ onNavClick, visibility, size }) => {
       </div>
 
       {/* Draggable notch-nav */}
-      {/* Draggable notch-nav */}
       <div
         ref={notchRef}
         className={`notch-nav ${visibility ? "hide" : ""}`}
@@ -751,7 +751,7 @@ const Header = ({ onNavClick, visibility, size }) => {
           top: notchNavPosition.y,
           cursor: "move",
           touchAction: "none",
-          zIndex: 9999,
+          zIndex: 180,
         }}
       >
         <button

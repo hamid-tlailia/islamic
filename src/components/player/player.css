@@ -3,7 +3,7 @@
   left: 0;
   bottom: -140%;
   width: 100%;
-  z-index: 150;
+  z-index: 210;
   padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
   transition: bottom 0.45s ease;
   direction: ltr !important;
@@ -33,7 +33,7 @@
   border-radius: 999px;
   display: grid;
   place-items: center;
-  z-index: 10000000;
+  z-index: 210;
   cursor: pointer;
 
   background: rgba(255, 255, 255, 0.1);

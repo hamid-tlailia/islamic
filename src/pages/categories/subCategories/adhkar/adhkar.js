@@ -1,197 +1,150 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./adhkar.css";
 import { useTranslation } from "../../../../components/languages/provider";
-import { Tabs, Tab, TabList, TabPanel } from "@mui/joy";
-import Card from "@mui/joy/Card";
-import CircularProgress from "@mui/joy/CircularProgress";
-import adhkarData from "./json/adhkar.json"; // Importing the adhkar data
+
+import {
+  Tabs,
+  Tab,
+  TabList,
+  TabPanel,
+  Card,
+  Chip,
+  Typography,
+  Box,
+  Skeleton,
+} from "@mui/joy";
+
+import adhkarData from "./json/adhkar.json";
 
 const Adhkar = () => {
   const { language } = useTranslation();
   const [tabIndex, setTabIndex] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // Simulate loading delay
   useEffect(() => {
-    const fetchData = () => {
-      setLoading(false);
-    };
-    fetchData();
+    // keep your loading simulation
+    const t = setTimeout(() => setLoading(false), 450);
+    return () => clearTimeout(t);
   }, []);
 
-  const getTitleByLanguage = (index) => {
-    return adhkarData?.adhkars[index]?.title[language];
-  };
+  const dir = language === "ar" ? "rtl" : "ltr";
 
-  const getContentByLanguage = (index) => {
-    return adhkarData.adhkars[index]?.content.map((item) => ({
-      zekr: item.zekr[language],
-      repeat: item.repeat,
-      bless: item.bless[language],
+  const getTitleByLanguage = (index) =>
+    adhkarData?.adhkars?.[index]?.title?.[language] || "—";
+
+  const getContentByLanguage = (index) =>
+    (adhkarData?.adhkars?.[index]?.content || []).map((item) => ({
+      zekr: item?.zekr?.[language] || "",
+      repeat: item?.repeat || "",
+      bless: item?.bless?.[language] || "",
     }));
+
+  const tabs = useMemo(
+    () => [
+      { id: 0, title: getTitleByLanguage(0) },
+      { id: 1, title: getTitleByLanguage(1) },
+      { id: 2, title: getTitleByLanguage(2) },
+    ],
+    // eslint-disable-next-line
+    [language]
+  );
+
+  const renderPanel = (panelIndex) => {
+    if (loading) {
+      return (
+        <Box className="adhkarList">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Card key={i} className="adhkarCard" variant="outlined">
+              <Skeleton variant="text" level="title-md" />
+              <Skeleton variant="text" />
+              <Skeleton variant="text" />
+              <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
+                <Skeleton variant="rectangular" width={90} height={28} />
+                <Skeleton variant="rectangular" width={120} height={28} />
+              </Box>
+            </Card>
+          ))}
+        </Box>
+      );
+    }
+
+    const list = getContentByLanguage(panelIndex);
+
+    return (
+      <Box className="adhkarList">
+        {list.map((item, index) => (
+          <Card key={index} className="adhkarCard" variant="outlined">
+            {item.bless ? (
+              <Box className="adhkarBless">
+                <Typography level="body-sm" className="adhkarBlessText">
+                  {item.bless}
+                </Typography>
+              </Box>
+            ) : null}
+
+            <Typography level="body-lg" className="adhkarText">
+              {item.zekr}
+            </Typography>
+
+            <Box className="adhkarFooter">
+              {item.repeat ? (
+                <Chip className="repeatChip" variant="soft" size="sm">
+                  {language === "ar" ? "التكرار" : "Repeat"}: {item.repeat}
+                </Chip>
+              ) : (
+                <span />
+              )}
+
+              <Chip className="typeChip" variant="soft" size="sm">
+                {tabs[panelIndex]?.title || ""}
+              </Chip>
+            </Box>
+          </Card>
+        ))}
+      </Box>
+    );
   };
 
   return (
-    <div>
+    <Box className="adhkarPage" dir={dir}>
+      <Box className="adhkarHeader">
+        <Typography level="h4" className="adhkarTitle">
+          {language === "ar" ? "الأذكار" : "Adhkar"}
+        </Typography>
+        <Typography level="body-sm" className="adhkarSubtitle">
+          {language === "ar"
+            ? "اختر القسم ثم اقرأ الأذكار بسهولة"
+            : "Pick a section and read comfortably"}
+        </Typography>
+      </Box>
+
       <Tabs
         aria-label="Adhkar Tabs"
         value={tabIndex}
         onChange={(event, newValue) => setTabIndex(newValue)}
-        sx={{
-          bgcolor: "var(--card-color)",
-          color: "var(--text-color)",
-          marginBottom: 2,
-        }}
+        className="adhkarTabsRoot"
       >
-        <TabList
-          className="w-100 d-flex flex-row justify-content-between align-items-center p-0 gap-0 card "
-          sx={{
-            bgcolor: "var(--card-color)",
-            color: "var(--text-color)",
-            marginBottom: 2,
-          }}
-        >
-          <Tab
-            value={0}
-            sx={{
-              color: tabIndex === 0 ? "purple" : "var(--text-color)",
-              padding: "10px",
-              width: "calc(100%/3)",
-            }}
-            className="tabs"
-          >
-            {getTitleByLanguage(0)}
-          </Tab>
-          <Tab
-            value={1}
-            sx={{
-              color: tabIndex === 1 ? "purple" : "var(--text-color)",
-              padding: "10px",
-              width: "calc(100%/3)",
-            }}
-            className="tabs"
-          >
-            {getTitleByLanguage(1)}
-          </Tab>
-          <Tab
-            value={2}
-            sx={{
-              color: tabIndex === 2 ? "purple" : "var(--text-color)",
-              padding: "10px",
-              width: "calc(100%/3)",
-            }}
-            className="tabs"
-          >
-            {getTitleByLanguage(2)}
-          </Tab>
+        <TabList className="adhkarTabList">
+          {tabs.map((t) => (
+            <Tab key={t.id} value={t.id} className="adhkarTab">
+              {t.title}
+            </Tab>
+          ))}
         </TabList>
 
-        <TabPanel value={0}>
-          {/* Display Morning Adhkar */}
-          {!loading ? (
-            getContentByLanguage(0)?.map((item, index) => (
-              <Card
-                key={index}
-                variant="outlined"
-                sx={{
-                  bgcolor: "var(--card-color)",
-                  color: "var(--text-color)",
-                  marginBottom: 2,
-                }}
-              >
-                <div>
-                  {item.bless && (
-                    <p className="text-success mb-2 p-2 border-bottom">
-                      {item.bless}
-                    </p>
-                  )}
-                  <p>{item.zekr}</p>
-                  {item.repeat && (
-                    <p className="badge bg-primary text-light">{`${
-                      language === "ar" ? "التكرار: " : "Repeat : "
-                    } ${item.repeat}`}</p>
-                  )}
-                </div>
-              </Card>
-            ))
-          ) : (
-            <div className="w-100 text-center loader-manager mt-5">
-              <CircularProgress />
-            </div>
-          )}
+        <TabPanel value={0} className="adhkarPanel">
+          {renderPanel(0)}
         </TabPanel>
 
-        <TabPanel value={1}>
-          {/* Display Evening Adhkar */}
-          {!loading ? (
-            getContentByLanguage(1)?.map((item, index) => (
-              <Card
-                key={index}
-                variant="outlined"
-                sx={{
-                  bgcolor: "var(--card-color)",
-                  color: "var(--text-color)",
-                  marginBottom: 2,
-                }}
-              >
-                <div>
-                  {item.bless && (
-                    <p className="text-success mb-2 p-2 border-bottom">
-                      {item.bless}
-                    </p>
-                  )}
-                  <p>{item.zekr}</p>
-                  {item.repeat && (
-                    <p className="badge bg-primary text-light">{`${
-                      language === "ar" ? "التكرار: " : "Repeat : "
-                    } ${item.repeat}`}</p>
-                  )}
-                </div>
-              </Card>
-            ))
-          ) : (
-            <div className="w-100 text-center loader-manager mt-5">
-              <CircularProgress />
-            </div>
-          )}
+        <TabPanel value={1} className="adhkarPanel">
+          {renderPanel(1)}
         </TabPanel>
 
-        <TabPanel value={2}>
-          {/* Display Post-Prayer Adhkar */}
-          {!loading ? (
-            getContentByLanguage(2)?.map((item, index) => (
-              <Card
-                key={index}
-                variant="outlined"
-                sx={{
-                  bgcolor: "var(--card-color)",
-                  color: "var(--text-color)",
-                  marginBottom: 2,
-                }}
-              >
-                <div>
-                  {item.bless && (
-                    <p className="text-success mb-2 p-2 border-bottom">
-                      {item.bless}
-                    </p>
-                  )}
-                  <p>{item.zekr}</p>
-                  {item.repeat && (
-                    <p className="badge bg-primary text-light">{`${
-                      language === "ar" ? "التكرار: " : "Repeat : "
-                    } ${item.repeat}`}</p>
-                  )}
-                </div>
-              </Card>
-            ))
-          ) : (
-            <div className="w-100 text-center loader-manager mt-5">
-              <CircularProgress />
-            </div>
-          )}
+        <TabPanel value={2} className="adhkarPanel">
+          {renderPanel(2)}
         </TabPanel>
       </Tabs>
-    </div>
+    </Box>
   );
 };
 

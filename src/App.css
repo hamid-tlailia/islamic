@@ -456,3 +456,13 @@ a {
 .MuiModalDialog-root {
   border: none !important;
 }
+/* z-index general for all modals */
+.MuiModal-root {
+  z-index: 200 !important;
+}
+.MuiDivider-horizontal {
+  background-color: var(--text-color) !important;
+}
+.Mui-disabled {
+  background-color: inherit !important;
+}

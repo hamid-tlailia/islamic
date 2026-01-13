@@ -270,7 +270,7 @@
 
 .mobile-header.active {
   opacity: 1;
-  z-index: 99999999 !important;
+  z-index: 250 !important;
 }
 
 .mobile-header .black-left {
@@ -325,7 +325,23 @@
   gap: 10px;
   margin-bottom: 14px;
 }
-
+.drawer-action {
+  border: none;
+  outline: none;
+  padding: 10px 12px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-evenly;
+  cursor: pointer;
+  background: rgba(255, 77, 77, 0.15);
+  color: #ff4d4d;
+  box-shadow: rgba(255, 77, 77, 0.25) 0 0 0 1px inset;
+  transition: 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
 .drawer-brand {
   display: flex;
   align-items: center;

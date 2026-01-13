@@ -1,27 +1,100 @@
-.times {
-  background-color: var(--card-color);
-  color: var(--text-color);
-  justify-content: center !important;
-  align-items: center !important;
+.times-page {
+  min-height: 100%;
+  padding-bottom: 28px;
+}
+
+.times-page.rtl {
+  direction: rtl;
+}
+
+.times-hero {
+  position: relative;
+  padding: 22px 14px 16px;
+}
+
+.times-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+      1200px 450px at 10% 10%,
+      rgba(255, 152, 0, 0.12),
+      transparent 55%
+    ),
+    radial-gradient(
+      1000px 420px at 90% 20%,
+      rgba(76, 175, 80, 0.1),
+      transparent 55%
+    ),
+    radial-gradient(
+      900px 420px at 40% 90%,
+      rgba(33, 150, 243, 0.1),
+      transparent 55%
+    );
+  pointer-events: none;
+}
+
+.times-hero__content {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.search-card {
+  border-radius: 16px !important;
+  backdrop-filter: blur(10px);
+}
+
+.times-body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 14px;
 }
 
 .loader-manager {
   display: flex;
+  flex-direction: column;
   justify-content: center !important;
   align-items: center !important;
-  min-height: 300px;
+  min-height: 260px;
 }
-.times-container h4 {
-  display: flex;
-  justify-content: center; /* Horizontally center */
-  align-items: center; /* Vertically center */
-  text-align: center !important;
+
+.time-card {
+  border-radius: 18px !important;
+  overflow: hidden;
+  transition: transform 180ms ease, box-shadow 180ms ease;
 }
-.times-container h5 {
-  display: flex;
-  justify-content: center; /* Horizontally center */
-  align-items: center; /* Vertically center */
-  text-align: center !important;
-  width: 100% !important;
-  background-color: red;
+
+.time-card:hover {
+  transform: translateY(-3px);
+}
+
+.time-card--active {
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.18) !important;
+}
+
+.time-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: rgba(127, 127, 127, 0.14);
+  color: var(--text-color);
+}
+
+.time-icon--active {
+  background: rgba(255, 152, 0, 0.18);
+}
+
+.time-value {
+  margin-top: 10px !important;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 480px) {
+  .times-hero {
+    padding: 18px 10px 12px;
+  }
 }

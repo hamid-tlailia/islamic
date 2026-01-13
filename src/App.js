@@ -313,6 +313,7 @@ function App() {
                         <Quran
                           src={audioSRC}
                           toTop={() => setBackToTop(true)}
+                          audioName={nowPlayingName}
                         />
                       }
                     />

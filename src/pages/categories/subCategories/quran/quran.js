@@ -107,7 +107,7 @@ function highlightText(text, query) {
   );
 }
 
-const Quran = ({ src, toTop }) => {
+const Quran = ({ src, toTop, audioName }) => {
   const { translations, language } = useTranslation();
   const isSmallScreen = useMediaQuery("(max-width:500px)");
 
@@ -163,7 +163,6 @@ const Quran = ({ src, toTop }) => {
     useState(null);
   const [pendingReadingScrollIndex, setPendingReadingScrollIndex] =
     useState(null);
-
   // ===================== REFS =====================
   const surahsRef = useRef(null);
   const ayahsRef = useRef(null);
@@ -273,7 +272,6 @@ const Quran = ({ src, toTop }) => {
   const handleSurahClick = (surah) => {
     setAllAyahs(surah);
     setSelectedSurah(surah.number);
-
     if (ayahsRef.current) {
       ayahsRef.current.classList.add("active");
       ayahsRef.current.scrollTo({ top: 0, behavior: "smooth" });
@@ -424,10 +422,15 @@ const Quran = ({ src, toTop }) => {
     setSelectedReciterOption(opt || null);
     if (!opt) return;
     if (autoPlayReciter) src(opt);
+    if (autoPlayReciter)
+      audioName(language === "ar" ? allAyahs.name : allAyahs.englishName);
   };
 
   const playSelectedReciter = () => {
-    if (selectedReciterOption) src(selectedReciterOption);
+    if (selectedReciterOption) {
+      src(selectedReciterOption);
+      audioName(language === "ar" ? allAyahs.name : allAyahs.englishName);
+    }
   };
 
   // ===================== PAGINATION LISTS =====================

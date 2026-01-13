@@ -1,0 +1,84 @@
+.tasbih-page {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 14px;
+}
+
+.tasbih-page.rtl {
+  direction: rtl;
+}
+
+.loader-manager {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 280px;
+}
+
+.tasbih-shell {
+  padding-bottom: 16px;
+}
+
+.tasbih-hero {
+  border-radius: 18px !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.tasbih-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(900px 420px at 10% 10%, rgba(255, 152, 0, 0.10), transparent 55%),
+    radial-gradient(800px 420px at 95% 20%, rgba(33, 150, 243, 0.10), transparent 55%),
+    radial-gradient(700px 420px at 40% 90%, rgba(76, 175, 80, 0.08), transparent 55%);
+  pointer-events: none;
+}
+
+.tasbih-hero > * {
+  position: relative;
+}
+
+.tasbih-card {
+  border-radius: 20px !important;
+}
+
+.tasbih-main-text {
+  word-break: break-word;
+}
+
+.tasbih-button {
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.18);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.tasbih-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+}
+
+.done-icon {
+  font-size: 64px;
+  opacity: 0.9;
+}
+
+.tasbih-desc {
+  max-height: 84px;
+  overflow: hidden;
+  transition: max-height 240ms ease;
+}
+
+.tasbih-desc.open {
+  max-height: 420px;
+}
+
+@media (max-width: 420px) {
+  .tasbih-page {
+    padding: 10px;
+  }
+  .tasbih-desc {
+    max-height: 110px;
+  }
+}
