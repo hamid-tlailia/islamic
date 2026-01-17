@@ -170,10 +170,10 @@ function limitWords(text = "", maxWords = 35, maxChars = 240) {
 
 async function fetchDorarBySKey(skey) {
   const apiUrl = `https://dorar.net/dorar_api.json?skey=${encodeURIComponent(
-    skey
+    skey,
   )}`;
   const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(
-    apiUrl
+    apiUrl,
   )}`;
   const resp = await fetch(proxyUrl);
   if (!resp.ok) throw new Error(`Dorar proxy failed ${resp.status}`);
@@ -259,7 +259,7 @@ const Ahadith = () => {
   const [ahadith, setAhadith] = useState([]);
 
   const [selectedBook, setSelectedBook] = useState(
-    () => localStorage.getItem("selectedBook") || null
+    () => localStorage.getItem("selectedBook") || null,
   );
   const [selectedChapter, setSelectedChapter] = useState(() => {
     const saved = localStorage.getItem("selectedChapter");
@@ -281,7 +281,7 @@ const Ahadith = () => {
   const [searchText, setSearchText] = useState("");
   const [hadithLangs, setHadithLangs] = useState("ar"); // ar | en
   const [searchBookSlug, setSearchBookSlug] = useState(
-    () => localStorage.getItem("selectedBook") || null
+    () => localStorage.getItem("selectedBook") || null,
   );
 
   // Result + verify
@@ -336,7 +336,7 @@ const Ahadith = () => {
     if (selectedChapter == null) return null;
     return (
       chapters.find(
-        (c) => Number(c.chapterNumber) === Number(selectedChapter)
+        (c) => Number(c.chapterNumber) === Number(selectedChapter),
       ) || null
     );
   }, [chapters, selectedChapter]);
@@ -346,11 +346,11 @@ const Ahadith = () => {
   // ===== Persist UI =====
   useEffect(
     () => localStorage.setItem("ahadith_fontScale", String(fontScale)),
-    [fontScale]
+    [fontScale],
   );
   useEffect(
     () => localStorage.setItem("ahadith_bookmarks", JSON.stringify(bookmarks)),
-    [bookmarks]
+    [bookmarks],
   );
 
   useEffect(() => {
@@ -409,8 +409,8 @@ const Ahadith = () => {
     const writerName = writer
       ? writer.writerName[language]
       : language === "ar"
-      ? book.writerName
-      : `Imam ${book.writerName}`;
+        ? book.writerName
+        : `Imam ${book.writerName}`;
 
     const writerDeath = writer
       ? writer.writerDeath[language]
@@ -446,7 +446,7 @@ const Ahadith = () => {
       if (data.books && typeof data.books === "object") {
         const arr = Object.values(data.books).filter(
           (b) =>
-            b.bookName !== "Musnad Ahmad" && b.bookName !== "Al-Silsila Sahiha"
+            b.bookName !== "Musnad Ahmad" && b.bookName !== "Al-Silsila Sahiha",
         );
         setBooks(arr);
 
@@ -468,7 +468,7 @@ const Ahadith = () => {
     } catch (e) {
       console.error(e);
       toast.error(
-        language === "ar" ? "تعذر تحميل الكتب" : "Failed to load books"
+        language === "ar" ? "تعذر تحميل الكتب" : "Failed to load books",
       );
     } finally {
       setLoading(false);
@@ -479,7 +479,7 @@ const Ahadith = () => {
     try {
       setLoading(true);
       const resp = await fetch(
-        `${API_BASE_URL}/${bookSlug}/chapters?apiKey=${API_KEY}`
+        `${API_BASE_URL}/${bookSlug}/chapters?apiKey=${API_KEY}`,
       );
       const data = await resp.json();
 
@@ -491,7 +491,7 @@ const Ahadith = () => {
 
         if (savedNum != null && Number.isFinite(savedNum)) {
           const ok = data.chapters.some(
-            (c) => Number(c.chapterNumber) === savedNum
+            (c) => Number(c.chapterNumber) === savedNum,
           );
           if (!ok) {
             setSelectedChapter(null);
@@ -516,7 +516,7 @@ const Ahadith = () => {
     } catch (e) {
       console.error(e);
       toast.error(
-        language === "ar" ? "تعذر تحميل الفصول" : "Failed to load chapters"
+        language === "ar" ? "تعذر تحميل الفصول" : "Failed to load chapters",
       );
     } finally {
       setLoading(false);
@@ -529,7 +529,7 @@ const Ahadith = () => {
     setLoading(true);
     try {
       const resp = await fetch(
-        `${API_BASE_URL}/hadiths?apiKey=${API_KEY}&book=${selectedBook}&chapter=${selectedChapter}&page=${page}`
+        `${API_BASE_URL}/hadiths?apiKey=${API_KEY}&book=${selectedBook}&chapter=${selectedChapter}&page=${page}`,
       );
       const data = await resp.json();
       const list = data?.hadiths?.data;
@@ -547,7 +547,7 @@ const Ahadith = () => {
     } catch (e) {
       console.error(e);
       toast.error(
-        language === "ar" ? "تعذر تحميل الأحاديث" : "Failed to load hadiths"
+        language === "ar" ? "تعذر تحميل الأحاديث" : "Failed to load hadiths",
       );
     } finally {
       setLoading(false);
@@ -638,7 +638,7 @@ const Ahadith = () => {
     setBookmarks((prev) => {
       if (prev.some((x) => x.key === key)) {
         toast.info(
-          language === "ar" ? "تمت إزالة الحفظ" : "Removed from favorites"
+          language === "ar" ? "تمت إزالة الحفظ" : "Removed from favorites",
         );
         return prev.filter((x) => x.key !== key);
       }
@@ -674,7 +674,7 @@ const Ahadith = () => {
     window.open(
       `https://dorar.net/hadith/search?q=${q}`,
       "_blank",
-      "noreferrer"
+      "noreferrer",
     );
   };
 
@@ -684,7 +684,7 @@ const Ahadith = () => {
     window.open(
       `https://sunnah.com/${c}:${hadithNumberX}`,
       "_blank",
-      "noreferrer"
+      "noreferrer",
     );
   };
 
@@ -707,7 +707,7 @@ const Ahadith = () => {
       toast.error(
         language === "ar"
           ? "تعذر التحقق من الدرر"
-          : "Failed to verify via Dorar"
+          : "Failed to verify via Dorar",
       );
     } finally {
       setVerifying(false);
@@ -766,7 +766,7 @@ const Ahadith = () => {
       if (searchMode === "number") {
         if (!hadithNumber || String(hadithNumber).trim() === "") {
           toast.info(
-            language === "ar" ? "اكتب رقم الحديث" : "Enter hadith number"
+            language === "ar" ? "اكتب رقم الحديث" : "Enter hadith number",
           );
           setLoading(false);
           return;
@@ -784,14 +784,14 @@ const Ahadith = () => {
         }
 
         const resp = await fetch(
-          `${API_BASE_URL}/hadiths?apiKey=${API_KEY}&book=${bookToUse}&hadithNumber=${hadithNumber}`
+          `${API_BASE_URL}/hadiths?apiKey=${API_KEY}&book=${bookToUse}&hadithNumber=${hadithNumber}`,
         );
         const data = await resp.json();
         const item = data?.hadiths?.data?.[0] || null;
 
         if (!item) {
           toast.error(
-            language === "ar" ? "لم يتم العثور على الحديث" : "Hadith not found"
+            language === "ar" ? "لم يتم العثور على الحديث" : "Hadith not found",
           );
         } else {
           setSearchResult(item);
@@ -807,7 +807,7 @@ const Ahadith = () => {
         const q = (searchText || "").trim();
         if (!q) {
           toast.info(
-            language === "ar" ? "اكتب نصًا للبحث" : "Enter text to search"
+            language === "ar" ? "اكتب نصًا للبحث" : "Enter text to search",
           );
           setLoading(false);
           return;
@@ -831,7 +831,7 @@ const Ahadith = () => {
           toast.info(
             language === "ar"
               ? "لم يتم العثور ضمن الصفحة الحالية. افتح صفحات أكثر أو استخدم فتح الدرر."
-              : "Not found in current page. Load more pages or use Dorar open button."
+              : "Not found in current page. Load more pages or use Dorar open button.",
           );
         } else {
           setSearchResult(found);
@@ -1078,7 +1078,7 @@ const Ahadith = () => {
                   setFontScale((x) => Math.min(1.35, +(x + 0.05).toFixed(2)))
                 }
               >
-                <TextIncreaseOutlinedIcon />
+                <TextIncreaseOutlinedIcon sx={{ color: "green" }} />
               </IconButton>
             </Tooltip>
 
@@ -1089,7 +1089,7 @@ const Ahadith = () => {
                   setFontScale((x) => Math.max(0.85, +(x - 0.05).toFixed(2)))
                 }
               >
-                <TextDecreaseOutlinedIcon />
+                <TextDecreaseOutlinedIcon sx={{ color: "rgb(150, 121, 44)" }} />
               </IconButton>
             </Tooltip>
 
@@ -1100,13 +1100,13 @@ const Ahadith = () => {
                 color="neutral"
                 onClick={() => setOpenFav(true)}
               >
-                <FavoriteBorderOutlinedIcon />
+                <FavoriteBorderOutlinedIcon sx={{ color: "red" }} />
               </IconButton>
             </Tooltip>
 
             <Tooltip title={language === "ar" ? "إعادة تعيين" : "Reset"}>
               <IconButton variant="outlined" onClick={handleResetAll}>
-                <RestartAltOutlinedIcon />
+                <RestartAltOutlinedIcon sx={{ color: "blue" }} />
               </IconButton>
             </Tooltip>
           </div>
@@ -1182,7 +1182,7 @@ const Ahadith = () => {
             value={selectedChapterObj}
             onChange={(event, newValue) => {
               setSelectedChapter(
-                newValue ? Number(newValue.chapterNumber) : null
+                newValue ? Number(newValue.chapterNumber) : null,
               );
               setPage(1);
               setAhadith([]);
@@ -1240,7 +1240,7 @@ const Ahadith = () => {
             searchBookSlug || selectedBook,
             searchResult,
             0,
-            true
+            true,
           )}
         </div>
       )}
@@ -1306,7 +1306,7 @@ const Ahadith = () => {
                   setHadithLangs(
                     newValue === "Arabic" || newValue === "العربية"
                       ? "ar"
-                      : "en"
+                      : "en",
                   );
                 }}
                 options={[
@@ -1333,15 +1333,15 @@ const Ahadith = () => {
                       ? "بالرقم"
                       : "By number"
                     : language === "ar"
-                    ? "بالنص"
-                    : "By text"
+                      ? "بالنص"
+                      : "By text"
                 }
                 onChange={(e, v) => {
                   if (!v) return;
                   setSearchMode(
                     v === (language === "ar" ? "بالرقم" : "By number")
                       ? "number"
-                      : "text"
+                      : "text",
                   );
                 }}
                 options={[
@@ -1444,8 +1444,8 @@ const Ahadith = () => {
                   ? "جارٍ البحث..."
                   : "Searching..."
                 : language === "ar"
-                ? "بحث"
-                : "Search"}
+                  ? "بحث"
+                  : "Search"}
             </Button>
 
             <Button
@@ -1600,7 +1600,7 @@ const Ahadith = () => {
                                 setLoading(true);
                                 try {
                                   const resp = await fetch(
-                                    `${API_BASE_URL}/hadiths?apiKey=${API_KEY}&book=${b.book}&hadithNumber=${b.hadithNumber}`
+                                    `${API_BASE_URL}/hadiths?apiKey=${API_KEY}&book=${b.book}&hadithNumber=${b.hadithNumber}`,
                                   );
                                   const data = await resp.json();
                                   const item = data?.hadiths?.data?.[0] || null;
@@ -1627,7 +1627,7 @@ const Ahadith = () => {
                                   toast.error(
                                     language === "ar"
                                       ? "تعذر فتح الحديث"
-                                      : "Failed to open hadith"
+                                      : "Failed to open hadith",
                                   );
                                 } finally {
                                   setLoading(false);
@@ -1644,7 +1644,9 @@ const Ahadith = () => {
                               color="neutral"
                               onClick={() => copyText(viewText)}
                             >
-                              <ContentCopyOutlinedIcon />
+                              <ContentCopyOutlinedIcon
+                                sx={{ color: "rgb(150, 121, 44)" }}
+                              />
                             </IconButton>
                           </Tooltip>
 
@@ -1675,7 +1677,9 @@ const Ahadith = () => {
                                   openSunnah(b.book, b.hadithNumber)
                                 }
                               >
-                                <OpenInNewOutlinedIcon />
+                                <OpenInNewOutlinedIcon
+                                  sx={{ color: "green" }}
+                                />
                               </IconButton>
                             </Tooltip>
                           ) : null}

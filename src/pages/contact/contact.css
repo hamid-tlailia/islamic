@@ -18,7 +18,8 @@
   border-radius: 18px;
   color: var(--text-color) !important;
   background: color-mix(in srgb, var(--card-color) 85%, transparent);
-  box-shadow: rgba(255, 255, 255, 0.08) 0 0 0 1px inset,
+  box-shadow:
+    rgba(255, 255, 255, 0.08) 0 0 0 1px inset,
     rgba(0, 0, 0, 0.25) 0 10px 30px;
 
   backdrop-filter: blur(10px);
@@ -195,4 +196,8 @@
   border-radius: 14px !important;
   font-weight: 900 !important;
   padding: 10px 16px !important;
+}
+.send-btn:hover {
+  background-color: inherit !important;
+  color: black !important;
 }

@@ -51,7 +51,8 @@
   background-color: var(--outlets-bg-color);
   border: var(--border);
   height: max-content;
-  box-shadow: rgb(137 21 21 / 20%) 0px 0px 0px 1px inset,
+  box-shadow:
+    rgb(137 21 21 / 20%) 0px 0px 0px 1px inset,
     rgb(216 201 201 / 90%) 0px 0px 0px 1px !important;
   transition: 0.5s;
   border-radius: 12px;
@@ -214,12 +215,14 @@
 
 .back {
   position: absolute;
-  left: 0;
-  top: 0;
-  padding: 6px;
-  color: rgb(231, 18, 18) !important;
-  font-size: 25px;
-  border-radius: 0 0 10px 0;
+  left: 5px;
+  top: 8px;
+  padding: 6px 10px;
+  color: rgb(252, 11, 72) !important;
+  font-size: 18px;
+  border-radius: 10px;
+  border: var(--search-border);
+  background-color: var(--search-card-bg);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -243,12 +246,13 @@
 .reciter-wrap {
   display: flex;
   gap: 10px;
+  border-radius: 8px;
   align-items: center;
   width: 100%;
 }
 .reciters-select {
   flex-grow: 1;
-  border: 1px solid rgba(39, 28, 28, 0.664);
+  border: 2px solid rgba(39, 28, 28, 0.664);
   border-radius: 8px;
 }
 /* top row reading */
@@ -426,7 +430,8 @@
 /* Tabs */
 .navs {
   background-color: var(--nav-color);
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+  box-shadow:
+    rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
     rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
   border-radius: 12px !important;
 }
@@ -443,7 +448,7 @@
 
 /* Fullscreen modal */
 .modalWrap {
-  background-color: var(--card-color);
+  background-color: inherit;
   color: var(--text-color);
   overflow-x: hidden;
   width: 100%;
@@ -571,7 +576,8 @@
   width: 15px;
   height: 15px;
   border-radius: 50% !important;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+  box-shadow:
+    rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
     rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
   background-color: var(--card-color) !important;
 }

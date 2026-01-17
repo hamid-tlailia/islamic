@@ -90,7 +90,7 @@ const Library = () => {
       "Favorites",
       ...new Set(booksData.map((b) => b.book_category)),
     ],
-    []
+    [],
   );
 
   const languages = ["ar", "en"];
@@ -114,11 +114,11 @@ const Library = () => {
 
       if (languageFilter === "ar") {
         base = base.filter(
-          (book) => book.book_lang === "ar" || book.book_lang === "both"
+          (book) => book.book_lang === "ar" || book.book_lang === "both",
         );
       } else if (languageFilter === "en") {
         base = base.filter(
-          (book) => book.book_lang === "en" || book.book_lang === "both"
+          (book) => book.book_lang === "en" || book.book_lang === "both",
         );
       }
 
@@ -136,14 +136,14 @@ const Library = () => {
       toast.info(
         language === "ar"
           ? "تمت إزالة الكتاب من المفضلة"
-          : "Book removed from favorites"
+          : "Book removed from favorites",
       );
     } else {
       setFavorites((prev) => [...prev, book]);
       toast.success(
         language === "ar"
           ? "تم إضافة الكتاب إلى المفضلة"
-          : "Book added to favorites"
+          : "Book added to favorites",
       );
     }
   };
@@ -160,14 +160,14 @@ const Library = () => {
       if (navigator.share) {
         await navigator.share({ title, url });
         toast.success(
-          language === "ar" ? "شكرا لك على النشر" : "Thanks for sharing!"
+          language === "ar" ? "شكرا لك على النشر" : "Thanks for sharing!",
         );
       } else {
         await navigator.clipboard.writeText(url);
         toast.success(
           language === "ar"
             ? "تم نسخ الرابط إلى الحافظة"
-            : "Link copied to clipboard"
+            : "Link copied to clipboard",
         );
       }
     } catch (e) {
@@ -304,8 +304,8 @@ const Library = () => {
                     ? "العربية"
                     : "الإنجليزية"
                   : lang === "ar"
-                  ? "Arabic"
-                  : "English"}
+                    ? "Arabic"
+                    : "English"}
               </Option>
             ))}
           </Select>
@@ -385,13 +385,13 @@ const Library = () => {
                         ? book.book_lang === "both"
                           ? "لغتان"
                           : book.book_lang === "ar"
-                          ? "عربي"
-                          : "إنجليزي"
+                            ? "عربي"
+                            : "إنجليزي"
                         : book.book_lang === "both"
-                        ? "2 languages"
-                        : book.book_lang === "ar"
-                        ? "Arabic"
-                        : "English"}
+                          ? "2 languages"
+                          : book.book_lang === "ar"
+                            ? "Arabic"
+                            : "English"}
                     </Chip>
                   </Box>
                 </CardContent>
@@ -481,8 +481,8 @@ const Library = () => {
                   ? "لا توجد كتب في المفضلة حاليًا. الرجاء إضافة بعض الكتب إلى المفضلة."
                   : "There are currently no books in your favorites. Please add some books."
                 : language === "ar"
-                ? "لا توجد كتب متاحة لهذه التصفية."
-                : "No books available for this filter."}
+                  ? "لا توجد كتب متاحة لهذه التصفية."
+                  : "No books available for this filter."}
             </Alert>
           )}
         </Box>
@@ -493,7 +493,7 @@ const Library = () => {
         <ModalDialog className="libModal" layout="center">
           <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <VisibilityOutlinedIcon />
-            <Typography level="title-md" sx={{ flex: 1 }}>
+            <Typography level="title-md" sx={{ flex: 1, color: "inherit" }}>
               {activeBook ? getBookTitle(activeBook) : ""}
             </Typography>
             <IconButton variant="plain" onClick={() => setPreviewOpen(false)}>
@@ -550,7 +550,10 @@ const Library = () => {
           <DialogContent className="libSummary">
             {activeBook ? (
               <>
-                <Typography level="body-sm" sx={{ lineHeight: 1.9 }}>
+                <Typography
+                  level="body-sm"
+                  sx={{ lineHeight: 1.9, color: "var(--text-color)" }}
+                >
                   {/* If you add these fields in JSON: book_summary_ar / book_summary_en */}
                   {languageFilter === "ar"
                     ? activeBook.book_summary_ar ||

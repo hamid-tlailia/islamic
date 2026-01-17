@@ -11,7 +11,6 @@ import Chip from "@mui/joy/Chip";
 import Divider from "@mui/joy/Divider";
 import Stack from "@mui/joy/Stack";
 import LinearProgress from "@mui/joy/LinearProgress";
-import Alert from "@mui/joy/Alert";
 import Tooltip from "@mui/joy/Tooltip";
 
 import ReplayRoundedIcon from "@mui/icons-material/ReplayRounded";
@@ -185,7 +184,7 @@ const Tasbih = () => {
   const totalForCurrent = Math.max(1, currentTasbih.total || 1);
   const progressValue = Math.min(
     100,
-    Math.round((count / totalForCurrent) * 100)
+    Math.round((count / totalForCurrent) * 100),
   );
   const remaining = Math.max(0, totalForCurrent - count);
 
@@ -197,8 +196,8 @@ const Tasbih = () => {
           ? "(مرة واحدة)"
           : "(one time)"
         : isAr
-        ? `(${totalForCurrent} مرة)`
-        : `(${totalForCurrent} times)`;
+          ? `(${totalForCurrent} مرة)`
+          : `(${totalForCurrent} times)`;
     return `${text} ${timesLabel}`;
   }, [currentTasbih, isAr, totalForCurrent]);
 
@@ -371,7 +370,11 @@ const Tasbih = () => {
                         border: "1px solid rgba(127,127,127,0.18)",
                       }}
                     >
-                      <ContentCopyRoundedIcon />
+                      {copied ? (
+                        <CheckCircleRoundedIcon sx={{ color: "green" }} />
+                      ) : (
+                        <ContentCopyRoundedIcon />
+                      )}
                     </IconButton>
                   </Tooltip>
 
@@ -390,16 +393,6 @@ const Tasbih = () => {
                   </Tooltip>
                 </Stack>
               </Stack>
-
-              {copied && (
-                <Alert
-                  variant="soft"
-                  color="success"
-                  sx={{ mt: 1.2, backgroundColor: "rgba(76,175,80,0.14)" }}
-                >
-                  {isAr ? "تم النسخ ✅" : "Copied ✅"}
-                </Alert>
-              )}
 
               <Divider sx={{ my: 1.5, opacity: 0.25 }} />
 
@@ -457,14 +450,6 @@ const Tasbih = () => {
             <CardContent>
               <Stack gap={1.2} alignItems="center">
                 <Typography
-                  level="h3"
-                  className="tasbih-main-text"
-                  sx={{ textAlign: "center", color: "var(--text-color)" }}
-                >
-                  {isAr ? currentTasbih.ar : currentTasbih.en}
-                </Typography>
-
-                <Typography
                   level="body-sm"
                   sx={{ opacity: 0.8, textAlign: "center" }}
                 >
@@ -500,10 +485,10 @@ const Tasbih = () => {
                       ? "ابدأ"
                       : "Start"
                     : count >= totalForCurrent
-                    ? isAr
-                      ? "تم"
-                      : "Done"
-                    : count}
+                      ? isAr
+                        ? "تم"
+                        : "Done"
+                      : count}
                 </Button>
 
                 <Stack
@@ -558,7 +543,10 @@ const Tasbih = () => {
                   >
                     <Stack direction="row" gap={1} alignItems="center">
                       <InfoOutlinedIcon fontSize="small" />
-                      <Typography level="title-md">
+                      <Typography
+                        level="title-md"
+                        sx={{ color: "var(--text-color)" }}
+                      >
                         {isAr ? "الشرح / الدليل" : "Description / Proof"}
                       </Typography>
                     </Stack>
@@ -581,8 +569,8 @@ const Tasbih = () => {
                           ? "إخفاء"
                           : "Hide"
                         : isAr
-                        ? "عرض"
-                        : "Show"}
+                          ? "عرض"
+                          : "Show"}
                     </Button>
                   </Stack>
 

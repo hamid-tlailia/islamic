@@ -51,6 +51,7 @@
 }
 
 .ah-toolbar-title {
+  color : var(--text-color) !important;
   font-weight: 800;
 }
 

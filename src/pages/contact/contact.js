@@ -30,7 +30,7 @@ const Contact = () => {
   });
   const [loading, setLoading] = useState(false);
   const [inputDirection, setInputDirection] = useState(
-    language === "ar" ? "rtl" : "ltr"
+    language === "ar" ? "rtl" : "ltr",
   );
 
   useEffect(() => {
@@ -60,16 +60,16 @@ const Contact = () => {
     e.preventDefault();
     setLoading(true);
 
-    const serviceID = "service_wkwt0sq";
-    const templateID = "template_ceamp5d";
-    const userID = "JgnJY3IJDvvpSS4nX";
+    const serviceID = "service_q9ux1k2";
+    const templateID = "template_2lguhoe";
+    const userID = "an4QUGfU0CzKLoFMB";
 
     emailjs.send(serviceID, templateID, formData, userID).then(
       () => {
         toast.success(
           language === "ar"
             ? "شكراً لتواصلك معنا، سنقوم بالرد في أقرب وقت."
-            : "Thanks for contacting us — we’ll reply as soon as possible."
+            : "Thanks for contacting us — we’ll reply as soon as possible.",
         );
         setFormData({ name: "", email: "", message: "" });
         setLoading(false);
@@ -79,11 +79,11 @@ const Contact = () => {
         toast.error(
           language === "ar"
             ? "حدث خطأ أثناء إرسال الرسالة."
-            : "An error occurred while sending your message."
+            : "An error occurred while sending your message.",
         );
         console.error("EmailJS Error:", err);
         setLoading(false);
-      }
+      },
     );
   };
 
@@ -107,7 +107,7 @@ const Contact = () => {
         <Typography level="body-md" className="contact-subtitle">
           {t(
             "يسعدنا سماع رسالتك. اختر الطريقة المناسبة أو أرسل رسالة مباشرة.",
-            "We’d love to hear from you. Use any method below or send a message."
+            "We'd love to hear from you. Use any method below or send a message.",
           )}
         </Typography>
       </Box>
@@ -219,7 +219,7 @@ const Contact = () => {
                   value={formData.email}
                   placeholder={t(
                     "البريد الإلكتروني أو رقم الهاتف...",
-                    "Email or phone number..."
+                    "Email or phone number...",
                   )}
                   onChange={handleChange}
                   required
@@ -249,6 +249,11 @@ const Contact = () => {
                   type="submit"
                   variant="solid"
                   className="send-btn"
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: "inherit",
+                    },
+                  }}
                   disabled={loading}
                 >
                   {loading ? (

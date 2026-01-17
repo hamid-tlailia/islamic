@@ -163,7 +163,7 @@ const Header = ({ onNavClick, visibility, size }) => {
     if (animationFrameRef.current)
       cancelAnimationFrame(animationFrameRef.current);
     animationFrameRef.current = requestAnimationFrame(() =>
-      updatePositionPx(newX, newY)
+      updatePositionPx(newX, newY),
     );
   };
 
@@ -204,7 +204,7 @@ const Header = ({ onNavClick, visibility, size }) => {
     if (animationFrameRef.current)
       cancelAnimationFrame(animationFrameRef.current);
     animationFrameRef.current = requestAnimationFrame(() =>
-      updatePositionPx(newX, newY)
+      updatePositionPx(newX, newY),
     );
   };
 
@@ -435,7 +435,7 @@ const Header = ({ onNavClick, visibility, size }) => {
           autoClose: false,
           closeOnClick: true,
           draggable: true,
-        }
+        },
       );
     } else {
       toast.dismiss();
@@ -551,7 +551,7 @@ const Header = ({ onNavClick, visibility, size }) => {
         toast.success(
           language === "ar"
             ? "تم إرسال تقرير الخطأ بنجاح!"
-            : "Error report sent successfully!"
+            : "Error report sent successfully!",
         );
         setLoading(false);
         closeErrorModal();
@@ -560,11 +560,11 @@ const Header = ({ onNavClick, visibility, size }) => {
         toast.error(
           language === "ar"
             ? "فشل في إرسال تقرير الخطأ."
-            : "Failed to send error report."
+            : "Failed to send error report.",
         );
         console.error("EmailJS Error:", err);
         setLoading(false);
-      }
+      },
     );
   };
 
@@ -638,8 +638,8 @@ const Header = ({ onNavClick, visibility, size }) => {
                       ? "داكن"
                       : "Dark"
                     : language === "ar"
-                    ? "فاتح"
-                    : "Light"}
+                      ? "فاتح"
+                      : "Light"}
                 </span>
               </label>
             </div>
@@ -686,12 +686,12 @@ const Header = ({ onNavClick, visibility, size }) => {
                       ? "غير متصل"
                       : "Offline"
                     : isNetworkWeak
-                    ? language === "ar"
-                      ? "شبكة ضعيفة"
-                      : "Weak network"
-                    : language === "ar"
-                    ? "متصل"
-                    : "Online"}
+                      ? language === "ar"
+                        ? "شبكة ضعيفة"
+                        : "Weak network"
+                      : language === "ar"
+                        ? "متصل"
+                        : "Online"}
                 </span>
               </div>
             </div>
@@ -941,8 +941,8 @@ const Header = ({ onNavClick, visibility, size }) => {
                         ? "مفعّل"
                         : "Enabled"
                       : language === "ar"
-                      ? "غير مفعّل"
-                      : "Disabled"}
+                        ? "غير مفعّل"
+                        : "Disabled"}
                   </Typography>
                 </div>
 
@@ -959,8 +959,8 @@ const Header = ({ onNavClick, visibility, size }) => {
                         ? "داكن"
                         : "Dark"
                       : language === "ar"
-                      ? "فاتح"
-                      : "Light"}
+                        ? "فاتح"
+                        : "Light"}
                   </span>
                 </label>
               </div>

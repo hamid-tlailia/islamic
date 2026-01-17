@@ -103,7 +103,7 @@ function highlightText(text, query) {
       </mark>
     ) : (
       <React.Fragment key={i}>{p}</React.Fragment>
-    )
+    ),
   );
 }
 
@@ -176,7 +176,7 @@ const Quran = ({ src, toTop, audioName }) => {
       toast.error(
         language === "ar"
           ? "هناك خطأ ما سيتم معالجة الأمر قريبا"
-          : "Something happened, we'll fix it soon"
+          : "Something happened, we'll fix it soon",
       );
     }
   }, [isErrorFetching, language]);
@@ -187,7 +187,7 @@ const Quran = ({ src, toTop, audioName }) => {
       try {
         setIsLoading(true);
         const response = await fetch(
-          "https://api.alquran.cloud/v1/quran/quran-uthmani"
+          "https://api.alquran.cloud/v1/quran/quran-uthmani",
         );
         const data = await response.json();
         if (data?.data?.surahs) setSurahs(data.data.surahs);
@@ -239,11 +239,11 @@ const Quran = ({ src, toTop, audioName }) => {
 
       const savedPageExplanation = parseInt(
         localStorage.getItem("explainedPage") || "1",
-        10
+        10,
       );
       const savedPageModal = parseInt(
         localStorage.getItem("quranModalPage") || "1",
-        10
+        10,
       );
 
       if (!Number.isNaN(savedPageExplanation))
@@ -317,7 +317,7 @@ const Quran = ({ src, toTop, audioName }) => {
   useEffect(() => {
     if (!selectedSurah) return;
     const surahTfsir = Quran_Tafsir.Surahs.find(
-      (s) => s.number === Number(selectedSurah)
+      (s) => s.number === Number(selectedSurah),
     );
     setSurahData(surahTfsir || null);
   }, [selectedSurah]);
@@ -328,7 +328,7 @@ const Quran = ({ src, toTop, audioName }) => {
     const run = async () => {
       try {
         const r = await fetch(
-          `https://api.alquran.cloud/v1/surah/${selectedSurah}/en.asad`
+          `https://api.alquran.cloud/v1/surah/${selectedSurah}/en.asad`,
         );
         const d = await r.json();
         if (d?.data?.ayahs) setApiTranslation(d.data.ayahs);
@@ -357,7 +357,7 @@ const Quran = ({ src, toTop, audioName }) => {
     const surahNumber = allAyahs?.number;
     if (!surahNumber) return;
     const ayahTfasir = Quran_Tafsir.Surahs?.find(
-      (t) => t.number === Number(surahNumber)
+      (t) => t.number === Number(surahNumber),
     );
     setAllSurahTafseer(ayahTfasir || null);
   }, [allAyahs]);
@@ -384,7 +384,7 @@ const Quran = ({ src, toTop, audioName }) => {
       setLoadingReciters(true);
       try {
         const response = await fetch(
-          "https://www.mp3quran.net/api/v3/reciters"
+          "https://www.mp3quran.net/api/v3/reciters",
         );
         const data = await response.json();
         setReciters(data?.reciters || []);
@@ -401,7 +401,7 @@ const Quran = ({ src, toTop, audioName }) => {
     if (!reciters?.length || !selectedSurah) return [];
     return reciters
       .filter((r) =>
-        r?.moshaf?.[0]?.surah_list?.split(",")?.includes(String(selectedSurah))
+        r?.moshaf?.[0]?.surah_list?.split(",")?.includes(String(selectedSurah)),
       )
       .map((r) => {
         const surahIndex =
@@ -437,7 +437,7 @@ const Quran = ({ src, toTop, audioName }) => {
   // Explanation
   const totalAyahsExplanation = surahData?.ayahs?.length || 0;
   const totalPagesExplanation = Math.ceil(
-    totalAyahsExplanation / itemsPerPageExplanation
+    totalAyahsExplanation / itemsPerPageExplanation,
   );
   const indexOfLastAyahExplanation =
     currentPageExplanation * itemsPerPageExplanation;
@@ -448,7 +448,7 @@ const Quran = ({ src, toTop, audioName }) => {
     return (
       surahData?.ayahs?.slice(
         indexOfFirstAyahExplanation,
-        indexOfLastAyahExplanation
+        indexOfLastAyahExplanation,
       ) || []
     );
   }, [surahData, indexOfFirstAyahExplanation, indexOfLastAyahExplanation]);
@@ -481,7 +481,7 @@ const Quran = ({ src, toTop, audioName }) => {
   // ===================== FIX: TAFSIR TO AYAH SCROLL =====================
   useEffect(() => {
     pageAyahRefs.current = currentAyahsExplanation.map(
-      (_, i) => pageAyahRefs.current[i] || React.createRef()
+      (_, i) => pageAyahRefs.current[i] || React.createRef(),
     );
   }, [currentAyahsExplanation]);
 
@@ -505,7 +505,7 @@ const Quran = ({ src, toTop, audioName }) => {
       ref.current.parentElement?.classList?.add("scrolled-ayah");
       setTimeout(
         () => ref.current?.parentElement?.classList?.remove("scrolled-ayah"),
-        3500
+        3500,
       );
       setPendingTafsirScrollIndex(null);
     }
@@ -567,7 +567,7 @@ const Quran = ({ src, toTop, audioName }) => {
     if (!surahNumber) return;
 
     const ayahTfasir = Quran_Tafsir.Surahs?.find(
-      (t) => t.number === Number(surahNumber)
+      (t) => t.number === Number(surahNumber),
     );
     if (!ayahTfasir) return;
 
@@ -762,8 +762,8 @@ const Quran = ({ src, toTop, audioName }) => {
       backgroundColor: state.isSelected
         ? "rgba(199, 21, 133, 0.35)"
         : state.isFocused
-        ? "rgba(199, 21, 133, 0.15)"
-        : "var(--card-color)",
+          ? "rgba(199, 21, 133, 0.15)"
+          : "var(--card-color)",
       color: state.isSelected ? "white" : "var(--text-color)",
       cursor: "pointer",
     }),
@@ -833,8 +833,8 @@ const Quran = ({ src, toTop, audioName }) => {
                       ? "أقل"
                       : "Less"
                     : language === "ar"
-                    ? "المزيد"
-                    : "More"}
+                      ? "المزيد"
+                      : "More"}
                 </button>
               </div>
             </div>
@@ -914,8 +914,8 @@ const Quran = ({ src, toTop, audioName }) => {
                           ? "مكية"
                           : "Meccan"
                         : language === "ar"
-                        ? "مدنية"
-                        : "Medinan"}
+                          ? "مدنية"
+                          : "Medinan"}
                     </p>
                   </div>
                 </div>
@@ -962,8 +962,8 @@ const Quran = ({ src, toTop, audioName }) => {
                             ? "⏳ الرجاء الانتظار..."
                             : "⏳ Please wait..."
                           : language === "ar"
-                          ? "اختر القارئ..."
-                          : "Choose reciter..."
+                            ? "اختر القارئ..."
+                            : "Choose reciter..."
                       }
                       noOptionsMessage={() =>
                         loadingReciters
@@ -971,8 +971,8 @@ const Quran = ({ src, toTop, audioName }) => {
                             ? "جاري التحميل..."
                             : "Loading..."
                           : language === "ar"
-                          ? "لا توجد نتائج"
-                          : "No options"
+                            ? "لا توجد نتائج"
+                            : "No options"
                       }
                       styles={selectStyles}
                     />
@@ -1151,14 +1151,14 @@ const Quran = ({ src, toTop, audioName }) => {
                             allAyahs.number !== 1
                               ? ayah.text.replace(
                                   "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
-                                  ""
+                                  "",
                                 )
                               : ayah.text;
 
                           const english =
                             apiTranslation?.[globalIndex0]?.text?.replace(
                               /^[;:!]/,
-                              ""
+                              "",
                             ) || "";
 
                           const dir = quranLangs === "English" ? "ltr" : "rtl";
@@ -1198,7 +1198,7 @@ const Quran = ({ src, toTop, audioName }) => {
                                         (language === "ar"
                                           ? "جاري التحميل..."
                                           : "Loading..."),
-                                      ayahSearch
+                                      ayahSearch,
                                     )}
                                     {quranLangs === "Together" && <br />}
                                   </span>
@@ -1279,7 +1279,7 @@ const Quran = ({ src, toTop, audioName }) => {
                             <option key={i} value={i}>
                               {i + 1}
                             </option>
-                          )
+                          ),
                         )}
                       </select>
                     </div>
@@ -1297,12 +1297,12 @@ const Quran = ({ src, toTop, audioName }) => {
 
                           const arabicTafsir =
                             allSurahTafseer?.ayahs?.find(
-                              (t) => t.number === ayahNum
+                              (t) => t.number === ayahNum,
                             )?.tafsir || "التفسير غير متاح";
 
                           const englishTafsirText =
                             englishTafsir?.find(
-                              (a) => a.ayah_number === String(ayahNum)
+                              (a) => a.ayah_number === String(ayahNum),
                             )?.text || "Explanation not available";
 
                           const ayahText =
@@ -1313,7 +1313,7 @@ const Quran = ({ src, toTop, audioName }) => {
                                   allAyahs?.number !== 1
                                     ? "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ"
                                     : "",
-                                  ""
+                                  "",
                                 )
                               : (
                                   apiTranslation?.[globalIndex0]?.text || ""
@@ -1444,14 +1444,14 @@ const Quran = ({ src, toTop, audioName }) => {
                                 allAyahs.number !== 1
                                   ? ayah.text.replace(
                                       "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
-                                      ""
+                                      "",
                                     )
                                   : ayah.text;
 
                               const english =
                                 apiTranslation?.[globalIndex0]?.text?.replace(
                                   /^[;:!]/,
-                                  ""
+                                  "",
                                 ) || "";
 
                               return (

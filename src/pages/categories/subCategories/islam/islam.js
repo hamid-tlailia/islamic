@@ -1,5 +1,4 @@
 import React from "react";
-import "./islam.css";
 import { useTranslation } from "../../../../components/languages/provider";
 import { Card, CardContent, Typography, Divider } from "@mui/joy";
 import { Mosque, Public, People, Favorite } from "@mui/icons-material"; // Material UI Icons
@@ -86,6 +85,7 @@ const Islam = () => {
         padding: "20px",
         margin: "5px auto",
         borderRadius: "12px",
+        border: "none",
       }}
     >
       <CardContent>

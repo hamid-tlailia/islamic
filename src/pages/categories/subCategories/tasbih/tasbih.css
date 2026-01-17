@@ -30,7 +30,8 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(
+  background:
+    radial-gradient(
       900px 420px at 10% 10%,
       rgba(255, 152, 0, 0.1),
       transparent 55%
@@ -62,7 +63,9 @@
 
 .tasbih-button {
   box-shadow: 0 14px 36px rgba(0, 0, 0, 0.18);
-  transition: transform 160ms ease, box-shadow 160ms ease;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .tasbih-button:hover {

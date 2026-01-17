@@ -133,7 +133,7 @@ const Categories = ({
   useEffect(() => {
     const currentComponentTitle = localStorage.getItem(LS_TITLE_KEY);
     setSubTitle(
-      currentComponentTitle || (language === "ar" ? "الأقسام" : "Categories")
+      currentComponentTitle || (language === "ar" ? "الأقسام" : "Categories"),
     );
 
     const saved = Number(localStorage.getItem(LS_POS_KEY) || 0);
@@ -215,7 +215,7 @@ const Categories = ({
         .toLowerCase();
 
       const matchedLink = navLinks.find(
-        (link) => link.path.toLowerCase() === categoryPath
+        (link) => link.path.toLowerCase() === categoryPath,
       );
 
       const nextTitle =
@@ -233,7 +233,7 @@ const Categories = ({
       setCheckTitle(false);
 
       const saved = Number(
-        localStorage.getItem(LS_POS_KEY) || selectedCategoryPosition || 0
+        localStorage.getItem(LS_POS_KEY) || selectedCategoryPosition || 0,
       );
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -261,7 +261,7 @@ const Categories = ({
       setCurrentScroll(scrollTop);
     }, 250),
     // eslint-disable-next-line
-    [currentScroll]
+    [currentScroll],
   );
 
   const handleScroll = (e) => checkScrollTop(e);

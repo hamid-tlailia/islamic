@@ -52,6 +52,7 @@
 .card-header {
   background-color: var(--search-card-bg);
   border-bottom: var(--search-border);
+  color: var(--text-color) !important;
   position: sticky;
   top: 0;
   z-index: 1;
@@ -124,7 +125,9 @@
   flex-direction: column-reverse;
   justify-content: space-between;
   align-items: flex-end;
-  transition: transform 160ms ease, filter 160ms ease;
+  transition:
+    transform 160ms ease,
+    filter 160ms ease;
   transition-behavior: normal, normal;
   transition-duration: 160ms, 160ms;
   transition-timing-function: ease, ease;

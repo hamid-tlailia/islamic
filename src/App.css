@@ -13,14 +13,14 @@
 
   --card-color: rgba(255, 255, 255, 0.92);
   --outlets-bg-color: rgba(255, 255, 255, 0.96);
-
+  --search-card-bg: rgba(255, 255, 255, 0.95);
   /* ====== Borders / Surfaces ====== */
   --border: 1px solid rgba(0, 0, 0, 0.1);
   --search-border: 1px solid rgba(0, 0, 0, 0.22);
   --surah-border: 1px solid rgba(0, 0, 0, 0.18);
 
   /* soft glass for headers/cards used in many places */
-  --search-card-bg: rgba(255, 255, 255, 0.977);
+  ---bg-bg: rgba(255, 255, 255, 0.977);
   --dropdown-bg-color: rgba(255, 255, 255, 0.92);
 
   /* ====== Brand colors ====== */
@@ -60,6 +60,7 @@
   --elev-2: 0 12px 28px rgba(2, 6, 23, 0.14);
   --settings-ui__section-bg: rgb(237 237 237 / 80%);
   --settings-ui__toggle-bg: rgb(29 23 23 / 10%);
+  --border-color: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 /* =========================================================
@@ -110,6 +111,7 @@ body.dark-mode {
   --elev-2: 0 14px 34px rgba(0, 0, 0, 0.55);
   --settings-ui__section-bg: rgba(75, 69, 69, 0.292);
   --settings-ui__toggle-bg: rgba(255, 255, 255, 0.1);
+  --border-color: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* =========================================================
@@ -129,7 +131,7 @@ body.light-filter {
   --search-border: 1px solid rgba(3, 2, 1, 0.28);
   --surah-border: 1px solid rgba(255, 255, 255, 0.8);
 
-  --search-card-bg: rgb(68, 71, 27);
+  --search-card-bg: rgba(178, 174, 159, 0.95);
   --dropdown-bg-color: rgba(178, 174, 159, 0.95);
 
   --nav-link-color: rgb(27, 230, 24);
@@ -149,6 +151,7 @@ body.light-filter {
   --shadow-secondary-color: rgba(255, 255, 255, 0.28);
   --settings-ui__section-bg: rgb(50 44 44 / 0%);
   --settings-ui__toggle-bg: rgba(255, 255, 255, 0.1);
+  --border-color: 1px solid rgba(3, 2, 1, 0.28);
 }
 
 /* =========================================================
@@ -192,6 +195,7 @@ body.image {
   --shadow-secondary-color: rgba(255, 255, 255, 0.08);
   --settings-ui__section-bg: rgb(50 44 44 / 0%);
   --settings-ui__toggle-bg: rgba(255, 255, 255, 0.1);
+  --border-color: 1px solid rgba(255, 255, 255, 0.16);
   background: url("./components/images//bg4.avif") no-repeat center;
   background-size: cover;
 }
@@ -236,6 +240,7 @@ body.sky {
   --shadow-secondary-color: rgba(255, 255, 255, 0.07);
   --settings-ui__section-bg: rgb(50 44 44 / 0%);
   --settings-ui__toggle-bg: rgba(255, 255, 255, 0.1);
+  --border-color: 1px solid rgba(70, 130, 180, 0.3);
 }
 
 /* Contrast mode styles */
@@ -265,7 +270,9 @@ html {
   font-size: 18px;
   background-color: var(--bg-color);
   color: var(--text-color);
-  transition: background-color 0.3s, color 0.3s;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
   direction: rtl;
   overflow-x: hidden;
   font-family: "Cairo", sans-serif;
@@ -394,8 +401,10 @@ a {
   color: #c41c1c !important;
 }
 .file {
-  box-shadow: rgb(4, 4, 139) 0px 0px 0px 2px inset,
-    var(--card-color) 10px -10px 0px -3px, rgb(6, 124, 4) 10px -10px !important;
+  box-shadow:
+    rgb(4, 4, 139) 0px 0px 0px 2px inset,
+    var(--card-color) 10px -10px 0px -3px,
+    rgb(6, 124, 4) 10px -10px !important;
   padding: 8px;
   border-radius: 6px;
   text-align: center;
@@ -472,7 +481,8 @@ a {
 .card::before {
   content: "";
   inset: 0;
-  background: radial-gradient(
+  background:
+    radial-gradient(
       900px 420px at 10% 10%,
       rgba(255, 152, 0, 0.1),
       transparent 55%
@@ -487,4 +497,18 @@ a {
       rgba(76, 175, 80, 0.08),
       transparent 55%
     ) !important;
+}
+.MuiSelect-root:hover {
+  background-color: inherit !important;
+}
+.MuiChip-root {
+  background-color: var(--card-color) !important;
+  color: var(--text-color) !important;
+  border: var(--border-color);
+}
+.MuiButton-root .MuiButton-variantSolid:hover {
+  background-color: inherit !important;
+}
+.MuiIconButton-root:hover {
+  background-color: inherit !important;
 }

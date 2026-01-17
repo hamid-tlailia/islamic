@@ -1,11 +1,39 @@
 // BeMuslim.js
-import React, { useState, useEffect } from "react";
-import { Typography, Box, Modal, Button, CircularProgress } from "@mui/joy";
-import { useTranslation } from "../../../../components/languages/provider";
-import ChecklistRtlOutlinedIcon from "@mui/icons-material/ChecklistRtlOutlined";
-import ReactPlayer from "react-player";
-import InsertLinkOutlinedIcon from "@mui/icons-material/InsertLinkOutlined";
+import React, { useEffect, useMemo, useState } from "react";
+import "./beMuslim.css";
+import {
+  Box,
+  Typography,
+  Modal,
+  Button,
+  CircularProgress,
+  Card,
+  CardContent,
+  CardOverflow,
+  Chip,
+  Divider,
+  Stack,
+  Grid,
+  Sheet,
+  IconButton,
+  Tooltip,
+  Input,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanel,
+  GlobalStyles,
+} from "@mui/joy";
 
+import { useTranslation } from "../../../../components/languages/provider";
+import InsertLinkOutlinedIcon from "@mui/icons-material/InsertLinkOutlined";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import ReactPlayer from "react-player";
+
+/* ================= CONTENT (INTENTIONALLY EMPTY) ================= */
 const beMuslimContent = [
   // Introduction Section
   {
@@ -1066,15 +1094,38 @@ const beMuslimContent = [
   },
 ];
 
+/* ================= HELPERS ================= */
+const safeText = (v) => (typeof v === "string" ? v : "");
+const getPreviewText = (descByLang, lang) => {
+  const v = descByLang?.[lang];
+  if (Array.isArray(v)) return safeText(v?.[0]?.text || "");
+  return safeText(v || "");
+};
+const isHeadingBlock = (item) => !!item?.isTitle;
+const isTypeBlock = (item) => !!item?.isType;
+
+const sectionTitle = (section, language, index) =>
+  section?.minTitle?.[language] || section?.title?.[language] || `${index + 1}`;
+
+const sectionSubtitle = (section, language) =>
+  getPreviewText(section?.description, language);
+
+/* ================= COMPONENT ================= */
 const BeMuslim = () => {
   const { language } = useTranslation();
+  const isRTL = language === "ar";
+
   const [open, setOpen] = useState(false);
   const [selectedContent, setSelectedContent] = useState(null);
   const [videoLoadingStates, setVideoLoadingStates] = useState([]);
 
+  const [query, setQuery] = useState("");
+  const [activeTab, setActiveTab] = useState(0);
+
   const handleOpen = (content) => {
     setSelectedContent(content);
     setOpen(true);
+    setActiveTab(0);
   };
 
   const handleClose = () => {
@@ -1084,7 +1135,7 @@ const BeMuslim = () => {
   };
 
   useEffect(() => {
-    if (selectedContent && selectedContent.videos) {
+    if (selectedContent?.videos?.length) {
       setVideoLoadingStates(selectedContent.videos.map(() => true));
     } else {
       setVideoLoadingStates([]);
@@ -1092,383 +1143,1063 @@ const BeMuslim = () => {
   }, [selectedContent]);
 
   const handleVideoReady = (index) => {
-    setVideoLoadingStates((prevStates) => {
-      const newStates = [...prevStates];
-      newStates[index] = false;
-      return newStates;
+    setVideoLoadingStates((prev) => {
+      const next = [...prev];
+      next[index] = false;
+      return next;
     });
   };
 
+  const filteredSections = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return beMuslimContent;
+
+    return beMuslimContent.filter((section) => {
+      const title = safeText(section?.title?.[language]);
+      const minTitle = safeText(section?.minTitle?.[language]);
+      const preview = getPreviewText(section?.description, language);
+      const proof = safeText(section?.proof?.[language]);
+
+      return (
+        title.toLowerCase().includes(q) ||
+        minTitle.toLowerCase().includes(q) ||
+        preview.toLowerCase().includes(q) ||
+        proof.toLowerCase().includes(q)
+      );
+    });
+  }, [query, language]);
+
+  const badgeLabel = (section) => {
+    if (!section) return isRTL ? "محتوى" : "Content";
+    if (section?.videos?.length) return isRTL ? "فيديو" : "Video";
+    if (section?.wuduSteps) return isRTL ? "وضوء" : "Wudu";
+    if (section?.salahConditions) return isRTL ? "صلاة" : "Salah";
+    if (section?.thingsNotAllowedWhileFasting)
+      return isRTL ? "صيام" : "Fasting";
+    if (section?.hajjSteps) return isRTL ? "حج" : "Hajj";
+    if (section?.qadarSteps) return isRTL ? "قدر" : "Qadar";
+    if (section?.proof) return isRTL ? "دليل" : "Proof";
+    return isRTL ? "محتوى" : "Content";
+  };
+
+  const modalTitle =
+    selectedContent?.minTitle?.[language] ||
+    selectedContent?.title?.[language] ||
+    "";
+
+  const modalHasSteps = !!(
+    selectedContent?.wuduSteps ||
+    selectedContent?.salahConditions ||
+    selectedContent?.salahDisallowedPlaces ||
+    selectedContent?.thingsThatInvalidateSalah ||
+    selectedContent?.thingsNotAllowedWhileFasting ||
+    selectedContent?.hajjSteps ||
+    selectedContent?.qadarSteps
+  );
+
   return (
-    <Box sx={{ padding: 0, maxWidth: "100%", overflowX: "hidden" }}>
-      <div className="w-100 text-center fs-2 mb-4" style={{ color: "#169777" }}>
-        {beMuslimContent[0].title[language]}
-      </div>
-      {beMuslimContent.map((section, index) => (
-        <Box key={index} sx={{ marginBottom: 4 }}>
-          {section.title &&
-            index > 0 &&
-            (index === 1 ? (
-              <Typography
-                level="h4"
-                role="link"
-                tabIndex="0"
-                aria-label={`Open section ${section.title[language]}`}
-                sx={{
-                  marginBottom: 2,
-                  cursor: "pointer",
-                  color: "rgb(174 101 17)",
-                  width: "max-content",
-                }}
-                onClick={() => handleOpen(section)}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    handleOpen(section);
-                  }
-                }}
-              >
-                {index > 0 && (
-                  <ChecklistRtlOutlinedIcon
-                    className={
-                      language === "ar"
-                        ? "rtl text-danger mx-3"
-                        : "ltr text-danger mx-3"
-                    }
-                  />
-                )}
-                {section.title[language]} <InsertLinkOutlinedIcon />
-              </Typography>
-            ) : (
-              <Typography
-                level="h4"
-                color={section.color}
-                sx={{ marginBottom: 2 }}
-              >
-                {index > 0 && (
-                  <ChecklistRtlOutlinedIcon
-                    className={
-                      language === "ar"
-                        ? "rtl text-danger mx-3"
-                        : "ltr text-danger mx-3"
-                    }
-                  />
-                )}
-                {section.title[language]}
-              </Typography>
-            ))}
+    <>
+      {/* ================= GLOBAL MODE STYLES (ONE PLACE) ================= */}
+      <GlobalStyles
+        styles={{
+          ":root": {
+            "--card-color": "var(--card-color)",
+            "--text-color": "var(--text-color)",
+            "--muted-text": "var(--joy-palette-text-secondary)",
+            "--border-color": "var(--border-color)",
+          },
+        }}
+      />
 
-          {/* The clickable minTitle */}
-          {section.minTitle && (
-            <Typography
-              component="p"
-              sx={{
-                cursor: "pointer",
-                color: "green",
-              }}
-              onClick={() => handleOpen(section)}
-            >
-              {" - "}
-              {section.minTitle[language]} <InsertLinkOutlinedIcon />
-            </Typography>
-          )}
+      <Box
+        sx={{
+          px: { xs: 1.5, sm: 2, md: 3 },
+          py: 2,
+          maxWidth: 1100,
+          mx: "auto",
+          color: "var(--text-color)",
 
-          <p style={{ marginBottom: 2 }}>
-            {Array.isArray(section.description[language])
-              ? section.description[language][0]?.text
-              : section.description[language]}
-          </p>
-
-          <Typography
-            level="body2"
-            sx={{ fontStyle: "italic", color: "#008f7a" }}
-          >
-            {section.proof ? section.proof[language] : ""}
-          </Typography>
-        </Box>
-      ))}
-
-      {/* Modal for displaying content */}
-      <Modal open={open} onClose={handleClose} fullScreen>
-        <Box
-          sx={{
-            padding: 4,
-            backgroundColor: "var(--card-color)",
-            height: "100%",
-            overflowY: "auto",
-          }}
+          /* ✅ Everything inherits mode automatically */
+          "& .MuiTypography-root": { color: "var(--text-color)" },
+          "& .MuiCard-root": {
+            bgcolor: "var(--card-color)",
+            color: "var(--text-color)",
+          },
+          "& .MuiSheet-root": {
+            bgcolor: "var(--card-color)",
+            color: "var(--text-color)",
+          },
+          "& .MuiInput-root": {
+            bgcolor: "var(--card-color)",
+            color: "var(--text-color)",
+          },
+          "& .MuiInput-input": {
+            color: "var(--text-color)",
+            WebkitTextFillColor: "var(--text-color)",
+          },
+          "& .MuiDivider-root": { borderColor: "var(--border-color)" },
+          "& .MuiTab-root": { color: "var(--text-color)" },
+        }}
+      >
+        {/* ================= HERO HEADER ================= */}
+        <Card
+          variant="soft"
+          className="beMuslim-hero-card"
+          sx={{ mb: 2, borderRadius: "lg", overflow: "hidden" }}
         >
-          <Box className="d-flex flex-row justify-content-between align-items-center gap-2">
-            <Button
-              onClick={handleClose}
-              sx={{
-                mb: 2,
-                backgroundColor: "#1b87a5",
-                border: "1px solid #1b87a5",
-              }}
+          <CardOverflow sx={{ p: { xs: 2, sm: 3 } }}>
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              alignItems={{ xs: "flex-start", sm: "center" }}
+              justifyContent="space-between"
+              spacing={2}
             >
-              X
-            </Button>
-            <Typography
-              level="h4"
-              color={selectedContent?.color}
-              sx={{ marginBottom: 2 }}
-            >
-              {selectedContent?.minTitle?.[language] ||
-                selectedContent?.title?.[language]}
-            </Typography>
-          </Box>
-          {selectedContent && (
-            <>
-              {Array.isArray(selectedContent.description[language]) ? (
-                selectedContent.description[language].map((item, idx) => (
-                  <Typography
-                    key={idx}
-                    level={item.isTitle ? "h5" : item.isType ? "h6" : "body1"}
+              <Box>
+                <Typography
+                  level="h2"
+                  sx={{ fontWeight: 900, letterSpacing: -0.5 }}
+                >
+                  {isRTL ? "كن مسلمًا" : "Be a Muslim"}
+                </Typography>
+                <Typography level="body-md" sx={{ mt: 0.5, opacity: 0.8 }}>
+                  {isRTL
+                    ? "اقرأ الأقسام بسرعة وافتح التفاصيل داخل نافذة أنيقة."
+                    : "Browse sections quickly and open details in a clean modal."}
+                </Typography>
+
+                <Stack
+                  direction="row"
+                  spacing={1}
+                  sx={{ mt: 1.5, flexWrap: "wrap" }}
+                >
+                  <Chip variant="soft" color="success">
+                    {isRTL ? "أساسيات" : "Basics"}
+                  </Chip>
+                  <Chip variant="soft" color="primary">
+                    {isRTL ? "إيمان" : "Faith"}
+                  </Chip>
+                  <Chip variant="soft" color="warning">
+                    {isRTL ? "أركان" : "Pillars"}
+                  </Chip>
+                </Stack>
+              </Box>
+
+              <Box sx={{ width: { xs: "100%", sm: 360 } }}>
+                <Input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={
+                    isRTL
+                      ? "ابحث داخل العناوين والمحتوى..."
+                      : "Search titles & content..."
+                  }
+                  startDecorator={<SearchRoundedIcon />}
+                  sx={{
+                    "--Input-radius": "16px",
+                    "--Input-minHeight": "44px",
+                    boxShadow: "sm",
+                  }}
+                />
+                <Typography level="body-xs" sx={{ mt: 0.75, opacity: 0.7 }}>
+                  {isRTL
+                    ? `النتائج: ${filteredSections.length} / ${beMuslimContent.length}`
+                    : `Results: ${filteredSections.length} / ${beMuslimContent.length}`}
+                </Typography>
+              </Box>
+            </Stack>
+          </CardOverflow>
+        </Card>
+
+        {/* ================= EMPTY STATE ================= */}
+        {filteredSections.length === 0 ? (
+          <Card variant="soft" sx={{ borderRadius: "lg" }}>
+            <CardContent sx={{ p: 3 }}>
+              <Stack spacing={1}>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <InfoOutlinedIcon />
+                  <Typography level="title-lg" sx={{ fontWeight: 900 }}>
+                    {isRTL ? "لا يوجد محتوى للعرض" : "No content to display"}
+                  </Typography>
+                </Stack>
+                <Typography level="body-md" sx={{ opacity: 0.8 }}>
+                  {isRTL
+                    ? "أضف العناصر داخل beMuslimContent، أو امسح البحث."
+                    : "Add items to beMuslimContent, or clear the search."}
+                </Typography>
+
+                {!!query && (
+                  <Button
+                    variant="soft"
                     sx={{
-                      marginBottom: 2,
-                      fontWeight:
-                        item.isTitle || item.isType ? "bold" : "normal",
-                      color: item.isTitle
-                        ? "blue"
-                        : item.isType
-                        ? "green"
-                        : "inherit",
+                      borderRadius: "16px",
+                      fontWeight: 800,
+                      width: "fit-content",
+                    }}
+                    onClick={() => setQuery("")}
+                  >
+                    {isRTL ? "مسح البحث" : "Clear search"}
+                  </Button>
+                )}
+              </Stack>
+            </CardContent>
+          </Card>
+        ) : (
+          /* ================= GRID ================= */
+          <Grid container spacing={2}>
+            {filteredSections.map((section, index) => {
+              const clickable = !!(section?.title || section?.minTitle);
+              const title = sectionTitle(section, language, index);
+              const subtitle = sectionSubtitle(section, language);
+              const proof = safeText(section?.proof?.[language] || "");
+
+              return (
+                <Grid key={index} xs={12} sm={6} md={4}>
+                  <Card
+                    variant="outlined"
+                    sx={{
+                      height: "100%",
+                      borderRadius: "xl",
+                      transition: "transform 180ms ease, box-shadow 180ms ease",
+                      "&:hover": {
+                        transform: "translateY(-2px)",
+                        boxShadow: "md",
+                      },
                     }}
                   >
-                    {item.text}
-                  </Typography>
-                ))
-              ) : (
-                <p style={{ marginBottom: 2 }}>
-                  {selectedContent.description[language]}
-                </p>
-              )}
-              <Typography
-                level="body2"
-                sx={{ fontStyle: "italic", color: "#008f7a" }}
-              >
-                {selectedContent.proof?.[language]}
-              </Typography>
-
-              {/* Wudu Steps */}
-              {selectedContent.wuduSteps && (
-                <Box sx={{ marginTop: 4 }}>
-                  <Typography level="h5" sx={{ marginBottom: 2, color: "red" }}>
-                    {language === "en" ? "Wudu Steps : " : "خطوات الوضوء : "}
-                  </Typography>
-                  {selectedContent.wuduSteps.map((step, idx) => (
-                    <Typography
-                      key={idx}
-                      level="body1"
-                      sx={{ marginBottom: 1 }}
-                    >
-                      {idx + 1}.{" "}
-                      <span className="text-primary">
-                        {step.stepName[language]}
-                      </span>{" "}
-                      : {step.description[language]}
-                      {step.repeats && (
-                        <Typography
-                          component="span"
-                          sx={{ fontWeight: "bold", color: "green" }}
+                    <CardContent>
+                      <Stack spacing={1.2}>
+                        <Stack
+                          direction="row"
+                          alignItems="center"
+                          justifyContent="space-between"
                         >
-                          {" "}
-                          (
-                          {language === "en"
-                            ? `Repeat ${step.repeats} times`
-                            : `تكرر ${step.repeats} مرات`}
-                          )
+                          <Chip
+                            size="sm"
+                            variant="soft"
+                            color={section?.color || "neutral"}
+                          >
+                            {badgeLabel(section)}
+                          </Chip>
+
+                          {clickable ? (
+                            <Tooltip
+                              title={isRTL ? "فتح التفاصيل" : "Open details"}
+                            >
+                              <IconButton
+                                size="sm"
+                                variant="soft"
+                                color="primary"
+                                onClick={() => handleOpen(section)}
+                              >
+                                <InsertLinkOutlinedIcon />
+                              </IconButton>
+                            </Tooltip>
+                          ) : (
+                            <Chip
+                              size="sm"
+                              variant="plain"
+                              startDecorator={<InfoOutlinedIcon />}
+                            >
+                              {isRTL ? "مقدمة" : "Intro"}
+                            </Chip>
+                          )}
+                        </Stack>
+
+                        <Typography
+                          level="title-lg"
+                          sx={{ fontWeight: 900, lineHeight: 1.15 }}
+                        >
+                          {title}
                         </Typography>
-                      )}
-                    </Typography>
-                  ))}
-                </Box>
-              )}
 
-              {/* Salah Conditions */}
-              {selectedContent.salahConditions && (
-                <Box sx={{ marginTop: 4 }}>
-                  <Typography level="h5" sx={{ marginBottom: 2, color: "red" }}>
-                    {language === "en"
-                      ? "Salah Conditions :"
-                      : "شروط الصلاة : "}
-                  </Typography>
-                  {selectedContent.salahConditions.map((condition, idx) => (
-                    <Typography
-                      key={idx}
-                      level="body1"
-                      sx={{ marginBottom: 1 }}
-                    >
-                      {idx + 1}.{" "}
-                      <span className="text-primary">
-                        {condition.conditionName[language]} :{" "}
-                      </span>
-                      {condition.description[language]}
-                    </Typography>
-                  ))}
-                </Box>
-              )}
-
-              {/* Places Not Allowed for Salah */}
-              {selectedContent.salahDisallowedPlaces && (
-                <Box sx={{ marginTop: 4 }}>
-                  <Typography level="h5" sx={{ marginBottom: 2, color: "red" }}>
-                    {language === "en"
-                      ? "Places Where Salah Is Not Allowed:"
-                      : "أماكن لا تجوز فيها الصلاة : "}
-                  </Typography>
-                  <ul className="list-unstyled">
-                    {selectedContent.salahDisallowedPlaces[0][language].map(
-                      (place, idx) => (
-                        <li key={idx}>
-                          <Typography level="body1">
-                            {idx + 1}. {place}
-                          </Typography>
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </Box>
-              )}
-              {/* Things That Invalidate Salah */}
-              {selectedContent.thingsThatInvalidateSalah && (
-                <Box sx={{ marginTop: 4 }}>
-                  <Typography level="h5" sx={{ marginBottom: 2, color: "red" }}>
-                    {language === "en"
-                      ? "Things That Invalidate Salah :"
-                      : "مبطلات الصلاة : "}
-                  </Typography>
-                  <ul className="list-unstyled">
-                    {selectedContent.thingsThatInvalidateSalah[language].map(
-                      (item, idx) => (
-                        <li key={idx}>
-                          <Typography level="body1">
-                            {idx + 1}. {item}
-                          </Typography>
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </Box>
-              )}
-              {/* Things Not Allowed While Fasting */}
-              {selectedContent.thingsNotAllowedWhileFasting && (
-                <Box sx={{ marginTop: 4 }}>
-                  <Typography level="h5" sx={{ marginBottom: 2, color: "red" }}>
-                    {language === "en"
-                      ? "Things Not Allowed While Fasting :"
-                      : "مبطلات الصيام : "}
-                  </Typography>
-                  <ul className="list-unstyled">
-                    {selectedContent.thingsNotAllowedWhileFasting[language].map(
-                      (item, idx) => (
-                        <li key={idx}>
-                          <Typography level="body1">
-                            {idx + 1}. {item}
-                          </Typography>
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </Box>
-              )}
-
-              {/* Hajj Steps */}
-              {selectedContent.hajjSteps && (
-                <Box sx={{ marginTop: 4 }}>
-                  <Typography level="h5" sx={{ marginBottom: 2, color: "red" }}>
-                    {language === "en" ? "Hajj Steps :" : "خطوات الحج : "}
-                  </Typography>
-                  {selectedContent.hajjSteps[language].map((step, idx) => (
-                    <Typography
-                      key={idx}
-                      level="body1"
-                      sx={{ marginBottom: 1 }}
-                    >
-                      {step.stepNumber}.{" "}
-                      <span className="text-primary">{step.stepName}</span> :{" "}
-                      {step.description}
-                    </Typography>
-                  ))}
-                </Box>
-              )}
-
-              {/* Qadar Steps */}
-              {selectedContent.qadarSteps && (
-                <Box sx={{ marginTop: 4 }}>
-                  <Typography level="h5" sx={{ marginBottom: 2, color: "red" }}>
-                    {language === "en"
-                      ? "Aspects of Belief in Qadar:"
-                      : "مراتب الإيمان بالقدر : "}
-                  </Typography>
-                  {selectedContent.qadarSteps[language].map((step, idx) => (
-                    <Typography
-                      key={idx}
-                      level="body1"
-                      sx={{ marginBottom: 1 }}
-                    >
-                      {step.stepNumber}.{" "}
-                      <span className="text-primary">{step.stepName}</span> :{" "}
-                      {step.description}
-                    </Typography>
-                  ))}
-                </Box>
-              )}
-
-              {/* Videos */}
-              {selectedContent.videos &&
-                selectedContent.videos.map((video, idx) => (
-                  <Box key={idx} sx={{ marginTop: 4 }}>
-                    <Typography
-                      level="h3"
-                      sx={{
-                        marginBottom: 2,
-                        textAlign: "center",
-                        color: "var(--primary-color)",
-                      }}
-                    >
-                      {video.title[language]}
-                    </Typography>
-                    <Typography
-                      level="body1"
-                      sx={{ marginBottom: 2, textAlign: "center" }}
-                    >
-                      {video.description[language]}
-                    </Typography>
-                    <Box
-                      sx={{
-                        position: "relative",
-                        width: "100%",
-                        height: "360px",
-                      }}
-                    >
-                      <ReactPlayer
-                        url={video.url}
-                        width="100%"
-                        height="100%"
-                        controls
-                        onReady={() => handleVideoReady(idx)}
-                      />
-                      {videoLoadingStates[idx] && (
-                        <Box
+                        <Typography
+                          level="body-sm"
                           sx={{
-                            position: "absolute",
-                            top: "50%",
-                            left: "50%",
-                            transform: "translate(-50%, -50%)",
+                            opacity: 0.85,
+                            display: "-webkit-box",
+                            WebkitLineClamp: 4,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
                           }}
                         >
-                          <CircularProgress />
-                        </Box>
-                      )}
-                    </Box>
-                  </Box>
-                ))}
-            </>
-          )}
-        </Box>
-      </Modal>
-    </Box>
+                          {subtitle}
+                        </Typography>
+
+                        {!!proof && (
+                          <>
+                            <Divider sx={{ my: 1.2 }} />
+                            <Typography
+                              level="body-xs"
+                              sx={{
+                                fontStyle: "italic",
+                                opacity: 0.8,
+                                display: "-webkit-box",
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: "vertical",
+                                overflow: "hidden",
+                              }}
+                            >
+                              {proof}
+                            </Typography>
+                          </>
+                        )}
+
+                        {clickable && (
+                          <Button
+                            variant="soft"
+                            color="primary"
+                            size="sm"
+                            onClick={() => handleOpen(section)}
+                            sx={{ borderRadius: "16px", fontWeight: 800 }}
+                          >
+                            {isRTL ? "عرض التفاصيل" : "View details"}
+                          </Button>
+                        )}
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              );
+            })}
+          </Grid>
+        )}
+
+        {/* ================= MODAL ================= */}
+        <Modal open={open} onClose={handleClose}>
+          <Sheet
+            variant="outlined"
+            sx={{
+              position: "fixed",
+              inset: 0,
+              borderRadius: 0,
+              display: "flex",
+              flexDirection: "column",
+            }}
+            className="beMuslim-modal-sheet"
+          >
+            {/* Top bar */}
+            <Box
+              sx={{
+                px: { xs: 1.5, sm: 2.5, md: 3 },
+                py: 1.5,
+                borderBottom: "1px solid",
+                borderColor: "divider",
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                justifyContent: "space-between",
+              }}
+            >
+              <Stack
+                direction="row"
+                spacing={1}
+                alignItems="center"
+                className="salah-condition-header"
+              >
+                <Chip
+                  variant="soft"
+                  color={selectedContent?.color || "neutral"}
+                >
+                  {badgeLabel(selectedContent)}
+                </Chip>
+
+                <Typography
+                  level="h4"
+                  sx={{
+                    fontWeight: 900,
+                    lineHeight: 1.1,
+                    color: "var(--text-color)",
+                  }}
+                >
+                  {modalTitle}
+                </Typography>
+              </Stack>
+
+              <Tooltip title={isRTL ? "إغلاق" : "Close"}>
+                <IconButton variant="soft" color="danger" onClick={handleClose}>
+                  <CloseRoundedIcon />
+                </IconButton>
+              </Tooltip>
+            </Box>
+
+            {/* Tabs */}
+            <Tabs
+              value={activeTab}
+              onChange={(_, v) => setActiveTab(v)}
+              sx={{ flex: 1, minHeight: 0, bgcolor: "var(--card-color)" }}
+            >
+              <TabList
+                variant="soft"
+                sx={{
+                  px: { xs: 1.5, sm: 2.5, md: 3 },
+                  py: 1,
+                  gap: 1,
+                  borderBottom: "1px solid",
+                  borderColor: "divider",
+                  flexWrap: "wrap",
+                  bgcolor: "var(--card-color)",
+                  color: "var(--text-color)",
+                }}
+              >
+                <Tab value={0}>{isRTL ? "المحتوى" : "Content"}</Tab>
+                <Tab value={1}>{isRTL ? "الدليل" : "Proof"}</Tab>
+                <Tab value={2} disabled={!modalHasSteps}>
+                  {isRTL ? "الخطوات" : "Steps"}
+                </Tab>
+                <Tab value={3} disabled={!selectedContent?.videos?.length}>
+                  {isRTL ? "الفيديو" : "Videos"}
+                </Tab>
+              </TabList>
+
+              <Box
+                sx={{
+                  flex: 1,
+                  minHeight: 0,
+                  overflow: "auto",
+                  px: { xs: 1.5, sm: 2.5, md: 3 },
+                  py: 2,
+                  bgcolor: "var(--card-color)",
+                }}
+              >
+                {/* ========== TAB 0: CONTENT ========== */}
+                <TabPanel value={0} sx={{ p: 0 }}>
+                  {selectedContent ? (
+                    <Card
+                      variant="soft"
+                      sx={{
+                        borderRadius: "xl",
+                        bgcolor: "var(--card-color)",
+                        color: "var(--text-color)",
+                      }}
+                      className="beMuslim-content-card"
+                    >
+                      <CardContent>
+                        {Array.isArray(
+                          selectedContent?.description?.[language],
+                        ) ? (
+                          <Stack
+                            spacing={1.25}
+                            sx={{ color: "var(--text-color)" }}
+                          >
+                            {selectedContent.description[language].map(
+                              (item, idx) => (
+                                <Typography
+                                  key={idx}
+                                  level={
+                                    isHeadingBlock(item)
+                                      ? "title-lg"
+                                      : isTypeBlock(item)
+                                        ? "title-md"
+                                        : "body-md"
+                                  }
+                                  sx={{
+                                    fontWeight:
+                                      isHeadingBlock(item) || isTypeBlock(item)
+                                        ? 900
+                                        : 400,
+                                    opacity: isHeadingBlock(item) ? 0.95 : 0.9,
+                                    borderInlineStart:
+                                      isHeadingBlock(item) || isTypeBlock(item)
+                                        ? "4px solid"
+                                        : "none",
+                                    borderColor: isHeadingBlock(item)
+                                      ? "primary.500"
+                                      : "success.500",
+                                    ps:
+                                      isHeadingBlock(item) || isTypeBlock(item)
+                                        ? 1
+                                        : 0,
+                                    color: "var(--text-color)",
+                                  }}
+                                >
+                                  {item.text}
+                                </Typography>
+                              ),
+                            )}
+                          </Stack>
+                        ) : (
+                          <Typography
+                            level="body-md"
+                            sx={{
+                              opacity: 0.9,
+                              color: "var(--text-color)",
+                              borderColor: "var(--text-color)",
+                            }}
+                          >
+                            {selectedContent?.description?.[language] || ""}
+                          </Typography>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    <Typography level="body-md" sx={{ opacity: 0.7 }}>
+                      {isRTL ? "لا يوجد محتوى." : "No content."}
+                    </Typography>
+                  )}
+                </TabPanel>
+
+                {/* ========== TAB 1: PROOF ========== */}
+                <TabPanel value={1} sx={{ p: 0 }}>
+                  <Card
+                    variant="outlined"
+                    sx={{
+                      borderRadius: "xl",
+                      bgcolor: "var(--card-color)",
+                      color: "var(--text-color)",
+                    }}
+                  >
+                    <CardContent>
+                      <Typography
+                        level="title-lg"
+                        sx={{
+                          fontWeight: 900,
+                          mb: 1,
+                          color: "var(--text-color)",
+                        }}
+                      >
+                        {isRTL ? "الدليل" : "Proof"}
+                      </Typography>
+                      <Typography
+                        level="body-md"
+                        sx={{
+                          fontStyle: "italic",
+                          opacity: 0.9,
+                          color: "var(--text-color)",
+                        }}
+                      >
+                        {selectedContent?.proof?.[language] ||
+                          (isRTL ? "لا يوجد دليل هنا." : "No proof provided.")}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </TabPanel>
+
+                {/* ========== TAB 2: STEPS (ALL TYPES) ========== */}
+                <TabPanel value={2} sx={{ p: 0 }}>
+                  <Stack spacing={1.5}>
+                    {/* Wudu */}
+                    {selectedContent?.wuduSteps && (
+                      <Card
+                        variant="outlined"
+                        sx={{
+                          borderRadius: "xl",
+                          bgcolor: "var(--card-color)",
+                          color: "var(--text-color)",
+                        }}
+                      >
+                        <CardContent className="wudu-steps">
+                          <Typography
+                            level="title-lg"
+                            sx={{
+                              fontWeight: 900,
+                              mb: 1,
+                              color: "var(--text-color)",
+                            }}
+                          >
+                            {isRTL ? "خطوات الوضوء" : "Wudu Steps"}
+                          </Typography>
+                          <Stack spacing={1}>
+                            {selectedContent.wuduSteps.map((step, idx) => (
+                              <Card
+                                key={idx}
+                                variant="soft"
+                                className="wudu-step-card"
+                                sx={{
+                                  borderRadius: "md",
+                                  color: "var(--text-color)",
+                                  borderColor: "var(--text-color)",
+                                }}
+                              >
+                                <CardContent>
+                                  <Stack
+                                    direction="row"
+                                    spacing={1}
+                                    alignItems="center"
+                                    sx={{
+                                      mb: 0.5,
+                                      borderColor: "var(--text-color)",
+                                      color: "var(--text-color)",
+                                    }}
+                                    className="salah-condition-header"
+                                  >
+                                    <Chip variant="soft" color="primary">
+                                      {step.stepNumber}
+                                    </Chip>
+                                    <Typography
+                                      level="title-md"
+                                      sx={{
+                                        fontWeight: 900,
+                                        color: "var(--text-color)",
+                                      }}
+                                    >
+                                      {step.stepName?.[language]}
+                                    </Typography>
+                                    {step.repeats ? (
+                                      <Chip
+                                        variant="soft"
+                                        color="success"
+                                        size="sm"
+                                      >
+                                        {isRTL
+                                          ? `تكرر ${step.repeats}`
+                                          : `Repeat ${step.repeats}`}
+                                      </Chip>
+                                    ) : null}
+                                  </Stack>
+                                  <Typography
+                                    level="body-md"
+                                    sx={{
+                                      opacity: 0.9,
+                                      color: "var(--text-color)",
+                                    }}
+                                  >
+                                    {step.description?.[language]}
+                                  </Typography>
+                                </CardContent>
+                              </Card>
+                            ))}
+                          </Stack>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* Salah Conditions */}
+                    {selectedContent?.salahConditions && (
+                      <Card
+                        variant="outlined"
+                        sx={{ borderRadius: "xl" }}
+                        className="salah-condition-card"
+                      >
+                        <CardContent>
+                          <Typography
+                            level="title-lg"
+                            sx={{
+                              fontWeight: 900,
+                              mb: 1,
+                              color: "var(--text-color)",
+                            }}
+                          >
+                            {isRTL ? "شروط الصلاة" : "Salah Conditions"}
+                          </Typography>
+                          <Stack spacing={1}>
+                            {selectedContent.salahConditions.map((c, idx) => (
+                              <Card
+                                key={idx}
+                                variant="soft"
+                                sx={{ borderRadius: "lg" }}
+                                className="wudu-step-card"
+                              >
+                                <CardContent>
+                                  <Stack
+                                    direction="row"
+                                    spacing={1}
+                                    alignItems="center"
+                                    sx={{ mb: 0.5 }}
+                                    className="salah-condition-header"
+                                  >
+                                    <Chip
+                                      variant="soft"
+                                      color="warning"
+                                      sx={{ margin: 5 }}
+                                    >
+                                      {c.conditionNumber}
+                                    </Chip>
+                                    <Typography
+                                      level="title-md"
+                                      sx={{
+                                        fontWeight: 900,
+                                        color: "var(--text-color)",
+                                        m: 2,
+                                      }}
+                                    >
+                                      {c.conditionName?.[language]}
+                                    </Typography>
+                                  </Stack>
+                                  <Typography
+                                    level="body-md"
+                                    sx={{
+                                      opacity: 0.9,
+                                      color: "var(--text-color)",
+                                    }}
+                                  >
+                                    {c.description?.[language]}
+                                  </Typography>
+                                </CardContent>
+                              </Card>
+                            ))}
+                          </Stack>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* Places Not Allowed */}
+                    {selectedContent?.salahDisallowedPlaces && (
+                      <Card
+                        variant="outlined"
+                        sx={{ borderRadius: "xl" }}
+                        className="salah-condition-card"
+                      >
+                        <CardContent>
+                          <Typography
+                            level="title-lg"
+                            sx={{
+                              fontWeight: 900,
+                              mb: 1,
+                              color: "var(--text-color)",
+                            }}
+                          >
+                            {isRTL
+                              ? "أماكن لا تجوز فيها الصلاة"
+                              : "Places Where Salah Is Not Allowed"}
+                          </Typography>
+                          <Stack spacing={1}>
+                            {selectedContent.salahDisallowedPlaces?.[0]?.[
+                              language
+                            ]?.map((p, idx) => (
+                              <Chip
+                                key={idx}
+                                variant="soft"
+                                sx={{ width: "fit-content" }}
+                              >
+                                {idx + 1}. {p}
+                              </Chip>
+                            ))}
+                          </Stack>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* Invalidators of Salah */}
+                    {selectedContent?.thingsThatInvalidateSalah && (
+                      <Card
+                        variant="outlined"
+                        sx={{ borderRadius: "xl" }}
+                        className="salah-condition-card"
+                      >
+                        <CardContent>
+                          <Typography
+                            level="title-lg"
+                            sx={{
+                              fontWeight: 900,
+                              mb: 1,
+                              color: "var(--text-color)",
+                            }}
+                          >
+                            {isRTL
+                              ? "مبطلات الصلاة"
+                              : "Things That Invalidate Salah"}
+                          </Typography>
+                          <Stack spacing={1}>
+                            {selectedContent.thingsThatInvalidateSalah?.[
+                              language
+                            ]?.map((p, idx) => (
+                              <Chip
+                                key={idx}
+                                variant="soft"
+                                color="danger"
+                                sx={{ width: "fit-content" }}
+                              >
+                                {idx + 1}. {p}
+                              </Chip>
+                            ))}
+                          </Stack>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* Fasting invalidators */}
+                    {selectedContent?.thingsNotAllowedWhileFasting && (
+                      <Card
+                        variant="outlined"
+                        sx={{ borderRadius: "xl" }}
+                        className="salah-condition-card"
+                      >
+                        <CardContent>
+                          <Typography
+                            level="title-lg"
+                            sx={{
+                              fontWeight: 900,
+                              mb: 1,
+                              color: "var(--text-color)",
+                            }}
+                          >
+                            {isRTL
+                              ? "مبطلات الصيام"
+                              : "Things Not Allowed While Fasting"}
+                          </Typography>
+                          <Stack spacing={1}>
+                            {selectedContent.thingsNotAllowedWhileFasting?.[
+                              language
+                            ]?.map((p, idx) => (
+                              <Chip
+                                key={idx}
+                                variant="soft"
+                                color="danger"
+                                sx={{ width: "fit-content" }}
+                              >
+                                {idx + 1}. {p}
+                              </Chip>
+                            ))}
+                          </Stack>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* Hajj steps */}
+                    {selectedContent?.hajjSteps && (
+                      <Card
+                        variant="outlined"
+                        sx={{ borderRadius: "xl" }}
+                        className="salah-condition-card"
+                      >
+                        <CardContent>
+                          <Typography
+                            level="title-lg"
+                            sx={{
+                              fontWeight: 900,
+                              mb: 1,
+                              color: "var(--text-color)",
+                            }}
+                          >
+                            {isRTL ? "خطوات الحج" : "Hajj Steps"}
+                          </Typography>
+                          <Stack spacing={1}>
+                            {selectedContent.hajjSteps?.[language]?.map(
+                              (s, idx) => (
+                                <Card
+                                  key={idx}
+                                  variant="soft"
+                                  sx={{ borderRadius: "lg" }}
+                                  className="wudu-step-card"
+                                >
+                                  <CardContent>
+                                    <Stack
+                                      direction="row"
+                                      spacing={1}
+                                      alignItems="center"
+                                      sx={{ mb: 0.5 }}
+                                      className="salah-condition-header"
+                                    >
+                                      <Chip variant="soft" color="primary">
+                                        {s.stepNumber}
+                                      </Chip>
+                                      <Typography
+                                        level="title-md"
+                                        sx={{
+                                          fontWeight: 900,
+                                          color: "var(--text-color)",
+                                        }}
+                                      >
+                                        {s.stepName}
+                                      </Typography>
+                                    </Stack>
+                                    <Typography
+                                      level="body-md"
+                                      sx={{
+                                        opacity: 0.9,
+                                        color: "var(--text-color)",
+                                      }}
+                                    >
+                                      {s.description}
+                                    </Typography>
+                                  </CardContent>
+                                </Card>
+                              ),
+                            )}
+                          </Stack>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* Qadar steps */}
+                    {selectedContent?.qadarSteps && (
+                      <Card
+                        variant="outlined"
+                        sx={{ borderRadius: "xl" }}
+                        className="salah-condition-card"
+                      >
+                        <CardContent>
+                          <Typography
+                            level="title-lg"
+                            sx={{
+                              fontWeight: 900,
+                              mb: 1,
+                              color: "var(--text-color)",
+                            }}
+                          >
+                            {isRTL
+                              ? "مراتب الإيمان بالقدر"
+                              : "Aspects of Belief in Qadar"}
+                          </Typography>
+                          <Stack spacing={1}>
+                            {selectedContent.qadarSteps?.[language]?.map(
+                              (s, idx) => (
+                                <Card
+                                  key={idx}
+                                  variant="soft"
+                                  sx={{ borderRadius: "lg" }}
+                                  className="wudu-step-card"
+                                >
+                                  <CardContent>
+                                    <Stack
+                                      direction="row"
+                                      spacing={1}
+                                      alignItems="center"
+                                      sx={{ mb: 0.5 }}
+                                      className="salah-condition-header"
+                                    >
+                                      <Chip variant="soft" color="primary">
+                                        {s.stepNumber}
+                                      </Chip>
+                                      <Typography
+                                        level="title-md"
+                                        sx={{
+                                          fontWeight: 900,
+                                          color: "var(--text-color)",
+                                        }}
+                                      >
+                                        {s.stepName}
+                                      </Typography>
+                                    </Stack>
+                                    <Typography
+                                      level="body-md"
+                                      sx={{
+                                        opacity: 0.9,
+                                        color: "var(--text-color)",
+                                      }}
+                                    >
+                                      {s.description}
+                                    </Typography>
+                                  </CardContent>
+                                </Card>
+                              ),
+                            )}
+                          </Stack>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* If steps tab opened but nothing exists */}
+                    {!modalHasSteps && (
+                      <Typography
+                        level="body-md"
+                        sx={{ opacity: 0.7, color: "var(--text-color)" }}
+                      >
+                        {isRTL
+                          ? "لا توجد خطوات لهذا القسم."
+                          : "No steps for this section."}
+                      </Typography>
+                    )}
+                  </Stack>
+                </TabPanel>
+
+                {/* ========== TAB 3: VIDEOS ========== */}
+                <TabPanel value={3} sx={{ p: 0 }} className="wudu-step-card">
+                  <Stack spacing={2} className="wudu-step-card">
+                    {selectedContent?.videos?.map((video, idx) => (
+                      <Card
+                        key={idx}
+                        variant="outlined"
+                        sx={{ borderRadius: "xl", overflow: "hidden" }}
+                        className="wudu-step-card"
+                      >
+                        <CardOverflow
+                          variant="soft"
+                          sx={{
+                            px: 2,
+                            py: 1.5,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            gap: 1,
+                            bgcolor: "var(--card-color)",
+                            color: "var(--text-color)",
+                          }}
+                        >
+                          <Stack
+                            direction="row"
+                            spacing={1}
+                            alignItems="center"
+                          >
+                            <PlayCircleOutlineRoundedIcon />
+                            <Typography
+                              level="title-lg"
+                              sx={{
+                                fontWeight: 900,
+                                color: "var(--text-color)",
+                              }}
+                            >
+                              {video.title?.[language]}
+                            </Typography>
+                          </Stack>
+                          <Chip variant="soft" color="primary" size="sm">
+                            {isRTL ? "تشغيل" : "Play"}
+                          </Chip>
+                        </CardOverflow>
+
+                        <CardContent>
+                          <Typography
+                            level="body-md"
+                            sx={{
+                              opacity: 0.9,
+                              mb: 1.5,
+                              color: "var(--text-color)",
+                            }}
+                          >
+                            {video.description?.[language]}
+                          </Typography>
+
+                          <Box
+                            sx={{
+                              position: "relative",
+                              width: "100%",
+                              height: { xs: 220, sm: 340 },
+                            }}
+                          >
+                            <ReactPlayer
+                              url={video.url}
+                              width="100%"
+                              height="100%"
+                              controls
+                              onReady={() => handleVideoReady(idx)}
+                            />
+                            {videoLoadingStates[idx] && (
+                              <Box
+                                sx={{
+                                  position: "absolute",
+                                  inset: 0,
+                                  display: "grid",
+                                  placeItems: "center",
+                                  bgcolor: "rgba(0,0,0,0.15)",
+                                  backdropFilter: "blur(4px)",
+                                }}
+                              >
+                                <CircularProgress />
+                              </Box>
+                            )}
+                          </Box>
+                        </CardContent>
+                      </Card>
+                    ))}
+
+                    {!selectedContent?.videos?.length && (
+                      <Typography
+                        level="body-md"
+                        sx={{ opacity: 0.7, color: "var(--text-color)" }}
+                      >
+                        {isRTL
+                          ? "لا يوجد فيديو لهذا القسم."
+                          : "No videos for this section."}
+                      </Typography>
+                    )}
+                  </Stack>
+                </TabPanel>
+              </Box>
+            </Tabs>
+          </Sheet>
+        </Modal>
+      </Box>
+    </>
   );
 };
 
