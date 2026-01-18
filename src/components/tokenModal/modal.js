@@ -1,6 +1,5 @@
-// notifications.js
 import { initializeApp } from "firebase/app";
-import { getMessaging, getToken, deleteToken } from "firebase/messaging";
+import { getMessaging, getToken } from "firebase/messaging";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCNYvDi7lQdSmnmnwiQX4fHkWSRJZYxS0A",
@@ -11,29 +10,25 @@ const firebaseConfig = {
   appId: "1:201721918025:web:6126bde4f558e1f8624598",
 };
 
-const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
-
 const VAPID_KEY =
   "BMIkZIuU4vOSNanHXz100XatwSraU421Jh5Z8AlD07Js8OFJghIjmDjgVn4Xxk856zQEDM5zWCiVU5IQRs7XiCQ";
 
-// ⏱️ 5 days
-const FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;
+const BACKEND_URL =
+  "https://islamic-notifs-backend.onrender.com/api/save-token";
 
-// localStorage keys
 const LS_TOKEN = "deviceToken";
-const LS_SAVED_AT = "deviceTokenSavedAt";
-const LS_RESET_ONCE = "fcmResetOnceDone";
+
+const app = initializeApp(firebaseConfig);
+const messaging = getMessaging(app);
 
 export async function registerDeviceToken() {
-  console.trace("[FCM] registerDeviceToken CALLED");
-
-  // Ask permission (must be called from a click)
   const permission = await Notification.requestPermission();
   if (permission !== "granted") return;
 
   try {
-    // Ensure SW for background messages (KEEP YOUR LOGIC)
+    // ⚠️ IMPORTANT:
+    // If you still use /firebase-messaging-sw.js keep this.
+    // If you merged into CRA Workbox SW, use: const swReg = await navigator.serviceWorker.ready;
     let swReg;
     if ("serviceWorker" in navigator) {
       swReg = await navigator.serviceWorker.register(
@@ -42,42 +37,7 @@ export async function registerDeviceToken() {
       await navigator.serviceWorker.ready;
     }
 
-    /* ------------------------------------------------------------------
-       ✅ ADD 1: one-time delete if token already exists (ONLY ONCE EVER)
-    ------------------------------------------------------------------ */
-    const hasToken = !!localStorage.getItem(LS_TOKEN);
-    const resetOnceDone = localStorage.getItem(LS_RESET_ONCE) === "1";
-
-    if (hasToken && !resetOnceDone) {
-      console.log("[FCM] One-time reset: deleting old token");
-      try {
-        await deleteToken(messaging);
-      } catch (_) {}
-
-      localStorage.removeItem(LS_TOKEN);
-      localStorage.removeItem(LS_SAVED_AT);
-      localStorage.setItem(LS_RESET_ONCE, "1");
-    }
-
-    /* ------------------------------------------------------------------
-       ✅ ADD 2: renew token every 5 days
-    ------------------------------------------------------------------ */
-    const savedAt = Number(localStorage.getItem(LS_SAVED_AT) || "0");
-    const tooOld = !savedAt || Date.now() - savedAt > FIVE_DAYS_MS;
-
-    if (tooOld) {
-      console.log("[FCM] Token too old -> rotating...");
-      try {
-        await deleteToken(messaging);
-      } catch (_) {}
-
-      localStorage.removeItem(LS_TOKEN);
-      localStorage.removeItem(LS_SAVED_AT);
-    }
-
-    /* ------------------------------------------------------------------
-       ORIGINAL LOGIC (UNCHANGED)
-    ------------------------------------------------------------------ */
+    // ✅ Firebase will return existing token OR generate a new one if needed
     const token = await getToken(messaging, {
       vapidKey: VAPID_KEY,
       serviceWorkerRegistration: swReg,
@@ -85,25 +45,26 @@ export async function registerDeviceToken() {
 
     if (!token) return;
 
-    // Save to backend ONLY if new
-    const oldToken = localStorage.getItem(LS_TOKEN);
-    if (!oldToken || oldToken !== token) {
-      const res = await fetch("https://islamic-notifs-backend.onrender.com/api/save-token", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
-      });
+    const oldToken = localStorage.getItem(LS_TOKEN) || "";
 
-      await res.json().catch(() => null);
+    // ✅ ALWAYS send token to backend (backend decides save/ignore)
+    const res = await fetch(BACKEND_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        token,
+        oldToken: oldToken && oldToken !== token ? oldToken : undefined,
+      }),
+    });
 
-      localStorage.setItem(LS_TOKEN, token);
-      localStorage.setItem(LS_SAVED_AT, String(Date.now()));
+    const data = await res.json().catch(() => null);
 
-      console.log("[FCM] Token saved:", token.slice(0, 25) + "...");
-    } else {
-      console.log("[FCM] Same token, not re-saving");
-    }
+    // store latest token locally (for change detection only)
+    localStorage.setItem(LS_TOKEN, token);
+
+    console.log("[FCM] sent token:", token.slice(0, 25) + "...");
+    if (data) console.log("[FCM] backend:", data);
   } catch (err) {
-    console.error("FCM registration failed:", err);
+    console.error("FCM registerDeviceToken failed:", err);
   }
 }
