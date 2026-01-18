@@ -1,77 +1,87 @@
-// ✅ Load Firebase SDK for service workers
+// firebase-messaging-sw.js
+
+// ✅ Load Firebase SDK for service workers (compat)
 importScripts(
-  "https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"
+  "https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js",
 );
 importScripts(
-  "https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js"
+  "https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js",
 );
 
-// ✅ Initialize Firebase (replace with your own config)
+// ✅ Initialize Firebase
 firebase.initializeApp({
-  apiKey: "AIzaSyB_RZPaSTSKyQFs53p1aAmj29qtsQhWGzw",
-  authDomain: "islamic-app-90797.firebaseapp.com",
-  projectId: "islamic-app-90797",
-  storageBucket: "islamic-app-90797.appspot.com",
-  messagingSenderId: "638328114408",
-  appId: "1:638328114408:web:e19eb1f1abd71b67160d5d",
-  measurementId: "G-2KV5EGH6D9",
+  apiKey: "AIzaSyCNYvDi7lQdSmnmnwiQX4fHkWSRJZYxS0A",
+  authDomain: "my-islam-9c165.firebaseapp.com",
+  projectId: "my-islam-9c165",
+  storageBucket: "my-islam-9c165.firebasestorage.app",
+  messagingSenderId: "201721918025",
+  appId: "1:201721918025:web:6126bde4f558e1f8624598",
 });
 
-// ✅ Initialize messaging
 const messaging = firebase.messaging();
 
-// ✅ Handle background push message
+// ✅ Always handle background messages yourself (more reliable)
 messaging.onBackgroundMessage((payload) => {
   console.log("[SW] Background message received:", payload);
 
-  // If notification is already shown by Firebase, do nothing
-  if (payload.notification) {
-    // Let Firebase handle it automatically
-    return;
-  }
+  // Title/body from either notification or data payload
+  const title =
+    payload?.notification?.title || payload?.data?.title || "🕌 Prayer Time";
 
-  // Manual fallback if it's a data-only message
-  const notificationTitle = payload.data?.title;
-  const notificationOptions = {
-    body: payload.data?.body,
-    icon: "./search.png",
-    badge: "./search.png",
-    data: {
-      url: payload.data?.url || "https://myislam-steel.vercel.app",
-    },
+  const body = payload?.notification?.body || payload?.data?.body || "";
+
+  const url =
+    payload?.data?.url ||
+    payload?.fcmOptions?.link ||
+    "https://myislam-steel.vercel.app";
+
+  const options = {
+    body,
+    icon: "/search.png",
+    badge: "/search.png",
+    data: { url }, // ✅ always available for click
   };
 
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  self.registration.showNotification(title, options);
 });
 
-// ✅ Handle notification click
-self.addEventListener("notificationclick", function (event) {
+// ✅ Handle notification click (robust for FCM)
+self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const urlToOpen = event.notification.data?.url;
+
+  // Most reliable: our own stored data.url
+  let urlToOpen = event.notification?.data?.url;
+
+  // Fallbacks for some FCM formats
+  if (!urlToOpen) {
+    urlToOpen =
+      event.notification?.data?.FCM_MSG?.data?.url ||
+      event.notification?.data?.FCM_MSG?.notification?.click_action;
+  }
+
+  if (!urlToOpen) {
+    urlToOpen = "https://myislam-steel.vercel.app";
+  }
 
   event.waitUntil(
     clients
       .matchAll({ type: "window", includeUncontrolled: true })
-      .then((windowClients) => {
-        for (const client of windowClients) {
-          if (client.url === urlToOpen && "focus" in client) {
+      .then((clientsArr) => {
+        for (const client of clientsArr) {
+          if (client.url === urlToOpen && "focus" in client)
             return client.focus();
-          }
         }
-        if (clients.openWindow) {
-          return clients.openWindow(urlToOpen);
-        }
-      })
+        return clients.openWindow(urlToOpen);
+      }),
   );
 });
 
-// ✅ Auto-update service worker
-self.addEventListener("install", (event) => {
-  self.skipWaiting();
-});
+// ✅ Auto-update SW
+self.addEventListener("install", () => self.skipWaiting());
+self.addEventListener("activate", (event) =>
+  event.waitUntil(self.clients.claim()),
+);
 
 self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "SKIP_WAITING") {
-    self.skipWaiting();
-  }
+  if (event.data && event.data.type === "SKIP_WAITING") self.skipWaiting();
 });

@@ -22,61 +22,61 @@ const Categories = lazy(() => import("./pages/categories/categories"));
 const About = lazy(() => import("./pages/about/about"));
 const API = lazy(() => import("./pages/api/apidocs"));
 const Contact = lazy(() => import("./pages/contact/contact"));
-const Islam = lazy(() =>
-  import("./pages/categories/subCategories/islam/islam")
+const Islam = lazy(
+  () => import("./pages/categories/subCategories/islam/islam"),
 );
-const Adhkar = lazy(() =>
-  import("./pages/categories/subCategories/adhkar/adhkar")
+const Adhkar = lazy(
+  () => import("./pages/categories/subCategories/adhkar/adhkar"),
 );
-const Ahadith = lazy(() =>
-  import("./pages/categories/subCategories/ahadith/ahadith")
+const Ahadith = lazy(
+  () => import("./pages/categories/subCategories/ahadith/ahadith"),
 );
-const Animals = lazy(() =>
-  import("./pages/categories/subCategories/animalsQisas/animals")
+const Animals = lazy(
+  () => import("./pages/categories/subCategories/animalsQisas/animals"),
 );
-const BeMuslim = lazy(() =>
-  import("./pages/categories/subCategories/beMuslim/beMuslim")
+const BeMuslim = lazy(
+  () => import("./pages/categories/subCategories/beMuslim/beMuslim"),
 );
-const Fatawa = lazy(() =>
-  import("./pages/categories/subCategories/fatawa/fatwa")
+const Fatawa = lazy(
+  () => import("./pages/categories/subCategories/fatawa/fatwa"),
 );
-const Hikam = lazy(() =>
-  import("./pages/categories/subCategories/library/library")
+const Hikam = lazy(
+  () => import("./pages/categories/subCategories/library/library"),
 );
-const Names = lazy(() =>
-  import("./pages/categories/subCategories/names/names")
+const Names = lazy(
+  () => import("./pages/categories/subCategories/names/names"),
 );
-const Prophets = lazy(() =>
-  import("./pages/categories/subCategories/prophetsQisas/prophets")
+const Prophets = lazy(
+  () => import("./pages/categories/subCategories/prophetsQisas/prophets"),
 );
-const Quran = lazy(() =>
-  import("./pages/categories/subCategories/quran/quran")
+const Quran = lazy(
+  () => import("./pages/categories/subCategories/quran/quran"),
 );
-const Tafsir = lazy(() =>
-  import("./pages/categories/subCategories/tafsir/tafsir")
+const Tafsir = lazy(
+  () => import("./pages/categories/subCategories/tafsir/tafsir"),
 );
-const Tasbih = lazy(() =>
-  import("./pages/categories/subCategories/tasbih/tasbih")
+const Tasbih = lazy(
+  () => import("./pages/categories/subCategories/tasbih/tasbih"),
 );
-const Times = lazy(() =>
-  import("./pages/categories/subCategories/times/times")
+const Times = lazy(
+  () => import("./pages/categories/subCategories/times/times"),
 );
-const Radio = lazy(() =>
-  import("./pages/categories/subCategories/radio/radio")
+const Radio = lazy(
+  () => import("./pages/categories/subCategories/radio/radio"),
 );
 const Fiqh = lazy(() => import("./pages/categories/subCategories/fiqh/fiqh"));
-const Historic = lazy(() =>
-  import("./pages/categories/subCategories/historic/history")
+const Historic = lazy(
+  () => import("./pages/categories/subCategories/historic/history"),
 );
-const Arabic = lazy(() =>
-  import("./pages/categories/subCategories/arabic/arabic")
+const Arabic = lazy(
+  () => import("./pages/categories/subCategories/arabic/arabic"),
 );
-const Topics = lazy(() =>
-  import("./pages/categories/subCategories/topics/topics")
+const Topics = lazy(
+  () => import("./pages/categories/subCategories/topics/topics"),
 );
 const Sira = lazy(() => import("./pages/categories/subCategories/sira/sira"));
-const Tajweed = lazy(() =>
-  import("./pages/categories/subCategories/tajweed/tajweed")
+const Tajweed = lazy(
+  () => import("./pages/categories/subCategories/tajweed/tajweed"),
 );
 const Player = lazy(() => import("./components/player/player"));
 
