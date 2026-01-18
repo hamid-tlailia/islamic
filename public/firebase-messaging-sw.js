@@ -33,7 +33,7 @@ messaging.onBackgroundMessage((payload) => {
   const url =
     payload?.data?.url ||
     payload?.fcmOptions?.link ||
-    "https://myislam-steel.vercel.app";
+    "https://myislam-steel.vercel.app/categories/times";
 
   const options = {
     body,
@@ -60,7 +60,7 @@ self.addEventListener("notificationclick", (event) => {
   }
 
   if (!urlToOpen) {
-    urlToOpen = "https://myislam-steel.vercel.app";
+    urlToOpen = "https://myislam-steel.vercel.app/categories/times";
   }
 
   event.waitUntil(
