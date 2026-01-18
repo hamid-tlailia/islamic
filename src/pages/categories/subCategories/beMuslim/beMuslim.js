@@ -1261,7 +1261,10 @@ const BeMuslim = () => {
                 >
                   {isRTL ? "كن مسلمًا" : "Be a Muslim"}
                 </Typography>
-                <Typography level="body-md" sx={{ mt: 0.5, opacity: 0.8 }}>
+                <Typography
+                  level="body-md"
+                  sx={{ mt: 0.5, opacity: 0.8, mx: 2 }}
+                >
                   {isRTL
                     ? "اقرأ الأقسام بسرعة وافتح التفاصيل داخل نافذة أنيقة."
                     : "Browse sections quickly and open details in a clean modal."}
@@ -1531,14 +1534,53 @@ const BeMuslim = () => {
               <TabList
                 variant="soft"
                 sx={{
-                  px: { xs: 1.5, sm: 2.5, md: 3 },
-                  py: 1,
-                  gap: 1,
-                  borderBottom: "1px solid",
-                  borderColor: "divider",
+                  px: { xs: 1, sm: 2, md: 3 },
+                  py: 0.75,
+                  gap: 0.75,
                   flexWrap: "wrap",
-                  bgcolor: "var(--card-color)",
+                  bgcolor: "var(--tabs-bg-color)",
+                  boxShadow: "var(--elev-1)",
                   color: "var(--text-color)",
+
+                  // Make tabs flexible on small screens
+                  "& .MuiTab-root": {
+                    flex: { xs: "1 1 auto", sm: "0 0 auto" },
+                    minWidth: { xs: 110, sm: 120, md: 140 },
+                    px: { xs: 1, sm: 1.25 },
+                    py: 0.9,
+                    borderRadius: "var(--radius-md)",
+                    color: "var(--text-color)",
+                    fontWeight: 700,
+                    opacity: 0.9,
+                    transition: "0.2s ease",
+                    "&:hover": {
+                      bgcolor: "rgba(127,127,127,0.12)",
+                      opacity: 1,
+                    },
+                    "&.Mui-disabled": {
+                      opacity: 0.45,
+                      cursor: "not-allowed",
+                      color: "var(--muted-text)",
+                    },
+                  },
+
+                  // Selected tab (mode-safe)
+                  "& .MuiTab-root.Mui-selected": {
+                    bgcolor: "var(--primary-color)",
+                    color: "var(--header-text-color)",
+                    opacity: 1,
+                    boxShadow: "var(--elev-1)",
+                  },
+                  "& .MuiTab-root.Mui-selected::after": {
+                    bgcolor: "transparent",
+                    boxShadow: "var(--elev-2)",
+                  },
+                  // Indicator (if Joy renders it for your setup)
+                  "& .MuiTabs-indicator, & .Mui-indicator": {
+                    bgcolor: "var(--text-color)",
+                    height: 3,
+                    borderRadius: 999,
+                  },
                 }}
               >
                 <Tab value={0}>{isRTL ? "المحتوى" : "Content"}</Tab>
@@ -1647,6 +1689,7 @@ const BeMuslim = () => {
                       bgcolor: "var(--card-color)",
                       color: "var(--text-color)",
                     }}
+                    className="beMuslim-content-card"
                   >
                     <CardContent>
                       <Typography

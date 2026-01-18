@@ -1,15 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./names.css";
 import { useTranslation } from "../../../../components/languages/provider";
+
 import Card from "@mui/joy/Card";
+import CardContent from "@mui/joy/CardContent";
+import Typography from "@mui/joy/Typography";
 import CircularProgress from "@mui/joy/CircularProgress";
-import { toast } from "react-toastify";
 import Modal from "@mui/joy/Modal";
 import ModalClose from "@mui/joy/ModalClose";
-import Typography from "@mui/joy/Typography";
 import Sheet from "@mui/joy/Sheet";
+import Input from "@mui/joy/Input";
+import Stack from "@mui/joy/Stack";
+import Divider from "@mui/joy/Divider";
 
-// namesOfAllah
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import { toast } from "react-toastify";
+
+// ✅ 1) KEEP your current object بالكامل كما هو
 const namesOfAllah = {
   Allah: {
     ar: "الله",
@@ -793,37 +800,47 @@ const namesOfAllah = {
     description_en:
       "Al-Witr indicates that Allah is the only one without any partners. He is the unique and eternal one.",
   },
+  "As-Sitteer": {
+    ar: "الستير",
+    en: "The Concealer",
+    description_ar:
+      "الستير: الذي يستر عيوب عباده ولا يفضحهم، ويحب الستر والحياء، ويدعو عباده إلى الستر على أنفسهم وعلى غيرهم.",
+    description_en:
+      "As-Sitteer: The One who conceals the faults of His servants and does not expose them. He loves modesty and concealment.",
+  },
 };
 
 const Names = () => {
   const { language } = useTranslation();
+
   const [namesData, setNamesData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isErrorFetching, setIsErrorFetching] = useState(false);
-  const [nameDescription, setNameDescription] = useState(null);
-  const [explainedName, setExplainedName] = useState(null);
+
   const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState(null);
+
+  const [query, setQuery] = useState("");
+
   useEffect(() => {
     if (isErrorFetching) {
       toast.error(
         language === "ar"
           ? "هناك خطأ ما سيتم معالجة الأمر قريبا "
-          : "Something happend , w'll fix it soon"
+          : "Something happend , w'll fix it soon",
       );
     }
     // eslint-disable-next-line
-  }, [isErrorFetching]);
+  }, [isErrorFetching, language]);
 
   useEffect(() => {
-    // Simulate fetching data by directly using the local object
     const fetchNames = async () => {
       try {
-        // Since we are using the local object, no need to fetch from API
         const data = Object.entries(namesOfAllah).map(([key, value]) => ({
           key,
           ...value,
         }));
-        setNamesData(data); // Use the local object data
+        setNamesData(data);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching names:", error);
@@ -831,105 +848,192 @@ const Names = () => {
         setIsErrorFetching(true);
       }
     };
-
     fetchNames();
   }, []);
 
-  const getDescription = (name) => {
-    const name_description =
-      language === "ar" ? name.description_ar : name.description_en;
-    setNameDescription(name_description);
-    setExplainedName(name[language]);
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return namesData;
+
+    return namesData.filter((item) => {
+      const ar = (item.ar || "").toLowerCase();
+      const en = (item.en || "").toLowerCase();
+      const key = (item.key || "").toLowerCase();
+      return ar.includes(q) || en.includes(q) || key.includes(q);
+    });
+  }, [namesData, query]);
+
+  const openDetails = (item) => {
+    setSelected(item);
     setOpen(true);
   };
 
+  const title = selected ? (language === "ar" ? selected.ar : selected.en) : "";
+  const subtitle = selected
+    ? language === "ar"
+      ? selected.en
+      : selected.ar
+    : "";
+  const description = selected
+    ? language === "ar"
+      ? selected.description_ar
+      : selected.description_en
+    : "";
+
   return (
-    <div className="names-container">
+    <div className="names-page" dir={language === "ar" ? "rtl" : "ltr"}>
+      {/* Top bar */}
+      <div className="names-topbar">
+        <div className="names-head">
+          <Typography level="h3" className="names-title">
+            {language === "ar" ? "أسماء الله الحسنى" : "Names of Allah"}
+          </Typography>
+          <Typography level="body-sm" className="names-subtitle">
+            {language === "ar"
+              ? "اضغط على الاسم لعرض الشرح"
+              : "Click a name to see details"}
+          </Typography>
+        </div>
+
+        <Input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={language === "ar" ? "ابحث..." : "Search..."}
+          startDecorator={<SearchRoundedIcon />}
+          className="names-search"
+          variant="soft"
+          size="md"
+          sx={{
+            bgcolor: "var(--card-color)",
+            color: "var(--text-color)",
+            border: "1px solid",
+            borderColor: "var(--text-color)20",
+          }}
+        />
+      </div>
+
       {loading ? (
         <div className="w-100 text-center loader-manager mt-5">
           <CircularProgress />
         </div>
-      ) : namesData.length > 0 ? (
-        namesData.map((item, index) => (
-          <Card
-            key={index}
-            variant="outlined"
-            sx={{
-              bgcolor: "var(--card-color)",
-              color: "var(--text-color)",
-              padding: 2,
-              textAlign: "center !important",
-              fontWeight: "bold",
-              cursor: "pointer",
-            }}
-            className="name-card"
-            onClick={() => getDescription(item)}
-          >
-            {/* Display the name based on the selected language */}
-            <div className="name pe-none">
-              {index + 1} - {item.ar}
-            </div>
-            {/* Display the meaning in English, which remains the same regardless of language */}
-            <div className="meaning pe-none">{item.en}</div>
-          </Card>
-        ))
+      ) : filtered.length > 0 ? (
+        <div className="names-container">
+          {filtered.map((item, index) => (
+            <Card
+              key={item.key}
+              variant="outlined"
+              className="name-card"
+              onClick={() => openDetails(item)}
+              sx={{
+                bgcolor: "var(--card-color)",
+                color: "var(--text-color)",
+                borderColor: "rgba(255,255,255,0.12)",
+              }}
+            >
+              <CardContent sx={{ textAlign: "center" }}>
+                <div className="index-badge">{index + 1}</div>
+
+                {/* ✅ show name based on language, not always Arabic */}
+                <div className="name">
+                  {language === "ar" ? item.ar : item.en}
+                </div>
+
+                {/* ✅ show the other language under it */}
+                <div className="meaning">
+                  {language === "ar" ? item.en : item.ar}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       ) : (
-        <div className="w-100 text-center loader-manager mt-5">
-          <CircularProgress />
+        <div className="empty-state">
+          <Typography level="h4">
+            {language === "ar" ? "لا توجد نتائج" : "No results"}
+          </Typography>
         </div>
       )}
-      {/* Description Modal */}
-      <React.Fragment>
-        <Modal
-          aria-labelledby="modal-title"
-          aria-describedby="modal-desc"
-          open={open}
-          onClose={() => setOpen(false)}
+
+      {/* Modal */}
+      <Modal
+        aria-labelledby="modal-title"
+        aria-describedby="modal-desc"
+        open={open}
+        onClose={() => setOpen(false)}
+        sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+      >
+        <Sheet
+          variant="outlined"
+          className="name-modal"
           sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            maxWidth: 560,
+            width: "92vw",
+            borderRadius: "16px",
+            p: 3,
+            boxShadow: "lg",
+            backgroundColor: "var(--card-color)",
+            direction: language === "ar" ? "rtl" : "ltr",
           }}
         >
-          <Sheet
-            variant="outlined"
+          <ModalClose
+            variant="plain"
             sx={{
-              maxWidth: 500,
-              borderRadius: "md",
-              p: 3,
-              boxShadow: "lg",
-              direction: language === "ar" ? "rtl" : "ltr",
-              backgroundColor: "var(--card-color)",
+              position: "absolute",
+              top: 18,
+
+              // 👇 force side based on language
+              right: language === "en" ? 8 : "auto",
+              left: language === "ar" ? 8 : "auto",
+
+              color: "var(--text-color)",
             }}
-          >
-            <ModalClose
-              variant="plain"
-              sx={{
-                m: 1,
-                right: language === "en" ? 2 : "80%",
-                width: "50px",
-              }}
-            />
+          />
+
+          <Stack spacing={1}>
             <Typography
               component="h2"
-              color="primary"
               id="modal-title"
-              level="h4"
-              textColor="primary"
-              sx={{ fontWeight: "lg", mb: 1 }}
+              level="h3"
+              sx={{ fontWeight: "xl", color: "var(--text-color)" }}
             >
-              {explainedName !== null && explainedName}
+              {title}
             </Typography>
+
             <Typography
-              id="modal-desc"
-              textColor="text.tertiary"
-              sx={{ color: "var(--text-color)" }}
+              level="body-sm"
+              sx={{ opacity: 0.85, color: "var(--text-color)" }}
             >
-              {nameDescription !== null && nameDescription}
+              {subtitle}
             </Typography>
-          </Sheet>
-        </Modal>
-      </React.Fragment>
+
+            <Divider />
+
+            <Typography id="modal-desc" sx={{ color: "var(--text-color)" }}>
+              {description}
+            </Typography>
+
+            {selected?.source_url ? (
+              <>
+                <Divider />
+                <Typography
+                  level="body-sm"
+                  sx={{ color: "var(--text-color)", opacity: 0.9 }}
+                >
+                  {language === "ar" ? "المصدر:" : "Source:"}{" "}
+                  <a
+                    className="source-link"
+                    href={selected.source_url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {selected.source_url}
+                  </a>
+                </Typography>
+              </>
+            ) : null}
+          </Stack>
+        </Sheet>
+      </Modal>
     </div>
   );
 };

@@ -170,7 +170,7 @@ const Times = () => {
       toast.error(
         isAr
           ? "حدث خطأ ما، سنقوم بإصلاحه قريبًا"
-          : "Something happened, we'll fix it soon"
+          : "Something happened, we'll fix it soon",
       );
     }
     // eslint-disable-next-line
@@ -205,7 +205,7 @@ const Times = () => {
         try {
           const geocodeResponse = await fetch(
             `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=${language}`,
-            { headers: { "Accept-Language": language } }
+            { headers: { "Accept-Language": language } },
           );
           const geocodeData = await geocodeResponse.json();
 
@@ -219,7 +219,7 @@ const Times = () => {
 
           if (city && country) {
             const countryCode = String(
-              geocodeData?.address?.country_code || ""
+              geocodeData?.address?.country_code || "",
             ).toUpperCase();
             const countryName =
               countries.getName(countryCode, language) || country;
@@ -243,7 +243,7 @@ const Times = () => {
         setFallbackLocation();
         setLoading(false);
       },
-      { enableHighAccuracy: true, timeout: 12000 }
+      { enableHighAccuracy: true, timeout: 12000 },
     );
   };
 
@@ -281,7 +281,7 @@ const Times = () => {
         .join("-");
 
       const apiUrl = `https://api.aladhan.com/v1/timingsByCity/${formattedDate}?city=${encodeURIComponent(
-        city
+        city,
       )}&country=${encodeURIComponent(country)}`;
 
       const response = await fetch(apiUrl);
@@ -434,7 +434,7 @@ const Times = () => {
                   if (currentLocation?.city && currentLocation?.country) {
                     fetchPrayerTimesByCity(
                       currentLocation.city,
-                      currentLocation.country
+                      currentLocation.country,
                     );
                   } else {
                     fetchCurrentLocation();
@@ -465,8 +465,8 @@ const Times = () => {
               {currentLocation
                 ? `${currentLocation.city}, ${currentLocation.country}`
                 : isAr
-                ? "جاري تحديد الموقع..."
-                : "Detecting location..."}
+                  ? "جاري تحديد الموقع..."
+                  : "Detecting location..."}
             </Chip>
 
             <Chip
@@ -525,6 +525,7 @@ const Times = () => {
                     flex: 1,
                     "--Input-focusedThickness": "2px",
                     backgroundColor: "var(--dropdown-bg-color)",
+                    color: "var(--text-color)",
                   }}
                 />
                 <Input
@@ -535,6 +536,7 @@ const Times = () => {
                     flex: 1,
                     "--Input-focusedThickness": "2px",
                     backgroundColor: "var(--dropdown-bg-color)",
+                    color: "var(--text-color)",
                   }}
                 />
                 <Button
