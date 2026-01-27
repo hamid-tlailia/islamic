@@ -1,176 +1,673 @@
-/* Tajweed.css */
+/* tajweed.css (FULL - collapsible filters + neutral black/var(--text-color) UI) */
 
-/* Tajweed Rules with corresponding colors */
+/* ===== Tajweed rule colors (keep these as-is) ===== */
 .ham_wasl,
 .silent,
 .laam_shamsiyah {
   color: #767272;
 }
-
 .madda_normal {
   color: #537fff;
 }
-
 .madda_permissible {
   color: #4050ff;
 }
-
 .madda_necessary {
   color: #000ebc;
 }
-
 .qalaqah {
   color: #dd0008;
 }
-
 .madda_obligatory {
   color: #2144c1;
 }
-
 .ikhafa_shafawi {
   color: #d500b7;
 }
-
 .ikhafa {
   color: #9400a8;
 }
-
 .idgham_shafawi {
   color: #58b800;
 }
-
 .iqlab {
   color: #26bffd;
 }
-
-.idgh_ghn {
-  color: #169777;
-}
-
-.idgh_w_ghn {
-  color: #169200;
-}
-
-.idgh_mus {
-  color: #a1a1a1;
-}
-
-.ghunnah {
-  color: #ff7e1e;
-}
-
-/* Additional styling for highlights */
-.tajweed-rule {
-  font-weight: bold;
-  padding: 0.2em;
-  border-radius: 0.25em;
-  display: inline-block;
-  margin-bottom: 0.5em;
-}
-.tajweed-parent {
-  position: relative;
-  border-radius: 4px;
-  white-space: pre-wrap;
-  font-size: 2rem;
-  text-align: justify;
-  padding: 0 !important;
-}
-/* Increased font size for Ayahs */
-.tajweed-text {
-  font-size: 1.5rem; /* Adjust as needed */
-  color: var(--text-color);
-  padding-inline: 3px !important;
-  border-radius: 8px !important;
-  text-align: right;
-  font-family: "amiri", sans-serif;
-}
-
-.tajweed-text:hover {
-  opacity: 1;
-  background-color: #4a2c61fc;
-  color: white;
-}
-.tajweed-parent:has(.tajweed-text:hover) .tajweed-text:not(:hover) {
-  opacity: 0.6;
-}
-.end {
-  display: inline-block;
-  position: relative;
-  width: 30px !important;
-  height: 30px !important;
-  line-height: 1.9em;
-  border-radius: 50%;
-  text-align: center !important;
-  font-size: 0.6em;
-  font-weight: bold;
-  vertical-align: middle;
-  background-color: #b0d206;
-  color: #fffdfd;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset,
-    rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
-}
-/* Modal content styling */
-.modal-content {
-  max-width: 95%;
-  padding: 2em;
-  overflow-y: auto;
-  max-height: 90vh;
-  background-color: var(--card-color);
-  color: var(--text-color);
-}
+.ghunnah,
 .idgham_ghunnah {
   color: #ff7e1e;
 }
 .idgham_wo_ghunnah {
   color: rgb(142, 121, 5);
 }
-
-/* tajweed.css */
-.flip-left {
-  animation: flipLeft 0.6s forwards;
+.idgham_mutajanisayn,
+.idgham_mutaqaribayn {
+  color: #a1a1a1;
 }
 
-.flip-right {
-  animation: flipRight 0.6s forwards;
+/* ===== Neutral default: everything uses --text-color ===== */
+.tajweed-shell {
+  width: 100%;
+  color: var(--text-color);
 }
 
-@keyframes flipLeft {
-  from {
-    left: -100vh;
-    opacity: 0;
-  }
-  to {
-    left: 0;
-    opacity: 1;
-  }
-}
-
-@keyframes flipRight {
-  from {
-    right: -100vh;
-    opacity: 0;
-  }
-  to {
-    right: 0;
-    opacity: 1;
-  }
-}
-.surahs-select {
-  background-color: var(--card-color) !important;
-  color: var(--text-color) !important;
-}
-.surahs-select:hover {
-  background-color: var(--card-color) !important;
-  color: var(--text-color) !important;
-}
-.surah_name {
+/* ===== Topbar (always visible) ===== */
+.tajweed-topbar {
   display: flex;
-  padding: 6px;
-  border-radius: 6px;
-  font-size: 22px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  padding: 10px 10px;
+  border-radius: 14px;
+
+  background: var(--card-color);
+  border: 1px solid color-mix(in srgb, var(--text-color) 14%, transparent);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+
+  position: sticky;
+  top: 0;
+  z-index: 12;
+}
+
+.tajweed-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Filter button */
+.tajweed-filterBtn {
+  border-radius: 14px !important;
+  background: color-mix(in srgb, var(--text-color) 8%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--text-color) 18%, transparent) !important;
+  padding-inline: 12px !important;
+  gap: 8px !important;
+}
+
+.tajweed-filterBtnText {
+  font-size: 0.95rem;
+  font-weight: 800;
+  opacity: 0.9;
+}
+
+/* Restore + nav buttons */
+.tajweed-restoreBtn,
+.tajweed-navBtn {
+  border-radius: 14px !important;
+  background: color-mix(in srgb, var(--text-color) 8%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--text-color) 18%, transparent) !important;
+}
+
+/* Save button (neutral) */
+.tajweed-saveBtn {
+  border-radius: 14px !important;
+  padding: 10px 14px !important;
+
+  background: color-mix(in srgb, var(--text-color) 10%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--text-color) 18%, transparent) !important;
+  box-shadow: none !important;
+}
+
+.tajweed-saveBtn:hover {
+  background: color-mix(in srgb, var(--text-color) 14%, transparent) !important;
+}
+.tajweed-savedBtn {
+  border-radius: 14px !important;
+  padding: 10px 14px !important;
+
+  background: color-mix(in srgb, green 12%, transparent) !important;
+  border: 1px solid color-mix(in srgb, green 18%, transparent) !important;
+  box-shadow: none !important;
+}
+.tajweed-btnIcon {
+  font-size: 1.2rem !important;
+  margin-inline: 6px;
+}
+
+/* ===== Info bar (always visible) ===== */
+.tajweed-infobar {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  padding: 10px 10px;
+  border-radius: 14px;
+
+  background: var(--card-color);
+  border: 1px solid color-mix(in srgb, var(--text-color) 14%, transparent);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Meta pill */
+.tajweed-metaPill {
+  flex: 1;
+  min-width: 240px;
+  text-align: center;
+
+  padding: 10px 12px;
+  border-radius: 14px;
+
+  background: color-mix(in srgb, var(--text-color) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text-color) 14%, transparent);
+}
+
+.tajweed-metaText {
+  font-size: 0.98rem !important;
+  opacity: 0.95;
+}
+
+.tajweed-metaSep {
+  margin: 0 10px;
+  opacity: 0.6;
+}
+
+.tajweed-hint {
+  font-size: 0.85rem !important;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+/* ===== Collapsible Filters Panel ===== */
+.tajweed-filters {
+  margin-top: 10px;
+  border-radius: 14px;
+  overflow: hidden;
+
+  background: var(--card-color);
+  border: 1px solid color-mix(in srgb, var(--text-color) 14%, transparent);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.1);
+
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+
+  transition:
+    max-height 0.25s ease,
+    opacity 0.2s ease,
+    transform 0.25s ease;
+}
+
+.tajweed-filters.open {
+  max-height: 240px;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.tajweed-filtersHead {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  position: relative;
+
+  background: color-mix(in srgb, var(--text-color) 6%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--text-color) 12%, transparent);
+}
+
+.tajweed-filtersTitle {
+  font-size: 1rem !important;
+  font-weight: 900 !important;
+  opacity: 0.95;
+  color: var(--text-color) !important;
+}
+
+.tajweed-filtersClose {
+  position: absolute !important;
+  left: 8px;
+  top: 3px;
+  border-radius: 14px !important;
+  background: color-mix(in srgb, var(--text-color) 8%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--text-color) 18%, transparent) !important;
+}
+
+.tajweed-filtersRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 12px 10px;
+}
+
+/* Surah select styling (neutral) */
+.tajweed-surahSelect {
+  border-radius: 14px !important;
+  background: var(--card-color) !important;
+  border: 1px solid color-mix(in srgb, var(--text-color) 14%, transparent) !important;
+  box-shadow: none !important;
+}
+
+.surahs-select:hover {
+  filter: brightness(1.02);
+}
+
+/* Page picker */
+.tajweed-pagePick {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  width: 100%;
+  background: color-mix(in srgb, var(--text-color) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text-color) 14%, transparent);
+}
+
+.tajweed-label {
+  font-size: 0.95rem !important;
+  opacity: 0.9;
+  color: var(--text-color) !important;
+}
+
+.tajweed-pageInput {
+  width: 90px;
+  text-align: center;
+  padding: 10px 10px;
+  border-radius: 12px;
+  color: var(--text-color) !important;
+  background: color-mix(in srgb, var(--card-color) 96%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text-color) 16%, transparent);
+  outline: none;
+  direction: ltr;
+
+  font-weight: 700;
+  transition:
+    transform 0.12s ease,
+    border-color 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+.tajweed-pageInput:focus {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--text-color) 28%, transparent);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* remove number spinners */
+.tajweed-pageInput::-webkit-outer-spin-button,
+.tajweed-pageInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.tajweed-pageTotal {
+  opacity: 0.85;
+  font-weight: 800;
+  color: var(--text-color) !important;
+}
+
+/* ===== Content Card ===== */
+.tajweed-content {
+  margin-top: 10px;
+  position: relative;
+
+  padding: 14px;
+  border-radius: 16px;
+
+  background: var(--card-color);
+  border: 1px solid color-mix(in srgb, var(--text-color) 12%, transparent);
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.12);
+
+  width: 100%;
+}
+
+.tajweed-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 22px 0;
+}
+
+.tajweed-loadingText {
+  font-size: 1rem !important;
+  opacity: 0.85;
+}
+
+/* Quran text container */
+.tajweed-parent {
+  position: relative;
+  border-radius: 12px;
+  white-space: pre-wrap;
+  font-size: 2rem;
+  text-align: justify;
+  padding: 4px 2px !important;
+}
+
+/* clickable ayah */
+.tajweed-text {
+  cursor: pointer;
+  display: inline;
+
+  font-size: 1.55rem;
+  padding: 2px 4px !important;
+  border-radius: 10px !important;
+
+  text-align: right;
+  font-family: "Amiri", "Cairo", serif;
+  line-height: 2.25;
+
+  transition:
+    background 0.12s ease,
+    transform 0.12s ease,
+    opacity 0.12s ease;
+}
+
+.tajweed-text:hover {
+  background: color-mix(in srgb, var(--text-color) 10%, transparent);
+  transform: translateY(-1px);
+}
+
+.tajweed-parent:has(.tajweed-text:hover) .tajweed-text:not(:hover) {
+  opacity: 0.65;
+}
+
+/* ayah number marker */
+.ayah-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-inline: 6px;
+  padding: 2px 8px;
+
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 900;
+
+  background: color-mix(in srgb, var(--text-color) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text-color) 16%, transparent);
+}
+
+/* Surah header chip (neutral) */
+.surah_name {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 14px;
+  font-size: 20px;
   font-family: "Cairo", sans-serif !important;
+  color: green;
   width: max-content !important;
   justify-content: center;
   align-items: center;
-  color: #169777;
+
+  background: color-mix(in srgb, var(--text-color) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text-color) 14%, transparent);
+}
+
+/* ===== Modals ===== */
+.tajweed-modal {
+  width: min(920px, 92vw);
+  max-height: 78vh;
+  overflow: auto;
+
+  border-radius: 18px !important;
+  padding: 14px !important;
+
+  background: var(--card-color) !important;
+  border: 1px solid color-mix(in srgb, var(--text-color) 14%, transparent);
+  box-shadow: 0 26px 60px rgba(0, 0, 0, 0.25);
+}
+
+.tajweed-modalSmall {
+  width: min(560px, 92vw);
+}
+
+.tajweed-modalHeader {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+
+  padding: 10px 10px;
+  border-radius: 14px;
+
+  background: color-mix(in srgb, var(--text-color) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text-color) 12%, transparent);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tajweed-modalTitle {
+  font-size: 1.35rem !important;
+  text-align: center;
+  font-weight: 900 !important;
+}
+
+.tajweed-closeBtn {
+  position: absolute !important;
+  left: 8px;
+  top: 8px;
+
+  border-radius: 14px !important;
+  background: color-mix(in srgb, var(--text-color) 8%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--text-color) 18%, transparent) !important;
+}
+
+.tajweed-ayahText {
+  white-space: pre-wrap;
+  font-size: 1.65rem;
+  padding: 14px 10px;
+  text-align: justify;
+  border-radius: 14px;
+  margin-top: 10px;
+
+  background: color-mix(in srgb, var(--text-color) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text-color) 10%, transparent);
+}
+
+.tajweed-audioRow {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  padding: 8px 0 2px;
+  color: green !important;
+}
+
+.tajweed-audioBtn {
+  border-radius: 14px !important;
+  padding: 10px 14px !important;
+  color: green !important;
+  background: color-mix(in srgb, var(--text-color) 8%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--text-color) 18%, transparent) !important;
+  box-shadow: none !important;
+}
+.tajweed-audioBtn svg {
+  color: green !important;
+  margin-inline: 6px;
+}
+.tajweed-audioBtn:hover {
+  background: color-mix(in srgb, var(--text-color) 12%, transparent) !important;
+}
+
+.tajweed-divider {
+  height: 1px;
+  margin: 14px 0 10px;
+  background: color-mix(in srgb, var(--text-color) 16%, transparent);
+}
+
+/* Rules title */
+.tajweed-rulesTitle {
+  text-align: center;
+  font-size: 1.1rem !important;
+  font-weight: 900 !important;
+  margin-bottom: 10px;
+}
+
+/* Rule chips */
+.tajweed-rulesWrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding-bottom: 6px;
+}
+
+.tajweed-ruleChip {
+  appearance: none;
+  border: 2px solid transparent;
+  background: color-mix(in srgb, var(--text-color) 6%, transparent);
+  border-radius: 999px;
+  padding: 8px 12px;
+
+  font-weight: 900;
+  font-size: 0.98rem;
+  cursor: pointer;
+
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    background 0.12s ease;
+}
+
+.tajweed-ruleChip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 24px rgba(0, 0, 0, 0.14);
+  background: color-mix(in srgb, var(--text-color) 9%, transparent);
+}
+
+.tajweed-ruleChip:active {
+  transform: translateY(0);
+}
+
+/* Rule details */
+.tajweed-ruleDesc {
+  font-size: 1.02rem !important;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  padding: 12px 6px;
+  opacity: 0.95;
+}
+
+.tajweed-letters {
+  margin-top: 10px;
+  font-size: 1.1rem !important;
+  font-weight: 900 !important;
+  text-align: center;
+  padding: 10px 10px;
+  border-radius: 14px;
+
+  background: color-mix(in srgb, var(--text-color) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text-color) 10%, transparent);
+}
+
+/* ===== Page flip animation (smoother) ===== */
+.flip-left {
+  animation: tajweedSlideInLeft 0.35s ease both;
+}
+
+.flip-right {
+  animation: tajweedSlideInRight 0.35s ease both;
+}
+
+@keyframes tajweedSlideInLeft {
+  from {
+    transform: translateX(-10px);
+    opacity: 0.4;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes tajweedSlideInRight {
+  from {
+    transform: translateX(10px);
+    opacity: 0.4;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 500px) {
+  .tajweed-metaPill {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .tajweed-pageInput {
+    width: 78px;
+  }
+
+  .tajweed-ayahText {
+    font-size: 1.45rem;
+  }
+
+  .tajweed-text {
+    font-size: 1.45rem;
+    line-height: 2.15;
+  }
+
+  .tajweed-filters.open {
+    max-height: 320px;
+  }
+}
+/* Neutral text only for UI containers (NOT the ayah tajweed spans) */
+.tajweed-topbar,
+.tajweed-infobar,
+.tajweed-filters,
+.tajweed-modal,
+.tajweed-modalHeader,
+.tajweed-metaPill,
+.tajweed-pagePick,
+.tajweed-content {
+  color: var(--text-color);
+}
+
+/* Make icons neutral (still safe) */
+.tajweed-topbar svg,
+.tajweed-infobar svg,
+.tajweed-filters svg,
+.tajweed-modal svg,
+.tajweed-infobar p {
+  color: var(--text-color) !important;
+}
+
+/* IMPORTANT: do NOT override colors inside Quran text */
+.tajweed-parent,
+.tajweed-text {
+  color: var(--text-color);
+}
+
+/* Ayah end bubble (if you use class="end") */
+.end {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 999px;
+
+  font-size: 0.78rem;
+  font-weight: 900;
+  line-height: 1;
+
+  vertical-align: middle;
+  margin-inline: 6px;
+
+  background: color-mix(in srgb, var(--text-color) 12%, var(--card-color));
+  color: var(--text-color);
+
+  border: 1px solid color-mix(in srgb, var(--text-color) 18%, transparent);
+  box-shadow:
+    0 10px 18px rgba(0, 0, 0, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* optional hover (nice if clickable) */
+.end:hover {
+  background: color-mix(in srgb, var(--text-color) 16%, var(--card-color));
 }

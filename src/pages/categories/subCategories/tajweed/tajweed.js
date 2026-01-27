@@ -1,3 +1,6 @@
+// Tajweed.jsx (FULL - UI updated with collapsible filters, neutral colors)
+// NOTE: logic is same; only UI structure + neutral color usage.
+
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "../../../../components/languages/provider";
 import {
@@ -11,18 +14,21 @@ import {
   Option,
   CircularProgress,
 } from "@mui/joy";
+
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CloseIcon from "@mui/icons-material/Close";
 import SlowMotionVideoOutlinedIcon from "@mui/icons-material/SlowMotionVideoOutlined";
 import BookmarksOutlinedIcon from "@mui/icons-material/BookmarksOutlined";
 import DoneOutlinedIcon from "@mui/icons-material/DoneOutlined";
+import RestoreIcon from "@mui/icons-material/Restore";
+import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
+
 import "./tajweed.css";
 import { toast } from "react-toastify";
 import DOMPurify from "dompurify";
 import { useMediaQuery } from "@mui/material";
 import { useSwipeable } from "react-swipeable";
-import RestoreIcon from "@mui/icons-material/Restore";
 
 const tajweedRules = {
   ham_wasl: {
@@ -69,9 +75,9 @@ const tajweedRules = {
     en: "Al-Madd Al-'Aridh",
     ar: "المد العارض",
     description_en:
-      "Al-Madd Al-'Aridh (Incidental Madd) occurs when a vowel letter or a soft letter is followed by a consonant that becomes silent due to a pause. It is called 'incidental' because the final letter in the word becomes silent as a result of the pause; if it were connected, it would become a normal Madd. Its ruling allows for three possibilities: shortening (two counts), medium lengthening (four counts), and full lengthening (six counts), such as the 'yaa' in Alhamdu lillahi rabbil 'aalameen",
+      "Al-Madd Al-'Aridh (Incidental Madd) occurs when a vowel letter or a soft letter is followed by a consonant that becomes silent due to a pause. It is called 'incidental' because the final letter in the word becomes silent as a result of the pause; if it were connected, it would become a normal Madd. Its ruling allows for three possibilities: shortening (two counts), medium lengthening (four counts), and full lengthening (six counts).",
     description_ar:
-      "المد العارض هو أن يقع بعد حرف المد أو حرف اللين ساكن سكونه عارض لأجل الوقف ، وسمي عارضا لتعرض الحرف الأخير في الكلمة للسكون نتيجة الوقف لأنه لو وصل لصار مدا طبيعيا. وحكمه : يجوز فيه ثلاثة أوجه : القصر حركتان, والتوسط أربع حركات, والإشباع ست حركات مثل الياء في (الحمد لله رب العالمين).",
+      "المد العارض هو أن يقع بعد حرف المد أو حرف اللين ساكن سكونه عارض لأجل الوقف. وحكمه: القصر حركتان، والتوسط أربع، والإشباع ست.",
     letters: "",
     color: "#4050FF",
   },
@@ -81,7 +87,7 @@ const tajweedRules = {
     description_en:
       "Extending the vowel sound for six counts obligatorily when followed by a sukoon in the same word.",
     description_ar:
-      "وهو أن يأتي بعد حرف المد سكون لازم وصلا ووقفا سواء كان ذلك في كلمة مثل (الحآقة ـ الضآلين ـ آلآن) أو حرف مثل الحروف التي في أوائل السور, وسمي لازما للزوم مده ست حركات من غير تفاوت , وأيضا للزوم سببه وهو السكون وصلا ووقفا.",
+      "وهو أن يأتي بعد حرف المد سكون لازم وصلا ووقفا، وسمي لازما للزوم مده ست حركات.",
     letters: "",
     color: "#000EBC",
   },
@@ -89,9 +95,8 @@ const tajweedRules = {
     en: "Qalqalah",
     ar: "قلقلة",
     description_en:
-      "A vibration or echoing sound produced when pronouncing specific letters (ق، ط، ب، ج، د). It adds a bouncing effect to the pronunciation, which gives the recitation a rhythmic touch.",
-    description_ar:
-      "هي اهتزاز أو تردد الصوت عند نطق بعض الحروف (قطب جد)، مما يعطي تأثيرًا إيقاعيًا للنطق.",
+      "A vibration or echoing sound produced when pronouncing specific letters (ق، ط، ب، ج، د). It adds a bouncing effect to the pronunciation.",
+    description_ar: "هي اهتزاز أو تردد الصوت عند نطق بعض الحروف (قطب جد).",
     letters: "[ق، ط، ب، ج، د]",
     color: "#DD0008",
   },
@@ -99,9 +104,9 @@ const tajweedRules = {
     en: "Obligatory Madd",
     ar: "مد واجب",
     description_en:
-      "It is the Madd (elongation) that must be extended for four or five counts when there is a reason, such as a Hamzah in the same word or in the following word. It is called Madd Muttasil if the Hamzah is in the same word, or Madd Munfasil if the Hamzah is in the immediately following word.",
+      "It is the Madd that must be extended for four or five counts when there is a Hamzah in the same word (muttasil) or in the following word (munfasil).",
     description_ar:
-      "هو المد الذي يجب مده أربع أو خمس حركات عند وجود سبب مثل الهمزة في نفس الكلمة أو في الكلمة التالية و يسمى متصلا في حال كانت الهمزة في نفس الكلمة أو منفصلا في حال كانت الهمزة في الكلمة التي تليها مباشرة.",
+      "هو المد الذي يجب مده أربع أو خمس حركات عند وجود همزة في نفس الكلمة (متصل) أو في الكلمة التالية (منفصل).",
     letters: "",
     color: "#2144C1",
   },
@@ -109,9 +114,8 @@ const tajweedRules = {
     en: "Ikhfā’ Shafawī",
     ar: "إخفاء شفوي",
     description_en:
-      "Concealing the 'Mīm Sākinah' when followed by 'Bā’ (ب)' with nasalization. This rule ensures a smooth transition between the two letters while maintaining clarity.",
-    description_ar:
-      "إخفاء الميم الساكنة عند ملاقاتها بحرف الباء (ب) مع الغنة، مما يضمن انتقالاً سلسًا بين الحرفين مع الحفاظ على الوضوح.",
+      "Concealing the 'Mīm Sākinah' when followed by 'Bā’ (ب)' with nasalization.",
+    description_ar: "إخفاء الميم الساكنة عند ملاقاتها بحرف الباء (ب) مع الغنة.",
     letters: "ب",
     color: "#D500B7",
   },
@@ -119,9 +123,9 @@ const tajweedRules = {
     en: "Ikhfā’",
     ar: "إخفاء",
     description_en:
-      "Concealing the 'Nūn Sākinah' or 'Tanwīn' with nasalization when followed by specific letters. This blending creates a more harmonious recitation.",
+      "Concealing the 'Nūn Sākinah' or 'Tanwīn' with nasalization when followed by specific letters.",
     description_ar:
-      "إخفاء النون الساكنة أو التنوين مع الغنة عند ملاقاتها بحروف الإخفاء، مما يضفي على التلاوة انسجامًا أكثر - مجموعة في قولك (صف - ذا - ثنا - كم - جاد - شخص - قد - سما - دم - طالبا - زد - في - تقى - ضع - ظالما) حيث يأخذ الحرف الأول من كل كلمة..",
+      "إخفاء النون الساكنة أو التنوين مع الغنة عند ملاقاتها بحروف الإخفاء.",
     letters: "[ت، ث، ج، د، ذ، ز، س، ش، ص، ض، ط، ظ، ف، ق، ك]",
     color: "#9400A8",
   },
@@ -129,9 +133,8 @@ const tajweedRules = {
     en: "Idghām Shafawī",
     ar: "إدغام شفوي",
     description_en:
-      "Merging 'Mīm Sākinah' into the following 'Mīm' with nasalization, which helps in maintaining the fluency of recitation.",
-    description_ar:
-      "إدغام الميم الساكنة في الميم التالية مع الغنة، مما يساعد في الحفاظ على سلاسة التلاوة.",
+      "Merging 'Mīm Sākinah' into the following 'Mīm' with nasalization.",
+    description_ar: "إدغام الميم الساكنة في الميم التالية مع الغنة.",
     letters: "م",
     color: "green",
   },
@@ -139,9 +142,9 @@ const tajweedRules = {
     en: "Iqlāb",
     ar: "إقلاب",
     description_en:
-      "Changing 'Nūn Sākinah' or 'Tanwīn' into 'Mīm' when followed by 'Bā’ (ب)' with nasalization. This rule allows for a more fluid transition between these letters.",
+      "Changing 'Nūn Sākinah' or 'Tanwīn' into 'Mīm' when followed by 'Bā’ (ب)' with nasalization.",
     description_ar:
-      "قلب النون الساكنة أو التنوين إلى ميم عند ملاقاتها بحرف الباء (ب) مع الغنة، مما يسمح بانتقال أكثر سلاسة بين هذه الحروف.",
+      "قلب النون الساكنة أو التنوين إلى ميم عند ملاقاتها بحرف الباء (ب) مع الغنة.",
     letters: "ب",
     color: "#1b87a5",
   },
@@ -149,9 +152,9 @@ const tajweedRules = {
     en: "Idghām with Ghunnah",
     ar: "إدغام بغنة",
     description_en:
-      "Merging 'Nūn Sākinah' or 'Tanwīn' into specific letters with nasalization. This rule applies to the letters 'ي', 'م', 'ن', and 'و'.",
+      "Merging 'Nūn Sākinah' or 'Tanwīn' into (ي، م، ن، و) with nasalization.",
     description_ar:
-      " 'إدغام النون الساكنة أو التنوين في بعض الحروف مع الغنة، ويطبق هذا الحكم على الحروف 'ي', 'م', 'ن', 'و - مجموعة في قولك (ينمو)'.",
+      "إدغام النون الساكنة أو التنوين في (ي، م، ن، و) مع الغنة (ينمو).",
     letters: "[ي، م، ن، و]",
     color: "#FF7E1E",
   },
@@ -159,9 +162,8 @@ const tajweedRules = {
     en: "Idghām without Ghunnah",
     ar: "إدغام بلا غنة",
     description_en:
-      "Merging 'Nūn Sākinah' or 'Tanwīn' into 'Lām (ل)' and 'Rā’ (ر)' without nasalization. This creates a seamless flow in recitation.",
-    description_ar:
-      "إدغام النون الساكنة أو التنوين في اللام (ل) والراء (ر) بلا غنة، مما يخلق تدفقًا سلسًا في التلاوة.",
+      "Merging 'Nūn Sākinah' or 'Tanwīn' into (ل، ر) without nasalization.",
+    description_ar: "إدغام النون الساكنة أو التنوين في (ل، ر) بلا غنة.",
     letters: "ل، ر",
     color: "rgb(142, 121, 5)",
   },
@@ -169,9 +171,8 @@ const tajweedRules = {
     en: "Idghām Mutajānishayn",
     ar: "إدغام متماثلين",
     description_en:
-      "Merging two letters with the same articulation point but different characteristics. This rule helps maintain the fluency of the recitation.",
-    description_ar:
-      "إدغام حرفين اتفقا مخرجًا واختلفا صفة، مما يساعد في الحفاظ على سلاسة التلاوة.",
+      "Merging two letters with the same articulation point but different characteristics.",
+    description_ar: "إدغام حرفين اتفقا مخرجًا واختلفا صفة.",
     letters: "",
     color: "#A1A1A1",
   },
@@ -179,8 +180,8 @@ const tajweedRules = {
     en: "Idghām Mutaqāribayn",
     ar: "إدغام متقاربين",
     description_en:
-      "Merging two letters that are close in articulation point and characteristics, making the recitation smoother.",
-    description_ar: "إدغام حرفين تقاربا مخرجًا وصفة لتسهيل النطق.",
+      "Merging two letters that are close in articulation point and characteristics.",
+    description_ar: "إدغام حرفين تقاربا مخرجًا وصفة.",
     letters: "",
     color: "#A1A1A1",
   },
@@ -188,9 +189,8 @@ const tajweedRules = {
     en: "Ghunnah",
     ar: "غنة",
     description_en:
-      "A nasal sound that accompanies the pronunciation of certain letters, giving the recitation a distinct sound.",
-    description_ar:
-      "صوت يخرج من الخيشوم يصاحب نطق بعض الحروف، مما يضفي على التلاوة صوتًا مميزًا و هما (الميم و النون).",
+      "A nasal sound that accompanies the pronunciation of certain letters (م، ن).",
+    description_ar: "صوت يخرج من الخيشوم يصاحب نطق بعض الحروف (الميم والنون).",
     letters: "",
     color: "#FF7E1E",
   },
@@ -216,36 +216,34 @@ const Tajweed = ({ audioName, documentName }) => {
   const [animationClass, setAnimationClass] = useState("");
   const [audioLoading, setAudioLoading] = useState(false);
   const audioRef = useRef(null);
-
   const [surahPageInfo, setSurahPageInfo] = useState({});
-
   const isSmallScreen = useMediaQuery("(max-width:500px)");
+
+  // NEW: collapsible filters
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
   useEffect(() => {
     if (isErrorFetching) {
       toast.error(
         language === "ar"
           ? "هناك خطأ ما سيتم معالجة الأمر قريبا "
-          : "Something happened, we'll fix it soon"
+          : "Something happened, we'll fix it soon",
       );
     }
     // eslint-disable-next-line
   }, [isErrorFetching]);
-  // Detect if user change saved page to not saved one
+
+  // Detect if user changed saved page to not saved one
   useEffect(() => {
     const savedSurah = localStorage.getItem("savedTajweedSurah");
     const savedPage = localStorage.getItem("savedPage");
     const currentSavedPage = parseInt(savedPage, 10);
+
     if (savedSurah && savedPage) {
-      if (currentSavedPage !== currentPage) {
-        // user change saved page
-        setSavedPageChanged(true);
-      } else {
-        //   user still in saved page
-        setSavedPageChanged(false);
-      }
+      if (currentSavedPage !== currentPage) setSavedPageChanged(true);
+      else setSavedPageChanged(false);
     }
   }, [currentPage, currentSurah, saved]);
-  // Restore saved page and surah
 
   const restoreSavedInfos = () => {
     const savedSurah = localStorage.getItem("savedTajweedSurah");
@@ -257,15 +255,13 @@ const Tajweed = ({ audioName, documentName }) => {
       setCurrentSurah(1);
       setCurrentPage(1);
     }
+    setFiltersOpen(false);
   };
-  // Swipe handlers for small media
+
+  // Swipe handlers (small screens)
   const swipeHandlers = useSwipeable({
-    onSwipedLeft: () => {
-      handlePrev();
-    },
-    onSwipedRight: () => {
-      handleNext();
-    },
+    onSwipedLeft: () => handlePrev(),
+    onSwipedRight: () => handleNext(),
     delta: 10,
     preventDefaultTouchmoveEvent: true,
     trackTouch: true,
@@ -288,9 +284,10 @@ const Tajweed = ({ audioName, documentName }) => {
     const fetchSurahList = async () => {
       try {
         const response = await fetch(
-          "https://api.quran.com/api/v4/chapters?language=en"
+          "https://api.quran.com/api/v4/chapters?language=en",
         );
         const data = await response.json();
+
         if (data.chapters && data.chapters.length > 0) {
           setSurahList(data.chapters);
 
@@ -316,6 +313,7 @@ const Tajweed = ({ audioName, documentName }) => {
     const fetchQuranData = async () => {
       setLoading(true);
       setError(null);
+
       try {
         let apiUrl = "";
         if (currentPage) {
@@ -339,7 +337,7 @@ const Tajweed = ({ audioName, documentName }) => {
             text_uthmani: processAyahText(
               verse.text_uthmani_tajweed
                 .replace(/<tajweed([^>]*)>/g, "<span$1>")
-                .replace(/<\/tajweed>/g, "</span>")
+                .replace(/<\/tajweed>/g, "</span>"),
             ),
             ayah_key: verse.verse_key,
           }));
@@ -357,6 +355,7 @@ const Tajweed = ({ audioName, documentName }) => {
         setLoading(false);
       }
     };
+
     fetchQuranData();
   }, [currentSurah, currentPage]);
 
@@ -377,7 +376,7 @@ const Tajweed = ({ audioName, documentName }) => {
       toast.info(
         language === "ar"
           ? "أنت بالفعل في أول صفحة"
-          : "You are in the first page"
+          : "You are in the first page",
       );
     }
     checkSavedPage();
@@ -392,7 +391,9 @@ const Tajweed = ({ audioName, documentName }) => {
     } else {
       setAnimationClass("flip-right");
       toast.info(
-        language === "ar" ? "لقد وصلت الى اخر صفحة" : "You are in the last page"
+        language === "ar"
+          ? "لقد وصلت الى اخر صفحة"
+          : "You are in the last page",
       );
     }
     checkSavedPage();
@@ -413,11 +414,8 @@ const Tajweed = ({ audioName, documentName }) => {
     if (surahNumber) {
       setCurrentSurah(surahNumber);
       const startPage = surahPageInfo[surahNumber]?.startPage;
-      if (startPage) {
-        setCurrentPage(startPage);
-      } else {
-        setCurrentPage(null);
-      }
+      if (startPage) setCurrentPage(startPage);
+      else setCurrentPage(null);
     }
   };
 
@@ -448,7 +446,7 @@ const Tajweed = ({ audioName, documentName }) => {
       toast.error(
         language === "ar"
           ? "الملف الصوتي غير متاح"
-          : "Unable to get audio please try again"
+          : "Unable to get audio please try again",
       );
     }
   };
@@ -458,7 +456,7 @@ const Tajweed = ({ audioName, documentName }) => {
       localStorage.setItem("savedTajweedSurah", currentSurah);
       localStorage.setItem("savedPage", currentPage);
       toast.success(
-        language === "ar" ? "تم حفظ السورة والصفحة!" : "Surah and Page saved!"
+        language === "ar" ? "تم حفظ السورة والصفحة!" : "Surah and Page saved!",
       );
     }
     checkSavedPage();
@@ -472,9 +470,7 @@ const Tajweed = ({ audioName, documentName }) => {
     spans.forEach((span) => {
       if (span.className) {
         span.className.split(" ").forEach((cls) => {
-          if (tajweedRules[cls]) {
-            classes.add(cls);
-          }
+          if (tajweedRules[cls]) classes.add(cls);
         });
       }
     });
@@ -505,32 +501,28 @@ const Tajweed = ({ audioName, documentName }) => {
     documentName("تجويد");
   };
 
-  const handleAudioLoadedMetadata = () => {
-    setAudioLoading(false);
-  };
+  const handleAudioLoadedMetadata = () => setAudioLoading(false);
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (audio) {
+    if (audio)
       audio.addEventListener("loadedmetadata", handleAudioLoadedMetadata);
-    }
     return () => {
-      if (audio) {
+      if (audio)
         audio.removeEventListener("loadedmetadata", handleAudioLoadedMetadata);
-      }
     };
   }, [ayahAudioSRC]);
 
   const renderSurahName = (verse, index) => {
-    const surahNumber = verse.verse_key.split(":")[0]; // Extract Surah number
+    const surahNumber = verse.verse_key.split(":")[0];
     const currentAyahNumber = verse.verse_key.split(":")[1];
+
     if (
       index === 0 ||
       quranData[index - 1].verse_key.split(":")[0] !== surahNumber
     ) {
-      // If it's the first verse or the Surah number is different from the previous verse
       const surahName = surahList.find(
-        (surah) => surah.id === parseInt(surahNumber)
+        (surah) => surah.id === parseInt(surahNumber),
       );
       return (
         <>
@@ -538,10 +530,7 @@ const Tajweed = ({ audioName, documentName }) => {
             <Typography
               key={`surah-${surahNumber}`}
               variant="h6"
-              sx={{
-                textAlign: "center",
-                margin: "5px 0",
-              }}
+              sx={{ textAlign: "center", margin: "6px 0" }}
               className="w-100 d-flex justify-content-center align-items-center mb-1"
             >
               <span className="surah_name">
@@ -563,26 +552,19 @@ const Tajweed = ({ audioName, documentName }) => {
     const storedPage = parseInt(localStorage.getItem("savedPage"));
     const storedSurah = parseInt(localStorage.getItem("savedTajweedSurah"));
     if (storedPage && storedSurah) {
-      if (storedPage === currentPage) {
-        setSaved(true);
-      } else {
-        setSaved(false);
-      }
+      if (storedPage === currentPage) setSaved(true);
+      else setSaved(false);
     } else {
       setSaved(false);
     }
   }, [currentPage, currentSurah]);
 
-  // Function to detect if page changed
   const checkSavedPage = () => {
     const storedPage = parseInt(localStorage.getItem("savedPage"), 10);
     const storedSurah = parseInt(localStorage.getItem("savedTajweedSurah"), 10);
     if (storedPage && storedSurah) {
-      if (storedPage === currentPage) {
-        setSaved(true);
-      } else {
-        setSaved(false);
-      }
+      if (storedPage === currentPage) setSaved(true);
+      else setSaved(false);
     } else {
       setSaved(false);
     }
@@ -592,144 +574,102 @@ const Tajweed = ({ audioName, documentName }) => {
     if (saved) {
       const storedSurah = parseInt(
         localStorage.getItem("savedTajweedSurah"),
-        10
+        10,
       );
-      // Display always saved Surah name
       setCurrentSurah(storedSurah);
     }
   }, [saved, savedPageChanged]);
 
-  return (
-    <Box
-      {...swipeHandlers}
-      sx={{
-        width: "100%",
-        color: "var(--text-color)",
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          mb: 2,
-          flexWrap: "wrap",
-          gap: 2,
-          padding: "10px",
-        }}
-      >
-        {savedPageChanged && (
-          <RestoreIcon
-            color="primary"
-            onClick={restoreSavedInfos}
-            style={{ cursor: "pointer" }}
-          />
-        )}
-        <Select
-          placeholder={language === "ar" ? "اختر سورة" : "Select Surah"}
-          onChange={handleSurahSelect}
-          value={currentSurah}
-          sx={{
-            width: 250,
-            backgroundColor: "var(--card-color)",
-            color: "var(--text-color)",
-          }}
-          className="surahs-select"
-        >
-          {surahList.map((surah) => (
-            <Option key={surah.id} value={surah.id}>
-              {language === "ar"
-                ? `سورة ${surah?.name_arabic}`
-                : surah.name_simple}
-            </Option>
-          ))}
-        </Select>
+  // close filters on page change (optional niceness)
+  useEffect(() => {
+    // if user navigates, keep panel closed on small screens
+    if (isSmallScreen) setFiltersOpen(false);
+    // eslint-disable-next-line
+  }, [currentPage]);
 
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Typography sx={{ mr: 1, color: "var(--text-color)" }}>
-            {language === "ar" ? "اختر الصفحة" : "Choose page"}:
-          </Typography>
-          <input
-            type="number"
-            value={currentPage || ""}
-            onChange={handlePageInput}
-            style={{
-              width: "max-content",
-              textAlign: "center",
-              padding: "0.25em",
-              borderRadius: "4px",
-              backgroundColor: "var(--card-color)",
-              color: "var(--text-color)",
-              border: "none",
-              outline: "none",
-              direction: "ltr",
-              margin: "3px",
-            }}
-            min="1"
-            max="606"
-            placeholder="1"
-          />{" "}
-          /
-          <Typography sx={{ mx: 1, color: "var(--text-color)" }}>
-            {" "}
-            604
-          </Typography>
+  return (
+    <Box {...swipeHandlers} className="tajweed-shell" sx={{ width: "100%" }}>
+      {/* ===== Top Bar (always visible) ===== */}
+      <Box className="tajweed-topbar">
+        <Box className="tajweed-topbar-left">
+          <IconButton
+            className="tajweed-filterBtn"
+            variant="soft"
+            onClick={() => setFiltersOpen((v) => !v)}
+          >
+            <TuneRoundedIcon style={{ color: "crimson" }} />
+            <span
+              className="tajweed-filterBtnText"
+              style={{ color: "var(--text-color)" }}
+            >
+              {language === "ar" ? "الفلاتر" : "Filters"}
+            </span>
+          </IconButton>
+
+          {savedPageChanged && (
+            <IconButton
+              className="tajweed-restoreBtn"
+              variant="soft"
+              onClick={restoreSavedInfos}
+            >
+              <RestoreIcon />
+            </IconButton>
+          )}
         </Box>
 
         <Button
-          variant="outlined"
-          sx={{
-            fontSize: "17px",
-            pointerEvents: saved && !savedPageChanged ? "none" : "all",
-          }}
+          className={
+            saved && !savedPageChanged ? "tajweed-savedBtn" : "tajweed-saveBtn"
+          }
+          variant="solid"
           onClick={handleSave}
-          color={saved && !savedPageChanged ? "success" : "primary"}
+          sx={{ pointerEvents: saved && !savedPageChanged ? "none" : "all" }}
         >
           {saved && !savedPageChanged ? (
             <>
-              <DoneOutlinedIcon className="fs-5 mt-1 mx-1" />
+              <DoneOutlinedIcon
+                className="tajweed-btnIcon green"
+                style={{ color: "green" }}
+              />
               {language === "ar" ? "محفوظة" : "Saved"}
             </>
           ) : (
             <>
-              <BookmarksOutlinedIcon className="fs-5 mt-1 mx-1" />
+              <BookmarksOutlinedIcon className="tajweed-btnIcon" />
               {language === "ar" ? "حفظ" : "Save"}
             </>
           )}
         </Button>
       </Box>
 
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          mb: 2,
-          gap: 2,
-          padding: "0",
-          maxHeight: "max-content",
-          flexWrap: "wrap",
-        }}
-      >
+      {/* ===== Info Bar (always visible) ===== */}
+      <Box className="tajweed-infobar">
         {!isSmallScreen && (
           <IconButton
-            variant="plain"
-            color="primary"
+            className="tajweed-navBtn"
+            variant="soft"
             onClick={handlePrev}
             disabled={currentPage <= 1}
           >
             {language === "ar" ? <ArrowForwardIosIcon /> : <ArrowBackIosIcon />}
           </IconButton>
         )}
-        <Typography sx={{ fontSize: "1rem", color: "var(--text-color)" }}>
-          {language === "ar" ? "السورة" : "Surah"} {currentSurah || "-"} /{" "}
-          {surahList.length} | {language === "ar" ? "الصفحة" : "Page"}{" "}
-          {currentPage || "-"} / 604
-        </Typography>
+
+        <Box className="tajweed-metaPill">
+          <Typography className="tajweed-metaText">
+            {language === "ar" ? "السورة" : "Surah"}{" "}
+            <b>{currentSurah || "-"}</b> /{" "}
+            <span>{surahList.length || "-"}</span>
+            <span className="tajweed-metaSep">•</span>
+            {language === "ar" ? "الصفحة" : "Page"} <b>{currentPage || "-"}</b>{" "}
+            / 604
+          </Typography>
+        </Box>
+
         {!isSmallScreen && (
           <IconButton
-            variant="plain"
-            color="primary"
+            className="tajweed-navBtn"
+            variant="soft"
             onClick={handleNext}
             disabled={currentPage >= 604}
           >
@@ -738,34 +678,78 @@ const Tajweed = ({ audioName, documentName }) => {
         )}
       </Box>
 
+      {/* ===== Hidden Filters Panel ===== */}
+      <Box className={`tajweed-filters ${filtersOpen ? "open" : ""}`}>
+        <Box className="tajweed-filtersHead">
+          <Typography className="tajweed-filtersTitle">
+            {language === "ar" ? "إعدادات الفلاتر" : "Filter Settings"}
+          </Typography>
+
+          <IconButton
+            className="tajweed-filtersClose"
+            variant="soft"
+            onClick={() => setFiltersOpen(false)}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+
+        <Box className="tajweed-filtersRow">
+          <Select
+            placeholder={language === "ar" ? "اختر سورة" : "Select Surah"}
+            onChange={handleSurahSelect}
+            value={currentSurah}
+            className="surahs-select tajweed-surahSelect"
+            sx={{ minWidth: 240, color: "var(--text-color)" }}
+          >
+            {surahList.map((surah) => (
+              <Option key={surah.id} value={surah.id}>
+                {language === "ar"
+                  ? `سورة ${surah?.name_arabic}`
+                  : surah.name_simple}
+              </Option>
+            ))}
+          </Select>
+
+          <Box className="tajweed-pagePick">
+            <Typography className="tajweed-label">
+              {language === "ar" ? "الصفحة" : "Page"}
+            </Typography>
+
+            <input
+              className="tajweed-pageInput"
+              type="number"
+              value={currentPage || ""}
+              onChange={handlePageInput}
+              min="1"
+              max="604"
+              placeholder="1"
+              inputMode="numeric"
+            />
+
+            <Typography className="tajweed-pageTotal">/ 604</Typography>
+          </Box>
+        </Box>
+      </Box>
+
+      {/* ===== Content ===== */}
       <Box
         {...swipeHandlers}
         ref={contentRef}
-        className={!loading && animationClass} // Apply the animation class here
-        sx={{
-          mb: 2,
-          overflowY: "auto",
-          position: "relative",
-          padding: "0.8em",
-          borderRadius: "8px",
-          backgroundColor: "var(--card-color)",
-          maxHeight: "max-content",
-          width: "100%",
-          direction: "rtl",
-        }}
+        className={`tajweed-content ${!loading ? animationClass : ""}`}
+        sx={{ direction: "rtl" }}
       >
         {loading && (
-          <Typography
-            textAlign="center"
-            sx={{ my: 4, fontSize: "1.2rem", color: "var(--text-color)" }}
-            className="w-100 text-center"
-          >
-            {language === "ar" ? "جاري التحميل..." : "Loading..."}
-          </Typography>
+          <Box className="tajweed-loading">
+            <CircularProgress />
+            <Typography className="tajweed-loadingText">
+              {language === "ar" ? "جاري التحميل..." : "Loading..."}
+            </Typography>
+          </Box>
         )}
 
         {error && (
-          <Typography color="danger" textAlign="center" sx={{ my: 4 }}>
+          <Typography textAlign="center" sx={{ my: 2 }}>
             {error}
           </Typography>
         )}
@@ -777,10 +761,6 @@ const Tajweed = ({ audioName, documentName }) => {
                 {renderSurahName(ayah, index)}
                 <span
                   onClick={() => handleAyahClick(ayah)}
-                  style={{
-                    cursor: "pointer",
-                    display: "inline",
-                  }}
                   className="tajweed-text"
                   dangerouslySetInnerHTML={{
                     __html: DOMPurify.sanitize(ayah.text_uthmani),
@@ -792,6 +772,7 @@ const Tajweed = ({ audioName, documentName }) => {
         )}
       </Box>
 
+      {/* ===== Ayah Modal ===== */}
       <Modal
         open={modalOpen}
         onClose={() => {
@@ -799,232 +780,125 @@ const Tajweed = ({ audioName, documentName }) => {
           setAyahAudioSRC(null);
           setAudioLoading(false);
         }}
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
+        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
       >
-        <Card
-          className="modal-content"
-          sx={{
-            maxWidth: "90%",
-            maxHeight: "72%",
-            overflowY: "auto",
-            position: "relative",
-            backgroundColor: "var(--card-color)",
-            color: "var(--text-color)",
-          }}
-        >
-          <Box
-            sx={{
-              position: "relative",
-              top: "0",
-              backgroundColor: "var(--card-color)",
-              color: "var(--text-color)",
-              zIndex: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: "0.2em",
-              borderBottom: "1px solid #ccc",
-            }}
-          >
+        <Card className="tajweed-modal">
+          <Box className="tajweed-modalHeader">
             <Typography
               level="h4"
-              sx={{
-                fontSize: "1.8rem",
-                textAlign: "center",
-                flex: 1,
-                color: "green",
-              }}
+              className="tajweed-modalTitle"
+              sx={{ color: "var(--text-color)" }}
             >
               {language === "ar" ? "نص الآية" : "Ayah Text"}
             </Typography>
+
             <IconButton
+              className="tajweed-closeBtn"
+              variant="soft"
               onClick={() => {
                 setModalOpen(false);
                 setAyahAudioSRC(null);
                 setAudioLoading(false);
               }}
-              sx={{ position: "absolute", left: "0.5em" }}
             >
               <CloseIcon />
             </IconButton>
           </Box>
 
           <div
-            mb={3}
-            className="rtl"
+            className="tajweed-ayahText rtl"
+            style={{ color: "var(--text-color)" }}
             dangerouslySetInnerHTML={{
               __html: DOMPurify.sanitize(selectedAyah?.text_uthmani),
             }}
-            style={{
-              whiteSpace: "pre-wrap",
-              fontSize: "1.5rem",
-              padding: "1em",
-              textAlign: "justify",
-            }}
           />
+
           {selectedAyah && ayahAudioSRC && (
-            <Box
-              sx={{
-                mt: 1,
-                display: "flex",
-                flexDirection: "row",
-                padding: "1em",
-                textAlign: "center",
-              }}
-            >
+            <Box className="tajweed-audioRow">
               <audio ref={audioRef} src={ayahAudioSRC} preload="auto" />
               {audioLoading ? (
                 <CircularProgress />
               ) : (
-                <IconButton
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: 2,
-                    paddingInline: 1,
-                    width: isSmallScreen ? "100%" : "max-content",
-                    border: "1px solid green",
-                  }}
-                  variant="outlined"
-                  color="success"
+                <Button
+                  className="tajweed-audioBtn"
+                  variant="soft"
                   onClick={handleAudioPlayPause}
                 >
-                  <IconButton
-                    color="primary"
-                    sx={{ fontSize: "2rem", pointerEvents: "none" }}
-                  >
-                    <SlowMotionVideoOutlinedIcon color="success" />
-                  </IconButton>
-                  <Typography color="success">
-                    {language === "ar" ? "استمع الى الأية" : "Listen to Ayah"}
-                  </Typography>
-                </IconButton>
+                  <SlowMotionVideoOutlinedIcon sx={{ color: "green" }} />
+                  {language === "ar" ? "استمع إلى الآية" : "Listen to Ayah"}
+                </Button>
               )}
             </Box>
           )}
-          <hr />
+
+          <Box className="tajweed-divider" />
+
           <Typography
             level="h5"
-            mb={1}
-            sx={{
-              fontSize: "1.3rem",
-              textAlign: "center",
-              color: "var(--main-color)",
-            }}
+            className="tajweed-rulesTitle"
+            sx={{ color: "var(--text-color)" }}
           >
             {language === "ar" ? "أحكام التجويد" : "Tajweed Rules"}
           </Typography>
 
-          <Box>
-            {selectedAyah && (
-              <ul
-                className="list-unstyled"
-                style={{
-                  borderRadius: "4px",
-                  whiteSpace: "pre-wrap",
-                  fontSize: "1.1rem",
-                  textAlign: "justify",
-                }}
-              >
-                {getTranslatedTajweedRules(
-                  extractTajweedClasses(selectedAyah.text_uthmani)
-                ).map((rule, index) => (
-                  <li
-                    key={index}
-                    className={`tajweed-rule ${rule.className}  rounded-3 p-2 ms-2`}
-                    style={{
-                      color: rule.color,
-                      cursor: "pointer",
-                      width: "max-content",
-                      border: `2px solid ${rule.color}`,
-                    }}
-                    onClick={() => handleRuleClick(rule)}
-                  >
-                    <strong>{rule.name}</strong>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </Box>
+          {selectedAyah && (
+            <Box className="tajweed-rulesWrap">
+              {getTranslatedTajweedRules(
+                extractTajweedClasses(selectedAyah.text_uthmani),
+              ).map((rule, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  className="tajweed-ruleChip"
+                  style={{ borderColor: rule.color, color: rule.color }}
+                  onClick={() => handleRuleClick(rule)}
+                  title={rule.name}
+                >
+                  {rule.name}
+                </button>
+              ))}
+            </Box>
+          )}
         </Card>
       </Modal>
 
+      {/* ===== Rule Modal ===== */}
       <Modal
         open={nestedModalOpen}
         onClose={() => setNestedModalOpen(false)}
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
+        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
       >
-        <Card
-          className="modal-content"
-          sx={{
-            maxWidth: 500,
-            maxHeight: "80vh",
-            overflowY: "auto",
-            position: "relative",
-            backgroundColor: "var(--card-color)",
-            color: "var(--text-color)",
-          }}
-        >
-          <Box
-            sx={{
-              position: "sticky",
-              top: 0,
-              backgroundColor: "var(--card-color)",
-              color: "var(--text-color)",
-              zIndex: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: "0.5em",
-              borderBottom: "1px solid #ccc",
-            }}
-          >
+        <Card className="tajweed-modal tajweed-modalSmall">
+          <Box className="tajweed-modalHeader">
             <Typography
               level="h5"
-              sx={{
-                fontSize: "1.5rem",
-                color: selectedRule?.color,
-                flex: 1,
-                textAlign: "center",
-              }}
+              className="tajweed-modalTitle"
+              sx={{ color: selectedRule?.color || "var(--text-color)" }}
             >
               {selectedRule?.name}
             </Typography>
+
             <IconButton
+              className="tajweed-closeBtn"
+              variant="soft"
               onClick={() => setNestedModalOpen(false)}
-              sx={{ position: "absolute", left: "0.5em" }}
             >
               <CloseIcon />
             </IconButton>
           </Box>
+
           <Typography
-            sx={{
-              fontSize: "1rem",
-              whiteSpace: "pre-wrap",
-              padding: "1em",
-              backgroundColor: "var(--card-color)",
-              color: "var(--text-color)",
-            }}
+            className="tajweed-ruleDesc"
+            sx={{ color: "var(--text-color)" }}
           >
             {selectedRule?.description}
           </Typography>
+
           {selectedRule?.letters && (
             <Typography
+              className="tajweed-letters"
               sx={{
-                fontSize: "1.2rem",
-                mt: 2,
                 color: selectedRule?.color,
-                textAlign: "center",
                 direction: language === "ar" ? "rtl" : "ltr",
               }}
             >
