@@ -67,7 +67,7 @@
 
   position: sticky;
   top: 0;
-  z-index: 12;
+  z-index: 1;
 }
 
 .tajweed-topbar-left {
@@ -103,7 +103,7 @@
 .tajweed-saveBtn {
   border-radius: 14px !important;
   padding: 10px 14px !important;
-
+  color: var(--text-color) !important;
   background: color-mix(in srgb, var(--text-color) 10%, transparent) !important;
   border: 1px solid color-mix(in srgb, var(--text-color) 18%, transparent) !important;
   box-shadow: none !important;
@@ -111,17 +111,19 @@
 
 .tajweed-saveBtn:hover {
   background: color-mix(in srgb, var(--text-color) 14%, transparent) !important;
+  color: var(--text-color) !important;
 }
 .tajweed-savedBtn {
   border-radius: 14px !important;
   padding: 10px 14px !important;
-
+  color: green !important;
   background: color-mix(in srgb, green 12%, transparent) !important;
   border: 1px solid color-mix(in srgb, green 18%, transparent) !important;
   box-shadow: none !important;
 }
-.tajweed-btnIcon {
+.tajweed-savedBtn svg {
   font-size: 1.2rem !important;
+  color: green !important ;
   margin-inline: 6px;
 }
 
@@ -632,7 +634,7 @@
 .tajweed-filters svg,
 .tajweed-modal svg,
 .tajweed-infobar p {
-  color: var(--text-color) !important;
+  color: rgb(11 108 66 / 92%) !important;
 }
 
 /* IMPORTANT: do NOT override colors inside Quran text */

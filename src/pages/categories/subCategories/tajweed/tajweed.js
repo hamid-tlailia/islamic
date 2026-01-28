@@ -597,7 +597,7 @@ const Tajweed = ({ audioName, documentName }) => {
             variant="soft"
             onClick={() => setFiltersOpen((v) => !v)}
           >
-            <TuneRoundedIcon style={{ color: "crimson" }} />
+            <TuneRoundedIcon sx={{ color: "crimson" }} />
             <span
               className="tajweed-filterBtnText"
               style={{ color: "var(--text-color)" }}
@@ -612,7 +612,7 @@ const Tajweed = ({ audioName, documentName }) => {
               variant="soft"
               onClick={restoreSavedInfos}
             >
-              <RestoreIcon />
+              <RestoreIcon sx={{ color: "blue" }} />
             </IconButton>
           )}
         </Box>

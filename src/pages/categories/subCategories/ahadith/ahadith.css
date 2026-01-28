@@ -23,6 +23,7 @@
 
 .ah-section-title {
   margin: 8px 0 10px;
+  color: var(--text-color) !important;
   font-weight: 700;
   opacity: 0.95;
 }
@@ -51,7 +52,7 @@
 }
 
 .ah-toolbar-title {
-  color : var(--text-color) !important;
+  color: var(--text-color) !important;
   font-weight: 800;
 }
 

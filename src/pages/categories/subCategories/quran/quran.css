@@ -252,7 +252,7 @@
 }
 .reciters-select {
   flex-grow: 1;
-  border: 2px solid rgba(39, 28, 28, 0.664);
+  border: 1px solid rgba(39, 28, 28, 0.664);
   border-radius: 8px;
 }
 /* top row reading */

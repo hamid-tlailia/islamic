@@ -1031,7 +1031,7 @@ const Ahadith = () => {
             <div className="ah-verify-row">
               <Typography level="body-sm" className="ah-verify-note">
                 {language === "ar"
-                  ? "الحكم المعروض من الدرر (أولوية على API عند توفره للبخاري/مسلم)."
+                  ? "الحكم المعروض من الدرر (أولوية عند توفره للبخاري/مسلم)."
                   : "Dorar judgement shown (preferred for Bukhari/Muslim when available)."}
               </Typography>
             </div>
