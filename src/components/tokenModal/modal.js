@@ -21,23 +21,64 @@ const LS_TOKEN = "deviceToken";
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
+/* -------------------- Helpers -------------------- */
+function getBrowserTZ() {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+  } catch {
+    return "UTC";
+  }
+}
+
+function getCoords(options = { enableHighAccuracy: true, timeout: 8000, maximumAge: 60_000 }) {
+  return new Promise((resolve) => {
+    if (!("geolocation" in navigator)) return resolve(null);
+    navigator.geolocation.getCurrentPosition(
+      (pos) =>
+        resolve({
+          latitude: Number(pos.coords.latitude),
+          longitude: Number(pos.coords.longitude),
+          accuracy: Number(pos.coords.accuracy || 0),
+        }),
+      () => resolve(null),
+      options,
+    );
+  });
+}
+
+/**
+ * Optional reverse geocode for nicer city/country display.
+ * If you don’t want any extra request, you can delete this function + calls.
+ */
+async function reverseGeocode(lat, lon) {
+  try {
+    const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
+    const r = await fetch(url, { headers: { Accept: "application/json" } });
+    const j = await r.json();
+    const a = j?.address || {};
+    return {
+      city: a.city || a.town || a.village || a.suburb || "",
+      country: a.country_code ? a.country_code.toUpperCase() : "",
+    };
+  } catch {
+    return { city: "", country: "" };
+  }
+}
+
+/* -------------------- Main -------------------- */
 export async function registerDeviceToken() {
   const permission = await Notification.requestPermission();
   if (permission !== "granted") return;
 
   try {
-    // ⚠️ IMPORTANT:
-    // If you still use /firebase-messaging-sw.js keep this.
-    // If you merged into CRA Workbox SW, use: const swReg = await navigator.serviceWorker.ready;
+    // Service worker
     let swReg;
     if ("serviceWorker" in navigator) {
-      swReg = await navigator.serviceWorker.register(
-        "/firebase-messaging-sw.js",
-      );
+      swReg = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
       await navigator.serviceWorker.ready;
     }
 
-    // ✅ Firebase will return existing token OR generate a new one if needed
+    // Token
     const token = await getToken(messaging, {
       vapidKey: VAPID_KEY,
       serviceWorkerRegistration: swReg,
@@ -46,14 +87,34 @@ export async function registerDeviceToken() {
     if (!token) return;
 
     const oldToken = localStorage.getItem(LS_TOKEN) || "";
+    const timezone = getBrowserTZ();
 
-    // ✅ ALWAYS send token to backend (backend decides save/ignore)
+    // Coordinates (precise)
+    const coords = await getCoords();
+
+    // Optional place details
+    let place = { city: "", country: "" };
+    if (coords?.latitude && coords?.longitude) {
+      place = await reverseGeocode(coords.latitude, coords.longitude);
+    }
+
+    // Send to backend
     const res = await fetch(BACKEND_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         token,
         oldToken: oldToken && oldToken !== token ? oldToken : undefined,
+
+        // ✅ new: timezone + coords (main accuracy upgrade)
+        timezone,
+        latitude: coords?.latitude,
+        longitude: coords?.longitude,
+        accuracy: coords?.accuracy,
+
+        // optional: helps display / fallback
+        city: place.city || undefined,
+        country: place.country || undefined,
       }),
     });
 
