@@ -1,0 +1,314 @@
+/*
+ * Shared primitives.
+ *
+ * Every page in this app grew its own card, button, badge and loading state,
+ * which is why so many rules end in `!important` — they were competing rather
+ * than composing. These classes are the shared versions, built only from the
+ * tokens in App.css so they follow every theme automatically.
+ *
+ * Loaded before the page stylesheets, so a page can still override any of it
+ * without needing `!important`.
+ */
+
+/* =========================================================
+   Accessibility baseline
+   ========================================================= */
+
+/*
+ * Keyboard focus was invisible almost everywhere: only four inputs in the
+ * whole app styled :focus, and nothing styled :focus-visible. `:focus-visible`
+ * shows the ring for keyboard users without putting it on every mouse click.
+ */
+:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
+
+/* Skip link — first thing a keyboard or screen reader user meets. */
+.u-skip-link {
+  position: absolute;
+  inset-inline-start: var(--sp-4);
+  top: -100vh;
+  z-index: 10000;
+  padding: var(--sp-2) var(--sp-4);
+  background: var(--card-color);
+  color: var(--text-color);
+  border: var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--elev-2);
+}
+.u-skip-link:focus {
+  top: var(--sp-4);
+}
+
+/* Visible to screen readers, not on screen. */
+.u-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/*
+ * Respect the operating system's reduced-motion setting. The app animates
+ * every route change, which is exactly the kind of movement that triggers
+ * vestibular discomfort.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Anchored scrolling clears the fixed header. */
+:target {
+  scroll-margin-top: 100px;
+}
+
+/* =========================================================
+   Layout helpers
+   ========================================================= */
+
+/* Vertical rhythm without a margin on every child. */
+.u-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+.u-stack--tight {
+  gap: var(--sp-2);
+}
+.u-stack--loose {
+  gap: var(--sp-6);
+}
+
+/* A row that wraps instead of overflowing on a narrow screen. */
+.u-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+/*
+ * Responsive grid with no media queries: the columns decide their own count
+ * from the space available.
+ */
+.u-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
+  gap: var(--sp-4);
+}
+
+/* Wide content — tables, code, diagrams — scrolls inside itself so the page
+   body never scrolls sideways. */
+.u-scroll-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* =========================================================
+   Surfaces
+   ========================================================= */
+
+.u-card {
+  background: var(--card-color);
+  color: var(--text-color);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--sp-4);
+  box-shadow: var(--elev-1);
+  transition:
+    transform var(--motion-base) var(--ease),
+    box-shadow var(--motion-base) var(--ease);
+}
+
+.u-card--interactive {
+  cursor: pointer;
+}
+.u-card--interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--elev-2);
+}
+.u-card--flat {
+  box-shadow: none;
+}
+
+.u-card__title {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+  margin-block-end: var(--sp-2);
+}
+
+.u-card__meta {
+  font-size: var(--fs-sm);
+  opacity: 0.72;
+}
+
+/* =========================================================
+   Controls
+   ========================================================= */
+
+.u-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4);
+  min-height: 44px; /* comfortable touch target */
+  border: var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card-color);
+  color: var(--text-color);
+  font: inherit;
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-tight);
+  cursor: pointer;
+  transition:
+    background var(--motion-fast) var(--ease),
+    transform var(--motion-fast) var(--ease),
+    opacity var(--motion-fast) var(--ease);
+}
+.u-btn:hover:not(:disabled) {
+  background: var(--nav-color);
+}
+.u-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.u-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.u-btn--primary {
+  background: var(--primary-color);
+  border-color: transparent;
+  color: #fff;
+}
+.u-btn--primary:hover:not(:disabled) {
+  background: var(--primary-color);
+  filter: brightness(1.12);
+}
+
+.u-btn--ghost {
+  background: transparent;
+  border-color: transparent;
+}
+
+.u-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--radius-full);
+  background: var(--tabs-bg-color);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-tight);
+}
+
+/* =========================================================
+   Loading and empty states
+   ========================================================= */
+
+/*
+ * A skeleton keeps the layout from jumping when content arrives, which reads
+ * as much faster than a spinner even when the wait is identical.
+ */
+.u-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--nav-color);
+  border-radius: var(--radius-sm);
+  min-height: 1em;
+}
+.u-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--shadow-secondary-color),
+    transparent
+  );
+  animation: u-shimmer 1.4s infinite;
+}
+[dir="rtl"] .u-skeleton::after {
+  animation-name: u-shimmer-rtl;
+}
+
+@keyframes u-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+@keyframes u-shimmer-rtl {
+  100% {
+    transform: translateX(-200%);
+  }
+}
+
+.u-skeleton--text {
+  height: 0.9em;
+  margin-block: 0.35em;
+}
+.u-skeleton--title {
+  height: 1.4em;
+  width: 55%;
+}
+
+.u-empty {
+  display: grid;
+  place-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-7) var(--sp-4);
+  text-align: center;
+  color: var(--text-color);
+  opacity: 0.78;
+}
+.u-empty__icon {
+  font-size: var(--fs-3xl);
+  line-height: 1;
+}
+.u-empty__title {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+}
+.u-empty__body {
+  font-size: var(--fs-sm);
+  max-width: 46ch;
+}
+
+/* =========================================================
+   Arabic typography
+   ========================================================= */
+
+/* Quranic text: more leading, no justification, ligatures intact. */
+.u-quran {
+  font-family: "Amiri Quran", "Amiri", serif;
+  line-height: var(--lh-quran);
+  text-align: start !important;
+  font-variant-ligatures: contextual common-ligatures;
+}
+
+/* Prose blocks read better ragged than justified: Arabic has no hyphenation
+   in browsers, so justification stretches the spaces into rivers. */
+.u-prose {
+  line-height: var(--lh-body);
+  text-align: start !important;
+  max-width: 72ch;
+}

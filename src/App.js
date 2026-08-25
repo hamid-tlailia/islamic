@@ -241,10 +241,13 @@ function App() {
   const scrollContent = () => {
     setScrollToTop(true);
   };
-  setInterval(() => {
-    setScrollToTop(false);
-    setBackToTop(false);
-  }, 1000);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setScrollToTop(false);
+      setBackToTop(false);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const nowPlayingName = (audioName) => {
     setPlayingSurah(audioName);
@@ -258,12 +261,18 @@ function App() {
         ) : (
           <Router>
             <Suspense fallback={<Loader />}>
+              <a className="u-skip-link" href="#main-content">
+                {currentLanguage === "en"
+                  ? "Skip to content"
+                  : "تخطَّ إلى المحتوى"}
+              </a>
               <Header
                 onNavClick={triggerAnimation}
                 visibility={hideHeader}
                 size={handleSize}
               />
-              <div
+              <main
+                id="main-content"
                 className={`lazy-component-wrapper ${isLoaded ? "loaded" : ""}`}
               >
                 <Routes>
@@ -431,7 +440,7 @@ function App() {
                   />
                   {/* Add more routes as needed */}
                 </Routes>
-              </div>
+              </main>
               <Footer onFooterClick={triggerAnimation} />
               <Player
                 show={isNowPlaying}
