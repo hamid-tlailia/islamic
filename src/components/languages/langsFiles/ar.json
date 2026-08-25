@@ -1,6 +1,5 @@
 {
   "//1": "Home pgae translations",
-
   "home": "الرئيسية",
   "categories": "الأقسام",
   "about": "من نحن",
@@ -27,9 +26,7 @@
   "userInterfaceDescription": "تصميم جذاب يتيح لك التنقل بكل سهولة بين مختلف الميزات.",
   "categoriesBtn": "الاقسام",
   "discoverBtn": "استكشف",
-
   "//2": "Categories pgae translations",
-
   "prayerKnowledge": " الُِلُِهم عٍلُِمنا ما ينفُعٍنا، وُانفُعٍنا بَما عٍلُِمتنا، وُزْدِنا عٍلُِما ",
   "whatIsIslam": "ماهو الاسلام",
   "beAMuslim": "كن مسلما",
@@ -52,6 +49,12 @@
   "OtherTopics": "فضاء طالب العلم",
   "alSira": "السيرة النبوية",
   "alTajweed": "أحكام التلاوة",
+  "mishkat": "مِشْكاة",
+  "groupQuran": "القرآن الكريم",
+  "groupSunnah": "السنة والسيرة",
+  "groupWorship": "العبادات والأذكار",
+  "groupFatwa": "الفقه والفتوى",
+  "groupLearn": "التعلّم والمعرفة",
   "numberOfAyahs": "عدد الآيات: 6236 آية",
   "numberOfSurahs": "عدد السور: 114 سورة",
   "numberOfSajdahs": "عدد السجدات: 15 سجدة",

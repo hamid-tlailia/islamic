@@ -21,6 +21,7 @@ import arabic from "../images/arabic.avif";
 import topics from "../images/topics.avif";
 import sira from "../images/sira.avif";
 import tajweed from "../images/tajweed.avif";
+import mishkat from "../images/mishkat.avif";
 
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "../../components/languages/provider";
@@ -49,30 +50,45 @@ const navLinks = [
   { path: "knowledge", title: "OtherTopics" },
   { path: "sira", title: "alSira" },
   { path: "tajweed", title: "alTajweed" },
+  { path: "mishkat", title: "mishkat" },
   { path: "questions", title: "askAQuestion" },
 ];
 
 const CATEGORIES = [
-  { to: "islam", img: islam, id: "whatIsIslam" },
-  { to: "beMuslim", img: be, id: "beAMuslim" },
-  { to: "quran", img: quran, id: "quran" },
-  { to: "tafsir", img: tafsir, id: "quranInterpretationCat" },
-  { to: "ahadith", img: ahadith, id: "hadiths" },
-  { to: "times", img: salat, id: "prayerTimes" },
-  { to: "adhkar", img: adhkar, id: "azkar" },
-  { to: "names", img: asma2, id: "asmaaHusna" },
-  { to: "tasbih", img: tasbih, id: "tasbeeh" },
-  { to: "prophets", img: qisas, id: "prophetsStories" },
-  { to: "animals", img: animals, id: "animalsStories" },
-  { to: "fatawa", img: fatawa, id: "contemporaryFatwas" },
-  { to: "library", img: wasia, id: "wisdomAndAdmonitions" },
-  { to: "radio", img: radio, id: "QuranRadio", imgClass: "wideImg" },
-  { to: "fiqh", img: fiqh, id: "fiqhIslam" },
-  { to: "historic", img: history, id: "islamicHistory" },
-  { to: "arabic", img: arabic, id: "arabicLanguage" },
-  { to: "knowledge", img: topics, id: "OtherTopics" },
-  { to: "sira", img: sira, id: "alSira" },
-  { to: "tajweed", img: tajweed, id: "alTajweed" },
+  { to: "islam", img: islam, id: "whatIsIslam" , group: "learn" },
+  { to: "beMuslim", img: be, id: "beAMuslim" , group: "learn" },
+  { to: "quran", img: quran, id: "quran" , group: "quranGrp" },
+  { to: "tafsir", img: tafsir, id: "quranInterpretationCat" , group: "quranGrp" },
+  { to: "ahadith", img: ahadith, id: "hadiths" , group: "sunnah" },
+  { to: "times", img: salat, id: "prayerTimes" , group: "worship" },
+  { to: "adhkar", img: adhkar, id: "azkar" , group: "worship" },
+  { to: "names", img: asma2, id: "asmaaHusna" , group: "worship" },
+  { to: "tasbih", img: tasbih, id: "tasbeeh" , group: "worship" },
+  { to: "prophets", img: qisas, id: "prophetsStories" , group: "sunnah" },
+  { to: "animals", img: animals, id: "animalsStories" , group: "sunnah" },
+  { to: "fatawa", img: fatawa, id: "contemporaryFatwas" , group: "fatwa" },
+  { to: "library", img: wasia, id: "wisdomAndAdmonitions" , group: "learn" },
+  { to: "radio", img: radio, id: "QuranRadio", imgClass: "wideImg" , group: "quranGrp" },
+  { to: "fiqh", img: fiqh, id: "fiqhIslam" , group: "fatwa" },
+  { to: "historic", img: history, id: "islamicHistory" , group: "sunnah" },
+  { to: "arabic", img: arabic, id: "arabicLanguage" , group: "learn" },
+  { to: "knowledge", img: topics, id: "OtherTopics" , group: "learn" },
+  { to: "sira", img: sira, id: "alSira" , group: "sunnah" },
+  { to: "tajweed", img: tajweed, id: "alTajweed" , group: "quranGrp" },
+  { to: "mishkat", img: mishkat, id: "mishkat" , group: "fatwa" },
+];
+
+/*
+ * Twenty-one tiles in one undifferentiated grid gave a reader no way in.
+ * Grouping them, and offering a filter, turns the page into something you can
+ * scan rather than sweep.
+ */
+const GROUPS = [
+  { id: "quranGrp", label: "groupQuran" },
+  { id: "sunnah", label: "groupSunnah" },
+  { id: "worship", label: "groupWorship" },
+  { id: "fatwa", label: "groupFatwa" },
+  { id: "learn", label: "groupLearn" },
 ];
 
 const LS_TITLE_KEY = "component-title";
@@ -93,6 +109,7 @@ const Categories = ({
   const [checkTitle, setCheckTitle] = useState(false);
   const [isRadio, setIsRadio] = useState(false);
   const [selectedCategoryPosition, setSelectedCategoryPosition] = useState(0);
+  const [query, setQuery] = useState("");
 
   const { language, translations } = useTranslation();
   const navigate = useNavigate();
@@ -103,6 +120,14 @@ const Categories = ({
   const contentRef = useRef(null);
 
   const isSmallScreen = useMediaQuery("(max-width:500px)");
+
+  const normalized = query.trim().toLowerCase();
+  const matches = normalized
+    ? CATEGORIES.filter((c) => {
+        const label = String(translations[c.id] || "").toLowerCase();
+        return label.includes(normalized) || c.to.toLowerCase().includes(normalized);
+      })
+    : null;
 
   // ✅ scroll helper that works in ALL browsers/layouts
   const scrollPageTo = (top, behavior = "auto") => {
@@ -285,28 +310,85 @@ const Categories = ({
         style={{ marginTop: isRadio && isSmallScreen ? "0" : "1vh" }}
       >
         <div className="card content" ref={contentRef} onScroll={handleScroll}>
-          <div className="card-header p-1 d-flex justify-content-center align-items-center">
+          <div className="card-header p-1 catHeader">
             <p className="w-100 text-center fw-bold mt-2 catHeaderTitle">
               {translations.prayerKnowledge}
             </p>
+            <label className="u-visually-hidden" htmlFor="category-filter">
+              {language === "en" ? "Filter sections" : "ابحث في الأقسام"}
+            </label>
+            <input
+              id="category-filter"
+              type="search"
+              className="catFilter"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={
+                language === "en" ? "Filter sections…" : "ابحث في الأقسام…"
+              }
+              autoComplete="off"
+            />
           </div>
 
           <div className="card-body p-0">
-            <div className="divisions" ref={categoriesRef}>
-              {CATEGORIES.map((c) => (
+            <div ref={categoriesRef}>
+              {matches ? (
+                matches.length > 0 ? (
+                  <div className="divisions">
+                    {matches.map((c) => (
                 <NavLink key={c.to} className="div" to={c.to}>
-                  <div className="catIcon">
-                    <img
-                      src={c.img}
-                      className={c.imgClass || ""}
-                      alt="category"
-                      loading="lazy"
-                      draggable="false"
-                    />
+                      <div className="catIcon">
+                        <img
+                          src={c.img}
+                          className={c.imgClass || ""}
+                          alt="category"
+                          loading="lazy"
+                          draggable="false"
+                        />
+                      </div>
+                      <span id={c.id}>{translations[c.id]}</span>
+                    </NavLink>
+                    ))}
                   </div>
-                  <span id={c.id}>{translations[c.id]}</span>
-                </NavLink>
-              ))}
+                ) : (
+                  <div className="u-empty">
+                    <span className="u-empty__icon" aria-hidden="true">
+                      🔍
+                    </span>
+                    <p className="u-empty__title">
+                      {language === "en" ? "Nothing found" : "لا توجد نتيجة"}
+                    </p>
+                  </div>
+                )
+              ) : (
+                GROUPS.map((group) => {
+                  const items = CATEGORIES.filter((c) => c.group === group.id);
+                  if (!items.length) return null;
+                  return (
+                    <section key={group.id} className="catGroup">
+                      <h2 className="catGroup__title">
+                        {translations[group.label] || group.label}
+                      </h2>
+                      <div className="divisions">
+                        {items.map((c) => (
+                <NavLink key={c.to} className="div" to={c.to}>
+                          <div className="catIcon">
+                            <img
+                              src={c.img}
+                              className={c.imgClass || ""}
+                              alt="category"
+                              loading="lazy"
+                              draggable="false"
+                            />
+                          </div>
+                          <span id={c.id}>{translations[c.id]}</span>
+                        </NavLink>
+                        ))}
+                      </div>
+                    </section>
+                  );
+                })
+              )}
             </div>
           </div>
 

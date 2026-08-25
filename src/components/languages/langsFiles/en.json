@@ -1,6 +1,5 @@
 {
   "//1": "Home pgae translations",
-
   "home": "Home",
   "categories": "Categories",
   "about": "About",
@@ -27,9 +26,7 @@
   "userInterfaceDescription": "An attractive design that allows you to easily navigate between different features.",
   "categoriesBtn": "Categories",
   "discoverBtn": "Discover",
-
   "//2": "Categories pgae translations",
-
   "prayerKnowledge": "O Allah, teach us what benefits us, benefit us with what You have taught us, and increase us in knowledge.",
   "whatIsIslam": "What is Islam",
   "beAMuslim": "Be a Muslim",
@@ -52,6 +49,12 @@
   "OtherTopics": "Knowledge's Space",
   "alSira": "The Prophetic Sira",
   "alTajweed": "Rules of Recitation",
+  "mishkat": "Mishkat",
+  "groupQuran": "The Holy Quran",
+  "groupSunnah": "Sunnah and Sira",
+  "groupWorship": "Worship and Remembrance",
+  "groupFatwa": "Fiqh and Fatwa",
+  "groupLearn": "Learning and Knowledge",
   "numberOfAyahs": "Number of Ayahs: 6236",
   "numberOfSurahs": "Number of Surahs: 114",
   "numberOfSajdahs": "Number of Sajdahs: 15",
