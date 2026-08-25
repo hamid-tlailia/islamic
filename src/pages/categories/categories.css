@@ -277,3 +277,70 @@
   align-items: center;
   cursor: pointer;
 }
+
+/* =========================================================
+   Grouped sections and filter
+   ========================================================= */
+
+.catHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.catFilter {
+  width: min(420px, 92%);
+  min-height: 40px;
+  padding: var(--sp-2) var(--sp-3);
+  margin-block-end: var(--sp-2);
+  border: var(--search-border);
+  border-radius: var(--radius-full);
+  background: var(--card-color);
+  color: var(--text-color);
+  font: inherit;
+  font-size: var(--fs-sm);
+  text-align: center;
+}
+
+.catFilter::placeholder {
+  color: var(--text-color);
+  opacity: 0.5;
+}
+
+.catGroup {
+  margin-block-end: var(--sp-5);
+}
+
+/* A quiet rule rather than a heavy heading: the group names orient the eye
+   without competing with the tiles they label. */
+.catGroup__title {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin: 0 0 var(--sp-3);
+  padding-inline: var(--sp-4);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.02em;
+  opacity: 0.7;
+}
+
+.catGroup__title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.25;
+}
+
+.catGroup .divisions {
+  grid-template-columns: repeat(auto-fit, minmax(140px, 200px));
+  justify-content: center;
+}
+
+@media screen and (max-width: 500px) {
+  .catGroup .divisions {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  }
+}

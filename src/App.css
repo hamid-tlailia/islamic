@@ -24,12 +24,15 @@
   --dropdown-bg-color: rgba(255, 255, 255, 0.92);
 
   /* ====== Brand colors ====== */
-  --primary-color: #2a9d8f;
+  /* Darkened from #2a9d8f, which sat at 2.45:1 on --bg-color. */
+  --primary-color: #115e59;
   --secondary-color: #e76f51;
   --tertiary-color: #264653;
   --quaternary-color: #8c4103;
 
-  --main-color: coral;
+  /* Was `coral`, used as body text on cards at 2.5:1. This keeps the warm
+     accent while clearing AA (7.3:1 on a card, 5.4:1 on the page). */
+  --main-color: #9a3412;
   --names-color: rgb(29, 14, 108);
 
   /* ====== Text accents ====== */
@@ -61,6 +64,49 @@
   --settings-ui__section-bg: rgb(237 237 237 / 80%);
   --settings-ui__toggle-bg: rgb(29 23 23 / 10%);
   --border-color: 1px solid rgba(0, 0, 0, 0.1);
+
+  /* ====== Type scale ======
+     In rem, so the size control in settings (body.sm / .md / .lg) still
+     scales the whole page from one place. */
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: 1.375rem;
+  --fs-2xl: 1.75rem;
+  --fs-3xl: 2.25rem;
+
+  /* Arabic script needs more leading than Latin: its ascenders, descenders
+     and diacritics collide at the 1.4–1.5 that suits Latin text. */
+  --lh-tight: 1.4;
+  --lh-body: 1.9;
+  --lh-quran: 2.3;
+
+  --fw-normal: 400;
+  --fw-medium: 600;
+  --fw-bold: 700;
+
+  /* ====== Spacing scale ====== */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-7: 3rem;
+  --sp-8: 4rem;
+
+  --radius-full: 999px;
+
+  /* ====== Motion ======
+     Honoured through the prefers-reduced-motion block further down. */
+  --motion-fast: 120ms;
+  --motion-base: 220ms;
+  --motion-slow: 380ms;
+  --ease: cubic-bezier(0.2, 0, 0.2, 1);
+
+  /* ====== Focus ====== */
+  --focus-ring: 0 0 0 3px rgba(17, 94, 89, 0.45);
 }
 
 /* =========================================================
@@ -109,6 +155,7 @@ body.dark-mode {
 
   --elev-1: 0 8px 22px rgba(0, 0, 0, 0.45);
   --elev-2: 0 14px 34px rgba(0, 0, 0, 0.55);
+  --focus-ring: 0 0 0 3px rgba(94, 234, 212, 0.55);
   --settings-ui__section-bg: rgba(75, 69, 69, 0.292);
   --settings-ui__toggle-bg: rgba(255, 255, 255, 0.1);
   --border-color: 1px solid rgba(255, 255, 255, 0.1);
@@ -271,11 +318,14 @@ html {
   background-color: var(--bg-color);
   color: var(--text-color);
   transition:
-    background-color 0.3s,
-    color 0.3s;
-  direction: rtl;
+    background-color var(--motion-slow) var(--ease),
+    color var(--motion-slow) var(--ease);
   overflow-x: hidden;
   font-family: "Cairo", sans-serif;
+  line-height: var(--lh-body);
+  /* Arabic renders with the wrong glyph shapes in some fallback stacks
+     unless ligatures and contextual alternates stay on. */
+  font-variant-ligatures: contextual common-ligatures;
   padding: 0 !important;
 }
 body *::selection {
@@ -303,8 +353,17 @@ body {
   }
 }
 
-body.en > div {
-  direction: ltr !important;
+/*
+ * Direction is carried by <html dir>, which the language provider sets (and
+ * index.html applies before first paint). The old rules hardcoded `rtl` on
+ * the body and undid it with `body.en > div { direction: ltr !important }`,
+ * which meant logical properties could not be used anywhere.
+ */
+[dir="rtl"] {
+  direction: rtl;
+}
+[dir="ltr"] {
+  direction: ltr;
 }
 body.sm {
   font-size: 18px !important;

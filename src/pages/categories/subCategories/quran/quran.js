@@ -26,6 +26,7 @@ import Divider from "@mui/joy/Divider";
 
 import Select from "react-select";
 import DOMPurify from "dompurify";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import logo from "../images/logo.png";
@@ -137,6 +138,8 @@ const Quran = ({ src, toTop, audioName }) => {
   const [layout, setLayout] = useState(undefined); // fullscreen modal
   const [openAyahTafsirModal, setOpenAyahTafsirModal] = useState(false);
   const [singleAyahTafsirText, setSingleAyahTafsirText] = useState("");
+  // Which ayah the tafsir modal is showing, so Mishkat can be asked about it.
+  const [openAyahRef, setOpenAyahRef] = useState(null);
   const [tafsirLoader, setTafsirLoader] = useState(true);
 
   // Settings modal
@@ -628,6 +631,11 @@ const Quran = ({ src, toTop, audioName }) => {
       </div>`;
     }
 
+    setOpenAyahRef({
+      surah: Number(surahNumber),
+      ayah: ayahIndex0 + 1,
+      name: allAyahs?.name || "",
+    });
     setSingleAyahTafsirText(DOMPurify.sanitize(html));
     setOpenAyahTafsirModal(true);
   };
@@ -1694,6 +1702,22 @@ const Quran = ({ src, toTop, audioName }) => {
               <span>{language === "ar" ? "جاري العمل..." : "Loading..."}</span>
             )}
           </Typography>
+
+          {/* Carry the ayah over to Mishkat, which answers with its evidence
+              checked against the mushaf. */}
+          {openAyahRef && (
+            <Link
+              className="u-btn u-btn--ghost quran-askMishkat"
+              to={`/categories/mishkat?q=${encodeURIComponent(
+                `ما معنى قوله تعالى في ${
+                  openAyahRef.name || `سورة ${openAyahRef.surah}`
+                } الآية ${openAyahRef.ayah}؟`,
+              )}`}
+              onClick={() => setOpenAyahTafsirModal(false)}
+            >
+              {language === "ar" ? "اسأل مِشْكاة عن هذه الآية" : "Ask Mishkat about this ayah"}
+            </Link>
+          )}
         </Sheet>
       </Modal>
     </div>

@@ -691,3 +691,17 @@ input[type="range"]::-webkit-slider-thumb {
   border-radius: 6px;
   box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.15) inset;
 }
+
+/* Hand-off from an ayah to Mishkat, inside the tafsir modal. */
+.quran-askMishkat {
+  margin-block-start: var(--sp-3);
+  width: 100%;
+  border: var(--border);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  text-decoration: none;
+  color: var(--text-color);
+}
+.quran-askMishkat:hover {
+  color: var(--text-color);
+}
