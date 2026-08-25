@@ -78,6 +78,9 @@ const Sira = lazy(() => import("./pages/categories/subCategories/sira/sira"));
 const Tajweed = lazy(
   () => import("./pages/categories/subCategories/tajweed/tajweed"),
 );
+const Mishkat = lazy(
+  () => import("./pages/categories/subCategories/mishkat/mishkat"),
+);
 const Player = lazy(() => import("./components/player/player"));
 
 function App() {
@@ -336,6 +339,7 @@ function App() {
                         />
                       }
                     />
+                    <Route path="mishkat" element={<Mishkat />} />
                     <Route path="tasbih" element={<Tasbih />} />
                     <Route path="times" element={<Times />} />
                     <Route

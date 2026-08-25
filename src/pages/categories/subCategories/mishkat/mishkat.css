@@ -1,0 +1,311 @@
+/*
+ * Mishkat — the Shari'ah question assistant.
+ *
+ * Built entirely on the tokens in App.css and the primitives in
+ * src/styles/primitives.css, so it follows every theme with no overrides and
+ * needs no `!important` anywhere.
+ */
+
+.mishkat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  max-width: 900px;
+  margin-inline: auto;
+  padding: var(--sp-4);
+}
+
+/* ===================== Header ===================== */
+
+.mishkat-head__title {
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+  margin-block-end: var(--sp-2);
+  color: var(--text-color);
+}
+
+.mishkat-head__lede {
+  font-size: var(--fs-sm);
+  opacity: 0.78;
+  margin: 0;
+}
+
+/* ===================== Thread ===================== */
+
+.mishkat-thread {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+  min-height: 40vh;
+}
+
+/* The reader's own question, set apart from the answer by a rule rather than
+   a bubble: at this line length a bubble wastes most of the row. */
+.mishkat-question {
+  margin: 0;
+  padding-inline-start: var(--sp-4);
+  border-inline-start: 3px solid var(--primary-color);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-tight);
+  color: var(--text-color);
+}
+
+.mishkat-answer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+/* While tokens are still arriving the text is dimmed slightly, so it reads
+   as in progress without a spinner competing for attention. */
+.mishkat-answer--streaming {
+  opacity: 0.82;
+}
+
+.mishkat-answer__topic {
+  align-self: flex-start;
+  margin: 0;
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--radius-full);
+  background: var(--tabs-bg-color);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.02em;
+}
+
+.mishkat-answer__prose {
+  margin: 0;
+  font-size: var(--fs-md);
+  color: var(--text-color);
+}
+
+/* ===================== Sections ===================== */
+
+.mishkat-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin-block-start: var(--sp-2);
+}
+
+.mishkat-section__title {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: 0;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  text-transform: none;
+  opacity: 0.72;
+}
+
+.mishkat-list {
+  margin: 0;
+  padding-inline-start: var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-body);
+}
+
+/* ===================== Evidence ===================== */
+
+.mishkat-evidence {
+  background: var(--card-color);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.mishkat-evidence__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+
+.mishkat-evidence__kind {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  opacity: 0.72;
+}
+
+.mishkat-evidence__text {
+  margin: 0;
+  font-size: var(--fs-lg);
+  color: var(--ayah-text-color);
+}
+
+.mishkat-evidence__ref {
+  margin: 0;
+  font-size: var(--fs-xs);
+  opacity: 0.66;
+}
+
+.mishkat-evidence__why,
+.mishkat-evidence__note {
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-body);
+  text-align: start;
+}
+
+.mishkat-evidence__note {
+  color: var(--secondary-color);
+}
+
+/* ===================== Verification badge ===================== */
+
+.mishkat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--radius-full);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  white-space: nowrap;
+}
+
+/* Colour is never the only signal — each state also carries its own icon and
+   its own wording, so it survives a colour-blind reader and a mono screen. */
+.mishkat-badge--ok {
+  background: rgba(21, 128, 61, 0.14);
+  color: #15803d;
+}
+.mishkat-badge--warn {
+  background: rgba(154, 52, 18, 0.14);
+  color: #9a3412;
+}
+.mishkat-badge--muted {
+  background: var(--nav-color);
+  opacity: 0.75;
+}
+
+body.dark-mode .mishkat-badge--ok,
+body.image .mishkat-badge--ok,
+body.sky .mishkat-badge--ok {
+  background: rgba(94, 234, 212, 0.16);
+  color: #5eead4;
+}
+body.dark-mode .mishkat-badge--warn,
+body.image .mishkat-badge--warn,
+body.sky .mishkat-badge--warn {
+  background: rgba(251, 146, 60, 0.16);
+  color: #fb923c;
+}
+
+.mishkat-chip {
+  align-self: flex-start;
+  margin: 0;
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--radius-full);
+  font-size: var(--fs-xs);
+}
+.mishkat-chip--warn {
+  background: rgba(154, 52, 18, 0.14);
+  color: #9a3412;
+}
+body.dark-mode .mishkat-chip--warn {
+  background: rgba(251, 146, 60, 0.16);
+  color: #fb923c;
+}
+
+/* ===================== Follow-ups and suggestions ===================== */
+
+.mishkat-followup {
+  font-size: var(--fs-sm);
+  text-align: start;
+  border: var(--border);
+  border-radius: var(--radius-full);
+  min-height: 40px;
+}
+
+.mishkat-suggestions {
+  justify-content: center;
+  margin-block-start: var(--sp-2);
+}
+
+/* ===================== Composer ===================== */
+
+.mishkat-composer {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  background: var(--outlets-bg-color);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elev-1);
+  backdrop-filter: blur(8px);
+}
+
+.mishkat-composer__input {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: var(--sp-2) var(--sp-3);
+  border: var(--search-border);
+  border-radius: var(--radius-sm);
+  background: var(--search-card-bg);
+  color: var(--text-color);
+  font: inherit;
+  font-size: var(--fs-md);
+}
+
+.mishkat-composer__input::placeholder {
+  color: var(--text-color);
+  opacity: 0.5;
+}
+
+/* ===================== States ===================== */
+
+.mishkat-error {
+  margin: 0;
+  padding: var(--sp-3) var(--sp-4);
+  border: var(--border);
+  border-inline-start: 3px solid var(--secondary-color);
+  border-radius: var(--radius-sm);
+  background: var(--card-color);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-body);
+  text-align: start;
+}
+
+.mishkat-disclaimer {
+  margin: 0;
+  font-size: var(--fs-xs);
+  line-height: var(--lh-body);
+  opacity: 0.62;
+  text-align: start;
+}
+
+/* ===================== Narrow screens ===================== */
+
+@media (max-width: 600px) {
+  .mishkat {
+    padding: var(--sp-3) var(--sp-2);
+  }
+  .mishkat-head__title {
+    font-size: var(--fs-xl);
+  }
+  .mishkat-evidence__text {
+    font-size: var(--fs-md);
+  }
+  .mishkat-composer {
+    flex-wrap: wrap;
+  }
+  .mishkat-composer__input {
+    flex-basis: 100%;
+  }
+}
