@@ -9,6 +9,7 @@ import ChecklistRtlOutlinedIcon from "@mui/icons-material/ChecklistRtlOutlined";
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "../../components/languages/provider";
 import { toast } from "react-toastify";
+import NowCard from "../../components/nowCard/nowCard";
 
 import sliderImageOne from "../images/slider3.avif";
 import quran from "../images/quran.avif";
@@ -216,6 +217,9 @@ const Home = ({ onNavClick }) => {
 
   return (
     <div className={`homeui ${language === "ar" ? "rtl" : "ltr"}`}>
+      {/* What this hour calls for, before the hadith carousel. */}
+      <NowCard />
+
       {/* Slider */}
       <div className="homeui-sliderWrap">
         {error ? (

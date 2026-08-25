@@ -1,4 +1,5 @@
 import { getJSON, TTL } from "../../../../lib/apiClient";
+import { saveLocation } from "../../../../lib/prayerContext";
 import React, { useEffect, useMemo, useState } from "react";
 import "./times.css";
 
@@ -180,6 +181,12 @@ const Times = () => {
   useEffect(() => {
     if (currentLocation) {
       fetchPrayerTimesByCity(currentLocation.city, currentLocation.country);
+      /*
+       * Remembered so the home page's "Now" card can show the next prayer
+       * without prompting for location itself. The Makkah default is not
+       * saved — it is a placeholder, not where the reader is.
+       */
+      if (!currentLocation.isFallback) saveLocation(currentLocation);
     }
     // eslint-disable-next-line
   }, [currentLocation]);
@@ -252,7 +259,12 @@ const Times = () => {
       countries.getName(countryCode, language) ||
       (isAr ? "السعودية" : "Saudi Arabia");
 
-    const fallback = { city: fallbackCity, country: countryName, countryCode };
+    const fallback = {
+      city: fallbackCity,
+      country: countryName,
+      countryCode,
+      isFallback: true,
+    };
     setCurrentLocation(fallback);
 
     setManualCity(fallbackCity);

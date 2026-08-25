@@ -1,0 +1,169 @@
+/*
+ * The "Now" card. Built from the tokens in App.css and the primitives, so it
+ * follows every theme without an override.
+ */
+
+.nowCard {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-5);
+  align-items: stretch;
+  justify-content: space-between;
+
+  /* The home page is a column flex container, where auto side margins alone
+     would shrink-wrap the card to its content instead of letting it fill. */
+  width: 100%;
+  max-width: 1100px;
+  margin-block: var(--sp-4);
+  margin-inline: auto;
+  padding: var(--sp-5);
+
+  background: var(--card-color);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elev-1);
+
+  /* A quiet band on the leading edge marks it as the page's first thing
+     without adding another heavy heading above the carousel. */
+  border-inline-start: 4px solid var(--primary-color);
+}
+
+.nowCard__main {
+  flex: 1 1 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  min-width: 0;
+}
+
+.nowCard__eyebrow {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.nowCard__title {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: 0;
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+  color: var(--text-color);
+}
+
+.nowCard__body {
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-body);
+  text-align: start;
+  opacity: 0.8;
+  max-width: 52ch;
+}
+
+.nowCard__cta {
+  margin-block-start: var(--sp-2);
+  text-decoration: none;
+}
+.nowCard__cta:hover {
+  color: #fff;
+}
+
+/* ===================== Side column ===================== */
+
+.nowCard__side {
+  flex: 0 1 260px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.nowCard__stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  padding: var(--sp-3);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  background: var(--nav-color);
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.nowCard__stat--link {
+  transition: background var(--motion-fast) var(--ease);
+}
+.nowCard__stat--link:hover {
+  background: var(--tabs-bg-color);
+  color: var(--text-color);
+}
+
+.nowCard__statLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  font-size: var(--fs-xs);
+  opacity: 0.7;
+}
+
+.nowCard__statValue {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+}
+
+.nowCard__statValue--surah {
+  /* Surah names are set in the Quran face, and some are long. */
+  font-family: "Amiri", serif;
+  overflow-wrap: anywhere;
+}
+
+/*
+ * Tabular figures keep the countdown from jittering as the digits change,
+ * which is otherwise very visible once a second.
+ */
+.nowCard__countdown {
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-bold);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  color: var(--primary-color);
+  direction: ltr;
+  text-align: start;
+}
+
+.nowCard__hint {
+  font-size: var(--fs-sm);
+  line-height: var(--lh-body);
+  opacity: 0.75;
+}
+
+/* ===================== Narrow screens ===================== */
+
+@media (max-width: 700px) {
+  .nowCard {
+    width: auto;
+    margin: var(--sp-3) var(--sp-2);
+    padding: var(--sp-4);
+    gap: var(--sp-4);
+  }
+
+  .nowCard__side {
+    flex-basis: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .nowCard__stat {
+    flex: 1 1 140px;
+  }
+
+  .nowCard__countdown {
+    font-size: var(--fs-xl);
+  }
+}
