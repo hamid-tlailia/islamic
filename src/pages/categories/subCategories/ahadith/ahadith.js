@@ -1,4 +1,5 @@
 // Ahadith.jsx
+import { getJSON, TTL } from "../../../../lib/apiClient";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./ahadith.css";
 
@@ -175,9 +176,7 @@ async function fetchDorarBySKey(skey) {
   const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(
     apiUrl,
   )}`;
-  const resp = await fetch(proxyUrl);
-  if (!resp.ok) throw new Error(`Dorar proxy failed ${resp.status}`);
-  const data = await resp.json();
+  const data = await getJSON(proxyUrl, { ttl: TTL.LONG });
   const parsed = safeJsonParse(data.contents);
   return parsed || null;
 }
@@ -440,8 +439,7 @@ const Ahadith = () => {
   const fetchBooks = async () => {
     try {
       setLoading(true);
-      const resp = await fetch(`${API_BASE_URL}/books?apiKey=${API_KEY}`);
-      const data = await resp.json();
+      const data = await getJSON(`${API_BASE_URL}/books?apiKey=${API_KEY}`, { ttl: TTL.LONG });
 
       if (data.books && typeof data.books === "object") {
         const arr = Object.values(data.books).filter(
@@ -478,10 +476,7 @@ const Ahadith = () => {
   const fetchChapters = async (bookSlug) => {
     try {
       setLoading(true);
-      const resp = await fetch(
-        `${API_BASE_URL}/${bookSlug}/chapters?apiKey=${API_KEY}`,
-      );
-      const data = await resp.json();
+      const data = await getJSON(`${API_BASE_URL}/${bookSlug}/chapters?apiKey=${API_KEY}`, { ttl: TTL.LONG });
 
       if (data.chapters && Array.isArray(data.chapters)) {
         setChapters(data.chapters);
@@ -528,10 +523,7 @@ const Ahadith = () => {
 
     setLoading(true);
     try {
-      const resp = await fetch(
-        `${API_BASE_URL}/hadiths?apiKey=${API_KEY}&book=${selectedBook}&chapter=${selectedChapter}&page=${page}`,
-      );
-      const data = await resp.json();
+      const data = await getJSON(`${API_BASE_URL}/hadiths?apiKey=${API_KEY}&book=${selectedBook}&chapter=${selectedChapter}&page=${page}`, { ttl: TTL.LONG });
       const list = data?.hadiths?.data;
 
       if (Array.isArray(list)) {
@@ -783,10 +775,7 @@ const Ahadith = () => {
           localStorage.removeItem("page");
         }
 
-        const resp = await fetch(
-          `${API_BASE_URL}/hadiths?apiKey=${API_KEY}&book=${bookToUse}&hadithNumber=${hadithNumber}`,
-        );
-        const data = await resp.json();
+        const data = await getJSON(`${API_BASE_URL}/hadiths?apiKey=${API_KEY}&book=${bookToUse}&hadithNumber=${hadithNumber}`, { ttl: TTL.LONG });
         const item = data?.hadiths?.data?.[0] || null;
 
         if (!item) {
@@ -1599,10 +1588,7 @@ const Ahadith = () => {
 
                                 setLoading(true);
                                 try {
-                                  const resp = await fetch(
-                                    `${API_BASE_URL}/hadiths?apiKey=${API_KEY}&book=${b.book}&hadithNumber=${b.hadithNumber}`,
-                                  );
-                                  const data = await resp.json();
+                                  const data = await getJSON(`${API_BASE_URL}/hadiths?apiKey=${API_KEY}&book=${b.book}&hadithNumber=${b.hadithNumber}`, { ttl: TTL.LONG });
                                   const item = data?.hadiths?.data?.[0] || null;
                                   if (item) {
                                     setSearchResult(item);

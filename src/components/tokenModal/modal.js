@@ -1,3 +1,4 @@
+import { getJSON, TTL } from "../../lib/apiClient";
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken } from "firebase/messaging";
 
@@ -53,8 +54,10 @@ function getCoords(options = { enableHighAccuracy: true, timeout: 8000, maximumA
 async function reverseGeocode(lat, lon) {
   try {
     const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
-    const r = await fetch(url, { headers: { Accept: "application/json" } });
-    const j = await r.json();
+    const j = await getJSON(url, {
+      headers: { Accept: "application/json" },
+      ttl: TTL.IMMUTABLE,
+    });
     const a = j?.address || {};
     return {
       city: a.city || a.town || a.village || a.suburb || "",

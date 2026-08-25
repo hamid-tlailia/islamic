@@ -1,6 +1,7 @@
 // Tajweed.jsx (FULL - UI updated with collapsible filters, neutral colors)
 // NOTE: logic is same; only UI structure + neutral color usage.
 
+import { getJSON, TTL } from "../../../../lib/apiClient";
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "../../../../components/languages/provider";
 import {
@@ -285,10 +286,7 @@ const Tajweed = ({ audioName, documentName }) => {
   useEffect(() => {
     const fetchSurahList = async () => {
       try {
-        const response = await fetch(
-          "https://api.quran.com/api/v4/chapters?language=en",
-        );
-        const data = await response.json();
+        const data = await getJSON("https://api.quran.com/api/v4/chapters?language=en", { ttl: TTL.IMMUTABLE });
 
         if (data.chapters && data.chapters.length > 0) {
           setSurahList(data.chapters);
@@ -330,8 +328,7 @@ const Tajweed = ({ audioName, documentName }) => {
           return;
         }
 
-        const response = await fetch(apiUrl);
-        const data = await response.json();
+        const data = await getJSON(apiUrl, { ttl: TTL.IMMUTABLE });
 
         if (data.verses && data.verses.length > 0) {
           const processedVerses = data.verses.map((verse) => ({

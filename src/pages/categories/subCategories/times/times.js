@@ -1,3 +1,5 @@
+import { getJSON, TTL } from "../../../../lib/apiClient";
+import { saveLocation } from "../../../../lib/prayerContext";
 import React, { useEffect, useMemo, useState } from "react";
 import "./times.css";
 
@@ -179,6 +181,12 @@ const Times = () => {
   useEffect(() => {
     if (currentLocation) {
       fetchPrayerTimesByCity(currentLocation.city, currentLocation.country);
+      /*
+       * Remembered so the home page's "Now" card can show the next prayer
+       * without prompting for location itself. The Makkah default is not
+       * saved — it is a placeholder, not where the reader is.
+       */
+      if (!currentLocation.isFallback) saveLocation(currentLocation);
     }
     // eslint-disable-next-line
   }, [currentLocation]);
@@ -203,11 +211,8 @@ const Times = () => {
         const { latitude, longitude } = position.coords;
 
         try {
-          const geocodeResponse = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=${language}`,
-            { headers: { "Accept-Language": language } },
-          );
-          const geocodeData = await geocodeResponse.json();
+          const geocodeData = await getJSON(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=${language}`,
+            { headers: { "Accept-Language": language } }, { ttl: TTL.IMMUTABLE });
 
           const city =
             geocodeData?.address?.city ||
@@ -254,7 +259,12 @@ const Times = () => {
       countries.getName(countryCode, language) ||
       (isAr ? "السعودية" : "Saudi Arabia");
 
-    const fallback = { city: fallbackCity, country: countryName, countryCode };
+    const fallback = {
+      city: fallbackCity,
+      country: countryName,
+      countryCode,
+      isFallback: true,
+    };
     setCurrentLocation(fallback);
 
     setManualCity(fallbackCity);
@@ -284,8 +294,7 @@ const Times = () => {
         city,
       )}&country=${encodeURIComponent(country)}`;
 
-      const response = await fetch(apiUrl);
-      const data = await response.json();
+      const data = await getJSON(apiUrl, { ttl: TTL.SHORT });
 
       if (data?.code === 200 && data?.data?.timings) {
         setPrayerTimes(data.data.timings);

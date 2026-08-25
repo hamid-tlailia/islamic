@@ -1,3 +1,4 @@
+import { getJSON, TTL } from "../../../../lib/apiClient";
 import React, { useState, useEffect, useRef } from "react";
 import {
   Card,
@@ -37,10 +38,7 @@ const Sira = ({ src, audioName }) => {
     const fetchCategories = async () => {
       setLoading(true); // Start loader
       try {
-        const response = await fetch(
-          `https://api3.islamhouse.com/v3/paV29H2gm56kvLPy/main/get-category-items/795/showall/${language}/${language}/1/25/json`
-        );
-        const data = await response.json();
+        const data = await getJSON(`https://api3.islamhouse.com/v3/paV29H2gm56kvLPy/main/get-category-items/795/showall/${language}/${language}/1/25/json`, { ttl: TTL.LONG });
         if (data.data.length > 0) {
           setCategoryItems(data.data);
         }

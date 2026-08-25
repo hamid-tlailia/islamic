@@ -3,6 +3,7 @@
 // If user searched full surah -> show only audios of same surah (by number/name)
 // Audio search is independent: if user types in audio search, it will NOT be restricted by text search)
 
+import { getJSON, TTL } from "../../../../lib/apiClient";
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import {
   Button,
@@ -186,8 +187,9 @@ const Tafsir = ({ toTop, src, audioName }) => {
 
   // -------------------- fetch surahs --------------------
   useEffect(() => {
-    fetch("https://api.alquran.cloud/v1/quran/quran-uthmani")
-      .then((response) => response.json())
+    getJSON("https://api.alquran.cloud/v1/quran/quran-uthmani", {
+      ttl: TTL.IMMUTABLE,
+    })
       .then((data) => {
         const surahsData = data?.data?.surahs || [];
         setSurahs(Array.isArray(surahsData) ? surahsData : []);
@@ -332,8 +334,7 @@ const Tafsir = ({ toTop, src, audioName }) => {
     // single ayah
     if (ayahToUse) {
       const apiUrl = `${tafsirUrl}/${surahToUse}:${ayahToUse}?words=false`;
-      fetch(apiUrl)
-        .then((response) => response.json())
+      getJSON(apiUrl, { ttl: TTL.IMMUTABLE })
         .then((data) => {
           const cleanContent = DOMPurify.sanitize(data?.tafsir?.text || "");
           setTafsir([cleanContent]);
@@ -362,8 +363,9 @@ const Tafsir = ({ toTop, src, audioName }) => {
 
     const fetchPromises = ayahNumbers.map(async (ayahNumber) => {
       const apiUrl = `${tafsirUrl}/${surahToUse}:${ayahNumber}?words=false`;
-      const response = await fetch(apiUrl);
-      return await response.json();
+      // A whole surah is up to 286 of these; caching them makes a second
+      // visit instant, and identical requests in flight are shared.
+      return getJSON(apiUrl, { ttl: TTL.IMMUTABLE });
     });
 
     Promise.all(fetchPromises)
@@ -438,8 +440,7 @@ const Tafsir = ({ toTop, src, audioName }) => {
   // get explained ayah text (when selected)
   const getExplainedAyahText = async (url) => {
     try {
-      const ayahResponse = await fetch(url);
-      const data = await ayahResponse.json();
+      const data = await getJSON(url, { ttl: TTL.IMMUTABLE });
       setCurrentExplainedAyah(data.data);
     } catch {
       setIsErrorFetching(true);
@@ -494,8 +495,7 @@ const Tafsir = ({ toTop, src, audioName }) => {
     const languageCode = langs === "arabic" ? "ar" : "eng";
     const url = `https://www.mp3quran.net/api/v3/tafsir?tafsir=1&language=${languageCode}`;
 
-    fetch(url)
-      .then((r) => r.json())
+    getJSON(url, { ttl: TTL.LONG })
       .then((data) => {
         const arr = normalizeMp3QuranResponse(data);
         setAudioAllData(arr); // ✅ keep full always

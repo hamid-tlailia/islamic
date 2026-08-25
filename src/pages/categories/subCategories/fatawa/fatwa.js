@@ -1,3 +1,4 @@
+import { getJSON, TTL } from "../../../../lib/apiClient";
 import React, { useState, useEffect, useRef } from "react";
 import {
   Card,
@@ -41,10 +42,7 @@ const Fatwa = ({ src, audioName }) => {
     const fetchCategories = async () => {
       setLoading(true); // Start loader
       try {
-        const response = await fetch(
-          `https://api3.islamhouse.com/v3/paV29H2gm56kvLPy/main/get-object-category-tree/${language}/json`
-        );
-        const data = await response.json();
+        const data = await getJSON(`https://api3.islamhouse.com/v3/paV29H2gm56kvLPy/main/get-object-category-tree/${language}/json`, { ttl: TTL.LONG });
         if (data.sub_categories && data.sub_categories.length > 3) {
           setCategories(
             data.sub_categories[3].sub_categories[13].sub_categories
@@ -86,8 +84,7 @@ const Fatwa = ({ src, audioName }) => {
       setModalOpen(true);
       setLoading(true);
       try {
-        const response = await fetch(category.category_items);
-        const data = await response.json();
+        const data = await getJSON(category.category_items, { ttl: TTL.LONG });
         setCategoryItems(data.data || []); // Ensure that data is correctly set or an empty array if none
       } catch (error) {
         console.error("Error fetching category items", error);
