@@ -3,7 +3,7 @@ import { useTranslation } from "../../../../components/languages/provider";
 import "./radio.css";
 import { Typography, Skeleton } from "@mui/material";
 
-import radioImage from "./images/radio.jpg";
+import radioImage from "./images/radio.avif";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SearchIcon from "@mui/icons-material/Search";

@@ -25,6 +25,15 @@ export const TranslationProvider = ({ children }) => {
       setTranslations(ar);
       document.body.classList.remove("en");
     }
+
+    /*
+     * The document element carries the language too, not just the body class:
+     * `dir` lets the browser lay the page out itself (so CSS logical
+     * properties resolve correctly), and `lang` tells screen readers which
+     * language to pronounce and search engines which one to index.
+     */
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === "en" ? "ltr" : "rtl";
   };
 
   // Load the saved language from localStorage on initial render

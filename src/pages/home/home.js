@@ -9,12 +9,12 @@ import { NavLink } from "react-router-dom";
 import { useTranslation } from "../../components/languages/provider";
 import { toast } from "react-toastify";
 
-import sliderImageOne from "../images/slider3.jpg";
-import quran from "../images/quran.png";
-import ahadith from "../images/ahadith.png";
-import fatawa from "../images/fatawa.png";
-import show from "../images/interface.png";
-import salat from "../images/salat.png";
+import sliderImageOne from "../images/slider3.avif";
+import quran from "../images/quran.avif";
+import ahadith from "../images/ahadith.avif";
+import fatawa from "../images/fatawa.avif";
+import show from "../images/interface.avif";
+import salat from "../images/salat.avif";
 
 const Home = ({ onNavClick }) => {
   const { translations, language } = useTranslation();

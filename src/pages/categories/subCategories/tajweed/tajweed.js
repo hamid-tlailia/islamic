@@ -24,6 +24,8 @@ import DoneOutlinedIcon from "@mui/icons-material/DoneOutlined";
 import RestoreIcon from "@mui/icons-material/Restore";
 import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
 
+// Quran text on this page is set in Amiri; the font ships in this chunk.
+import "@fontsource/amiri/arabic-400.css";
 import "./tajweed.css";
 import { toast } from "react-toastify";
 import DOMPurify from "dompurify";

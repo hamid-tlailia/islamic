@@ -1,5 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+/*
+ * Bootstrap and the fonts are imported before App so that App.css — pulled in
+ * by App itself — still wins the cascade, exactly as it did when both came
+ * from <link> tags in index.html.
+ */
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./styles/fonts";
 import App from "./App";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 

@@ -796,7 +796,7 @@
 
 /* Arabic fonts */
 .font-scheherazade {
-  font-family: "Scheherazade", serif !important;
+  font-family: "Scheherazade New", serif !important;
 }
 .font-amiri {
   font-family: "Amiri", serif !important;
@@ -804,14 +804,16 @@
 .font-lateef {
   font-family: "Lateef", cursive !important;
 }
-.font-dubai {
-  font-family: "Dubai", sans-serif;
+/* "Dubai" is a licensed font we cannot ship; IBM Plex Sans Arabic is the
+   open equivalent for the same modern, low-contrast look. */
+.font-modern {
+  font-family: "IBM Plex Sans Arabic", "Cairo", sans-serif !important;
 }
 .font-noto-arabic {
-  font-family: "Noto Naskh Arabic", serif;
+  font-family: "Noto Naskh Arabic", serif !important;
 }
 .font-uthmanic {
-  font-family: "Uthman Taha Naskh", serif;
+  font-family: "Amiri Quran", "Amiri", serif !important;
 }
 
 /* English fonts */
