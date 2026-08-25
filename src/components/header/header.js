@@ -25,6 +25,7 @@ import RingVolumeOutlinedIcon from "@mui/icons-material/RingVolumeOutlined";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import emailjs from "emailjs-com";
+import { loadFontTheme } from "../../styles/fonts";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { Button, FormControl, FormLabel, CircularProgress } from "@mui/joy";
 import DOMPurify from "dompurify";
@@ -336,7 +337,7 @@ const Header = ({ onNavClick, visibility, size }) => {
       "font-scheherazade",
       "font-amiri",
       "font-lateef",
-      "font-dubai",
+      "font-modern",
       "font-noto-arabic",
       "font-uthmanic",
       "font-roboto",
@@ -348,7 +349,11 @@ const Header = ({ onNavClick, visibility, size }) => {
     ];
 
     body.classList.remove(...allFontClasses);
-    if (fontTheme) body.classList.add(fontTheme);
+    if (fontTheme) {
+      body.classList.add(fontTheme);
+      // Webfonts are bundled but split per theme; fetch this one's chunk.
+      loadFontTheme(fontTheme);
+    }
   }, [fontTheme]);
 
   // background toggling
@@ -1075,7 +1080,9 @@ const Header = ({ onNavClick, visibility, size }) => {
                     <>
                       <Option value="font-default">افتراضي</Option>
                       <Option value="font-amiri">أميري</Option>
-                      <Option value="font-dubai">دبي</Option>
+                      <Option value="font-uthmanic">عثماني</Option>
+                      <Option value="font-scheherazade">شهرزاد</Option>
+                      <Option value="font-modern">عصري</Option>
                       <Option value="font-noto-arabic">نسخ عربي</Option>
                     </>
                   ) : (

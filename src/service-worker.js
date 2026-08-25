@@ -6,12 +6,30 @@
 import { clientsClaim } from "workbox-core";
 import { precacheAndRoute, createHandlerBoundToURL } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
+import { StaleWhileRevalidate } from "workbox-strategies";
+import { ExpirationPlugin } from "workbox-expiration";
+import { initializeApp } from "firebase/app";
+import { getMessaging, onBackgroundMessage } from "firebase/messaging/sw";
 
 clientsClaim();
 self.skipWaiting();
 
 // Precache everything built by CRA (JS/CSS/assets)
 precacheAndRoute(self.__WB_MANIFEST);
+
+/*
+ * The large tafsir files are served from /APIs/ rather than bundled, so they
+ * are not in the precache manifest. Cache them the first time they are read
+ * and serve them from the cache afterwards, which is what keeps the Quran
+ * page usable offline.
+ */
+registerRoute(
+  ({ url }) => url.pathname.startsWith(process.env.PUBLIC_URL + "/APIs/"),
+  new StaleWhileRevalidate({
+    cacheName: "islamic-json-data",
+    plugins: [new ExpirationPlugin({ maxEntries: 16 })],
+  }),
+);
 
 // SPA navigation fallback (so /categories/times works offline)
 const fileExtensionRegexp = new RegExp("/[^/?]+\\.[^/]+$");
@@ -28,9 +46,6 @@ registerRoute(
 // --------------------
 // ✅ Firebase Messaging (FCM) Background Push
 // --------------------
-import { initializeApp } from "firebase/app";
-import { getMessaging, onBackgroundMessage } from "firebase/messaging/sw";
-
 initializeApp({
   apiKey: "AIzaSyCNYvDi7lQdSmnmnwiQX4fHkWSRJZYxS0A",
   authDomain: "my-islam-9c165.firebaseapp.com",
@@ -75,14 +90,14 @@ self.addEventListener("notificationclick", (event) => {
     "https://myislam-steel.vercel.app/categories/times";
 
   event.waitUntil(
-    clients
+    self.clients
       .matchAll({ type: "window", includeUncontrolled: true })
       .then((arr) => {
         for (const client of arr) {
           if (client.url === urlToOpen && "focus" in client)
             return client.focus();
         }
-        return clients.openWindow(urlToOpen);
+        return self.clients.openWindow(urlToOpen);
       }),
   );
 });

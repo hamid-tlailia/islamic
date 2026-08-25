@@ -1,5 +1,7 @@
 // Quran.js
 import React, { useEffect, useMemo, useRef, useState } from "react";
+// Ayah text on this page is set in Amiri; the font ships in this chunk.
+import "@fontsource/amiri/arabic-400.css";
 import "./quran.css";
 import {
   SyncAltOutlined as SyncIcon,
@@ -27,8 +29,10 @@ import DOMPurify from "dompurify";
 import { toast } from "react-toastify";
 
 import logo from "../images/logo.png";
-import Quran_Tafsir from "./tafsirs/Quran_Tafsir.json";
-import en_al_jalalayn from "./tafsirs/en-al-jalalayn.json";
+import {
+  loadArabicTafsir,
+  loadEnglishTafsir,
+} from "../../../../lib/staticData";
 import { useTranslation } from "../../../../components/languages/provider";
 
 /* ===================== SEARCH NORMALIZATION ===================== */
@@ -316,10 +320,20 @@ const Quran = ({ src, toTop, audioName }) => {
   // ===================== SURAH DATA (AR TAFSIR JSON) =====================
   useEffect(() => {
     if (!selectedSurah) return;
-    const surahTfsir = Quran_Tafsir.Surahs.find(
-      (s) => s.number === Number(selectedSurah),
-    );
-    setSurahData(surahTfsir || null);
+    let cancelled = false;
+    loadArabicTafsir()
+      .then(({ Surahs }) => {
+        if (cancelled) return;
+        setSurahData(
+          Surahs.find((s) => s.number === Number(selectedSurah)) || null,
+        );
+      })
+      .catch(() => {
+        if (!cancelled) setSurahData(null);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [selectedSurah]);
 
   // ===================== API TRANSLATION =====================
@@ -343,23 +357,44 @@ const Quran = ({ src, toTop, audioName }) => {
   useEffect(() => {
     const surahNumber = allAyahs?.number;
     if (!surahNumber) return;
+    let cancelled = false;
     setTafsirLoader(true);
 
-    const surahTafsir = en_al_jalalayn[surahNumber - 1];
-    if (surahTafsir?.ayahs) setEnglishTafsir(surahTafsir.ayahs);
-    else setEnglishTafsir([]);
+    loadEnglishTafsir()
+      .then((surahs) => {
+        if (cancelled) return;
+        setEnglishTafsir(surahs[surahNumber - 1]?.ayahs || []);
+      })
+      .catch(() => {
+        if (!cancelled) setEnglishTafsir([]);
+      })
+      .finally(() => {
+        if (!cancelled) setTafsirLoader(false);
+      });
 
-    setTafsirLoader(false);
+    return () => {
+      cancelled = true;
+    };
   }, [allAyahs]);
 
   // ===================== ALL SURAH AR TAFSIR (FOR LIST) =====================
   useEffect(() => {
     const surahNumber = allAyahs?.number;
     if (!surahNumber) return;
-    const ayahTfasir = Quran_Tafsir.Surahs?.find(
-      (t) => t.number === Number(surahNumber),
-    );
-    setAllSurahTafseer(ayahTfasir || null);
+    let cancelled = false;
+    loadArabicTafsir()
+      .then(({ Surahs }) => {
+        if (cancelled) return;
+        setAllSurahTafseer(
+          Surahs?.find((t) => t.number === Number(surahNumber)) || null,
+        );
+      })
+      .catch(() => {
+        if (!cancelled) setAllSurahTafseer(null);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [allAyahs]);
 
   // ===================== META UI =====================
@@ -562,13 +597,18 @@ const Quran = ({ src, toTop, audioName }) => {
   ]);
 
   // ===================== SINGLE AYAH TAFSIR MODAL =====================
-  const getSingleAyahTafsir = (ayahIndex0) => {
+  const getSingleAyahTafsir = async (ayahIndex0) => {
     const surahNumber = allAyahs?.number;
     if (!surahNumber) return;
 
-    const ayahTfasir = Quran_Tafsir.Surahs?.find(
-      (t) => t.number === Number(surahNumber),
-    );
+    // Resolves from cache once the surah-level effects above have run.
+    let ayahTfasir;
+    try {
+      const { Surahs } = await loadArabicTafsir();
+      ayahTfasir = Surahs?.find((t) => t.number === Number(surahNumber));
+    } catch {
+      return;
+    }
     if (!ayahTfasir) return;
 
     const arab = ayahTfasir.ayahs?.[ayahIndex0]?.tafsir || "";
