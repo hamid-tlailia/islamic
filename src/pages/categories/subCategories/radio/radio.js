@@ -1,3 +1,4 @@
+import { getJSON, TTL } from "../../../../lib/apiClient";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "../../../../components/languages/provider";
 import "./radio.css";
@@ -27,8 +28,7 @@ const Radio = ({ src, audioName, isPlaying, toTop }) => {
 
   // Fetch radios
   useEffect(() => {
-    fetch("https://mp3quran.net/api/v3/radios")
-      .then((response) => response.json())
+    getJSON("https://mp3quran.net/api/v3/radios", { ttl: TTL.LONG })
       .then((data) => {
         if (data.radios) {
           const allowedRadioIds = [

@@ -1,3 +1,4 @@
+import { getJSON, TTL } from "../../../../lib/apiClient";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   Card,
@@ -43,13 +44,7 @@ const Topics = ({ src, audioName }) => {
     const fetchCategories = async () => {
       setLoading(true); // Start loader
       try {
-        const response = await fetch(
-          `https://api3.islamhouse.com/v3/paV29H2gm56kvLPy/main/get-object-category-tree/${language}/json`
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
+        const data = await getJSON(`https://api3.islamhouse.com/v3/paV29H2gm56kvLPy/main/get-object-category-tree/${language}/json`, { ttl: TTL.LONG });
         const newData = data.sub_categories.filter(
           (item, index) => !hiddenIndices.includes(index)
         );
@@ -99,11 +94,7 @@ const Topics = ({ src, audioName }) => {
         setModalOpen(true);
         setLoading(true);
         try {
-          const response = await fetch(category.category_items);
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          const data = await response.json();
+          const data = await getJSON(category.category_items, { ttl: TTL.LONG });
           setCategoryItems(data.data || []); // Ensure that data is correctly set or an empty array if none
         } catch (error) {
           setErrorFetching(true);

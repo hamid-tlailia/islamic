@@ -1,3 +1,4 @@
+import { getJSON, TTL } from "../../../../lib/apiClient";
 import React, { useState, useEffect, useRef } from "react";
 import {
   Card,
@@ -41,10 +42,7 @@ const History = ({ src, audioName }) => {
     const fetchCategories = async () => {
       setLoading(true);
       try {
-        const response = await fetch(
-          `https://api3.islamhouse.com/v3/paV29H2gm56kvLPy/main/get-object-category-tree/${language}/json`
-        );
-        const data = await response.json();
+        const data = await getJSON(`https://api3.islamhouse.com/v3/paV29H2gm56kvLPy/main/get-object-category-tree/${language}/json`, { ttl: TTL.LONG });
         if (data.sub_categories && data.sub_categories.length > 0) {
           setCategories(data.sub_categories[7].sub_categories); // Only use subcategories of the eighth main category
         }
@@ -90,8 +88,7 @@ const History = ({ src, audioName }) => {
       // If no children, fetch category items
       setLoading(true);
       try {
-        const response = await fetch(category.category_items);
-        const data = await response.json();
+        const data = await getJSON(category.category_items, { ttl: TTL.LONG });
         setCategoryItems(data.data || []); // Set the fetched items
       } catch (error) {
         console.error("Error fetching category items", error);
@@ -139,8 +136,7 @@ const History = ({ src, audioName }) => {
         } else if (previousState.category.category_items) {
           // Fetch the previous category items
           setLoading(true);
-          fetch(previousState.category.category_items)
-            .then((response) => response.json())
+          getJSON(previousState.category.category_items, { ttl: TTL.LONG })
             .then((data) => {
               setCategoryItems(data.data || []);
             })

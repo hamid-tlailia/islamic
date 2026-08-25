@@ -1,4 +1,5 @@
 // Quran.js
+import { getJSON, TTL } from "../../../../lib/apiClient";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 // Ayah text on this page is set in Amiri; the font ships in this chunk.
 import "@fontsource/amiri/arabic-400.css";
@@ -193,10 +194,7 @@ const Quran = ({ src, toTop, audioName }) => {
     const fetchQuran = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(
-          "https://api.alquran.cloud/v1/quran/quran-uthmani",
-        );
-        const data = await response.json();
+        const data = await getJSON("https://api.alquran.cloud/v1/quran/quran-uthmani", { ttl: TTL.IMMUTABLE });
         if (data?.data?.surahs) setSurahs(data.data.surahs);
       } catch (e) {
         setIsErrorFetching(true);
@@ -344,10 +342,7 @@ const Quran = ({ src, toTop, audioName }) => {
     if (!selectedSurah) return;
     const run = async () => {
       try {
-        const r = await fetch(
-          `https://api.alquran.cloud/v1/surah/${selectedSurah}/en.asad`,
-        );
-        const d = await r.json();
+        const d = await getJSON(`https://api.alquran.cloud/v1/surah/${selectedSurah}/en.asad`, { ttl: TTL.IMMUTABLE });
         if (d?.data?.ayahs) setApiTranslation(d.data.ayahs);
       } catch (e) {
         setIsErrorFetching(true);
@@ -421,10 +416,7 @@ const Quran = ({ src, toTop, audioName }) => {
     const fetchReciters = async () => {
       setLoadingReciters(true);
       try {
-        const response = await fetch(
-          "https://www.mp3quran.net/api/v3/reciters",
-        );
-        const data = await response.json();
+        const data = await getJSON("https://www.mp3quran.net/api/v3/reciters", { ttl: TTL.LONG });
         setReciters(data?.reciters || []);
       } catch (error) {
         setIsErrorFetching(true);

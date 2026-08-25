@@ -1,3 +1,4 @@
+import { getJSON, TTL } from "../../lib/apiClient";
 import React, { useEffect, useState, useCallback } from "react";
 import "./home.css";
 import "slick-carousel/slick/slick.css";
@@ -28,12 +29,7 @@ const Home = ({ onNavClick }) => {
 
   const fetchHadithDetails = async (id) => {
     try {
-      const response = await fetch(
-        `https://hadeethenc.com/api/v1/hadeeths/one/?language=${language}&id=${id}`
-      );
-      if (!response.ok)
-        throw new Error(`HTTP error! status: ${response.status}`);
-      const hadithData = await response.json();
+      const hadithData = await getJSON(`https://hadeethenc.com/api/v1/hadeeths/one/?language=${language}&id=${id}`, { ttl: TTL.LONG });
 
       return { id, data: hadithData };
     } catch (err) {
@@ -56,13 +52,10 @@ const Home = ({ onNavClick }) => {
       setHadithsLoading(true);
       localStorage.removeItem("last-category-limit");
 
-      const categoriesResponse = await fetch(
-        `https://hadeethenc.com/api/v1/categories/list/?language=${language}`
+      const categoriesData = await getJSON(
+        `https://hadeethenc.com/api/v1/categories/list/?language=${language}`,
+        { ttl: TTL.LONG }
       );
-      if (!categoriesResponse.ok) {
-        throw new Error(`HTTP error! status: ${categoriesResponse.status}`);
-      }
-      const categoriesData = await categoriesResponse.json();
 
       const newLimit = storedLimit + 5;
       const categoriesToFetch = categoriesData.slice(storedLimit, newLimit);
@@ -74,13 +67,10 @@ const Home = ({ onNavClick }) => {
       let allHadithIds = [];
 
       for (const category of categoriesToFetch) {
-        const hadithsResponse = await fetch(
-          `https://hadeethenc.com/api/v1/hadeeths/list/?language=${language}&category_id=${category.id}`
+        const hadithsData = await getJSON(
+          `https://hadeethenc.com/api/v1/hadeeths/list/?language=${language}&category_id=${category.id}`,
+          { ttl: TTL.LONG }
         );
-        if (!hadithsResponse.ok) {
-          throw new Error(`HTTP error! status: ${hadithsResponse.status}`);
-        }
-        const hadithsData = await hadithsResponse.json();
 
         if (hadithsData?.data && Array.isArray(hadithsData.data)) {
           const ids = hadithsData.data.map((hadith) => hadith.id);
