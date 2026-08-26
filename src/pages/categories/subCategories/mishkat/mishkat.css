@@ -399,3 +399,33 @@ body.dark-mode .mishkat-chip--warn {
   /* The field already fills the row and the send button is inside it, so
      there is nothing left to wrap. */
 }
+
+/* A pointer to the standalone Mishkat app, above the disclaimer. */
+.mishkat-appNote {
+  margin: 0;
+  padding: var(--sp-3) var(--sp-4);
+
+  background: var(--card-color);
+  border: var(--border);
+  border-radius: var(--radius-md);
+
+  font-size: var(--fs-sm);
+  line-height: var(--lh-body);
+  text-align: start;
+}
+
+.mishkat-appNote__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+
+  color: var(--primary-color);
+  font-weight: var(--fw-medium);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.mishkat-appNote__link:hover {
+  color: var(--primary-color);
+  filter: brightness(1.15);
+}
