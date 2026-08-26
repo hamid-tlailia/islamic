@@ -18,13 +18,13 @@ const VAPID_KEY =
 
 /*
  * The notifications backend moved off Render — which stopped the service — to
- * a Cloudflare Worker. Set REACT_APP_NOTIFS_API to the deployed Worker's
- * origin (no trailing slash); the fallback below is only there so a checkout
- * without the variable still builds.
+ * a Cloudflare Worker. The fallback is the deployed Worker, so a checkout with
+ * no environment variable still reaches a real host; set REACT_APP_NOTIFS_API
+ * to override it (a custom domain, or a staging deployment). No trailing slash.
  */
 const NOTIFS_API =
   process.env.REACT_APP_NOTIFS_API ||
-  "https://islamic-notifs-backend.workers.dev";
+  "https://islamic-notifs-backend.tlhamid18.workers.dev";
 
 const BACKEND_URL = `${NOTIFS_API.replace(/\/+$/, "")}/api/save-token`;
 
