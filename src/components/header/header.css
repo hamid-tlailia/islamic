@@ -582,6 +582,18 @@
   background: rgba(255, 255, 255, 0.12);
 }
 
+/* Mishkat is the one thing here that takes you somewhere, so it carries the
+   accent rather than the same neutral fill as the controls around it. */
+.notch-btn--mishkat {
+  background: color-mix(in srgb, var(--primary-color) 42%, transparent);
+  box-shadow: color-mix(in srgb, var(--primary-color) 55%, transparent) 0 0 0 1px
+    inset;
+}
+
+.notch-btn--mishkat:hover {
+  background: color-mix(in srgb, var(--primary-color) 58%, transparent);
+}
+
 .notch-btn.danger {
   color: #ff4d4d;
   background: rgba(255, 77, 77, 0.16);
@@ -689,11 +701,23 @@
   opacity: 0.9;
 }
 
+/*
+ * The pair of cards for language and text size.
+ *
+ * It carries a section background of its own but had no corner and no
+ * padding, so it drew a hard-edged rectangle behind two rounded cards — the
+ * one square box in a sheet where everything else is rounded. It is dressed
+ * like `.settings-ui__section` now, because that is what it is.
+ */
 .settings-ui__grid2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  background: var(--settings-ui__section-bg);
   gap: 12px;
+
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--settings-ui__section-bg);
+  box-shadow: rgba(255, 255, 255, 0.08) 0 0 0 1px inset;
 }
 
 @media (max-width: 520px) {

@@ -91,6 +91,82 @@
   opacity: 0.9;
 }
 
+/* A toggle that is currently on says so, rather than looking like the rest. */
+.tajweed-filterBtn.is-on {
+  background: color-mix(
+    in srgb,
+    var(--primary-color) 18%,
+    transparent
+  ) !important;
+  border-color: var(--primary-color) !important;
+}
+
+/* =========================
+   Rules legend for the page in hand
+========================= */
+
+.tajweed-legend {
+  margin: 10px 0 4px;
+  padding: 12px 14px;
+
+  background: var(--card-color);
+  border: 1px solid color-mix(in srgb, var(--text-color) 14%, transparent);
+  border-radius: 16px;
+}
+
+.tajweed-legendTitle {
+  font-size: 0.95rem !important;
+  font-weight: 800;
+  margin-bottom: 10px !important;
+  color: var(--text-color);
+}
+
+.tajweed-legendList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/*
+ * Each chip carries the colour as a swatch rather than as its own text
+ * colour: some of these rules are drawn in a near-black that would be
+ * unreadable on a dark theme, and a swatch beside plain text is legible
+ * either way.
+ */
+.tajweed-legendChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 6px 12px;
+  border: 1px solid color-mix(in srgb, var(--text-color) 18%, transparent);
+  border-radius: 999px;
+
+  background: color-mix(in srgb, var(--text-color) 5%, transparent);
+  color: var(--text-color);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  transition: background 0.15s ease;
+}
+
+.tajweed-legendChip:hover {
+  background: color-mix(in srgb, var(--text-color) 12%, transparent);
+}
+
+.tajweed-legendSwatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--text-color) 25%, transparent);
+}
+
+.tajweed-legendEmpty {
+  font-size: 0.9rem !important;
+  opacity: 0.7;
+}
+
 /* Restore + nav buttons */
 .tajweed-restoreBtn,
 .tajweed-navBtn {
@@ -159,6 +235,11 @@
 .tajweed-metaText {
   font-size: 0.98rem !important;
   opacity: 0.95;
+}
+
+/* The name is the part a reader is looking for, so it leads. */
+.tajweed-metaSurah {
+  font-size: 1.02rem;
 }
 
 .tajweed-metaSep {
@@ -360,6 +441,29 @@
     background 0.12s ease,
     transform 0.12s ease,
     opacity 0.12s ease;
+}
+
+/*
+ * Recitation mode.
+ *
+ * Bigger type and more room between the lines, which is what reading aloud
+ * from a screen needs — the eye has to find the start of the next line
+ * without losing the place in a page of unbroken Uthmani script.
+ */
+.tajweed-content.is-recite .tajweed-text {
+  font-size: 2rem;
+  line-height: 2.7;
+}
+
+.tajweed-content.is-recite .surah_name {
+  font-size: 1.5rem;
+}
+
+/* The hover dimming is for picking one ayah out; while reciting it only
+   flickers as the finger passes over the page. */
+.tajweed-content.is-recite .tajweed-parent:has(.tajweed-text:hover)
+  .tajweed-text:not(:hover) {
+  opacity: 1;
 }
 
 .tajweed-text:hover {

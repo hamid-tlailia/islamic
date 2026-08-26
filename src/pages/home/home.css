@@ -39,11 +39,14 @@
 
 /* Overlay */
 /*
- * There is no panel behind the hadith any more — the card is the whole of it.
- * So this stopped being an overlay pinned over a picture and became a plain
- * wrapper: the card takes the height its own hadith needs, and the carousel
- * follows it with `adaptiveHeight` rather than holding every slide to one
- * fixed height that a short hadith would leave mostly empty.
+ * One size for every hadith, and the long ones scroll inside it.
+ *
+ * Letting the card grow to its content made a short hadith a neat card and a
+ * long one a wall of text taller than the screen, which pushed the rest of
+ * the page out of reach. Its own scroller never worked either: it was told to
+ * take the leftover height of a card that had no height of its own, so there
+ * was never any leftover, nothing to scroll, and the overflow was simply
+ * clipped away. A definite height here is what makes the scroller below real.
  */
 .homeui-overlay {
   display: flex;
@@ -53,7 +56,10 @@
 }
 
 .homeui-overlayCard {
+  position: relative;
   width: min(980px, 100%);
+  height: 58vh;
+  max-height: 520px;
   overflow: hidden;
 
   border-radius: 18px;
@@ -80,16 +86,51 @@
 }
 
 /*
- * A plain block, not a scroller.
+ * The part of the card that moves. The title and its rule stay put above it.
  *
- * It used to be a nested scroll box inside a card of fixed height, which is
- * how a reader ends up dragging a hadith that will not move because the
- * finger landed on the page instead of on the little box. The card grows to
- * its hadith now and the page scrolls, which is the only scroller anyone has
- * to find.
+ * `min-height: 0` is the load-bearing line: a flex child's floor is its
+ * content, so without it this box refuses to be shorter than the hadith
+ * inside it and there is nothing to scroll.
  */
 .homeui-scroll {
-  padding-block-end: var(--sp-2);
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding-block-end: var(--sp-4);
+  padding-inline-end: var(--sp-2);
+
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
+}
+
+.homeui-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.homeui-scroll::-webkit-scrollbar-thumb {
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/*
+ * A fade along the bottom edge, so a hadith that continues past the card
+ * looks like it continues rather than like it ends there.
+ */
+.homeui-overlayCard::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 34px;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(6, 19, 26, 0.92), transparent);
+  border-end-start-radius: 18px;
+  border-end-end-radius: 18px;
 }
 .homeui.rtl .homeui-scroll {
   padding: 0 0 18px 10px;

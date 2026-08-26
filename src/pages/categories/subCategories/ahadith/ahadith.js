@@ -1475,33 +1475,17 @@ const Ahadith = () => {
           }}
           className={`ah-modal sheet-surface ${dir}`}
         >
+          {/* One close control only: the sheet's own, in the top band. This
+              row used to carry a second one beside the title. */}
           <ModalClose aria-label="إغلاق" />
-          {/* ✅ header row with title + close */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 10,
-            }}
+          <Typography
+            component="h2"
+            level="h5"
+            className="ah-modal-title"
+            sx={{ m: 0, textAlign: "start" }}
           >
-            <Typography
-              level="h5"
-              className="ah-modal-title"
-              sx={{ m: 0, textAlign: "start" }}
-            >
-              {language === "ar" ? "المفضلة" : "Favorites"}
-            </Typography>
-            <IconButton
-              variant="outlined"
-              onClick={() => setOpenFav(false)}
-              aria-label="close"
-            >
-              <CloseOutlinedIcon />
-            </IconButton>
-          </div>
-
-          <Divider sx={{ my: 1 }} />
+            {language === "ar" ? "المفضلة" : "Favorites"}
+          </Typography>
 
           <FormControl sx={{ mb: 1 }}>
             <FormLabel sx={{ color: "var(--text-color)" }}>
@@ -1736,36 +1720,16 @@ const Ahadith = () => {
           }}
         >
           <ModalClose aria-label="إغلاق" />
-          {/* ✅ header row with title + close + rtl/ltr friendly */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 10,
-              flexDirection: dir === "rtl" ? "row-reverse" : "row",
-            }}
+          <Typography
+            component="h2"
+            level="h4"
+            className="ah-dorar-title"
+            sx={{ m: 0, textAlign: "start" }}
           >
-            <Typography
-              level="h4"
-              className="ah-dorar-title"
-              sx={{ m: 0, textAlign: "start" }}
-            >
-              {language === "ar"
-                ? "التخريج والحكم (الدرر)"
-                : "Takhrij / Grading (Dorar)"}
-            </Typography>
-
-            <IconButton
-              variant="outlined"
-              onClick={() => setOpenHadithModal(false)}
-              aria-label="close"
-            >
-              <CloseOutlinedIcon />
-            </IconButton>
-          </div>
-
-          <Divider sx={{ my: 1 }} />
+            {language === "ar"
+              ? "التخريج والحكم (الدرر)"
+              : "Takhrij / Grading (Dorar)"}
+          </Typography>
 
           {verifying ? (
             <div className="ah-dorar-loading">

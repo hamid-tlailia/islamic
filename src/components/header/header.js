@@ -2,12 +2,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./header.css";
 import logo from "../images/logo.png";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   HomeOutlined as HomeOutlinedIcon,
   WidgetsOutlined as WidgetsOutlinedIcon,
   CloseOutlined as CloseOutlinedIcon,
   SettingsOutlined as SettingsOutlinedIcon,
+  ManageSearchOutlined as ManageSearchOutlinedIcon,
 } from "@mui/icons-material";
 import ApiOutlinedIcon from "@mui/icons-material/ApiOutlined";
 import { Select, Option } from "@mui/joy";
@@ -72,6 +73,7 @@ const Header = ({ onNavClick, visibility, size }) => {
 
   // render pixels
   const [notchNavPosition, setNotchNavPosition] = useState({ x: 0, y: 0 });
+  const navigate = useNavigate();
   const positionRef = useRef({ x: 0, y: 0 });
 
   const dragStartPos = useRef({ x: 0, y: 0 });
@@ -839,9 +841,31 @@ const Header = ({ onNavClick, visibility, size }) => {
           "--tuck-dir": tuckDirection,
         }}
       >
+        {/*
+          Mishkat, reachable from wherever the reader happens to be. A
+          question tends to arrive in the middle of reading something else,
+          and until now answering it meant leaving the page to go find the
+          section first.
+        */}
+        <button
+          type="button"
+          className="notch-btn notch-btn--mishkat"
+          aria-label={language === "ar" ? "اسأل مِشْكاة" : "Ask Mishkat"}
+          title={language === "ar" ? "اسأل مِشْكاة" : "Ask Mishkat"}
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate("/categories/mishkat");
+          }}
+        >
+          <ManageSearchOutlinedIcon />
+        </button>
+
         <button
           type="button"
           className="notch-btn"
+          aria-label={language === "ar" ? "القائمة" : "Menu"}
           onMouseDown={(e) => e.stopPropagation()}
           onTouchStart={(e) => e.stopPropagation()}
           onClick={showNavbar}

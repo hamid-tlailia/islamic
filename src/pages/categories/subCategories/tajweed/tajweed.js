@@ -24,6 +24,9 @@ import BookmarksOutlinedIcon from "@mui/icons-material/BookmarksOutlined";
 import DoneOutlinedIcon from "@mui/icons-material/DoneOutlined";
 import RestoreIcon from "@mui/icons-material/Restore";
 import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
+import PaletteOutlinedIcon from "@mui/icons-material/PaletteOutlined";
+import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
+import { surahName } from "../../../../lib/surahNames";
 
 // Quran text on this page is set in Amiri; the font ships in this chunk.
 import "@fontsource/amiri/arabic-400.css";
@@ -224,6 +227,12 @@ const Tajweed = ({ audioName, documentName }) => {
 
   // NEW: collapsible filters
   const [filtersOpen, setFiltersOpen] = useState(false);
+
+  /* The legend of colours for the page in hand, and the reading mode. */
+  const [rulesOpen, setRulesOpen] = useState(false);
+  const [reciteMode, setReciteMode] = useState(
+    () => localStorage.getItem("tajweedReciteMode") === "1",
+  );
 
   useEffect(() => {
     if (isErrorFetching) {
@@ -586,6 +595,37 @@ const Tajweed = ({ audioName, documentName }) => {
     // eslint-disable-next-line
   }, [currentPage]);
 
+  useEffect(() => {
+    localStorage.setItem("tajweedReciteMode", reciteMode ? "1" : "0");
+  }, [reciteMode]);
+
+  /*
+   * Which surah the page in hand belongs to, by name.
+   *
+   * The bar used to read "السورة 3 / 114", and a number is not how anyone
+   * knows where they are in the mushaf. The chapter list carries the name; the
+   * local table stands in for it while that request is in flight or offline.
+   */
+  const currentSurahMeta = surahList.find((sr) => sr.id === currentSurah);
+  const currentSurahLabel = currentSurah
+    ? language === "ar"
+      ? `سورة ${currentSurahMeta?.name_arabic || surahName(currentSurah, "ar")}`
+      : currentSurahMeta?.name_simple || surahName(currentSurah, "en")
+    : "—";
+
+  /*
+   * Every rule the colours on this page actually stand for — not the whole
+   * table of twenty. A reciter looking at a coloured word wants to know what
+   * that colour means here, and the page is a short enough list to read.
+   */
+  const pageRules = (() => {
+    const seen = new Set();
+    quranData.forEach((ayah) =>
+      extractTajweedClasses(ayah.text_uthmani).forEach((cls) => seen.add(cls)),
+    );
+    return getTranslatedTajweedRules(Array.from(seen));
+  })();
+
   return (
     <Box {...swipeHandlers} className="tajweed-shell" sx={{ width: "100%" }}>
       {/* ===== Top Bar (always visible) ===== */}
@@ -602,6 +642,38 @@ const Tajweed = ({ audioName, documentName }) => {
               style={{ color: "var(--text-color)" }}
             >
               {language === "ar" ? "الفلاتر" : "Filters"}
+            </span>
+          </IconButton>
+
+          {/* What the colours on this page mean. */}
+          <IconButton
+            className={`tajweed-filterBtn ${rulesOpen ? "is-on" : ""}`}
+            variant="soft"
+            aria-pressed={rulesOpen}
+            onClick={() => setRulesOpen((v) => !v)}
+          >
+            <PaletteOutlinedIcon sx={{ color: "var(--primary-color)" }} />
+            <span
+              className="tajweed-filterBtnText"
+              style={{ color: "var(--text-color)" }}
+            >
+              {language === "ar" ? "القواعد" : "Rules"}
+            </span>
+          </IconButton>
+
+          {/* Larger type and wider leading, for reading aloud. */}
+          <IconButton
+            className={`tajweed-filterBtn ${reciteMode ? "is-on" : ""}`}
+            variant="soft"
+            aria-pressed={reciteMode}
+            onClick={() => setReciteMode((v) => !v)}
+          >
+            <MenuBookRoundedIcon sx={{ color: "var(--primary-color)" }} />
+            <span
+              className="tajweed-filterBtnText"
+              style={{ color: "var(--text-color)" }}
+            >
+              {language === "ar" ? "وضع التلاوة" : "Recite"}
             </span>
           </IconButton>
 
@@ -656,9 +728,7 @@ const Tajweed = ({ audioName, documentName }) => {
 
         <Box className="tajweed-metaPill">
           <Typography className="tajweed-metaText">
-            {language === "ar" ? "السورة" : "Surah"}{" "}
-            <b>{currentSurah || "-"}</b> /{" "}
-            <span>{surahList.length || "-"}</span>
+            <b className="tajweed-metaSurah">{currentSurahLabel}</b>
             <span className="tajweed-metaSep">•</span>
             {language === "ar" ? "الصفحة" : "Page"} <b>{currentPage || "-"}</b>{" "}
             / 604
@@ -731,11 +801,50 @@ const Tajweed = ({ audioName, documentName }) => {
         </Box>
       </Box>
 
+      {/* ===== Rules legend for this page ===== */}
+      {rulesOpen && (
+        <Box className="tajweed-legend">
+          <Typography className="tajweed-legendTitle">
+            {language === "ar"
+              ? "أحكام التجويد في هذه الصفحة"
+              : "Tajweed rules on this page"}
+          </Typography>
+
+          {pageRules.length ? (
+            <Box className="tajweed-legendList">
+              {pageRules.map((rule) => (
+                <button
+                  key={rule.className}
+                  type="button"
+                  className="tajweed-legendChip"
+                  onClick={() => handleRuleClick(rule)}
+                >
+                  <span
+                    className="tajweed-legendSwatch"
+                    style={{ background: rule.color }}
+                    aria-hidden="true"
+                  />
+                  {rule.name}
+                </button>
+              ))}
+            </Box>
+          ) : (
+            <Typography className="tajweed-legendEmpty">
+              {language === "ar"
+                ? "لا توجد أحكام ملوّنة في هذه الصفحة."
+                : "No coloured rules on this page."}
+            </Typography>
+          )}
+        </Box>
+      )}
+
       {/* ===== Content ===== */}
       <Box
         {...swipeHandlers}
         ref={contentRef}
-        className={`tajweed-content ${!loading ? animationClass : ""}`}
+        className={`tajweed-content ${!loading ? animationClass : ""} ${
+          reciteMode ? "is-recite" : ""
+        }`}
         sx={{ direction: "rtl" }}
       >
         {loading && (
