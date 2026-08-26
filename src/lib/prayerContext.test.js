@@ -175,11 +175,69 @@ describe("formatApiDate", () => {
 });
 
 describe("buildTimingsUrl", () => {
+  const DOHA = { city: "الدوحة", country: "قطر", countryCode: "QA" };
+
   it("builds one URL both callers can share", () => {
-    const url = buildTimingsUrl({ city: "الدوحة", country: "قطر" }, at(WED, "12:00"));
+    const url = buildTimingsUrl(DOHA, at(WED, "12:00"));
     expect(url).toContain("/timingsByCity/26-08-2026?");
-    // Arabic city and country names have to survive the query string.
+    // Arabic city names have to survive the query string.
     expect(url).toContain(`city=${encodeURIComponent("الدوحة")}`);
-    expect(url).toContain(`country=${encodeURIComponent("قطر")}`);
+  });
+
+  /*
+   * Sending no method meant every reader got aladhan's default rather than
+   * their country's calendar, which moves Fajr and Isha by twenty minutes or
+   * more. This is the assertion that keeps the times honest.
+   */
+  it("asks for the country's own calculation method", () => {
+    expect(buildTimingsUrl(DOHA, at(WED, "12:00"))).toContain("method=10");
+    expect(
+      buildTimingsUrl({ ...DOHA, countryCode: "EG" }, at(WED, "12:00")),
+    ).toContain("method=5");
+  });
+
+  it("uses the Hanafi Asr only where it is the local convention", () => {
+    expect(
+      buildTimingsUrl({ ...DOHA, countryCode: "PK" }, at(WED, "12:00")),
+    ).toContain("school=1");
+    expect(buildTimingsUrl(DOHA, at(WED, "12:00"))).toContain("school=0");
+  });
+
+  /*
+   * The country name is localised — "قطر" when the reader is reading Arabic —
+   * and aladhan's geocoder resolves an ISO code far more reliably.
+   */
+  it("sends the ISO country code rather than the translated name", () => {
+    const url = buildTimingsUrl(DOHA, at(WED, "12:00"));
+    expect(url).toContain("country=QA");
+    expect(url).not.toContain(encodeURIComponent("قطر"));
+  });
+
+  it("falls back to the country name when no code was resolved", () => {
+    const url = buildTimingsUrl(
+      { city: "Doha", country: "Qatar" },
+      at(WED, "12:00"),
+    );
+    expect(url).toContain("country=Qatar");
+  });
+
+  /*
+   * A city centroid is fine in Doha and noticeably wrong across a country the
+   * size of Algeria, so coordinates win when the reader has granted them.
+   */
+  it("prefers coordinates over the city when they are known", () => {
+    const url = buildTimingsUrl(
+      { ...DOHA, latitude: 25.2854, longitude: 51.531 },
+      at(WED, "12:00"),
+    );
+    expect(url).toContain("/timings/26-08-2026?");
+    expect(url).toContain("latitude=25.2854");
+    expect(url).toContain("longitude=51.531");
+    expect(url).not.toContain("city=");
+  });
+
+  it("survives a location with nothing resolved yet", () => {
+    expect(() => buildTimingsUrl(null, at(WED, "12:00"))).not.toThrow();
+    expect(() => buildTimingsUrl({}, at(WED, "12:00"))).not.toThrow();
   });
 });

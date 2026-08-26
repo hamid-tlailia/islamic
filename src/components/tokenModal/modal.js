@@ -1,4 +1,6 @@
 import { getJSON, TTL } from "../../lib/apiClient";
+import { methodForCountry, schoolForCountry } from "../../lib/calcMethod";
+import { browserTimeZone } from "../../lib/prayerContext";
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken } from "firebase/messaging";
 
@@ -14,8 +16,17 @@ const firebaseConfig = {
 const VAPID_KEY =
   "BMIkZIuU4vOSNanHXz100XatwSraU421Jh5Z8AlD07Js8OFJghIjmDjgVn4Xxk856zQEDM5zWCiVU5IQRs7XiCQ";
 
-const BACKEND_URL =
-  "https://islamic-notifs-backend.onrender.com/api/save-token";
+/*
+ * The notifications backend moved off Render — which stopped the service — to
+ * a Cloudflare Worker. Set REACT_APP_NOTIFS_API to the deployed Worker's
+ * origin (no trailing slash); the fallback below is only there so a checkout
+ * without the variable still builds.
+ */
+const NOTIFS_API =
+  process.env.REACT_APP_NOTIFS_API ||
+  "https://islamic-notifs-backend.workers.dev";
+
+const BACKEND_URL = `${NOTIFS_API.replace(/\/+$/, "")}/api/save-token`;
 
 const LS_TOKEN = "deviceToken";
 
@@ -23,14 +34,6 @@ const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
 /* -------------------- Helpers -------------------- */
-function getBrowserTZ() {
-  try {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
-  } catch {
-    return "UTC";
-  }
-}
-
 function getCoords(options = { enableHighAccuracy: true, timeout: 8000, maximumAge: 60_000 }) {
   return new Promise((resolve) => {
     if (!("geolocation" in navigator)) return resolve(null);
@@ -106,7 +109,7 @@ export async function registerDeviceToken() {
     if (!token) return;
 
     const oldToken = localStorage.getItem(LS_TOKEN) || "";
-    const timezone = getBrowserTZ();
+    const timezone = browserTimeZone() || "UTC";
 
     // Coordinates (precise)
     const coords = await getCoords();
@@ -134,6 +137,14 @@ export async function registerDeviceToken() {
         // optional: helps display / fallback
         city: place.city || undefined,
         country: place.country || undefined,
+
+        /*
+         * The same convention the prayer-times page renders with. Without it
+         * the backend falls back to its own guess, and a notification can
+         * announce a minute the screen never showed.
+         */
+        method: place.country ? methodForCountry(place.country) : undefined,
+        school: place.country ? schoolForCountry(place.country) : undefined,
       }),
     });
 
