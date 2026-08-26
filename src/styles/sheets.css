@@ -50,11 +50,17 @@ body .MuiModal-root > .sheet-surface {
 
   margin: 0;
   /*
-   * A band across the top belongs to the handle and the close button alone,
-   * and the horizontal gutter is normalised here because every dialog set its
-   * own — anywhere from 18px to 24px — which the sticky bar below has to know.
+   * No top padding: the band below is a real box in the flow and reserves the
+   * height itself. It used to be pulled up into 56px of reserved padding with
+   * a negative margin — but a sticky element is clamped to its containing
+   * block, which starts *after* that padding, so the pull was cancelled and
+   * the band came to rest one band-height too low, directly over the heading.
+   * That is why every sheet's title looked greyed out and half-covered.
+   *
+   * The horizontal gutter is normalised here because every dialog set its own
+   * — anywhere from 18px to 24px — which the band below has to know.
    */
-  padding-top: 56px;
+  padding-top: 0;
   padding-inline: var(--sp-4);
   border: var(--border);
   border-bottom: 0;
@@ -104,8 +110,8 @@ body .MuiModal-root > .sheet-surface::before {
 
   display: block;
   height: 56px;
-  /* Pulled up over the reserved padding and out to the sheet's edges. */
-  margin: -56px calc(var(--sp-4) * -1) 0;
+  /* Out to the sheet's edges, and clear of the heading that follows. */
+  margin: 0 calc(var(--sp-4) * -1) var(--sp-3);
 
   background:
     linear-gradient(
@@ -116,26 +122,69 @@ body .MuiModal-root > .sheet-surface::before {
     var(--card-color);
   border-start-start-radius: var(--radius-lg);
   border-start-end-radius: var(--radius-lg);
+
+  /*
+   * A rule under the band, and air between it and the title. Without either,
+   * the heading started on the band's own edge — nothing separated the sheet's
+   * chrome from its content, and every dialog then drew its own <hr /> a line
+   * later to make up for it.
+   */
+  border-bottom: 1px solid color-mix(in srgb, var(--text-color) 12%, transparent);
 }
 
-/* The close control, on the trailing side so it follows the text direction. */
+/*
+ * The close control, on the trailing side so it follows the text direction.
+ *
+ * Centred in the 56px band: every dialog set its own margin on this button
+ * (`m: 1`, a 20px bottom margin in one case), which pushed it off the band's
+ * centre line and, in the worst of them, down over the heading. The margin is
+ * cleared here so one rule decides where it sits in all sixteen of them.
+ */
 body .MuiModal-root .MuiModalClose-root {
   position: absolute;
-  top: 8px;
+  top: 10px;
   inset-inline-end: var(--sp-3);
   inset-inline-start: auto;
   z-index: 3;
+  margin: 0;
 
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
   border-radius: var(--radius-full);
 
   background: var(--nav-color);
   color: var(--text-color);
+  border: 1px solid color-mix(in srgb, var(--text-color) 10%, transparent);
 }
 
 body .MuiModal-root .MuiModalClose-root:hover {
   background: var(--tabs-bg-color);
+}
+
+/*
+ * The sheet's heading.
+ *
+ * These are written by each dialog as an <h2>/<h4> of its own, so the shared
+ * look lives here: one size, the sheet's own text colour, aligned with the
+ * reading direction, and kept clear of the close button so a long Arabic
+ * title cannot run underneath it.
+ */
+body .MuiModal-root > .sheet-surface > :where(h1, h2, h3, h4):first-of-type {
+  margin: 0 0 var(--sp-3);
+  padding-inline-end: 44px;
+
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+  color: var(--text-color);
+  text-align: start;
+}
+
+/* The rule each dialog drew for itself, now that the band carries one. */
+body .MuiModal-root > .sheet-surface > hr:first-of-type {
+  display: none;
 }
 
 /* A slightly heavier scrim: the sheet covers less of the screen than a

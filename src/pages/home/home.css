@@ -35,107 +35,39 @@
 .homeui-slide {
   position: relative;
   width: 100%;
-  height: 70vh;
-}
-
-/*
- * The panel behind a hadith.
- *
- * This used to be the same photograph that now covers the whole page, so the
- * slider read as a rectangle cut out of its own background — the one thing a
- * card must not do. It is drawn instead of loaded: a dark ground mixed from
- * the theme's own two colours, lit from the top, with an eight-point star
- * lattice over it. That keeps it dark enough for the white text on top in
- * every theme, changes hue with the theme the way the rest of the page does,
- * and costs no download at all.
- */
-.homeui-art {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  border-radius: 18px;
-  box-shadow: rgba(0, 0, 0, 0.25) 0 14px 35px;
-
-  /* Mixed into near-black rather than used raw: the card above is white text
-     on a translucent scrim, and it needs ground it can rely on. */
-  background-image:
-    radial-gradient(
-      120% 88% at 50% 0%,
-      color-mix(in srgb, var(--primary-color) 46%, transparent),
-      transparent 70%
-    ),
-    linear-gradient(
-      200deg,
-      color-mix(in srgb, var(--primary-color) 42%, #061418),
-      color-mix(in srgb, var(--secondary-color) 26%, #060f16)
-    );
-}
-
-/*
- * Two squares on the same circle, one turned by an eighth — the khatam, drawn
- * as a mask so a single token decides its colour. Its points land on the tile
- * edges, so the tiles join into one continuous lattice rather than a grid of
- * separate stamps.
- */
-.homeui-art::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-color: rgba(255, 255, 255, 0.16);
-
-  --star-tile: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='none' stroke='%23000' stroke-width='2.4' stroke-linejoin='round'><path d='M50 0 100 50 50 100 0 50Z'/><path d='M14.6 14.6H85.4V85.4H14.6Z'/><circle cx='50' cy='50' r='9'/></g></svg>");
-
-  /* The lattice is cut against a vignette, so it reads around the rim and
-     fades out under the card — a frame for the text, not a texture behind it. */
-  --star-fade: radial-gradient(
-    120% 82% at 50% 50%,
-    transparent 34%,
-    #000 100%
-  );
-  -webkit-mask-image: var(--star-tile), var(--star-fade);
-  mask-image: var(--star-tile), var(--star-fade);
-  -webkit-mask-size: 132px 132px, 100% 100%;
-  mask-size: 132px 132px, 100% 100%;
-  -webkit-mask-repeat: repeat, no-repeat;
-  mask-repeat: repeat, no-repeat;
-  -webkit-mask-composite: source-in;
-  mask-composite: intersect;
-}
-
-@media (max-width: 700px) {
-  .homeui-slide {
-    height: 62vh;
-  }
-  .homeui-art {
-    border-radius: 0;
-  }
 }
 
 /* Overlay */
 /*
- * The card is centred in the panel rather than pinned to its top edge. The
- * slide is a fixed height because the carousel needs every slide to agree on
- * one, so a short hadith always leaves room around the card; centred, that
- * room falls evenly above and below and the star lattice reads as the frame
- * it is, instead of as a gap under the text.
+ * There is no panel behind the hadith any more — the card is the whole of it.
+ * So this stopped being an overlay pinned over a picture and became a plain
+ * wrapper: the card takes the height its own hadith needs, and the carousel
+ * follows it with `adaptiveHeight` rather than holding every slide to one
+ * fixed height that a short hadith would leave mostly empty.
  */
 .homeui-overlay {
-  position: absolute;
-  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 18px;
+  padding: 0 var(--sp-2);
 }
 
 .homeui-overlayCard {
   width: min(980px, 100%);
-  max-height: 100%;
   overflow: hidden;
 
   border-radius: 18px;
-  background: color-mix(in srgb, #000 55%, transparent);
+  /*
+   * Deeper than it was. At 55% black it was a scrim over a panel that carried
+   * most of the darkness itself; with the panel gone it sits straight on a
+   * photograph of lit marble, and the mint title and gold hadith need ground
+   * of their own rather than a grey haze. The hint of the theme's colour in
+   * it keeps the card from reading as a plain black box.
+   */
+  background: linear-gradient(
+    color-mix(in srgb, var(--primary-color) 14%, rgba(6, 19, 26, 0.88)),
+    rgba(6, 19, 26, 0.92)
+  );
   color: #fff;
 
   box-shadow: rgba(0, 0, 0, 0.4) 0 14px 35px;
@@ -147,18 +79,17 @@
   flex-direction: column; /* ✅ */
 }
 
+/*
+ * A plain block, not a scroller.
+ *
+ * It used to be a nested scroll box inside a card of fixed height, which is
+ * how a reader ends up dragging a hadith that will not move because the
+ * finger landed on the page instead of on the little box. The card grows to
+ * its hadith now and the page scrolls, which is the only scroller anyone has
+ * to find.
+ */
 .homeui-scroll {
-  flex: 1; /* ✅ يخليها تاخذ الباقي */
-  max-height: none; /* ✅ */
-  overflow-y: auto;
-  overflow-x: hidden;
-
-  padding: 0 10px 18px 0; /* ✅ padding-bottom باش آخر سطر ما يتقصش */
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-
-  touch-action: pan-y; /* ✅ مهم جداً للموبايل */
-  scrollbar-gutter: stable;
+  padding-block-end: var(--sp-2);
 }
 .homeui.rtl .homeui-scroll {
   padding: 0 0 18px 10px;
@@ -305,15 +236,64 @@
   }
 }
 
-/* Slick dots */
+/*
+ * Slick dots.
+ *
+ * Slick pins them absolutely 25px below the track and draws each one as a
+ * bullet character in a 20px font, which is why they sat inside the card's
+ * bottom edge and why their size never matched anything else on the page.
+ * They are laid out in the flow instead, under the card, and each dot is
+ * drawn as a shape rather than as a glyph — the current one stretches into a
+ * short bar so the position in the set reads at a glance.
+ */
 .homeui-sliderWrap .slick-dots {
-  margin-bottom: 41px !important;
+  position: static;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  gap: var(--sp-2);
+
+  width: 100%;
+  margin: var(--sp-4) 0 0;
+  padding: 0;
+  list-style: none;
 }
+
+.homeui-sliderWrap .slick-dots li {
+  width: auto;
+  height: auto;
+  margin: 0;
+}
+
+.homeui-sliderWrap .slick-dots li button {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+
+  background: color-mix(in srgb, var(--text-color) 30%, transparent);
+  text-indent: -9999px;
+  overflow: hidden;
+
+  transition:
+    width var(--motion-fast) var(--ease),
+    background var(--motion-fast) var(--ease);
+}
+
+/* The bullet glyph slick draws is replaced by the button itself. */
 .homeui-sliderWrap .slick-dots li button:before {
-  color: rgb(255, 255, 255);
+  display: none;
 }
-.homeui-sliderWrap .slick-dots li.slick-active button:before {
-  color: #917125;
+
+.homeui-sliderWrap .slick-dots li.slick-active button {
+  width: 22px;
+  background: var(--primary-color);
+}
+
+.homeui-sliderWrap .slick-dots li button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 /* ================= Shortcuts ================= */
@@ -582,11 +562,8 @@
     min-height: 84px;
   }
 
-  /* The slider is edge-to-edge art; it should not inherit the page gutter. */
-  .homeui-sliderWrap {
-    width: 100vw;
-    margin-inline: calc(50% - 50vw);
-  }
+  /* It was bled to the screen edges while it was a photographic panel. Now
+     that it is a card, it keeps the page's gutter like everything else. */
 }
 
 
