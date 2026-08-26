@@ -330,3 +330,165 @@
     backdrop-filter: blur(10px) saturate(120%);
   }
 }
+
+/* =========================================================
+   Motion and polish
+   =========================================================
+   These are the finishing rules: the ones that make the app feel settled
+   rather than assembled. Everything here is opt-out under
+   prefers-reduced-motion, which the block near the top of this file handles.
+   ========================================================= */
+
+/*
+ * Smooth scrolling everywhere the app moves the viewport itself — jumping to
+ * an ayah, returning to the top, opening a section.
+ */
+html {
+  scroll-behavior: smooth;
+}
+
+/*
+ * Momentum and a settled stop on the two elements that actually scroll.
+ * `overscroll-behavior-y` stops a flick at the end of a list from dragging
+ * the page behind it, which on a phone reads as the layout coming loose.
+ */
+body,
+.categories .content,
+.outlets-body {
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/*
+ * Every interactive surface shares one transition, so nothing in the app
+ * snaps while its neighbour eases.
+ */
+a,
+button,
+input,
+select,
+textarea,
+summary,
+[role="button"],
+.card,
+.u-card,
+.MuiButton-root,
+.MuiIconButton-root {
+  transition:
+    background-color var(--motion-fast) var(--ease),
+    border-color var(--motion-fast) var(--ease),
+    color var(--motion-fast) var(--ease),
+    box-shadow var(--motion-fast) var(--ease),
+    transform var(--motion-fast) var(--ease),
+    opacity var(--motion-fast) var(--ease);
+}
+
+/* A press should register on the element, not just in the browser's ripple. */
+button:active:not(:disabled),
+[role="button"]:active,
+a:active {
+  transform: scale(0.985);
+}
+
+/* =========================================================
+   Form controls
+   ========================================================= */
+
+/*
+ * The app's inputs were each styled where they were written, so borders,
+ * radii and heights drifted apart. These give every bare control the same
+ * shape, and any page that wants something different still overrides it.
+ */
+/*
+ * Wrapped in :where() so this contributes no specificity at all. It is a
+ * baseline, not a decision: any component that styles its own field — the
+ * Mishkat composer's borderless input inside its pill, for one — overrides it
+ * with a single class, which a bare `input:not(...)` chain would have beaten.
+ */
+:where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"])),
+:where(select),
+:where(textarea) {
+  min-height: 44px;
+  padding: var(--sp-2) var(--sp-3);
+
+  background: var(--search-card-bg);
+  color: var(--text-color);
+  border: var(--search-border);
+  border-radius: var(--radius-sm);
+
+  font: inherit;
+  font-size: var(--fs-md);
+}
+
+:where(textarea) {
+  min-height: 96px;
+  line-height: var(--lh-body);
+}
+
+:where(input, select, textarea):hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--primary-color) 55%, transparent);
+}
+
+:where(input, select, textarea):focus-visible {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+:where(input, textarea)::placeholder {
+  color: var(--text-color);
+  opacity: 0.5;
+}
+
+:where(input, select, textarea):disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   Media and surfaces
+   ========================================================= */
+
+/*
+ * An image that arrives without reserved space shifts everything under it.
+ * A neutral placeholder holds the box while it loads and hides the flash of
+ * background through a transparent PNG.
+ */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Cards lift slightly on hover wherever they are already interactive. */
+a > .card,
+.card a,
+.u-card--interactive {
+  will-change: transform;
+}
+
+/* A thin, themed scrollbar rather than the platform's default slab. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--text-color) 28%, transparent)
+    transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--text-color) 24%, transparent);
+  border-radius: var(--radius-full);
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--text-color) 38%, transparent);
+}
+
+/* Selection in the app's own colour rather than the browser's blue. */
+::selection {
+  background: color-mix(in srgb, var(--primary-color) 35%, transparent);
+  color: var(--text-color);
+}

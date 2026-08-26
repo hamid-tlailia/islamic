@@ -1,5 +1,5 @@
 import { getJSON, TTL } from "../../../../lib/apiClient";
-import { saveLocation } from "../../../../lib/prayerContext";
+import { buildTimingsUrl, saveLocation } from "../../../../lib/prayerContext";
 import React, { useEffect, useMemo, useState } from "react";
 import "./times.css";
 
@@ -284,17 +284,9 @@ const Times = () => {
       const year = today.getFullYear();
       setTodayDate(`${dayName}, ${today.getDate()} ${monthName} ${year}`);
 
-      const formattedDate = today
-        .toLocaleDateString("en-GB")
-        .split("/")
-        .reverse()
-        .join("-");
-
-      const apiUrl = `https://api.aladhan.com/v1/timingsByCity/${formattedDate}?city=${encodeURIComponent(
-        city,
-      )}&country=${encodeURIComponent(country)}`;
-
-      const data = await getJSON(apiUrl, { ttl: TTL.SHORT });
+      const data = await getJSON(buildTimingsUrl({ city, country }, today), {
+        ttl: TTL.SHORT,
+      });
 
       if (data?.code === 200 && data?.data?.timings) {
         setPrayerTimes(data.data.timings);

@@ -519,6 +519,20 @@
   box-shadow: rgba(245, 246, 247, 0.3) 0px 0px 0px 1px;
   overflow: hidden;
   transition: 0.35s;
+
+  /*
+   * The dock floats over the page, so at rest it steps back and lets the
+   * content behind it read; touching or hovering brings it fully forward.
+   * Without this it sits opaquely across whatever is underneath — on the home
+   * page that was the middle of a card.
+   */
+  opacity: 0.55;
+}
+
+.notch-nav:hover,
+.notch-nav:focus-within,
+.notch-nav:active {
+  opacity: 1;
 }
 
 .notch-nav.hide {

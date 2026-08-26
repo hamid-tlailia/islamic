@@ -5,6 +5,7 @@ import "./nowCard.css";
 import { useTranslation } from "../languages/provider";
 import { getJSON, TTL } from "../../lib/apiClient";
 import {
+  buildTimingsUrl,
   formatRemaining,
   nextPrayer,
   pickSuggestion,
@@ -157,18 +158,10 @@ const NowCard = () => {
     const controller = new AbortController();
     abortRef.current = controller;
 
-    const date = new Date()
-      .toLocaleDateString("en-GB")
-      .split("/")
-      .reverse()
-      .join("-");
-
-    getJSON(
-      `https://api.aladhan.com/v1/timingsByCity/${date}?city=${encodeURIComponent(
-        location.city,
-      )}&country=${encodeURIComponent(location.country)}`,
-      { ttl: TTL.SHORT, signal: controller.signal },
-    )
+    getJSON(buildTimingsUrl(location), {
+      ttl: TTL.SHORT,
+      signal: controller.signal,
+    })
       .then((data) => {
         if (data?.data?.timings) setTimings(data.data.timings);
       })

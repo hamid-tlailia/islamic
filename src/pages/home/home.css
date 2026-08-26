@@ -6,6 +6,27 @@
 .homeui {
   --home-width: min(1100px, 100%);
 
+  /*
+   * The image that used to sit only behind the hadith carousel now backs the
+   * whole page, so the home screen reads as one composition instead of a
+   * photograph wedged between two plain bands.
+   *
+   * The gradient above it is not decoration: over a photograph of a lit
+   * marble courtyard, text and card edges lose their footing, and the scrim
+   * is what holds the page's own colour underneath everything.
+   */
+  background-image:
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--bg-color) 74%, transparent),
+      color-mix(in srgb, var(--bg-color) 86%, transparent)
+    ),
+    url("../images/slider3.avif");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -500,6 +521,10 @@
 
 @media (max-width: 700px) {
   .homeui {
+    /* A fixed attachment repaints the whole backdrop on every scroll frame on
+       mobile Safari, and stutters; the image scrolls with the page instead. */
+    background-attachment: scroll;
+
     --home-width: 100%;
     gap: var(--sp-4);
     padding-inline: var(--sp-2);
@@ -519,4 +544,11 @@
     width: 100vw;
     margin-inline: calc(50% - 50vw);
   }
+}
+
+
+/* The photographic theme already dresses the body, so the home page does not
+   lay a second picture over it. */
+body.image .homeui {
+  background-image: none;
 }

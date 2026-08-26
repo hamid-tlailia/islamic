@@ -14,8 +14,40 @@
 /** Where a resolved location is kept, so the home page can reuse it. */
 export const LOCATION_KEY = "prayer-location";
 
-/** The prayers a countdown counts to, in the order they fall. */
-const PRAYER_ORDER = ["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"];
+/*
+ * The five prayers, in the order they fall.
+ *
+ * Sunrise is deliberately absent: it marks the end of Fajr's window and the
+ * start of the forenoon, but it is not a prayer, so counting down to it under
+ * the heading "next prayer" states something false. It is still read from the
+ * timings for the suggestion logic below.
+ */
+const PRAYER_ORDER = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
+
+/**
+ * Format a date the way aladhan's path parameter expects it.
+ *
+ * The endpoint is /v1/timingsByCity/DD-MM-YYYY. Both callers were building
+ * YYYY-MM-DD from `toLocaleDateString("en-GB")` reversed, which the API does
+ * not read as the requested day — so the times came back for the wrong date.
+ */
+export function formatApiDate(now = new Date()) {
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${pad(now.getDate())}-${pad(now.getMonth() + 1)}-${now.getFullYear()}`;
+}
+
+/**
+ * The prayer-times request for a saved location.
+ *
+ * Built in one place so the home card and the prayer-times page cannot drift
+ * apart and show a reader two different answers for the same day.
+ */
+export function buildTimingsUrl({ city, country }, now = new Date()) {
+  return (
+    `https://api.aladhan.com/v1/timingsByCity/${formatApiDate(now)}` +
+    `?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`
+  );
+}
 
 /**
  * Turn an aladhan "HH:MM" (sometimes "HH:MM (UTC)") into a Date on `now`'s
