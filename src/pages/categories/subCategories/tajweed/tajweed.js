@@ -632,8 +632,10 @@ const Tajweed = ({ audioName, documentName }) => {
       <Box className="tajweed-topbar">
         <Box className="tajweed-topbar-left">
           <IconButton
-            className="tajweed-filterBtn"
+            className={`tajweed-filterBtn ${filtersOpen ? "is-on" : ""}`}
             variant="soft"
+            aria-pressed={filtersOpen}
+            title={language === "ar" ? "الفلاتر" : "Filters"}
             onClick={() => setFiltersOpen((v) => !v)}
           >
             <TuneRoundedIcon sx={{ color: "crimson" }} />
@@ -650,6 +652,7 @@ const Tajweed = ({ audioName, documentName }) => {
             className={`tajweed-filterBtn ${rulesOpen ? "is-on" : ""}`}
             variant="soft"
             aria-pressed={rulesOpen}
+            title={language === "ar" ? "القواعد" : "Rules"}
             onClick={() => setRulesOpen((v) => !v)}
           >
             <PaletteOutlinedIcon sx={{ color: "var(--primary-color)" }} />
@@ -666,6 +669,7 @@ const Tajweed = ({ audioName, documentName }) => {
             className={`tajweed-filterBtn ${reciteMode ? "is-on" : ""}`}
             variant="soft"
             aria-pressed={reciteMode}
+            title={language === "ar" ? "وضع التلاوة" : "Recite mode"}
             onClick={() => setReciteMode((v) => !v)}
           >
             <MenuBookRoundedIcon sx={{ color: "var(--primary-color)" }} />
@@ -707,7 +711,7 @@ const Tajweed = ({ audioName, documentName }) => {
           ) : (
             <>
               <BookmarksOutlinedIcon className="tajweed-btnIcon" />
-              {language === "ar" ? "حفظ" : "Save"}
+              {language === "ar" ? "حفظ التقدّم" : "Save progress"}
             </>
           )}
         </Button>

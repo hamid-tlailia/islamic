@@ -235,6 +235,52 @@ body.dark-mode .mishkat-chip--warn {
   margin-block-start: var(--sp-2);
 }
 
+/* ===================== Copy and share ===================== */
+
+/*
+ * Sits at the foot of an answer, separated by a rule rather than boxed: it
+ * belongs to the answer above it, not beside it.
+ */
+.mishkat-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+
+  margin-block-start: var(--sp-3);
+  padding-block-start: var(--sp-3);
+  border-block-start: 1px solid
+    color-mix(in srgb, var(--text-color) 12%, transparent);
+}
+
+.mishkat-action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+
+  padding: var(--sp-1) var(--sp-3);
+  border: var(--border);
+  border-radius: var(--radius-full);
+
+  background: transparent;
+  color: var(--text-color);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+
+  transition:
+    background var(--motion-fast) var(--ease),
+    border-color var(--motion-fast) var(--ease);
+}
+
+.mishkat-action:hover {
+  background: var(--nav-color);
+  border-color: var(--primary-color);
+}
+
+.mishkat-action:active {
+  transform: scale(0.97);
+}
+
 /* ===================== Composer ===================== */
 
 .mishkat-composer {

@@ -9,6 +9,9 @@ import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import MusicNoteOutlinedIcon from "@mui/icons-material/MusicNoteOutlined";
+import Replay10RoundedIcon from "@mui/icons-material/Replay10Rounded";
+import Forward10RoundedIcon from "@mui/icons-material/Forward10Rounded";
+import KeyboardArrowUpRoundedIcon from "@mui/icons-material/KeyboardArrowUpRounded";
 import { toast } from "react-toastify";
 import { useTranslation } from "../languages/provider";
 
@@ -242,6 +245,33 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
 
   const handleVolumeToggle = () => setIsMuted((m) => !m);
 
+  /*
+   * Rate and skipping.
+   *
+   * A recitation is listened to differently from a song: you go back over the
+   * ayah you missed, and you slow a fast qari down to follow along. Neither
+   * was reachable without the browser's own controls, which this player hides.
+   */
+  const RATES = [0.75, 1, 1.25, 1.5];
+  const [rate, setRate] = useState(1);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio) audio.playbackRate = rate;
+  }, [rate, src]);
+
+  const cycleRate = () =>
+    setRate((current) => RATES[(RATES.indexOf(current) + 1) % RATES.length]);
+
+  const skip = (seconds) => {
+    const audio = audioRef.current;
+    if (!audio || isLiveStream || !isFinite(audio.duration)) return;
+    audio.currentTime = Math.min(
+      Math.max(0, audio.currentTime + seconds),
+      audio.duration,
+    );
+  };
+
   const handleProgressChange = (e) => {
     const audio = audioRef.current;
     if (!audio || isLiveStream) return;
@@ -315,148 +345,219 @@ const Player = ({ show, hidePlayer, src, surah_name, title }) => {
 
   const showFab = show && isMinimized;
 
+  /*
+   * How far along the recitation is, as a number the bar can paint with.
+   *
+   * The old bar was a bare range input with a grey track: nothing showed how
+   * much had played, so the only cue was the thumb's position on an otherwise
+   * featureless line. The fill is drawn from this.
+   */
+  const progress =
+    !isLiveStream && isFinite(duration) && duration > 0
+      ? Math.min(100, Math.max(0, (currentTime / duration) * 100))
+      : 0;
+
+  const ar = language === "ar";
+
   return (
     <>
-      {/* ✅ Floating music icon when minimized */}
+      {/*
+        Minimised.
+
+        This was a bare music note, which told you something was playing but
+        not what, and gave you no way to stop it without opening the player
+        again. It is a small bar now: the title, and play/pause where the
+        thumb already is.
+      */}
       {showFab && (
-        <button
-          className="player-fab"
-          onClick={expand}
-          aria-label="Open player"
-          title={language === "ar" ? "فتح المشغل" : "Open player"}
-        >
-          <MusicNoteOutlinedIcon />
-        </button>
+        <div className="player-mini" role="group">
+          <button
+            type="button"
+            className="player-mini__play"
+            onClick={togglePlayPause}
+            aria-label={isPlaying ? (ar ? "إيقاف" : "Pause") : ar ? "تشغيل" : "Play"}
+          >
+            {loaded ? (
+              <span className="player-spinner" aria-hidden="true" />
+            ) : isPlaying ? (
+              <PauseOutlinedIcon fontSize="small" />
+            ) : (
+              <PlayArrowOutlinedIcon fontSize="small" />
+            )}
+          </button>
+
+          <button
+            type="button"
+            className="player-mini__body"
+            onClick={expand}
+            aria-label={ar ? "فتح المشغل" : "Open player"}
+          >
+            <MusicNoteOutlinedIcon className="player-mini__icon" fontSize="small" />
+            <span className="player-mini__title">{surah_name || (ar ? "تشغيل" : "Playing")}</span>
+            <KeyboardArrowUpRoundedIcon fontSize="small" aria-hidden="true" />
+          </button>
+
+          <button
+            type="button"
+            className="player-mini__close"
+            onClick={handleClosePlayer}
+            aria-label={ar ? "إغلاق" : "Close"}
+          >
+            <CloseOutlinedIcon fontSize="small" />
+          </button>
+        </div>
       )}
 
       <div
         className={`quran-player ${show ? "active" : ""} ${
           isMinimized ? "min" : ""
         }`}
+        dir={ar ? "rtl" : "ltr"}
       >
         {/* IMPORTANT: audio must stay mounted always */}
         <audio ref={audioRef} className="d-none" preload="auto" playsInline />
 
-        {/* Full UI hidden when minimized */}
         {!isMinimized && (
           <div className="player-shell">
-            <div className="player-top">
-              <div className="player-titleWrap">
+            {/* ---------- what is playing ---------- */}
+            <div className="player-head">
+              <div className="player-headText">
                 <span className={`player-badge ${isLiveStream ? "live" : ""}`}>
-                  {isLiveStream
-                    ? language === "ar"
-                      ? "مباشر"
-                      : "Live"
-                    : language === "ar"
-                    ? "تشغيل"
-                    : "Playing"}
-                  {isLiveStream && <span className="record-dot" />}
+                  {isLiveStream && <span className="record-dot" aria-hidden="true" />}
+                  {isLiveStream ? (ar ? "بثّ مباشر" : "Live") : ar ? "تشغيل" : "Playing"}
                 </span>
 
                 <div className="player-title" title={surah_name || ""}>
-                  {surah_name ? `✧ ${surah_name} ✧` : ""}
+                  {surah_name || ""}
                 </div>
               </div>
 
-              <div className="player-actions">
+              <div className="player-headActions">
                 <button
-                  className="pbtn"
+                  type="button"
+                  className="pbtn pbtn--quiet"
                   onClick={minimize}
-                  aria-label="Minimize"
-                  title={language === "ar" ? "تصغير" : "Minimize"}
+                  aria-label={ar ? "تصغير" : "Minimize"}
+                  title={ar ? "تصغير" : "Minimize"}
                 >
                   <ExpandMoreOutlinedIcon />
                 </button>
 
-                {!loaded && !isLiveStream && (
+                {!isLiveStream && (
                   <button
-                    className="pbtn"
+                    type="button"
+                    className="pbtn pbtn--quiet"
                     onClick={handleDownload}
-                    aria-label="Download"
-                    title={language === "ar" ? "تحميل" : "Download"}
+                    disabled={loaded}
+                    aria-label={ar ? "تحميل" : "Download"}
+                    title={ar ? "تحميل" : "Download"}
                   >
                     <DownloadOutlinedIcon />
                   </button>
                 )}
 
                 <button
-                  className="pbtn danger"
+                  type="button"
+                  className="pbtn pbtn--quiet pbtn--danger"
                   onClick={handleClosePlayer}
-                  aria-label="Close"
-                  title={language === "ar" ? "إغلاق" : "Close"}
+                  aria-label={ar ? "إغلاق" : "Close"}
+                  title={ar ? "إغلاق" : "Close"}
                 >
                   <CloseOutlinedIcon />
                 </button>
               </div>
             </div>
 
-            <div className="player-mid">
-              <div className="player-leftControls">
-                {loaded ? (
-                  <div className="dot-spinner" aria-label="Loading">
-                    <div className="dot-spinner__dot"></div>
-                    <div className="dot-spinner__dot"></div>
-                    <div className="dot-spinner__dot"></div>
-                    <div className="dot-spinner__dot"></div>
-                    <div className="dot-spinner__dot"></div>
-                    <div className="dot-spinner__dot"></div>
-                    <div className="dot-spinner__dot"></div>
-                    <div className="dot-spinner__dot"></div>
-                  </div>
-                ) : (
-                  <>
-                    <button
-                      className="pbtn main"
-                      onClick={togglePlayPause}
-                      aria-label={isPlaying ? "Pause" : "Play"}
-                    >
-                      {isPlaying ? (
-                        <PauseOutlinedIcon />
-                      ) : (
-                        <PlayArrowOutlinedIcon />
-                      )}
-                    </button>
+            {/* ---------- where in it ---------- */}
+            {/* Times and the bar read left to right whatever the interface
+                language: a timeline is not a sentence. */}
+            <div className="player-seek" dir="ltr">
+              <input
+                type="range"
+                className={`player-bar ${loaded || isLiveStream ? "is-idle" : ""}`}
+                style={{ "--played": `${progress}%` }}
+                ref={progressRef}
+                onInput={handleProgressChange}
+                onChange={handleProgressChange}
+                min="0"
+                max="100"
+                step="0.1"
+                defaultValue="0"
+                disabled={isLiveStream}
+                aria-label={ar ? "موضع التشغيل" : "Seek"}
+              />
 
-                    <button
-                      className="pbtn"
-                      onClick={handleVolumeToggle}
-                      aria-label={isMuted ? "Unmute" : "Mute"}
-                    >
-                      {isMuted ? (
-                        <VolumeOffOutlinedIcon />
-                      ) : (
-                        <VolumeUpOutlinedIcon />
-                      )}
-                    </button>
-                  </>
-                )}
+              <div className="player-times">
+                <span className="player-time">{formatTime(currentTime)}</span>
+                <span className="player-time">
+                  {isLiveStream || loaded ? "-:-" : formatTime(duration)}
+                </span>
+              </div>
+            </div>
+
+            {/* ---------- controls ---------- */}
+            <div className="player-controls">
+              <button
+                type="button"
+                className="pbtn"
+                onClick={handleVolumeToggle}
+                aria-label={isMuted ? (ar ? "تشغيل الصوت" : "Unmute") : ar ? "كتم" : "Mute"}
+              >
+                {isMuted ? <VolumeOffOutlinedIcon /> : <VolumeUpOutlinedIcon />}
+              </button>
+
+              <div className="player-transport">
+                <button
+                  type="button"
+                  className="pbtn"
+                  onClick={() => skip(-10)}
+                  disabled={isLiveStream}
+                  aria-label={ar ? "رجوع عشر ثوانٍ" : "Back 10 seconds"}
+                >
+                  <Replay10RoundedIcon />
+                </button>
+
+                {/*
+                  The spinner lives inside the play button rather than in place
+                  of the whole control cluster, which used to vanish and come
+                  back on every seek and take the layout with it.
+                */}
+                <button
+                  type="button"
+                  className="pbtn pbtn--main"
+                  onClick={togglePlayPause}
+                  aria-label={isPlaying ? (ar ? "إيقاف" : "Pause") : ar ? "تشغيل" : "Play"}
+                >
+                  {loaded ? (
+                    <span className="player-spinner" aria-hidden="true" />
+                  ) : isPlaying ? (
+                    <PauseOutlinedIcon />
+                  ) : (
+                    <PlayArrowOutlinedIcon />
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  className="pbtn"
+                  onClick={() => skip(10)}
+                  disabled={isLiveStream}
+                  aria-label={ar ? "تقدّم عشر ثوانٍ" : "Forward 10 seconds"}
+                >
+                  <Forward10RoundedIcon />
+                </button>
               </div>
 
-              <div className="player-progress">
-                <div className="time-row">
-                  <span className="time">{formatTime(currentTime)}</span>
-                  <span className="time">
-                    {isLiveStream
-                      ? "-:-"
-                      : loaded
-                      ? "-:-"
-                      : formatTime(duration)}
-                  </span>
-                </div>
-
-                <input
-                  type="range"
-                  className={`bar ${loaded || isLiveStream ? "pe-none" : ""}`}
-                  ref={progressRef}
-                  // ✅ onInput works better on mobile (continuous)
-                  onInput={handleProgressChange}
-                  // ✅ keep onChange too (desktop / fallback)
-                  onChange={handleProgressChange}
-                  min="0"
-                  max="100"
-                  defaultValue="0"
-                />
-              </div>
+              <button
+                type="button"
+                className={`pbtn pbtn--rate ${rate !== 1 ? "is-on" : ""}`}
+                onClick={cycleRate}
+                disabled={isLiveStream}
+                aria-label={ar ? "سرعة التلاوة" : "Playback speed"}
+                title={ar ? "سرعة التلاوة" : "Playback speed"}
+              >
+                {rate}×
+              </button>
             </div>
           </div>
         )}

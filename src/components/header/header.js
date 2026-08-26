@@ -841,6 +841,17 @@ const Header = ({ onNavClick, visibility, size }) => {
           "--tuck-dir": tuckDirection,
         }}
       >
+        <button
+          type="button"
+          className="notch-btn"
+          aria-label={language === "ar" ? "القائمة" : "Menu"}
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          onClick={showNavbar}
+        >
+          <WidgetsOutlinedIcon />
+        </button>
+
         {/*
           Mishkat, reachable from wherever the reader happens to be. A
           question tends to arrive in the middle of reading something else,
@@ -860,17 +871,6 @@ const Header = ({ onNavClick, visibility, size }) => {
           }}
         >
           <ManageSearchOutlinedIcon />
-        </button>
-
-        <button
-          type="button"
-          className="notch-btn"
-          aria-label={language === "ar" ? "القائمة" : "Menu"}
-          onMouseDown={(e) => e.stopPropagation()}
-          onTouchStart={(e) => e.stopPropagation()}
-          onClick={showNavbar}
-        >
-          <WidgetsOutlinedIcon />
         </button>
 
         <button

@@ -3,6 +3,7 @@ import "./mishkat.css";
 import { useSearchParams } from "react-router-dom";
 import { useTranslation } from "../../../../components/languages/provider";
 import {
+  answerToText,
   askMishkat,
   parseMishkatReply,
   verifyAyah,
@@ -19,6 +20,9 @@ import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import ErrorOutlineRoundedIcon from "@mui/icons-material/ErrorOutlineRounded";
 import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
 import OpenInNewRoundedIcon from "@mui/icons-material/OpenInNewRounded";
+import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
+import IosShareRoundedIcon from "@mui/icons-material/IosShareRounded";
+import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 
 const STORAGE_KEY = "mishkat:conversation";
 const MAX_TURNS = 24;
@@ -66,6 +70,11 @@ const T = {
     emptyTitle: "لم تبدأ محادثة بعد",
     appNote: "يمكنك تحميل التطبيق من هنا",
     appLink: "تطبيق مِشْكاة المستقل",
+    question: "السؤال",
+    copy: "نسخ",
+    copied: "نُسخ",
+    copyFailed: "تعذّر النسخ",
+    share: "مشاركة",
   },
   en: {
     title: "Mishkat",
@@ -94,6 +103,11 @@ const T = {
     emptyTitle: "No conversation yet",
     appNote: "You can install the app from here",
     appLink: "The standalone Mishkat app",
+    question: "Question",
+    copy: "Copy",
+    copied: "Copied",
+    copyFailed: "Could not copy",
+    share: "Share",
   },
 };
 
@@ -177,7 +191,96 @@ function HadithCard({ item, t }) {
   );
 }
 
-function Answer({ parsed, t, onFollowUp }) {
+/*
+ * Copy and share, on each answer.
+ *
+ * `navigator.share` only exists on a phone and only over https, and the
+ * clipboard API can be refused outright; both fall back rather than fail
+ * silently, because an answer the reader cannot take with them is an answer
+ * they have to retype.
+ */
+function AnswerActions({ parsed, question, t }) {
+  const [state, setState] = useState("idle");
+
+  const text = () =>
+    answerToText(parsed, question, {
+      question: t.question,
+      evidence: t.evidence,
+      ayah: t.ayah,
+      hadith: t.hadith,
+      views: t.views,
+      references: t.references,
+      indication: t.indication,
+      source: t.source,
+    });
+
+  const copy = async () => {
+    const body = text();
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(body);
+      } else {
+        // Older WebViews, and any context where the clipboard API is refused.
+        const field = document.createElement("textarea");
+        field.value = body;
+        field.setAttribute("readonly", "");
+        field.style.position = "fixed";
+        field.style.opacity = "0";
+        document.body.appendChild(field);
+        field.select();
+        document.execCommand("copy");
+        document.body.removeChild(field);
+      }
+      setState("copied");
+      setTimeout(() => setState("idle"), 1800);
+    } catch {
+      setState("failed");
+      setTimeout(() => setState("idle"), 2400);
+    }
+  };
+
+  const share = async () => {
+    const body = text();
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: t.title, text: body });
+        return;
+      } catch {
+        /* dismissed, or the sheet refused — fall through to copying */
+      }
+    }
+    copy();
+  };
+
+  return (
+    <div className="mishkat-actions">
+      <button
+        type="button"
+        className="mishkat-action"
+        onClick={copy}
+        aria-live="polite"
+      >
+        {state === "copied" ? (
+          <CheckRoundedIcon fontSize="small" aria-hidden="true" />
+        ) : (
+          <ContentCopyRoundedIcon fontSize="small" aria-hidden="true" />
+        )}
+        {state === "copied"
+          ? t.copied
+          : state === "failed"
+            ? t.copyFailed
+            : t.copy}
+      </button>
+
+      <button type="button" className="mishkat-action" onClick={share}>
+        <IosShareRoundedIcon fontSize="small" aria-hidden="true" />
+        {t.share}
+      </button>
+    </div>
+  );
+}
+
+function Answer({ parsed, question, t, onFollowUp }) {
   const hasEvidence = parsed.ayat.length > 0 || parsed.ahadith.length > 0;
 
   return (
@@ -247,19 +350,21 @@ function Answer({ parsed, t, onFollowUp }) {
         <section className="mishkat-section">
           <h3 className="mishkat-section__title">{t.followUps}</h3>
           <div className="u-cluster">
-            {parsed.followUps.map((question, i) => (
+            {parsed.followUps.map((followUp, i) => (
               <button
                 key={i}
                 type="button"
                 className="u-btn u-btn--ghost mishkat-followup"
-                onClick={() => onFollowUp(question)}
+                onClick={() => onFollowUp(followUp)}
               >
-                {question}
+                {followUp}
               </button>
             ))}
           </div>
         </section>
       )}
+
+      <AnswerActions parsed={parsed} question={question} t={t} />
     </div>
   );
 }
@@ -449,7 +554,15 @@ const Mishkat = () => {
               {turn.content}
             </p>
           ) : (
-            <Answer key={i} parsed={turn.parsed} t={t} onFollowUp={ask} />
+            <Answer
+              key={i}
+              parsed={turn.parsed}
+              /* The turn before an answer is the question it answers, and a
+                 copied answer is worth little without it. */
+              question={turns[i - 1]?.role === "user" ? turns[i - 1].content : ""}
+              t={t}
+              onFollowUp={ask}
+            />
           ),
         )}
 

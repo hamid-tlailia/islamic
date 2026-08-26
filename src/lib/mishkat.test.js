@@ -1,4 +1,9 @@
-import { parseMishkatReply, normalizeArabic, verifyAyah } from "./mishkat";
+import {
+  answerToText,
+  normalizeArabic,
+  parseMishkatReply,
+  verifyAyah,
+} from "./mishkat";
 
 /*
  * The reply protocol and the ayah comparison are the two places where a
@@ -153,5 +158,90 @@ describe("verifyAyah", () => {
     global.fetch = jest.fn().mockRejectedValue(new Error("offline"));
     const result = await verifyAyah({ surah: 4, ayah: 101, quoted: "أي نص" });
     expect(result.status).toBe("unchecked");
+  });
+});
+
+describe("answerToText", () => {
+  const parsed = {
+    religious: true,
+    topic: "الطهارة",
+    prose: "المسح على الخفّين ثابت بالسنّة.\nومدّته يوم وليلة للمقيم.",
+    ayat: [
+      {
+        surah: 5,
+        ayah: 6,
+        quoted: "وامسحوا برؤوسكم",
+        text: "وَٱمْسَحُوا۟ بِرُءُوسِكُمْ",
+        surahName: "المائدة",
+        reasoning: "أصل المسح",
+        status: "verified",
+      },
+    ],
+    ahadith: [
+      { matn: "مسح على الخفّين", search: "", source: "صحيح مسلم", reasoning: "نصّ في الباب" },
+    ],
+    views: [{ who: "الجمهور", what: "يجوز" }],
+    references: [{ name: "المغني", why: "بابه" }],
+    followUps: ["ما مدّة المسح للمسافر؟"],
+  };
+
+  it("keeps every reference a reader would need to check the answer", () => {
+    const text = answerToText(parsed, "ما حكم المسح على الخفّين؟");
+    expect(text).toContain("ما حكم المسح على الخفّين؟");
+    expect(text).toContain("المائدة [5:6]");
+    expect(text).toContain("صحيح مسلم");
+    expect(text).toContain("الجمهور: يجوز");
+    expect(text).toContain("المغني — بابه");
+  });
+
+  it("prefers the mushaf's own wording over what was quoted", () => {
+    const text = answerToText(parsed, "س");
+    expect(text).toContain("وَٱمْسَحُوا۟ بِرُءُوسِكُمْ");
+  });
+
+  it("falls back to the quote before the mushaf text arrives", () => {
+    const pending = { ...parsed, ayat: [{ ...parsed.ayat[0], text: undefined }] };
+    expect(answerToText(pending, "س")).toContain("وامسحوا برؤوسكم");
+  });
+
+  it("takes its section words from the caller's language", () => {
+    const text = answerToText(parsed, "Q", {
+      question: "Question",
+      evidence: "Evidence",
+      ayah: "Ayah",
+      hadith: "Hadith",
+      views: "Scholarly views",
+      references: "References",
+      source: "Source",
+      indication: "Relevance",
+    });
+    expect(text).toContain("Question: Q");
+    expect(text).toContain("— Evidence —");
+    expect(text).toContain("Ayah:");
+    expect(text).toContain("Source: صحيح مسلم");
+  });
+
+  it("leaves out sections the answer does not have", () => {
+    const bare = {
+      prose: "لا دليل هنا.",
+      ayat: [],
+      ahadith: [],
+      views: [],
+      references: [],
+      followUps: [],
+    };
+    const text = answerToText(bare, "س");
+    expect(text).not.toContain("الأدلّة");
+    expect(text).not.toContain("مراجع");
+    expect(text).toContain("لا دليل هنا.");
+  });
+
+  it("survives an answer object that is missing fields entirely", () => {
+    expect(() => answerToText({}, "")).not.toThrow();
+    expect(answerToText({}, "")).toBe("");
+  });
+
+  it("never leaves a run of blank lines behind an empty section", () => {
+    expect(answerToText(parsed, "س")).not.toMatch(/\n{3}/);
   });
 });
