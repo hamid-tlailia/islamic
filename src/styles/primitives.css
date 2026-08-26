@@ -312,3 +312,21 @@
   text-align: start !important;
   max-width: 72ch;
 }
+
+/*
+ * The photographic theme puts every surface over a busy image. A blur behind
+ * the scrim separates the text from the picture's detail, which a flat tint
+ * alone cannot do — without it, ornament and contrast edges read through the
+ * card and the writing sits on noise.
+ */
+@supports (backdrop-filter: blur(1px)) {
+  body.image .u-card,
+  body.image .nowCard,
+  body.image .homeui-shortcut,
+  body.image .homeui-content,
+  body.image .mishkat-evidence,
+  body.image .mishkat-composer,
+  body.image .card {
+    backdrop-filter: blur(10px) saturate(120%);
+  }
+}

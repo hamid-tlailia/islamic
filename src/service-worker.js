@@ -6,7 +6,7 @@
 import { clientsClaim } from "workbox-core";
 import { precacheAndRoute, createHandlerBoundToURL } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
-import { StaleWhileRevalidate } from "workbox-strategies";
+import { NetworkFirst, StaleWhileRevalidate } from "workbox-strategies";
 import { ExpirationPlugin } from "workbox-expiration";
 import { initializeApp } from "firebase/app";
 import { getMessaging, onBackgroundMessage } from "firebase/messaging/sw";
@@ -28,6 +28,64 @@ registerRoute(
   new StaleWhileRevalidate({
     cacheName: "islamic-json-data",
     plugins: [new ExpirationPlugin({ maxEntries: 16 })],
+  }),
+);
+
+/*
+ * The reference APIs the pages read from.
+ *
+ * Precaching covers the app's own code and data, but the mushaf, the hadith
+ * collections and the article trees all live on other origins — so without
+ * this, opening the Quran page with no connection showed an empty list. They
+ * are served from cache and refreshed in the background, which also makes a
+ * repeat visit instant.
+ */
+const REFERENCE_API_HOSTS = [
+  "api.alquran.cloud",
+  "api.quran.com",
+  "api.qurancdn.com",
+  "hadeethenc.com",
+  "hadithapi.com",
+  "api3.islamhouse.com",
+  "api.quran-tafseer.com",
+];
+
+registerRoute(
+  ({ url, request }) =>
+    request.method === "GET" && REFERENCE_API_HOSTS.includes(url.hostname),
+  new StaleWhileRevalidate({
+    cacheName: "islamic-reference-api",
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 400,
+        maxAgeSeconds: 30 * 24 * 60 * 60,
+        purgeOnQuotaError: true,
+      }),
+    ],
+  }),
+);
+
+/*
+ * Prayer times and the reciter catalogue change, so the network wins when it
+ * is there; the cached copy is the fallback rather than the default —
+ * yesterday's timings still beat an error.
+ */
+registerRoute(
+  ({ url, request }) =>
+    request.method === "GET" &&
+    (url.hostname === "api.aladhan.com" ||
+      url.hostname.endsWith("mp3quran.net") ||
+      url.hostname === "nominatim.openstreetmap.org"),
+  new NetworkFirst({
+    cacheName: "islamic-live-api",
+    networkTimeoutSeconds: 6,
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 80,
+        maxAgeSeconds: 7 * 24 * 60 * 60,
+        purgeOnQuotaError: true,
+      }),
+    ],
   }),
 );
 

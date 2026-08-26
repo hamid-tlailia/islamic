@@ -10,6 +10,7 @@ import {
   pickSuggestion,
   readSavedLocation,
 } from "../../lib/prayerContext";
+import { surahName } from "../../lib/surahNames";
 
 import AutoStoriesRoundedIcon from "@mui/icons-material/AutoStoriesRounded";
 import WbTwilightRoundedIcon from "@mui/icons-material/WbTwilightRounded";
@@ -52,7 +53,9 @@ const COPY = {
     nextPrayer: "الصلاة القادمة",
     setLocation: "حدّد موقعك لعرض المواقيت",
     continueReading: "تابع القراءة",
+    continueTajweed: "تابع التجويد",
     surah: "سورة",
+    page: "صفحة",
     prayers: {
       Fajr: "الفجر",
       Sunrise: "الشروق",
@@ -67,7 +70,9 @@ const COPY = {
     nextPrayer: "Next prayer",
     setLocation: "Set your location to see prayer times",
     continueReading: "Continue reading",
+    continueTajweed: "Continue tajweed",
     surah: "Surah",
+    page: "Page",
     prayers: {
       Fajr: "Fajr",
       Sunrise: "Sunrise",
@@ -79,16 +84,49 @@ const COPY = {
   },
 };
 
-/** The surah the reader last opened, if the Quran page saved one. */
-function readLastSurah() {
+/*
+ * Where the reader left off, in either section that keeps a position.
+ *
+ * The two pages store different things — the Quran page saves the whole surah
+ * object, the tajweed page only a number and a page — so each is read on its
+ * own terms and normalised here.
+ */
+function readResumePoints(lang) {
+  const points = [];
+
   try {
     const raw = localStorage.getItem("quranSurah");
-    if (!raw) return null;
-    const surah = JSON.parse(raw);
-    return surah?.number ? surah : null;
+    const surah = raw ? JSON.parse(raw) : null;
+    if (surah?.number) {
+      points.push({
+        key: "quran",
+        route: "/categories/quran",
+        labelKey: "continueReading",
+        title: surah.name || surahName(surah.number, lang),
+        detail: "",
+      });
+    }
   } catch {
-    return null;
+    /* a corrupt entry just means no resume point */
   }
+
+  try {
+    const number = parseInt(localStorage.getItem("savedTajweedSurah"), 10);
+    if (number >= 1 && number <= 114) {
+      const page = parseInt(localStorage.getItem("savedPage"), 10);
+      points.push({
+        key: "tajweed",
+        route: "/categories/tajweed",
+        labelKey: "continueTajweed",
+        title: surahName(number, lang),
+        detail: page >= 1 ? String(page) : "",
+      });
+    }
+  } catch {
+    /* same */
+  }
+
+  return points;
 }
 
 /**
@@ -105,7 +143,7 @@ const NowCard = () => {
   const [tick, setTick] = useState(() => Date.now());
 
   const location = useMemo(() => readSavedLocation(), []);
-  const lastSurah = useMemo(() => readLastSurah(), []);
+  const resumePoints = useMemo(() => readResumePoints(lang), [lang]);
   const abortRef = useRef(null);
 
   /*
@@ -198,17 +236,26 @@ const NowCard = () => {
           </Link>
         )}
 
-        {lastSurah && (
-          <Link className="nowCard__stat nowCard__stat--link" to="/categories/quran">
+        {resumePoints.map((point) => (
+          <Link
+            key={point.key}
+            className="nowCard__stat nowCard__stat--link"
+            to={point.route}
+          >
             <span className="nowCard__statLabel">
               <BookmarkRoundedIcon fontSize="small" aria-hidden="true" />
-              {copy.continueReading}
+              {copy[point.labelKey]}
             </span>
             <span className="nowCard__statValue nowCard__statValue--surah">
-              {lastSurah.name || `${copy.surah} ${lastSurah.number}`}
+              {point.title}
             </span>
+            {point.detail && (
+              <span className="nowCard__statDetail">
+                {copy.page} {point.detail}
+              </span>
+            )}
           </Link>
-        )}
+        ))}
       </div>
     </section>
   );

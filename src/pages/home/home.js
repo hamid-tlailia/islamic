@@ -5,6 +5,8 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import ManageSearchOutlinedIcon from "@mui/icons-material/ManageSearchOutlined";
+import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
+import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import ChecklistRtlOutlinedIcon from "@mui/icons-material/ChecklistRtlOutlined";
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "../../components/languages/provider";
@@ -213,12 +215,37 @@ const Home = ({ onNavClick }) => {
     );
   };
 
-  const homeContentMarginTop = selectedHadiths.length === 0 ? "0" : "-4vh";
-
   return (
     <div className={`homeui ${language === "ar" ? "rtl" : "ltr"}`}>
-      {/* What this hour calls for, before the hadith carousel. */}
+      {/* What this hour calls for, before anything else on the page. */}
       <NowCard />
+
+      {/*
+        Quick ways in, directly under the "Now" card. These used to sit in the
+        bottom-right of the page below five paragraphs of description, which is
+        the last place a returning reader would look for them.
+      */}
+      <nav className="homeui-shortcuts" aria-label={translations.categories}>
+        <NavLink to="/categories" className="homeui-shortcut" onClick={onNavClick}>
+          <ChecklistRtlOutlinedIcon className="homeui-shortcut__icon" />
+          <span className="homeui-shortcut__title">{translations.categoriesBtn}</span>
+        </NavLink>
+
+        <NavLink to="/categories/quran" className="homeui-shortcut" onClick={onNavClick}>
+          <MenuBookOutlinedIcon className="homeui-shortcut__icon" />
+          <span className="homeui-shortcut__title">{translations.quran}</span>
+        </NavLink>
+
+        <NavLink to="/categories/times" className="homeui-shortcut" onClick={onNavClick}>
+          <AccessTimeOutlinedIcon className="homeui-shortcut__icon" />
+          <span className="homeui-shortcut__title">{translations.prayerTimes}</span>
+        </NavLink>
+
+        <NavLink to="/categories/mishkat" className="homeui-shortcut" onClick={onNavClick}>
+          <ManageSearchOutlinedIcon className="homeui-shortcut__icon" />
+          <span className="homeui-shortcut__title">{translations.mishkat}</span>
+        </NavLink>
+      </nav>
 
       {/* Slider */}
       <div className="homeui-sliderWrap">
@@ -279,12 +306,8 @@ const Home = ({ onNavClick }) => {
       </div>
 
       {/* Content */}
-      <div
-        className="homeui-content"
-        style={{ marginTop: homeContentMarginTop }}
-      >
-        <div className={`homeui-grid ${language === "ar" ? "rtl" : "ltr"}`}>
-          {/* Left: description */}
+      <div className="homeui-content">
+        <div className={`homeui-about ${language === "ar" ? "rtl" : "ltr"}`}>
           <div className="homeui-panel">
             <div className="homeui-hero">
               <h1 className="homeui-siteName">{translations.siteName}</h1>
@@ -344,51 +367,6 @@ const Home = ({ onNavClick }) => {
             </div>
           </div>
 
-          {/* Right: shortcuts */}
-          <div className="homeui-cta">
-            <NavLink
-              to="/categories"
-              className="homeui-link"
-              onClick={onNavClick}
-            >
-              <div className="homeui-ctaCard primary">
-                <ChecklistRtlOutlinedIcon className="homeui-ctaIcon" />
-                <div className="homeui-ctaText">
-                  <span className="homeui-ctaTitle">
-                    {translations.categoriesBtn}
-                  </span>
-                  <span className="homeui-ctaSub">
-                    {language === "ar"
-                      ? "تصفح الأقسام بسرعة"
-                      : "Browse categories quickly"}
-                  </span>
-                </div>
-              </div>
-            </NavLink>
-
-            <NavLink
-              to="/categories/beMuslim"
-              className="homeui-link"
-              onClick={() => {
-                localStorage.setItem("component-title", "beAMuslim");
-                onNavClick?.();
-              }}
-            >
-              <div className="homeui-ctaCard">
-                <ManageSearchOutlinedIcon className="homeui-ctaIcon" />
-                <div className="homeui-ctaText">
-                  <span className="homeui-ctaTitle">
-                    {translations.discoverBtn}
-                  </span>
-                  <span className="homeui-ctaSub">
-                    {language === "ar"
-                      ? "اكتشف محتوى مفيد"
-                      : "Discover useful content"}
-                  </span>
-                </div>
-              </div>
-            </NavLink>
-          </div>
         </div>
       </div>
     </div>
