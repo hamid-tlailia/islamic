@@ -11,6 +11,7 @@ import { TranslationProvider } from "./components/languages/provider";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { registerDeviceToken } from "./components/tokenModal/modal";
+import ErrorBoundary from "./components/errorBoundary/errorBoundary";
 // import OneSignal from "react-onesignal";
 import KeyboardDoubleArrowUpOutlinedIcon from "@mui/icons-material/KeyboardDoubleArrowUpOutlined";
 // Lazy load components
@@ -263,197 +264,202 @@ function App() {
           <Loader />
         ) : (
           <Router>
-            <Suspense fallback={<Loader />}>
-              <a className="u-skip-link" href="#main-content">
-                {currentLanguage === "en"
-                  ? "Skip to content"
-                  : "تخطَّ إلى المحتوى"}
-              </a>
-              <Header
-                onNavClick={triggerAnimation}
-                visibility={hideHeader}
-                size={handleSize}
-              />
-              <main
-                id="main-content"
-                className={`lazy-component-wrapper ${isLoaded ? "loaded" : ""}`}
-              >
-                <Routes>
-                  <Route
-                    exact
-                    path="/"
-                    element={<Home onNavClick={triggerAnimation} />}
-                  />
-                  <Route
-                    path="/categories"
-                    element={
-                      <Categories
-                        showHeader={headerON}
-                        hideHeader={headerOFF}
-                        backToTop={scrollToTop}
-                        displayButton={() => setShow(true)}
-                        hideButton={() => setShow(false)}
-                        backTop={backToTop}
-                        scrollTop={() => setBackToTop(true)}
+            <ErrorBoundary language={currentLanguage}>
+              <Suspense fallback={<Loader />}>
+                <a className="u-skip-link" href="#main-content">
+                  {currentLanguage === "en"
+                    ? "Skip to content"
+                    : "تخطَّ إلى المحتوى"}
+                </a>
+                <Header
+                  onNavClick={triggerAnimation}
+                  visibility={hideHeader}
+                  size={handleSize}
+                />
+                <main
+                  id="main-content"
+                  className={`lazy-component-wrapper ${isLoaded ? "loaded" : ""}`}
+                >
+                  <Routes>
+                    <Route
+                      exact
+                      path="/"
+                      element={<Home onNavClick={triggerAnimation} />}
+                    />
+                    <Route
+                      path="/categories"
+                      element={
+                        <Categories
+                          showHeader={headerON}
+                          hideHeader={headerOFF}
+                          backToTop={scrollToTop}
+                          displayButton={() => setShow(true)}
+                          hideButton={() => setShow(false)}
+                          backTop={backToTop}
+                          scrollTop={() => setBackToTop(true)}
+                        />
+                      }
+                    >
+                      {/* All routes under the categories component start */}
+                      <Route path="islam" element={<Islam />} />
+                      <Route path="adhkar" element={<Adhkar />} />
+                      <Route path="ahadith" element={<Ahadith />} />
+                      <Route
+                        path="animals"
+                        element={<Animals scrollUp={scrollContent} />}
                       />
-                    }
-                  >
-                    {/* All routes under the categories component start */}
-                    <Route path="islam" element={<Islam />} />
-                    <Route path="adhkar" element={<Adhkar />} />
-                    <Route path="ahadith" element={<Ahadith />} />
-                    <Route
-                      path="animals"
-                      element={<Animals scrollUp={scrollContent} />}
-                    />
-                    <Route path="beMuslim" element={<BeMuslim />} />
-                    <Route
-                      path="fatawa"
-                      element={
-                        <Fatawa src={playerSrc} audioName={nowPlayingName} />
-                      }
-                    />
-                    <Route path="library" element={<Hikam />} />
-                    <Route path="names" element={<Names />} />
-                    <Route
-                      path="prophets"
-                      element={<Prophets scrollUp={scrollContent} />}
-                    />
-                    <Route
-                      path="quran"
-                      element={
-                        <Quran
-                          src={audioSRC}
-                          toTop={() => setBackToTop(true)}
-                          audioName={nowPlayingName}
-                        />
-                      }
-                    />
-                    <Route
-                      path="tafsir"
-                      element={
-                        <Tafsir
-                          toTop={() => setBackToTop(true)}
-                          src={playerSrc}
-                          audioName={nowPlayingName}
-                        />
-                      }
-                    />
-                    <Route path="mishkat" element={<Mishkat />} />
-                    <Route path="tasbih" element={<Tasbih />} />
-                    <Route path="times" element={<Times />} />
-                    <Route
-                      path="radio"
-                      element={
-                        <Radio
-                          src={playerSrc}
-                          audioName={nowPlayingName}
-                          isPlaying={isNowPlaying}
-                          toTop={() => setBackToTop(true)}
-                        />
-                      }
-                    />
-                    <Route
-                      path="fiqh"
-                      element={
-                        <Fiqh src={playerSrc} audioName={nowPlayingName} />
-                      }
-                    />
-                    <Route
-                      path="historic"
-                      element={
-                        <Historic src={playerSrc} audioName={nowPlayingName} />
-                      }
-                    />
-                    <Route
-                      path="arabic"
-                      element={
-                        <Arabic src={playerSrc} audioName={nowPlayingName} />
-                      }
-                    />
-                    <Route
-                      path="knowledge"
-                      element={
-                        <Topics
-                          back={scrollContent}
-                          src={playerSrc}
-                          audioName={nowPlayingName}
-                        />
-                      }
-                    />
-                    <Route
-                      path="sira"
-                      element={
-                        <Sira src={playerSrc} audioName={nowPlayingName} />
-                      }
-                    />
-                    <Route
-                      path="tajweed"
-                      element={
-                        <Tajweed
-                          audioName={playerSrc}
-                          documentName={nowPlayingName}
-                        />
-                      }
-                    />
-                    {/* All routes under the categories component end */}
-                  </Route>
-                  <Route
-                    path="/about"
-                    element={<About onAboutClick={triggerAnimation} />}
-                  />
-                  <Route
-                    path="/api-docs"
-                    element={
-                      <API
-                        showScrillBtn={() => setShow(true)}
-                        hideScrollBtn={() => setShow(false)}
-                        back={backToTop}
+                      <Route path="beMuslim" element={<BeMuslim />} />
+                      <Route
+                        path="fatawa"
+                        element={
+                          <Fatawa src={playerSrc} audioName={nowPlayingName} />
+                        }
                       />
-                    }
-                  />
-                  <Route
-                    path="/contact"
-                    element={<Contact top={backToTop} />}
-                  />
-                  <Route path="/*" element={<Home />} />
-                  {/* Path to APIs */}
-                  <Route
-                    path="/APIs/stories.json"
-                    element={<Navigate to="/APIs/stories.json" />}
-                  />
-                  <Route
-                    path="/APIs/animals.json"
-                    element={<Navigate to="/APIs/animals.json" />}
-                  />
-                  <Route
-                    path="/APIs/Quran_Tafsir.json"
-                    element={<Navigate to="/APIs/Quran_Tafsir.json" />}
-                  />
-                  <Route
-                    path="/APIs/books.json"
-                    element={<Navigate to="/APIs/books.json" />}
-                  />
-                  <Route
-                    path="/APIs/adhkar.json"
-                    element={<Navigate to="/APIs/adhkar.json" />}
-                  />
-                  <Route
-                    path="en-al-jalalayn.json"
-                    element={<Navigate to="en-al-jalalayn.json" />}
-                  />
-                  {/* Add more routes as needed */}
-                </Routes>
-              </main>
-              <Footer onFooterClick={triggerAnimation} />
-              <Player
-                show={isNowPlaying}
-                hidePlayer={pausePlayer}
-                src={newSRC}
-                surah_name={playingSurah}
-                title={pageTitle}
-              />
-            </Suspense>
+                      <Route path="library" element={<Hikam />} />
+                      <Route path="names" element={<Names />} />
+                      <Route
+                        path="prophets"
+                        element={<Prophets scrollUp={scrollContent} />}
+                      />
+                      <Route
+                        path="quran"
+                        element={
+                          <Quran
+                            src={audioSRC}
+                            toTop={() => setBackToTop(true)}
+                            audioName={nowPlayingName}
+                          />
+                        }
+                      />
+                      <Route
+                        path="tafsir"
+                        element={
+                          <Tafsir
+                            toTop={() => setBackToTop(true)}
+                            src={playerSrc}
+                            audioName={nowPlayingName}
+                          />
+                        }
+                      />
+                      <Route path="mishkat" element={<Mishkat />} />
+                      <Route path="tasbih" element={<Tasbih />} />
+                      <Route path="times" element={<Times />} />
+                      <Route
+                        path="radio"
+                        element={
+                          <Radio
+                            src={playerSrc}
+                            audioName={nowPlayingName}
+                            isPlaying={isNowPlaying}
+                            toTop={() => setBackToTop(true)}
+                          />
+                        }
+                      />
+                      <Route
+                        path="fiqh"
+                        element={
+                          <Fiqh src={playerSrc} audioName={nowPlayingName} />
+                        }
+                      />
+                      <Route
+                        path="historic"
+                        element={
+                          <Historic
+                            src={playerSrc}
+                            audioName={nowPlayingName}
+                          />
+                        }
+                      />
+                      <Route
+                        path="arabic"
+                        element={
+                          <Arabic src={playerSrc} audioName={nowPlayingName} />
+                        }
+                      />
+                      <Route
+                        path="knowledge"
+                        element={
+                          <Topics
+                            back={scrollContent}
+                            src={playerSrc}
+                            audioName={nowPlayingName}
+                          />
+                        }
+                      />
+                      <Route
+                        path="sira"
+                        element={
+                          <Sira src={playerSrc} audioName={nowPlayingName} />
+                        }
+                      />
+                      <Route
+                        path="tajweed"
+                        element={
+                          <Tajweed
+                            audioName={playerSrc}
+                            documentName={nowPlayingName}
+                          />
+                        }
+                      />
+                      {/* All routes under the categories component end */}
+                    </Route>
+                    <Route
+                      path="/about"
+                      element={<About onAboutClick={triggerAnimation} />}
+                    />
+                    <Route
+                      path="/api-docs"
+                      element={
+                        <API
+                          showScrillBtn={() => setShow(true)}
+                          hideScrollBtn={() => setShow(false)}
+                          back={backToTop}
+                        />
+                      }
+                    />
+                    <Route
+                      path="/contact"
+                      element={<Contact top={backToTop} />}
+                    />
+                    <Route path="/*" element={<Home />} />
+                    {/* Path to APIs */}
+                    <Route
+                      path="/APIs/stories.json"
+                      element={<Navigate to="/APIs/stories.json" />}
+                    />
+                    <Route
+                      path="/APIs/animals.json"
+                      element={<Navigate to="/APIs/animals.json" />}
+                    />
+                    <Route
+                      path="/APIs/Quran_Tafsir.json"
+                      element={<Navigate to="/APIs/Quran_Tafsir.json" />}
+                    />
+                    <Route
+                      path="/APIs/books.json"
+                      element={<Navigate to="/APIs/books.json" />}
+                    />
+                    <Route
+                      path="/APIs/adhkar.json"
+                      element={<Navigate to="/APIs/adhkar.json" />}
+                    />
+                    <Route
+                      path="en-al-jalalayn.json"
+                      element={<Navigate to="en-al-jalalayn.json" />}
+                    />
+                    {/* Add more routes as needed */}
+                  </Routes>
+                </main>
+                <Footer onFooterClick={triggerAnimation} />
+                <Player
+                  show={isNowPlaying}
+                  hidePlayer={pausePlayer}
+                  src={newSRC}
+                  surah_name={playingSurah}
+                  title={pageTitle}
+                />
+              </Suspense>
+            </ErrorBoundary>
           </Router>
         )}
         <ToastContainer

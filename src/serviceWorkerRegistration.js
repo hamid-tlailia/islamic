@@ -33,6 +33,29 @@ async function removeStaleFirebaseWorker() {
   }
 }
 
+/*
+ * Reload once when a new service worker takes control of this page.
+ *
+ * The worker calls skipWaiting() and clientsClaim(), so a new build activates
+ * and claims open tabs straight away, and Workbox then drops the previous
+ * build's precache. The page itself is still the old build, and every route in
+ * this app is lazily imported — so the next navigation asks for a chunk
+ * filename that no longer exists either in the cache or on the server. That
+ * rejected import is what turns the app into a blank screen.
+ *
+ * Reloading at the moment control changes swaps the page over to the build its
+ * worker is already serving. The guard matters: without it, a controller that
+ * changes during startup reloads forever.
+ */
+function reloadOnControllerChange() {
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (reloaded) return;
+    reloaded = true;
+    window.location.reload();
+  });
+}
+
 export function register(config) {
   if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
     const publicUrl = new URL(
@@ -43,6 +66,7 @@ export function register(config) {
 
     window.addEventListener("load", async () => {
       await removeStaleFirebaseWorker();
+      reloadOnControllerChange();
 
       const publicPath = (process.env.PUBLIC_URL || "").replace(/\/$/, "");
       const swUrl = publicPath

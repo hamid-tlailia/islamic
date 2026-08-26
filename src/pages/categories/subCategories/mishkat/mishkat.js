@@ -18,6 +18,7 @@ import LibraryBooksRoundedIcon from "@mui/icons-material/LibraryBooksRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import ErrorOutlineRoundedIcon from "@mui/icons-material/ErrorOutlineRounded";
 import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
+import OpenInNewRoundedIcon from "@mui/icons-material/OpenInNewRounded";
 
 const STORAGE_KEY = "mishkat:conversation";
 const MAX_TURNS = 24;
@@ -63,6 +64,8 @@ const T = {
       "الجواب من نموذج ذكاء اصطناعي وقد يخطئ في تنزيل الدليل على المسألة. ووسم «مُطابق للمصحف» يعني أن موضع النصّ ثبت، لا أن الاستدلال به صحيح. ولا يُعتمد فتوى في النوازل الشخصية؛ تُراجَع فيها دار إفتاء معتبرة.",
     suggestionsTitle: "ابدأ بسؤال",
     emptyTitle: "لم تبدأ محادثة بعد",
+    appNote: "يمكنك تحميل التطبيق من هنا",
+    appLink: "تطبيق مِشْكاة المستقل",
   },
   en: {
     title: "Mishkat",
@@ -89,6 +92,8 @@ const T = {
       "Answers come from an AI model and may misapply a proof. A “matches the mushaf” badge means the wording was found at that reference — not that the reasoning from it is sound. Do not treat this as a fatwa on a personal matter; consult a qualified mufti.",
     suggestionsTitle: "Start with a question",
     emptyTitle: "No conversation yet",
+    appNote: "You can install the app from here",
+    appLink: "The standalone Mishkat app",
   },
 };
 
@@ -535,6 +540,20 @@ const Mishkat = () => {
           </button>
         )}
       </form>
+
+      {/* Mishkat also exists on its own, installable and offline-capable. */}
+      <p className="mishkat-appNote">
+        {t.appNote}:{" "}
+        <a
+          className="mishkat-appNote__link"
+          href="https://hamid-tlailia.github.io/Mishkat/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {t.appLink}
+          <OpenInNewRoundedIcon fontSize="inherit" aria-hidden="true" />
+        </a>
+      </p>
 
       <p className="mishkat-disclaimer">{t.disclaimer}</p>
     </div>

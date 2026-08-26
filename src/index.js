@@ -23,5 +23,10 @@ root.render(
 // ✅ ONLY ONE SW: CRA/Workbox service-worker.js
 serviceWorkerRegistration.register({
   onSuccess: () => console.log("✅ SW registered (offline ready)"),
-  onUpdate: () => console.log("♻️ New version available, close tabs to update"),
+  /*
+   * The new worker calls skipWaiting(), so it activates on its own and the
+   * controllerchange handler in serviceWorkerRegistration reloads the page
+   * onto the build being served. Nothing to prompt the reader about.
+   */
+  onUpdate: () => console.log("♻️ New version installed; reloading."),
 });
