@@ -180,7 +180,7 @@ const Times = () => {
 
   useEffect(() => {
     if (currentLocation) {
-      fetchPrayerTimesByCity(currentLocation.city, currentLocation.country);
+      fetchPrayerTimesByCity(currentLocation);
       /*
        * Remembered so the home page's "Now" card can show the next prayer
        * without prompting for location itself. The Makkah default is not
@@ -229,7 +229,18 @@ const Times = () => {
             const countryName =
               countries.getName(countryCode, language) || country;
 
-            const location = { city, country: countryName, countryCode };
+            /*
+             * The coordinates travel with the location, not just the city
+             * name: buildTimingsUrl prefers them, and a city centroid is
+             * noticeably wrong away from the centre of a large country.
+             */
+            const location = {
+              city,
+              country: countryName,
+              countryCode,
+              latitude,
+              longitude,
+            };
             setCurrentLocation(location);
 
             setManualCity(city);
@@ -271,7 +282,7 @@ const Times = () => {
     setManualCountry(countryName);
   };
 
-  const fetchPrayerTimesByCity = async (city, country) => {
+  const fetchPrayerTimesByCity = async (location) => {
     setLoading(true);
     setIsErrorFetching(false);
     setPrayerTimes(null);
@@ -284,7 +295,7 @@ const Times = () => {
       const year = today.getFullYear();
       setTodayDate(`${dayName}, ${today.getDate()} ${monthName} ${year}`);
 
-      const data = await getJSON(buildTimingsUrl({ city, country }, today), {
+      const data = await getJSON(buildTimingsUrl(location, today), {
         ttl: TTL.SHORT,
       });
 
@@ -433,10 +444,7 @@ const Times = () => {
                 }}
                 onClick={() => {
                   if (currentLocation?.city && currentLocation?.country) {
-                    fetchPrayerTimesByCity(
-                      currentLocation.city,
-                      currentLocation.country,
-                    );
+                    fetchPrayerTimesByCity(currentLocation);
                   } else {
                     fetchCurrentLocation();
                   }
