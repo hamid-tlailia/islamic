@@ -352,9 +352,8 @@ html {
  * `overscroll-behavior-y` stops a flick at the end of a list from dragging
  * the page behind it, which on a phone reads as the layout coming loose.
  */
-body,
-.categories .content,
-.outlets-body {
+/* The document is the scroller now, so this belongs to it. */
+html {
   overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
 }
@@ -414,10 +413,25 @@ a:active {
   background: var(--search-card-bg);
   color: var(--text-color);
   border: var(--search-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
 
   font: inherit;
   font-size: var(--fs-md);
+}
+
+/*
+ * Joy's inputs and selects are composed of a wrapper plus a bare input, and
+ * the corner belongs to the wrapper — so the element rule above never reaches
+ * them and they stayed square next to everything else.
+ */
+:where(.MuiInput-root, .MuiSelect-root, .MuiTextarea-root, .MuiAutocomplete-root) {
+  border-radius: var(--radius-md);
+}
+
+/* Anything that styles its own field keeps its shape; this is the default for
+   the rest, including the plain textareas in the report and contact forms. */
+:where(textarea, input[type="search"], input[type="text"], input[type="email"]) {
+  border-radius: var(--radius-md);
 }
 
 :where(textarea) {

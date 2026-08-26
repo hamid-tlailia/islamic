@@ -521,17 +521,10 @@
   transition: 0.35s;
 
   /*
-   * The dock floats over the page, so at rest it steps back and lets the
-   * content behind it read; touching or hovering brings it fully forward.
-   * Without this it sits opaquely across whatever is underneath — on the home
-   * page that was the middle of a card.
+   * Fully opaque. Fading it at rest made it look washed out, and because any
+   * touch restored it, the first moment of a drag flashed it back to full
+   * strength — a change the reader did not ask for and could not explain.
    */
-  opacity: 0.88;
-}
-
-.notch-nav:hover,
-.notch-nav:focus-within,
-.notch-nav:active {
   opacity: 1;
 }
 

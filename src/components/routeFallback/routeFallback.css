@@ -1,0 +1,32 @@
+/*
+ * One viewport tall on purpose: this is the height the arriving page will
+ * almost certainly need, and holding it here is what stops the document from
+ * collapsing between the old page and the new one.
+ */
+.routeFallback {
+  display: grid;
+  place-content: center;
+  min-height: 100dvh;
+  width: 100%;
+}
+
+.routeFallback__spinner {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid var(--nav-color);
+  border-top-color: var(--primary-color);
+  animation: routeFallback-spin 0.8s linear infinite;
+}
+
+@keyframes routeFallback-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .routeFallback__spinner {
+    animation-duration: 2s;
+  }
+}
