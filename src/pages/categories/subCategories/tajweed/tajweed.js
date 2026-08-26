@@ -781,7 +781,7 @@ const Tajweed = ({ audioName, documentName }) => {
         }}
         sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
       >
-        <Card className="tajweed-modal">
+        <Card className="tajweed-modal sheet-surface">
           <Box className="tajweed-modalHeader">
             <Typography
               level="h4"
@@ -867,7 +867,7 @@ const Tajweed = ({ audioName, documentName }) => {
         onClose={() => setNestedModalOpen(false)}
         sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
       >
-        <Card className="tajweed-modal tajweed-modalSmall">
+        <Card className="tajweed-modal tajweed-modalSmall sheet-surface">
           <Box className="tajweed-modalHeader">
             <Typography
               level="h5"

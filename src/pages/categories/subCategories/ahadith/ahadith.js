@@ -22,6 +22,7 @@ import {
 } from "@mui/joy";
 
 import Chip from "@mui/joy/Chip";
+import ModalClose from "@mui/joy/ModalClose";
 import { Pagination, Stack, PaginationItem } from "@mui/material";
 
 import { useTranslation } from "../../../../components/languages/provider";
@@ -1268,8 +1269,9 @@ const Ahadith = () => {
             backgroundColor: "var(--card-color)",
             color: "var(--text-color)",
           }}
-          className={`ah-modal ${dir}`}
+          className={`ah-modal sheet-surface ${dir}`}
         >
+          <ModalClose aria-label="إغلاق" />
           <Typography ref={responseRef} className="ah-modal-error"></Typography>
 
           <Typography
@@ -1471,8 +1473,9 @@ const Ahadith = () => {
             overflowX: "hidden",
             overflowY: "auto",
           }}
-          className={`ah-modal ${dir}`}
+          className={`ah-modal sheet-surface ${dir}`}
         >
+          <ModalClose aria-label="إغلاق" />
           {/* ✅ header row with title + close */}
           <div
             style={{
@@ -1719,7 +1722,7 @@ const Ahadith = () => {
       >
         <Sheet
           variant="outlined"
-          className="ah-dorar-sheet"
+          className="ah-dorar-sheet sheet-surface"
           sx={{
             maxWidth: 860,
             borderRadius: "lg",
@@ -1732,6 +1735,7 @@ const Ahadith = () => {
             color: "var(--text-color)",
           }}
         >
+          <ModalClose aria-label="إغلاق" />
           {/* ✅ header row with title + close + rtl/ltr friendly */}
           <div
             style={{

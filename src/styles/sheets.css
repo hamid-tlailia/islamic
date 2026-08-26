@@ -1,0 +1,163 @@
+/*
+ * Bottom sheets.
+ *
+ * Every dialog in the app is a Joy `Modal` holding either a `Sheet` or a
+ * `ModalDialog`, and each one centred itself with its own inline sizes. On a
+ * phone a centred box is the wrong shape: it floats, it is hard to reach with
+ * a thumb, and dismissing it means finding a small target near the top.
+ *
+ * These rules turn all of them into sheets that rise from the bottom edge,
+ * with a grab handle, rounded top corners and a close control in the corner —
+ * without touching the fifteen files that render them.
+ *
+ * Specificity: Joy's `sx` prop compiles to a single Emotion class, so the
+ * `body` prefix here is enough to win without `!important` on anything except
+ * the few sizes those props set inline.
+ */
+
+/*
+ * The portal wrapper: pin the sheet to the bottom instead of centring it.
+ *
+ * Joy gives this element 12px of padding, which held the sheet clear of the
+ * bottom edge and trimmed its width — a sheet has to meet the edge, or it
+ * reads as a floating card that happens to sit low.
+ */
+body .MuiModal-root {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+}
+
+body .MuiModal-root > .sheet-surface {
+  position: relative;
+  inset: auto;
+  transform: none;
+
+  /* Full width on a phone; on a wider screen it stays a sheet but stops
+     stretching into a band across the whole display. */
+  width: min(720px, 100%);
+  max-width: min(720px, 100%) !important;
+  min-width: 0 !important;
+
+  /* Room for the sheet to grow, but the page underneath stays visible so it
+     still reads as a layer over the app rather than a new screen. */
+  max-height: 88vh !important;
+  max-height: 88dvh !important;
+  min-height: 0 !important;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  margin: 0;
+  /*
+   * A band across the top belongs to the handle and the close button alone,
+   * and the horizontal gutter is normalised here because every dialog set its
+   * own — anywhere from 18px to 24px — which the sticky bar below has to know.
+   */
+  padding-top: 56px;
+  padding-inline: var(--sp-4);
+  border: var(--border);
+  border-bottom: 0;
+  border-start-start-radius: var(--radius-lg);
+  border-start-end-radius: var(--radius-lg);
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+
+  background: var(--card-color);
+  color: var(--text-color);
+  box-shadow: 0 -12px 34px var(--shadow-primary-color);
+
+  /* The home indicator on a phone sits over the sheet's bottom edge. */
+  padding-bottom: max(var(--sp-4), env(safe-area-inset-bottom));
+
+  animation: sheet-rise var(--motion-base) var(--ease);
+}
+
+@keyframes sheet-rise {
+  from {
+    transform: translateY(12%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/*
+ * The top band: an opaque bar that sticks to the top of the sheet, with the
+ * grab handle drawn inside it.
+ *
+ * It has to be opaque and sticky rather than a floating pill, because the
+ * sheet is its own scroll container — content scrolls up beneath the close
+ * button, which does not scroll with it, and would otherwise pass straight
+ * under the X. The bar keeps that from ever showing.
+ *
+ * The handle itself is a background layer rather than a second element, so
+ * this needs no ::after and cannot collide with a component that uses one.
+ */
+body .MuiModal-root > .sheet-surface::before {
+  content: "";
+  position: sticky;
+  top: 0;
+  z-index: 2;
+
+  display: block;
+  height: 56px;
+  /* Pulled up over the reserved padding and out to the sheet's edges. */
+  margin: -56px calc(var(--sp-4) * -1) 0;
+
+  background:
+    linear-gradient(
+        color-mix(in srgb, var(--text-color) 28%, transparent),
+        color-mix(in srgb, var(--text-color) 28%, transparent)
+      )
+      center 14px / 40px 4px no-repeat,
+    var(--card-color);
+  border-start-start-radius: var(--radius-lg);
+  border-start-end-radius: var(--radius-lg);
+}
+
+/* The close control, on the trailing side so it follows the text direction. */
+body .MuiModal-root .MuiModalClose-root {
+  position: absolute;
+  top: 8px;
+  inset-inline-end: var(--sp-3);
+  inset-inline-start: auto;
+  z-index: 3;
+
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+
+  background: var(--nav-color);
+  color: var(--text-color);
+}
+
+body .MuiModal-root .MuiModalClose-root:hover {
+  background: var(--tabs-bg-color);
+}
+
+/* A slightly heavier scrim: the sheet covers less of the screen than a
+   centred dialog did, so the layer behind needs pushing further back. */
+body .MuiModal-root > .MuiModal-backdrop {
+  backdrop-filter: blur(3px);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/*
+ * A sheet that rises past most of the screen should not also animate, and
+ * on a short landscape phone it needs the whole height it can get.
+ */
+@media (max-height: 480px) {
+  body .MuiModal-root > .sheet-surface {
+    max-height: 96vh !important;
+    max-height: 96dvh !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body .MuiModal-root > .sheet-surface {
+    animation: none;
+  }
+}

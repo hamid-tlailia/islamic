@@ -558,7 +558,7 @@ const Topics = ({ src, audioName }) => {
       )}
       {/* Modal for Subcategories or Files */}
       <Modal open={modalOpen} onClose={handleCloseModal}>
-        <Box
+        <Box className="sheet-surface"
           sx={{
             position: "absolute",
             top: 0,

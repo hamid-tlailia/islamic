@@ -129,10 +129,10 @@ const Contact = () => {
                   {t("البريد الإلكتروني", "Email")}
                 </Typography>
                 <MuiLink
-                  href="mailto:tlailia757@gmail.com"
+                  href="mailto:tlhamid18@gmail.com"
                   className="info-link"
                 >
-                  tlailia757@gmail.com
+                  tlhamid18@gmail.com
                 </MuiLink>
               </Box>
             </Card>
@@ -145,8 +145,8 @@ const Contact = () => {
                 <Typography level="title-md" className="info-title">
                   {t("الهاتف", "Phone")}
                 </Typography>
-                <MuiLink href="tel:+97450445182" className="info-link tel">
-                  +974 50 445 182
+                <MuiLink href="tel:+97471009494" className="info-link tel">
+                  +974 7100 9494
                 </MuiLink>
               </Box>
             </Card>
@@ -174,7 +174,7 @@ const Contact = () => {
                   {t("المعرض", "Portfolio")}
                 </Typography>
                 <MuiLink
-                  href="https://hamidos-portfolio.onrender.com"
+                  href="https://hamid-tlailia-portfolio-exyv.vercel.app/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="info-link"

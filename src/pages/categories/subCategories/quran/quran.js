@@ -1440,7 +1440,7 @@ const Quran = ({ src, toTop, audioName }) => {
 
                 {/* ===================== FULLSCREEN MODAL ===================== */}
                 <Modal open={!!layout} onClose={() => setLayout(undefined)}>
-                  <ModalDialog
+                  <ModalDialog className="sheet-surface"
                     layout={layout}
                     style={{
                       backgroundColor: "var(--card-color)",
@@ -1573,13 +1573,14 @@ const Quran = ({ src, toTop, audioName }) => {
 
       {/* ===================== SETTINGS MODAL ===================== */}
       <Modal open={openSettings} onClose={() => setOpenSettings(false)}>
-        <ModalDialog
+        <ModalDialog className="sheet-surface"
           style={{
             backgroundColor: "var(--card-color)",
             color: "var(--text-color)",
             width: "min(520px, 95vw)",
           }}
         >
+          <ModalClose aria-label="إغلاق" />
           <div className="d-flex flex-direction-row justify-content-between">
             <Typography level="h4" sx={{ color: "var(--text-color)", mb: 1 }}>
               {language === "ar" ? "الإعدادات" : "Settings"}
@@ -1648,7 +1649,7 @@ const Quran = ({ src, toTop, audioName }) => {
         onClose={() => setOpenAyahTafsirModal(false)}
         sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
       >
-        <Sheet
+        <Sheet className="sheet-surface"
           variant="outlined"
           sx={{
             maxWidth: "95%",
