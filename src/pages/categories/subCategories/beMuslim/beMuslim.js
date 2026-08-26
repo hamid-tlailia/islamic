@@ -1478,7 +1478,7 @@ const BeMuslim = () => {
               display: "flex",
               flexDirection: "column",
             }}
-            className="beMuslim-modal-sheet"
+            className="beMuslim-modal-sheet sheet-surface"
           >
             {/* Top bar */}
             <Box

@@ -512,7 +512,7 @@ const Fiqh = ({ src, audioName }) => {
             color: "var(--text-color)",
           }}
         >
-          <Box
+          <Box className="sheet-surface"
             sx={{
               position: "absolute",
               top: 0,

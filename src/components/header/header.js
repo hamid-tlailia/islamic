@@ -52,6 +52,9 @@ const Header = ({ onNavClick, visibility, size }) => {
   const [formData, setFormData] = useState({
     category: "",
     description: "",
+    // Optional: lets the reporter be answered. Blank falls back to the
+    // site's own address so the template's reply-to is never empty.
+    email: "",
   });
 
   const mobileHeader = useRef(null);
@@ -551,13 +554,40 @@ const Header = ({ onNavClick, visibility, size }) => {
     const templateID = "template_2lguhoe";
     const userID = "an4QUGfU0CzKLoFMB";
 
-    emailjs.send(serviceID, templateID, formData, userID).then(
+    /*
+     * This shares the contact form's EmailJS template, which is written around
+     * {{name}}, {{email}} and {{message}} — so sending the raw { category,
+     * description } produced an empty mail, and failed outright wherever the
+     * template binds reply-to to {{email}}. The report is mapped onto those
+     * three variables instead.
+     *
+     * The page and the browser are included because a report without them says
+     * something is broken but not where, which is not actionable.
+     */
+    const payload = {
+      name: `${language === "ar" ? "تقرير خطأ" : "Error report"} — ${
+        formData.category
+      }`,
+      email: formData.email?.trim() || "tlhamid18@gmail.com",
+      message: [
+        `${language === "ar" ? "الموضع" : "Location"}: ${formData.category}`,
+        "",
+        formData.description,
+        "",
+        `${language === "ar" ? "الصفحة" : "Page"}: ${window.location.href}`,
+        `${language === "ar" ? "المتصفح" : "Browser"}: ${navigator.userAgent}`,
+        `${language === "ar" ? "اللغة" : "Language"}: ${language}`,
+      ].join("\n"),
+    };
+
+    emailjs.send(serviceID, templateID, payload, userID).then(
       () => {
         toast.success(
           language === "ar"
             ? "تم إرسال تقرير الخطأ بنجاح!"
             : "Error report sent successfully!",
         );
+        setFormData({ category: "", description: "", email: "" });
         setLoading(false);
         closeErrorModal();
       },
@@ -816,7 +846,7 @@ const Header = ({ onNavClick, visibility, size }) => {
           open={!isOnline}
           onClose={() => setIsOnline(true)}
         >
-          <Sheet
+          <Sheet className="sheet-surface"
             sx={{
               borderRadius: "md",
               p: 3,
@@ -865,7 +895,7 @@ const Header = ({ onNavClick, visibility, size }) => {
       >
         <Sheet
           variant="outlined"
-          className="settings-modal settings-ui"
+          className="settings-modal settings-ui sheet-surface"
           onClick={(e) => e.stopPropagation()}
           sx={{
             width: "100%",
@@ -1211,7 +1241,7 @@ const Header = ({ onNavClick, visibility, size }) => {
       >
         <Sheet
           variant="outlined"
-          className="report-error-modal"
+          className="report-error-modal sheet-surface"
           sx={{
             borderRadius: "md",
             p: 3,
@@ -1296,7 +1326,7 @@ const Header = ({ onNavClick, visibility, size }) => {
                   }
                   onChange={handleChange}
                   required
-                  rows="9"
+                  rows="7"
                   style={{
                     width: "100%",
                     backgroundColor: "var(--card-color)",
@@ -1307,6 +1337,36 @@ const Header = ({ onNavClick, visibility, size }) => {
                     outline: "none",
                     resize: "none",
                     direction: inputDirection,
+                  }}
+                />
+
+                {/* Optional, so a reporter who wants an answer can get one. */}
+                <FormLabel
+                  htmlFor="reporter-email"
+                  className="text-primary fw-normal fs-6 mt-3"
+                >
+                  {language === "ar"
+                    ? "بريدك (اختياري، للردّ عليك)"
+                    : "Your email (optional, so we can reply)"}
+                </FormLabel>
+                <input
+                  id="reporter-email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="name@example.com"
+                  autoComplete="email"
+                  style={{
+                    width: "100%",
+                    marginTop: "6px",
+                    backgroundColor: "var(--card-color)",
+                    color: "var(--text-color)",
+                    border: "1px solid #ccc",
+                    borderRadius: 4,
+                    padding: "8px",
+                    outline: "none",
+                    direction: "ltr",
                   }}
                 />
               </FormControl>

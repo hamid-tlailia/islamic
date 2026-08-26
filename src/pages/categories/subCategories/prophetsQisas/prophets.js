@@ -197,7 +197,7 @@ const Prophets = ({ scrollUp }) => {
           color: "var(--text-color)",
         }}
       >
-        <div className="modal-content-fullscreen">
+        <div className="modal-content-fullscreen sheet-surface">
           <div className="modal-header">
             <button
               onClick={handleCloseModal}

@@ -155,7 +155,7 @@ const Sira = ({ src, audioName }) => {
       )}
       {/* Modal for Attachments */}
       <Modal open={modalOpen} onClose={handleCloseModal}>
-        <Box
+        <Box className="sheet-surface"
           sx={{
             position: "absolute",
             top: "50%",

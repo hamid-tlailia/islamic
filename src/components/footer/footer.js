@@ -98,7 +98,7 @@ const Footer = ({ onFooterClick }) => {
             <p>
               <PublicOutlinedIcon />{" "}
               <a
-                href="https://hamidos-portfolio.onrender.com"
+                href="https://hamid-tlailia-portfolio-exyv.vercel.app/"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -109,9 +109,9 @@ const Footer = ({ onFooterClick }) => {
               className={language === "en" ? "ltr text-start" : "rtl text-end"}
             >
               <PhoneEnabledOutlinedIcon />
-              <a href="tel:+97450445182" className="d-ltr">
+              <a href="tel:+97471009494" className="d-ltr">
                 {" "}
-                <span className="d-ltr">+974 50 445 182</span>{" "}
+                <span className="d-ltr">+974 7100 9494</span>{" "}
               </a>
             </p>
           </div>

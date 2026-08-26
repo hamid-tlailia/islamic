@@ -8,6 +8,7 @@ import ReactDOM from "react-dom/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/fonts";
 import "./styles/primitives.css";
+import "./styles/sheets.css";
 import App from "./App";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 

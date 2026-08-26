@@ -518,7 +518,7 @@ const History = ({ src, audioName }) => {
         ))
       )}
       <Modal open={modalOpen} onClose={handleCloseModal} fullscreen="true">
-        <Box
+        <Box className="sheet-surface"
           sx={{
             position: "absolute",
             top: 0,

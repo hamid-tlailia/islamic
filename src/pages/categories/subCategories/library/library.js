@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import ModalClose from "@mui/joy/ModalClose";
 import "./library.css";
 
 // Import JSON file of books
@@ -490,7 +491,8 @@ const Library = () => {
 
       {/* PDF Preview Modal */}
       <Modal open={previewOpen} onClose={() => setPreviewOpen(false)}>
-        <ModalDialog className="libModal" layout="center">
+        <ModalDialog className="libModal sheet-surface" layout="center">
+          <ModalClose aria-label="إغلاق" />
           <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <VisibilityOutlinedIcon />
             <Typography level="title-md" sx={{ flex: 1, color: "inherit" }}>
@@ -536,7 +538,8 @@ const Library = () => {
 
       {/* Summary Modal */}
       <Modal open={summaryOpen} onClose={() => setSummaryOpen(false)}>
-        <ModalDialog className="libModal" layout="center">
+        <ModalDialog className="libModal sheet-surface" layout="center">
+          <ModalClose aria-label="إغلاق" />
           <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <DescriptionOutlinedIcon />
             <Typography level="title-md" sx={{ flex: 1 }}>

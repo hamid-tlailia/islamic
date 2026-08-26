@@ -964,7 +964,7 @@ const Names = () => {
       >
         <Sheet
           variant="outlined"
-          className="name-modal"
+          className="name-modal sheet-surface"
           sx={{
             maxWidth: 560,
             width: "92vw",
