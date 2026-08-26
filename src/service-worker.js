@@ -115,27 +115,64 @@ initializeApp({
 
 const messaging = getMessaging();
 
-// ✅ This assumes you send DATA-ONLY from backend (recommended)
+const SITE = "https://myislam-steel.vercel.app";
+
+/*
+ * How the notification is drawn.
+ *
+ * The backend sends data-only messages, so nothing appears unless this handler
+ * calls showNotification — which means every visual choice is made here.
+ *
+ * `badge` is the one that matters most. Android masks it to a flat silhouette
+ * by its alpha channel and draws it in the status bar; it used to be handed the
+ * full-colour icon, which masks down to an unreadable smear, so the launcher
+ * showed its generic bell instead. It now gets a purpose-drawn crescent.
+ */
 onBackgroundMessage(messaging, (payload) => {
-  console.log("[SW] Background message received:", payload);
+  const d = payload?.data || {};
 
-  const title = payload?.data?.title || "🕌 Prayer Time";
-  const body = payload?.data?.body || "";
-
-  const url =
-    payload?.data?.url || "https://myislam-steel.vercel.app/categories/times";
-
-  const icon =
-    payload?.data?.icon || "https://myislam-steel.vercel.app/search.png";
-
-  const badge =
-    payload?.data?.badge || "https://myislam-steel.vercel.app/search.png";
+  const title = d.title || "🕌 دين الله";
+  const lang = d.lang === "en" ? "en" : "ar";
+  const url = d.url || `${SITE}/categories/times`;
 
   self.registration.showNotification(title, {
-    body,
-    icon,
-    badge,
-    data: { url },
+    body: d.body || "",
+    icon: d.icon || `${SITE}/search.png`,
+    badge: d.badge || `${SITE}/notification-badge.png`,
+
+    /*
+     * Without an explicit direction the renderer applies bidi to the whole
+     * line, so "⏰ 19:29 — بعد 5 دقائق • 📍 Al Wukair" came out reordered
+     * around its Latin city name and digits. Stating the direction keeps the
+     * line reading the way it was written.
+     */
+    lang,
+    dir: d.dir || (lang === "ar" ? "rtl" : "ltr"),
+
+    /*
+     * One prayer alert at a time. `tag` replaces the previous notification
+     * rather than stacking a fifth one on the shade by evening; `renotify`
+     * keeps the replacement audible instead of swapping it in silently.
+     */
+    tag: d.tag || "prayer",
+    renotify: true,
+
+    // A prayer reminder that vanishes after twenty seconds has not reminded
+    // anyone. It stays until it is dismissed.
+    requireInteraction: true,
+    vibrate: [180, 90, 180],
+
+    actions: lang === "ar"
+      ? [
+          { action: "times", title: "🕌 الأوقات" },
+          { action: "adhkar", title: "📿 الأذكار" },
+        ]
+      : [
+          { action: "times", title: "🕌 Prayer times" },
+          { action: "adhkar", title: "📿 Adhkar" },
+        ],
+
+    data: { url, adhkar: `${SITE}/categories/adhkar` },
   });
 });
 
@@ -143,17 +180,19 @@ onBackgroundMessage(messaging, (payload) => {
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
+  const data = event.notification?.data || {};
   const urlToOpen =
-    event.notification?.data?.url ||
-    "https://myislam-steel.vercel.app/categories/times";
+    event.action === "adhkar"
+      ? data.adhkar || `${SITE}/categories/adhkar`
+      : data.url || `${SITE}/categories/times`;
 
   event.waitUntil(
     self.clients
       .matchAll({ type: "window", includeUncontrolled: true })
       .then((arr) => {
+        // Reuse a tab already on the target rather than opening a duplicate.
         for (const client of arr) {
-          if (client.url === urlToOpen && "focus" in client)
-            return client.focus();
+          if (client.url === urlToOpen && "focus" in client) return client.focus();
         }
         return self.clients.openWindow(urlToOpen);
       }),
