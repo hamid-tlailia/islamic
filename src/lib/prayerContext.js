@@ -11,6 +11,8 @@
  * without waiting for the hour to come round.
  */
 
+import { methodForCountry, schoolForCountry } from "./calcMethod";
+
 /** Where a resolved location is kept, so the home page can reuse it. */
 export const LOCATION_KEY = "prayer-location";
 
@@ -36,17 +38,57 @@ export function formatApiDate(now = new Date()) {
   return `${pad(now.getDate())}-${pad(now.getMonth() + 1)}-${now.getFullYear()}`;
 }
 
+/** The reader's IANA timezone, or "" where the browser will not say. */
+export function browserTimeZone() {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+  } catch {
+    return "";
+  }
+}
+
 /**
  * The prayer-times request for a saved location.
  *
  * Built in one place so the home card and the prayer-times page cannot drift
  * apart and show a reader two different answers for the same day.
+ *
+ * Three things this now sends that it did not before, each of which moves the
+ * times that come back:
+ *
+ *  - `method` and `school`, so the answer follows the country's own convention
+ *    rather than aladhan's default. Getting this wrong shifts Fajr and Isha by
+ *    twenty minutes or more — see lib/calcMethod.js.
+ *  - the ISO country code instead of the country's localised name. That name is
+ *    whatever the reader's language renders it as — "قطر" in Arabic — and
+ *    aladhan's geocoder resolves a code far more reliably than a translated
+ *    name.
+ *  - the coordinates, when the reader has granted geolocation. A city centroid
+ *    is fine in Doha and noticeably wrong across a country the size of Algeria.
+ *
+ * `timezonestring` pins the result to the reader's own clock, so a request made
+ * either side of midnight resolves to the day they actually mean.
  */
-export function buildTimingsUrl({ city, country }, now = new Date()) {
-  return (
-    `https://api.aladhan.com/v1/timingsByCity/${formatApiDate(now)}` +
-    `?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`
-  );
+export function buildTimingsUrl(location, now = new Date()) {
+  const { city, country, countryCode, latitude, longitude } = location || {};
+
+  const params = new URLSearchParams({
+    method: String(methodForCountry(countryCode)),
+    school: String(schoolForCountry(countryCode)),
+  });
+
+  const timezone = browserTimeZone();
+  if (timezone) params.set("timezonestring", timezone);
+
+  if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
+    params.set("latitude", String(latitude));
+    params.set("longitude", String(longitude));
+    return `https://api.aladhan.com/v1/timings/${formatApiDate(now)}?${params}`;
+  }
+
+  params.set("city", city || "");
+  params.set("country", countryCode || country || "");
+  return `https://api.aladhan.com/v1/timingsByCity/${formatApiDate(now)}?${params}`;
 }
 
 /**
