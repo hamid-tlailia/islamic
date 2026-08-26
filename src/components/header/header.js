@@ -234,6 +234,53 @@ const Header = ({ onNavClick, visibility, size }) => {
     // eslint-disable-next-line
   }, []);
 
+  /*
+   * The dock steps aside while the reader is going down the page.
+   *
+   * It floats over the text, and on a phone that is most of the width of a
+   * line — so on a long adhkar or tafsir page it sits on top of the very
+   * thing being read. Scrolling down tucks it out to the nearest side edge;
+   * scrolling back up, or returning near the top, brings it back. It never
+   * moves while it is being dragged, and the thresholds are wide enough that
+   * the small jitter of a finger resting on the screen does not toggle it.
+   */
+  const [notchTucked, setNotchTucked] = useState(false);
+
+  useEffect(() => {
+    let last = window.scrollY;
+    let queued = false;
+
+    const settle = () => {
+      queued = false;
+      const y = window.scrollY;
+      const delta = y - last;
+
+      if (isDraggingRef.current) {
+        last = y;
+        return;
+      }
+
+      if (y < 120) setNotchTucked(false);
+      else if (delta > 8) setNotchTucked(true);
+      else if (delta < -8) setNotchTucked(false);
+
+      last = y;
+    };
+
+    const onScroll = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(settle);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  /* Out through whichever edge it is already closest to. */
+  const tuckDirection =
+    notchNavPosition.x + 26 > window.innerWidth / 2 ? "1" : "-1";
+
   // -------------------- THEME --------------------
   const setTheme = (e) => {
     const body = document.body;
@@ -777,7 +824,9 @@ const Header = ({ onNavClick, visibility, size }) => {
       {/* Draggable notch-nav */}
       <div
         ref={notchRef}
-        className={`notch-nav ${visibility ? "hide" : ""}`}
+        className={`notch-nav ${visibility ? "hide" : ""} ${
+          notchTucked ? "tucked" : ""
+        }`}
         onMouseDownCapture={handleMouseDown} // ✅ optional
         onTouchStartCapture={handleTouchStart} // ✅ FIX mobile
         style={{
@@ -787,6 +836,7 @@ const Header = ({ onNavClick, visibility, size }) => {
           cursor: "move",
           touchAction: "none",
           zIndex: 180,
+          "--tuck-dir": tuckDirection,
         }}
       >
         <button
@@ -1266,7 +1316,6 @@ const Header = ({ onNavClick, visibility, size }) => {
             id="report-error-modal-title"
             level="h4"
             textColor="inherit"
-            className="ltr"
             sx={{ fontWeight: "lg", mb: 1 }}
           >
             {language === "ar" ? "الإبلاغ عن خطأ" : "Report an error"}

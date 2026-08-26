@@ -117,6 +117,10 @@ const Home = ({ onNavClick }) => {
 
   const settings = {
     dots: true,
+    /* Each hadith is a different length and the card is all there is to see
+       now, so the track follows the slide it is on instead of standing every
+       slide up to the tallest one. */
+    adaptiveHeight: true,
     infinite: false,
     speed: 500,
     slidesToShow: 1,
@@ -158,7 +162,6 @@ const Home = ({ onNavClick }) => {
 
     return (
       <div className="homeui-slide" key={index}>
-        <div className="homeui-art" aria-hidden="true" />
 
         <div className={`homeui-overlay ${dirClass}`}>
           <div className="homeui-overlayCard">
@@ -246,8 +249,7 @@ const Home = ({ onNavClick }) => {
       <div className="homeui-sliderWrap">
         {error ? (
           <div className="homeui-slide">
-            <div className="homeui-art" aria-hidden="true" />
-            <div className={`homeui-overlay ${dirClass}`}>
+              <div className={`homeui-overlay ${dirClass}`}>
               <div className="homeui-overlayCard">
                 <p className="homeui-text">
                   {language === "ar"
@@ -261,8 +263,7 @@ const Home = ({ onNavClick }) => {
           <Slider {...settings}>
             {hadithsLoading ? (
               <div className="homeui-slide">
-                <div className="homeui-art" aria-hidden="true" />
-                <div className={`homeui-overlay ${dirClass}`}>
+                      <div className={`homeui-overlay ${dirClass}`}>
                   <div className="homeui-overlayCard">
                     <p className={`homeui-loading ${dirClass}`}>
                       {language === "ar"
@@ -276,8 +277,7 @@ const Home = ({ onNavClick }) => {
               selectedHadiths.map((item, idx) => renderSlide(item, idx))
             ) : (
               <div className="homeui-slide">
-                <div className="homeui-art" aria-hidden="true" />
-                <div className={`homeui-overlay ${dirClass}`}>
+                      <div className={`homeui-overlay ${dirClass}`}>
                   <div className="homeui-overlayCard">
                     <p className="homeui-hadith">
                       {translations.prophetSaid} {translations.prophetHadith}

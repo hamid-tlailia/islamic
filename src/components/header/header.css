@@ -518,7 +518,6 @@
   z-index: 15;
   box-shadow: rgba(245, 246, 247, 0.3) 0px 0px 0px 1px;
   overflow: hidden;
-  transition: 0.35s;
 
   /*
    * Fully opaque. Fading it at rest made it look washed out, and because any
@@ -526,12 +525,39 @@
    * strength — a change the reader did not ask for and could not explain.
    */
   opacity: 1;
+
+  transition:
+    transform var(--motion-base, 0.24s) var(--ease, ease),
+    opacity var(--motion-base, 0.24s) var(--ease, ease),
+    background-color 0.35s,
+    box-shadow 0.35s;
 }
 
 .notch-nav.hide {
   right: -60%;
   opacity: 0;
   pointer-events: none;
+}
+
+/*
+ * Tucked away while the reader is moving down the page.
+ *
+ * It slides out through the edge it already sits nearest — `--tuck-dir` is
+ * +1 or -1, set from its own position — rather than always to the right,
+ * because it is draggable and half the readers keep it on the left. A
+ * transform, not `right`, because the position is set inline in pixels and
+ * an offset property would fight it.
+ */
+.notch-nav.tucked {
+  transform: translateX(calc(var(--tuck-dir, 1) * 150%));
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notch-nav.tucked {
+    transform: none;
+  }
 }
 
 .notch-btn {
