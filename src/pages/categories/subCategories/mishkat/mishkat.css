@@ -241,31 +241,125 @@ body.dark-mode .mishkat-chip--warn {
   position: sticky;
   bottom: 0;
   display: flex;
+  align-items: center;
   gap: var(--sp-2);
-  padding: var(--sp-3);
-  background: var(--outlets-bg-color);
-  border: var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--elev-1);
-  backdrop-filter: blur(8px);
+  padding-block: var(--sp-3);
+  background: linear-gradient(
+    to top,
+    var(--outlets-bg-color) 72%,
+    transparent
+  );
 }
 
-.mishkat-composer__input {
+/*
+ * One rounded field holding the text and its send button. The button sits
+ * inside the border rather than beside it, so the composer reads as a single
+ * object — and on a phone the send target lands under the thumb instead of at
+ * the far edge of a row.
+ */
+.mishkat-field {
   flex: 1;
   min-width: 0;
-  min-height: 44px;
-  padding: var(--sp-2) var(--sp-3);
-  border: var(--search-border);
-  border-radius: var(--radius-sm);
+
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1);
+  padding-inline-start: var(--sp-3);
+
   background: var(--search-card-bg);
+  border: var(--search-border);
+  border-radius: var(--radius-full);
+  box-shadow: var(--elev-1);
+
+  transition:
+    border-color var(--motion-fast) var(--ease),
+    box-shadow var(--motion-fast) var(--ease);
+}
+
+/* The ring moves to the field, so focus reads on the whole control rather
+   than drawing a second outline around the bare input inside it. */
+.mishkat-field:focus-within {
+  border-color: var(--primary-color);
+  box-shadow: var(--focus-ring);
+}
+
+.mishkat-field__input {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+
+  border: 0;
+  background: transparent;
   color: var(--text-color);
   font: inherit;
   font-size: var(--fs-md);
+  outline: none;
 }
 
-.mishkat-composer__input::placeholder {
+.mishkat-field__input::placeholder {
   color: var(--text-color);
   opacity: 0.5;
+}
+
+.mishkat-field__action {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: var(--radius-full);
+
+  background: var(--primary-color);
+  color: #fff;
+  cursor: pointer;
+
+  transition:
+    transform var(--motion-fast) var(--ease),
+    opacity var(--motion-fast) var(--ease),
+    background var(--motion-fast) var(--ease);
+}
+
+.mishkat-field__action:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+.mishkat-field__action:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
+/* Dimmed rather than hidden, so the field does not change shape as you type. */
+.mishkat-field__action:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.mishkat-field__action--stop {
+  background: var(--secondary-color);
+}
+
+.mishkat-composer__clear {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 44px;
+  height: 44px;
+  border: var(--border);
+  border-radius: var(--radius-full);
+
+  background: var(--card-color);
+  color: var(--text-color);
+  cursor: pointer;
+
+  transition: background var(--motion-fast) var(--ease);
+}
+
+.mishkat-composer__clear:hover {
+  background: var(--nav-color);
 }
 
 /* ===================== States ===================== */
@@ -302,10 +396,6 @@ body.dark-mode .mishkat-chip--warn {
   .mishkat-evidence__text {
     font-size: var(--fs-md);
   }
-  .mishkat-composer {
-    flex-wrap: wrap;
-  }
-  .mishkat-composer__input {
-    flex-basis: 100%;
-  }
+  /* The field already fills the row and the send button is inside it, so
+     there is nothing left to wrap. */
 }

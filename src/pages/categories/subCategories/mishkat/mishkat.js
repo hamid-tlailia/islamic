@@ -486,41 +486,52 @@ const Mishkat = () => {
         <label className="u-visually-hidden" htmlFor="mishkat-input">
           {t.placeholder}
         </label>
-        <input
-          id="mishkat-input"
-          className="mishkat-composer__input"
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          placeholder={t.placeholder}
-          disabled={busy}
-          autoComplete="off"
-        />
 
-        {busy ? (
-          <button type="button" className="u-btn" onClick={stop}>
-            <StopRoundedIcon fontSize="small" aria-hidden="true" />
-            {t.stop}
-          </button>
-        ) : (
-          <button
-            type="submit"
-            className="u-btn u-btn--primary"
-            disabled={!draft.trim()}
-          >
-            <SendRoundedIcon fontSize="small" aria-hidden="true" />
-            {t.send}
-          </button>
-        )}
+        {/* The field and its send control are one shape, so the composer reads
+            as a single place to write rather than a row of parts. */}
+        <div className="mishkat-field">
+          <input
+            id="mishkat-input"
+            className="mishkat-field__input"
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            placeholder={t.placeholder}
+            disabled={busy}
+            autoComplete="off"
+          />
+
+          {busy ? (
+            <button
+              type="button"
+              className="mishkat-field__action mishkat-field__action--stop"
+              onClick={stop}
+              title={t.stop}
+              aria-label={t.stop}
+            >
+              <StopRoundedIcon fontSize="small" />
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="mishkat-field__action"
+              disabled={!draft.trim()}
+              title={t.send}
+              aria-label={t.send}
+            >
+              <SendRoundedIcon fontSize="small" />
+            </button>
+          )}
+        </div>
 
         {turns.length > 0 && (
           <button
             type="button"
-            className="u-btn u-btn--ghost"
+            className="mishkat-composer__clear"
             onClick={clear}
             title={t.clear}
+            aria-label={t.clear}
           >
-            <DeleteOutlineRoundedIcon fontSize="small" aria-hidden="true" />
-            <span className="u-visually-hidden">{t.clear}</span>
+            <DeleteOutlineRoundedIcon fontSize="small" />
           </button>
         )}
       </form>

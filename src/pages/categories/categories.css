@@ -124,6 +124,29 @@
   border-radius: inherit;
 }
 
+/*
+ * With a section open the page itself scrolls, rather than the section being
+ * trapped inside a viewport-tall box that clips it.
+ *
+ * `.categories` is `height: 100%; overflow: hidden` and `.content` inside it
+ * is a second scroller of the same height — fine for the grid, which fits,
+ * but a section is usually taller, so it was cut off at one screen with the
+ * footer appearing underneath the cut.
+ */
+.categories.hasOutlet {
+  height: auto;
+  min-height: 100%;
+  overflow: visible;
+  align-items: stretch;
+}
+
+.categories.hasOutlet .content {
+  height: auto;
+  min-height: 100%;
+  overflow: visible;
+  margin-top: 0;
+}
+
 /* =========================================================
    TILE (MINIMAL)
    ========================================================= */

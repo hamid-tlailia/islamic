@@ -121,6 +121,10 @@ const Categories = ({
 
   const isSmallScreen = useMediaQuery("(max-width:500px)");
 
+  const isOutletRoute =
+    location.pathname.startsWith("/categories/") &&
+    location.pathname !== "/categories/";
+
   const normalized = query.trim().toLowerCase();
   const matches = normalized
     ? CATEGORIES.filter((c) => {
@@ -310,7 +314,7 @@ const Categories = ({
   return (
     <div className="container-fluid p-0">
       <div
-        className="categories"
+        className={`categories ${isOutletRoute ? "hasOutlet" : ""}`}
         style={{ marginTop: isRadio && isSmallScreen ? "0" : "1vh" }}
       >
         <div className="card content" ref={contentRef} onScroll={handleScroll}>

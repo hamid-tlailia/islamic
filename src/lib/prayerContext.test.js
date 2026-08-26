@@ -3,6 +3,8 @@ import {
   nextPrayer,
   formatRemaining,
   pickSuggestion,
+  formatApiDate,
+  buildTimingsUrl,
 } from "./prayerContext";
 
 /*
@@ -52,6 +54,11 @@ describe("nextPrayer", () => {
     const next = nextPrayer(TIMINGS, at(WED, "13:00"));
     expect(next.name).toBe("Asr");
     expect(next.msRemaining).toBe(3 * 60 * 60 * 1000);
+  });
+
+  it("never counts down to sunrise, which is not a prayer", () => {
+    // 05:00 sits between Fajr (04:30) and sunrise (06:00).
+    expect(nextPrayer(TIMINGS, at(WED, "05:00")).name).toBe("Dhuhr");
   });
 
   it("rolls over to tomorrow's Fajr after Isha", () => {
@@ -154,5 +161,25 @@ describe("every suggestion points at a page that exists", () => {
         expect(known).toContain(pickSuggestion(TIMINGS, at(day, hour)).route);
       }
     }
+  });
+});
+
+describe("formatApiDate", () => {
+  it("uses the DD-MM-YYYY the aladhan path expects", () => {
+    expect(formatApiDate(at(WED, "12:00"))).toBe("26-08-2026");
+  });
+
+  it("pads single-digit days and months", () => {
+    expect(formatApiDate(new Date(2026, 0, 5, 12))).toBe("05-01-2026");
+  });
+});
+
+describe("buildTimingsUrl", () => {
+  it("builds one URL both callers can share", () => {
+    const url = buildTimingsUrl({ city: "الدوحة", country: "قطر" }, at(WED, "12:00"));
+    expect(url).toContain("/timingsByCity/26-08-2026?");
+    // Arabic city and country names have to survive the query string.
+    expect(url).toContain(`city=${encodeURIComponent("الدوحة")}`);
+    expect(url).toContain(`country=${encodeURIComponent("قطر")}`);
   });
 });
