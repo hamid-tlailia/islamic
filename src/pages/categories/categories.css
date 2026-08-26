@@ -7,13 +7,14 @@
 .categories {
   position: relative;
   width: 100%;
-  height: 100%;
+  /* Was `height: 100%`, which resolved against a body pinned to one screen.
+     Now that the document scrolls, it measures the viewport itself. */
+  min-height: 100dvh;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 0;
   margin-top: 1vh;
-  overflow: hidden; /* better than auto here */
   margin-bottom: 1vh;
 }
 
@@ -22,8 +23,7 @@
   margin-top: auto;
   width: 90%;
   border: var(--search-border);
-  overflow-y: auto;
-  height: 100%;
+  min-height: 100%;
   border-radius: 10px; /* a bit more modern */
   background-color: var(--search-card-bg);
   /* want hide scroll bar */
@@ -134,16 +134,11 @@
  * footer appearing underneath the cut.
  */
 .categories.hasOutlet {
-  height: auto;
-  min-height: 100%;
-  overflow: visible;
+  min-height: 100dvh;
   align-items: stretch;
 }
 
 .categories.hasOutlet .content {
-  height: auto;
-  min-height: 100%;
-  overflow: visible;
   margin-top: 0;
 }
 
@@ -243,7 +238,6 @@
 .outlets-body {
   height: max-content !important;
   padding: 5px 0 !important;
-  overflow-y: auto;
 }
 /* Final state when loaded */
 .outlets.active {

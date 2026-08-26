@@ -13,7 +13,8 @@
   /* The home page is a column flex container, where auto side margins alone
      would shrink-wrap the card to its content instead of letting it fill. */
   width: var(--home-width, min(1100px, 100%));
-  margin-block: 0;
+  /* Clear of the header rather than tucked under it. */
+  margin-block: var(--sp-5) 0;
   margin-inline: auto;
   padding: var(--sp-5);
 

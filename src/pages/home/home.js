@@ -13,7 +13,6 @@ import { useTranslation } from "../../components/languages/provider";
 import { toast } from "react-toastify";
 import NowCard from "../../components/nowCard/nowCard";
 
-import sliderImageOne from "../images/slider3.avif";
 import quran from "../images/quran.avif";
 import ahadith from "../images/ahadith.avif";
 import fatawa from "../images/fatawa.avif";
@@ -159,11 +158,7 @@ const Home = ({ onNavClick }) => {
 
     return (
       <div className="homeui-slide" key={index}>
-        <img
-          src={sliderImageOne}
-          className="homeui-img"
-          alt={`Slide ${index + 1}`}
-        />
+        <div className="homeui-art" aria-hidden="true" />
 
         <div className={`homeui-overlay ${dirClass}`}>
           <div className="homeui-overlayCard">
@@ -251,7 +246,7 @@ const Home = ({ onNavClick }) => {
       <div className="homeui-sliderWrap">
         {error ? (
           <div className="homeui-slide">
-            <img src={sliderImageOne} className="homeui-img" alt="Error" />
+            <div className="homeui-art" aria-hidden="true" />
             <div className={`homeui-overlay ${dirClass}`}>
               <div className="homeui-overlayCard">
                 <p className="homeui-text">
@@ -266,11 +261,7 @@ const Home = ({ onNavClick }) => {
           <Slider {...settings}>
             {hadithsLoading ? (
               <div className="homeui-slide">
-                <img
-                  src={sliderImageOne}
-                  className="homeui-img"
-                  alt="Loading"
-                />
+                <div className="homeui-art" aria-hidden="true" />
                 <div className={`homeui-overlay ${dirClass}`}>
                   <div className="homeui-overlayCard">
                     <p className={`homeui-loading ${dirClass}`}>
@@ -285,7 +276,7 @@ const Home = ({ onNavClick }) => {
               selectedHadiths.map((item, idx) => renderSlide(item, idx))
             ) : (
               <div className="homeui-slide">
-                <img src={sliderImageOne} className="homeui-img" alt="Hadith" />
+                <div className="homeui-art" aria-hidden="true" />
                 <div className={`homeui-overlay ${dirClass}`}>
                   <div className="homeui-overlayCard">
                     <p className="homeui-hadith">
