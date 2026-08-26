@@ -361,3 +361,82 @@ async function readStream(response, onToken) {
   if (streamError && !answer) throw new Error(streamError);
   return answer;
 }
+
+/*
+ * A parsed answer as plain text, for copying and for sharing.
+ *
+ * What reaches the clipboard has to stand on its own away from the app: the
+ * question it answers, the prose, and — this is the part that matters for a
+ * religious answer — every reference intact. An answer pasted into a message
+ * without its ayah numbers and its hadith sources is worth less than nothing,
+ * because the reader on the other end has no way to check it.
+ *
+ * `labels` carries the section words in the reader's language; the caller
+ * already has them for the interface.
+ */
+export function answerToText(parsed, question, labels = {}) {
+  const L = {
+    question: "السؤال",
+    evidence: "الأدلّة",
+    ayah: "آية",
+    hadith: "حديث",
+    views: "أقوال أهل العلم",
+    references: "مراجع",
+    indication: "وجه الدلالة",
+    source: "المصدر",
+    ...labels,
+  };
+
+  const lines = [];
+
+  if (question) lines.push(`${L.question}: ${question}`, "");
+  if (parsed?.topic) lines.push(parsed.topic, "");
+  if (parsed?.prose) lines.push(parsed.prose.trim(), "");
+
+  const ayat = parsed?.ayat || [];
+  const ahadith = parsed?.ahadith || [];
+
+  if (ayat.length || ahadith.length) {
+    lines.push(`— ${L.evidence} —`);
+
+    for (const item of ayat) {
+      // The mushaf's own wording once it has been fetched, the quote until then.
+      const text = item.text || item.quoted;
+      const place = item.surahName
+        ? `${item.surahName} [${item.surah}:${item.ayah}]`
+        : `[${item.surah}:${item.ayah}]`;
+      lines.push(`${L.ayah}: ${text}`, `  ${place}`);
+      if (item.reasoning) lines.push(`  ${L.indication}: ${item.reasoning}`);
+      lines.push("");
+    }
+
+    for (const item of ahadith) {
+      lines.push(`${L.hadith}: ${item.matn}`);
+      if (item.source) lines.push(`  ${L.source}: ${item.source}`);
+      if (item.reasoning) lines.push(`  ${L.indication}: ${item.reasoning}`);
+      lines.push("");
+    }
+  }
+
+  if (parsed?.views?.length) {
+    lines.push(`— ${L.views} —`);
+    for (const view of parsed.views) {
+      lines.push(`• ${view.who}: ${view.what}`.trimEnd());
+    }
+    lines.push("");
+  }
+
+  if (parsed?.references?.length) {
+    lines.push(`— ${L.references} —`);
+    for (const ref of parsed.references) {
+      lines.push(`• ${ref.name}${ref.why ? ` — ${ref.why}` : ""}`);
+    }
+    lines.push("");
+  }
+
+  // Collapse the runs of blank lines the sections leave behind.
+  return lines
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}

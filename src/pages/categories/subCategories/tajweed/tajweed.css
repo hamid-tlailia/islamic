@@ -52,11 +52,21 @@
 }
 
 /* ===== Topbar (always visible) ===== */
+/*
+ * It wraps.
+ *
+ * This was one unwrapping row, and with the two new toggles beside the
+ * filters it ran past the edge of a phone — the save button was pushed off
+ * the screen entirely, which is why it looked as though there wasn't one.
+ * Now the controls flow onto a second line rather than out of the page, and
+ * save keeps to the trailing end of whichever line it lands on.
+ */
 .tajweed-topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
 
   padding: 10px 10px;
   border-radius: 14px;
@@ -73,7 +83,15 @@
 .tajweed-topbar-left {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
+  min-width: 0;
+}
+
+/* Whatever line it lands on, it sits at the far end of it. */
+.tajweed-saveBtn,
+.tajweed-savedBtn {
+  margin-inline-start: auto;
 }
 
 /* Filter button */
@@ -89,6 +107,9 @@
   font-size: 0.95rem;
   font-weight: 800;
   opacity: 0.9;
+  /* "وضع التلاوة" was breaking across two lines and making its button twice
+     the height of the ones beside it. */
+  white-space: nowrap;
 }
 
 /* A toggle that is currently on says so, rather than looking like the rest. */
@@ -701,6 +722,27 @@
   .tajweed-metaPill {
     width: 100%;
     min-width: auto;
+  }
+
+  /*
+   * Icons only. Three labelled toggles and a save button do not fit across a
+   * phone at any sensible size, and the icons are distinct enough to tell
+   * apart — each one still carries its name for a screen reader and in its
+   * tooltip.
+   */
+  .tajweed-filterBtnText {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .tajweed-filterBtn {
+    padding-inline: 10px !important;
   }
 
   .tajweed-pageInput {
