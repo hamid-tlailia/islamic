@@ -190,6 +190,7 @@ const Categories = ({
         if (outletsRef.current) {
           outletsRef.current.classList.add("active");
           categoriesRef.current.classList.add("hide");
+          contentRef.current?.classList.add("hasOutlet");
           if (contentRef.current) {
             contentRef.current.scrollTo({
               top: 0,
@@ -212,6 +213,7 @@ const Categories = ({
   // Close outlet
   const closeOutlet = () => {
     if (outletsRef.current) outletsRef.current.classList.remove("active");
+    contentRef.current?.classList.remove("hasOutlet");
     navigate("/categories");
     categoriesRef.current.classList.remove("hide");
 
@@ -233,6 +235,7 @@ const Categories = ({
     if (isOutlet) {
       outletsRef.current?.classList.add("active");
       categoriesRef.current?.classList.add("hide");
+      contentRef.current?.classList.add("hasOutlet");
 
       const categoryPath = location.pathname
         .replace("/categories/", "")
@@ -255,6 +258,7 @@ const Categories = ({
     } else {
       outletsRef.current?.classList.remove("active");
       categoriesRef.current?.classList.remove("hide");
+      contentRef.current?.classList.remove("hasOutlet");
       setCheckTitle(false);
 
       const saved = Number(

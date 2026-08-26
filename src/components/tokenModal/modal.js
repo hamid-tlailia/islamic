@@ -73,13 +73,29 @@ export async function registerDeviceToken() {
   const permission = await Notification.requestPermission();
   if (permission !== "granted") return;
 
+  if (!("serviceWorker" in navigator)) return;
+
   try {
-    // Service worker
-    let swReg;
-    if ("serviceWorker" in navigator) {
-      swReg = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
-      await navigator.serviceWorker.ready;
-    }
+    /*
+     * Messaging attaches to the app's own service worker.
+     *
+     * This used to register /firebase-messaging-sw.js, which claims the same
+     * root scope as the Workbox worker and therefore replaced it — and that
+     * file has no fetch handler, so the app stopped working offline entirely
+     * the moment notifications were allowed. The Workbox worker already
+     * initialises messaging and handles onBackgroundMessage, so it does both
+     * jobs and there is nothing to register here.
+     *
+     * A registration must always be passed: given none, Firebase goes looking
+     * for /firebase-messaging-sw.js and registers it itself, which is the
+     * behaviour being avoided. So when no worker is active — in development,
+     * where CRA registers none — the token is simply skipped.
+     */
+    const swReg = await Promise.race([
+      navigator.serviceWorker.ready,
+      new Promise((resolve) => setTimeout(() => resolve(null), 8000)),
+    ]);
+    if (!swReg) return;
 
     // Token
     const token = await getToken(messaging, {

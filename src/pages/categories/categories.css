@@ -103,9 +103,25 @@
 }
 
 /* بدل height:755px (تسبب مشاكل في شاشات مختلفة) */
-.divisions.hide {
-  height: 723px !important;
-  overflow: clip;
+/*
+ * An open section is the page, not a layer over it. Hiding the grid and the
+ * page header means the section no longer has to stretch to cover them, which
+ * is what left a tall blank band under short pages, and nothing shows through
+ * from behind.
+ */
+.hide {
+  display: none;
+}
+
+.categories .content.hasOutlet > .card-header,
+.categories .content.hasOutlet > .card-body {
+  display: none;
+}
+
+.categories .content.hasOutlet > .outlets {
+  position: static;
+  min-height: 0 !important;
+  border-radius: inherit;
 }
 
 /* =========================================================

@@ -6,6 +6,33 @@ const isLocalhost = Boolean(
   ),
 );
 
+/*
+ * Earlier builds registered /firebase-messaging-sw.js at the root scope,
+ * which displaced the Workbox worker and left the app with no offline cache.
+ * That file is gone, but a browser that already registered it keeps the
+ * registration until it is removed, so any install still carrying it is
+ * healed here before the real worker is registered.
+ */
+async function removeStaleFirebaseWorker() {
+  try {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(
+      registrations
+        .filter((registration) => {
+          const url =
+            registration.active?.scriptURL ||
+            registration.waiting?.scriptURL ||
+            registration.installing?.scriptURL ||
+            "";
+          return url.endsWith("/firebase-messaging-sw.js");
+        })
+        .map((registration) => registration.unregister()),
+    );
+  } catch {
+    /* nothing we can do; the fresh registration below still applies */
+  }
+}
+
 export function register(config) {
   if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
     const publicUrl = new URL(
@@ -14,7 +41,9 @@ export function register(config) {
     );
     if (publicUrl.origin !== window.location.origin) return;
 
-    window.addEventListener("load", () => {
+    window.addEventListener("load", async () => {
+      await removeStaleFirebaseWorker();
+
       const publicPath = (process.env.PUBLIC_URL || "").replace(/\/$/, "");
       const swUrl = publicPath
         ? `${publicPath}/service-worker.js`

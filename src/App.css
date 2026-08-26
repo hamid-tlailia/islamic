@@ -38,7 +38,9 @@
   /* ====== Text accents ====== */
   --ayah-text-color: #173d8a;
   --surah-hover-color: #173d8a;
-  --nav-link-color: rgb(14, 207, 37);
+  /* Was a neon rgb(14,207,37); a warm gold sits better against the teal
+     header and still clears AA on it at 6.05:1. */
+  --nav-link-color: #e9c46a;
   --nav-color: rgba(0, 0, 0, 0.06);
   --tabs-bg-color: rgba(0, 0, 0, 0.12);
 
@@ -119,8 +121,10 @@ body.dark-mode {
   --bg-color: #0f1115;
   --text-color: rgba(255, 255, 255, 0.92);
 
-  --card-color: rgb(24, 26, 27);
-  --outlets-bg-color: rgba(24, 26, 27, 0.96);
+  /* Lifted from rgb(24,26,27), which sat at 1.08 against the page — close
+     enough that cards read as flat areas rather than surfaces. */
+  --card-color: #212429;
+  --outlets-bg-color: rgba(33, 36, 41, 0.96);
 
   --border: 1px solid rgba(255, 255, 255, 0.1);
   --search-border: 1px solid rgba(255, 255, 255, 0.16);
@@ -129,7 +133,7 @@ body.dark-mode {
   --search-card-bg: rgba(9, 6, 7, 0.956);
   --dropdown-bg-color: rgba(24, 26, 27, 0.95);
 
-  --nav-link-color: #27c2d8;
+  --nav-link-color: #e9c46a;
   --nav-color: rgba(255, 255, 255, 0.06);
   --tabs-bg-color: rgba(255, 255, 255, 0.08);
 
@@ -165,40 +169,51 @@ body.dark-mode {
    LIGHT FILTER (body.light-filter)
    ========================================================= */
 body.light-filter {
-  --header-bg-color: rgb(81, 85, 27);
-  --header-text-color: rgba(255, 255, 255, 0.92);
+  /*
+   * A warm reading theme. Previously the page and the cards were the same
+   * beige (1.07:1 apart) with a near-invisible border, so the whole interface
+   * read as one flat slab. Page, card and header are now three distinct tones:
+   * sand, parchment and deep olive.
+   */
+  --header-bg-color: #3f4a2a;
+  --header-text-color: rgba(255, 255, 255, 0.94);
 
-  --bg-color: rgb(178, 174, 159);
-  --text-color: rgb(3, 2, 1) !important;
+  --bg-color: #d5cebb;
+  --text-color: #1a1a14;
 
-  --card-color: rgba(178, 174, 159, 0.92);
-  --outlets-bg-color: rgba(178, 174, 159, 0.96);
+  --card-color: #f6f2e8;
+  --outlets-bg-color: #f6f2e8;
 
-  --border: 1px solid rgba(231, 227, 210, 0.65);
-  --search-border: 1px solid rgba(3, 2, 1, 0.28);
-  --surah-border: 1px solid rgba(255, 255, 255, 0.8);
+  --border: 1px solid rgba(63, 74, 42, 0.22);
+  --search-border: 1px solid rgba(63, 74, 42, 0.32);
+  --surah-border: 1px solid rgba(63, 74, 42, 0.24);
 
-  --search-card-bg: rgba(178, 174, 159, 0.95);
-  --dropdown-bg-color: rgba(178, 174, 159, 0.95);
+  --search-card-bg: #fbf9f3;
+  --dropdown-bg-color: #fbf9f3;
 
-  --nav-link-color: rgb(27, 230, 24);
-  --nav-color: rgba(94, 91, 85, 0.22);
-  --tabs-bg-color: rgba(8, 4, 4, 0.3);
+  --nav-link-color: #e9c46a;
+  --nav-color: rgba(63, 74, 42, 0.1);
+  --tabs-bg-color: rgba(63, 74, 42, 0.14);
 
-  --ayah-text-color: #253987;
-  --surah-hover-color: rgb(7, 24, 73);
+  --ayah-text-color: #1e3a5f;
+  --surah-hover-color: #1e3a5f;
 
-  --player-bg-color: rgba(62, 65, 26, 0.663);
+  --player-bg-color: rgba(63, 74, 42, 0.72);
 
-  --main-color: rgb(70, 17, 182);
-  --api-card: #ddeedf;
-  --names-color: rgb(6, 23, 106);
+  --scrolled-ayah-bg: rgba(63, 74, 42, 0.16);
+  --scolled-ayah-color: #1a1a14;
 
-  --shadow-primary-color: rgba(2, 6, 23, 0.16);
-  --shadow-secondary-color: rgba(255, 255, 255, 0.28);
-  --settings-ui__section-bg: rgb(50 44 44 / 0%);
-  --settings-ui__toggle-bg: rgba(255, 255, 255, 0.1);
-  --border-color: 1px solid rgba(3, 2, 1, 0.28);
+  --primary-color: #3f4a2a;
+  --main-color: #8f3a12;
+  --api-card: #f6f2e8;
+  --names-color: #4a2c6b;
+
+  --shadow-primary-color: rgba(40, 36, 22, 0.16);
+  --shadow-secondary-color: rgba(255, 255, 255, 0.6);
+  --focus-ring: 0 0 0 3px rgba(63, 74, 42, 0.45);
+  --settings-ui__section-bg: rgba(63, 74, 42, 0.08);
+  --settings-ui__toggle-bg: rgba(63, 74, 42, 0.12);
+  --border-color: 1px solid rgba(63, 74, 42, 0.22);
 }
 
 /* =========================================================
@@ -211,8 +226,10 @@ body.image {
   --bg-color: rgba(0, 0, 0, 0.45);
   --text-color: rgba(255, 255, 255, 0.92);
 
-  --card-color: rgba(0, 0, 0, 0.773);
-  --outlets-bg-color: rgba(0, 0, 0, 0.72);
+  /* Over a photograph the scrim is what makes text legible, so it is darker
+     than it was and paired with the blur below. */
+  --card-color: rgba(10, 12, 14, 0.88);
+  --outlets-bg-color: rgba(10, 12, 14, 0.86);
 
   --border: 1px solid rgba(255, 255, 255, 0.16);
   --search-border: 1px solid rgba(255, 255, 255, 0.22);
@@ -221,7 +238,7 @@ body.image {
   --search-card-bg: rgba(0, 0, 0, 0.896);
   --dropdown-bg-color: rgba(0, 0, 0, 0.55);
 
-  --nav-link-color: #1ec832;
+  --nav-link-color: #e9c46a;
   --nav-color: rgba(255, 255, 255, 0.08);
   --tabs-bg-color: rgba(180, 154, 154, 0.22);
 
@@ -257,8 +274,9 @@ body.sky {
   --bg-color: rgb(18, 18, 32);
   --text-color: rgba(230, 230, 250, 0.92);
 
-  --card-color: rgba(28, 28, 48, 0.92);
-  --outlets-bg-color: rgba(18, 18, 32, 0.95);
+  /* Lifted from rgba(28,28,48,.92) so a card reads as a surface. */
+  --card-color: #26263e;
+  --outlets-bg-color: rgba(38, 38, 62, 0.96);
 
   --border: 1px solid rgba(70, 130, 180, 0.25);
   --search-border: 1px solid rgba(70, 130, 180, 0.3);
@@ -267,12 +285,12 @@ body.sky {
   --search-card-bg: rgba(11, 11, 53, 0.944);
   --dropdown-bg-color: rgba(28, 28, 48, 0.95);
 
-  --nav-link-color: rgb(32, 220, 29);
+  --nav-link-color: #a7f3d0;
   --nav-color: rgba(40, 40, 64, 0.7);
   --tabs-bg-color: rgba(70, 130, 180, 0.18);
 
   --ayah-text-color: rgba(230, 230, 250, 0.92);
-  --surah-hover-color: rgb(226, 26, 110);
+  --surah-hover-color: #93c5fd;
 
   --player-bg-color: rgba(11, 11, 53, 0.648);
 
@@ -293,21 +311,21 @@ body.sky {
 /* Contrast mode styles */
 
 /* Optional: Add a semi-transparent overlay to increase brightness */
-body.brightness::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(
-    255,
-    255,
-    255,
-    0.1
-  ); /* Semi-transparent white overlay */
-  pointer-events: none;
-  z-index: 9999; /* Ensure it's above other elements */
+/*
+ * Brightness used to paint a 10% white sheet over the entire viewport at
+ * z-index 9999 — above every card, every ayah and every button — so it raised
+ * the black level of the text as much as the background and made the whole
+ * interface hazier rather than brighter. Lifting the surfaces themselves gives
+ * the brighter page without costing any contrast.
+ */
+body.brightness {
+  --bg-color: #ece9d9;
+  --card-color: #ffffff;
+  --outlets-bg-color: #ffffff;
+  --search-card-bg: #ffffff;
+  --dropdown-bg-color: #ffffff;
+  --text-color: #0b0f12;
+  --nav-color: rgba(0, 0, 0, 0.05);
 }
 
 body,
