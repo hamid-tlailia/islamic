@@ -52,6 +52,7 @@ const COPY = {
   ar: {
     now: "الآن",
     nextPrayer: "الصلاة القادمة",
+    remaining: "متبقٍ على الصلاة",
     setLocation: "حدّد موقعك لعرض المواقيت",
     continueReading: "تابع القراءة",
     continueTajweed: "تابع التجويد",
@@ -69,6 +70,7 @@ const COPY = {
   en: {
     now: "Now",
     nextPrayer: "Next prayer",
+    remaining: "Time left until the prayer",
     setLocation: "Set your location to see prayer times",
     continueReading: "Continue reading",
     continueTajweed: "Continue tajweed",
@@ -213,8 +215,17 @@ const NowCard = () => {
             <span className="nowCard__statValue">
               {copy.prayers[upcoming.name] || upcoming.name}
             </span>
-            {/* A live region would announce every second, so the countdown is
-                left out of the accessibility tree and the label carries it. */}
+            {/*
+              The countdown says in words what it is counting. On its own,
+              "المغرب" over "01:23" reads as the time Maghrib is called, not
+              as the time left until it.
+
+              A live region would announce every second, so the number is left
+              out of the accessibility tree and the label carries it.
+            */}
+            <span className="nowCard__remaining" aria-hidden="true">
+              {copy.remaining}
+            </span>
             <span className="nowCard__countdown" aria-hidden="true">
               {formatRemaining(upcoming.msRemaining)}
             </span>

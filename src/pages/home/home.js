@@ -117,10 +117,8 @@ const Home = ({ onNavClick }) => {
 
   const settings = {
     dots: true,
-    /* Each hadith is a different length and the card is all there is to see
-       now, so the track follows the slide it is on instead of standing every
-       slide up to the tallest one. */
-    adaptiveHeight: true,
+    /* Every card is the same height now and scrolls its own hadith, so the
+       track has nothing to adapt to. */
     infinite: false,
     speed: 500,
     slidesToShow: 1,

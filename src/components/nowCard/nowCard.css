@@ -129,6 +129,14 @@
  * Tabular figures keep the countdown from jittering as the digits change,
  * which is otherwise very visible once a second.
  */
+/* Sits directly above the number and names what it counts. */
+.nowCard__remaining {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-tight);
+  opacity: 0.75;
+}
+
 .nowCard__countdown {
   font-size: var(--fs-2xl);
   font-weight: var(--fw-bold);

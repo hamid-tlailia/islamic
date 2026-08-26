@@ -27,6 +27,7 @@ import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "../../components/languages/provider";
 import throttle from "lodash.throttle";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
+import ManageSearchOutlinedIcon from "@mui/icons-material/ManageSearchOutlined";
 import { useMediaQuery } from "@mui/material";
 
 const navLinks = [
@@ -132,6 +133,20 @@ const Categories = ({
         return label.includes(normalized) || c.to.toLowerCase().includes(normalized);
       })
     : null;
+
+  /*
+   * The same field does two jobs. As a filter it narrows the sections while
+   * you type; as a question it hands what you typed to Mishkat, which is
+   * where an answer lives rather than a section name. A reader looking for
+   * "حكم صيام يوم الشك" is not looking for a tile, and until now that search
+   * simply came back empty.
+   */
+  const askMishkat = () => {
+    const question = query.trim();
+    if (!question) return;
+    setQuery("");
+    navigate(`/categories/mishkat?q=${encodeURIComponent(question)}`);
+  };
 
   // ✅ scroll helper that works in ALL browsers/layouts
   const scrollPageTo = (top, behavior = "auto") => {
@@ -315,19 +330,47 @@ const Categories = ({
               {translations.prayerKnowledge}
             </p>
             <label className="u-visually-hidden" htmlFor="category-filter">
-              {language === "en" ? "Filter sections" : "ابحث في الأقسام"}
+              {language === "en"
+                ? "Filter sections, or ask Mishkat"
+                : "ابحث في الأقسام أو اسأل مِشْكاة"}
             </label>
-            <input
-              id="category-filter"
-              type="search"
-              className="catFilter"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={
-                language === "en" ? "Filter sections…" : "ابحث في الأقسام…"
-              }
-              autoComplete="off"
-            />
+            <form
+              className="catSearch"
+              role="search"
+              onSubmit={(e) => {
+                e.preventDefault();
+                askMishkat();
+              }}
+            >
+              <input
+                id="category-filter"
+                type="search"
+                className="catFilter"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={
+                  language === "en"
+                    ? "Filter sections, or ask a question…"
+                    : "ابحث في الأقسام أو اطرح سؤالاً…"
+                }
+                autoComplete="off"
+              />
+
+              {normalized ? (
+                <button type="submit" className="catSearch__ask">
+                  <ManageSearchOutlinedIcon
+                    className="catSearch__askIcon"
+                    fontSize="small"
+                    aria-hidden="true"
+                  />
+                  <span className="catSearch__askText">
+                    {language === "en"
+                      ? `Ask Mishkat: “${query.trim()}”`
+                      : `اسأل مِشْكاة: «${query.trim()}»`}
+                  </span>
+                </button>
+              ) : null}
+            </form>
           </div>
 
           <div className="card-body p-0">
@@ -358,6 +401,18 @@ const Categories = ({
                     <p className="u-empty__title">
                       {language === "en" ? "Nothing found" : "لا توجد نتيجة"}
                     </p>
+                    <p className="u-empty__body">
+                      {language === "en"
+                        ? "No section carries this name — but Mishkat can answer it."
+                        : "لا يوجد قسم بهذا الاسم، لكنّ مِشْكاة تستطيع الإجابة عنه."}
+                    </p>
+                    <button
+                      type="button"
+                      className="u-btn u-btn--primary"
+                      onClick={askMishkat}
+                    >
+                      {language === "en" ? "Ask Mishkat" : "اسأل مِشْكاة"}
+                    </button>
                   </div>
                 )
               ) : (

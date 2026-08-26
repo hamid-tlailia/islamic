@@ -322,6 +322,58 @@
   gap: var(--sp-2);
 }
 
+/* The field and the ask-Mishkat action it offers, as one block. */
+.catSearch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  width: 100%;
+}
+
+/*
+ * Appears the moment there is something typed. It is a button rather than a
+ * hint because it does something, and it repeats the words back so it is
+ * clear exactly what will be asked.
+ */
+.catSearch__ask {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  max-width: min(560px, 92%);
+
+  padding: var(--sp-2) var(--sp-4);
+  border: 1px solid color-mix(in srgb, var(--primary-color) 40%, transparent);
+  border-radius: var(--radius-full);
+
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  color: var(--text-color);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+
+  transition:
+    background var(--motion-fast) var(--ease),
+    border-color var(--motion-fast) var(--ease);
+}
+
+.catSearch__ask:hover {
+  background: color-mix(in srgb, var(--primary-color) 20%, transparent);
+  border-color: var(--primary-color);
+}
+
+.catSearch__askIcon {
+  flex: none;
+  color: var(--primary-color);
+}
+
+/* A long question is trimmed rather than allowed to wrap the button open. */
+.catSearch__askText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .catFilter {
   width: min(420px, 92%);
   min-height: 40px;
