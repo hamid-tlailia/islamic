@@ -456,9 +456,21 @@ a {
   transform: translateX(100%);
 }
 
-/* Final state when loaded */
+/*
+ * Final state when loaded.
+ *
+ * The settled state is declared here rather than held by `animation-fill-mode:
+ * forwards`, and that matters beyond tidiness: `forwards` kept a transform on
+ * this wrapper permanently, and an element with a transform becomes the
+ * containing block for every `position: fixed` descendant inside it. So
+ * "fixed to the viewport" anywhere in the app actually meant "fixed to this
+ * wrapper" — which is several screens tall. Ending on `transform: none` gives
+ * the viewport back.
+ */
 .lazy-component-wrapper.loaded {
-  animation: slideInElastic 1s cubic-bezier(0.68, -0.6, 0.32, 1.6) forwards;
+  opacity: 1;
+  transform: none;
+  animation: slideInElastic 1s cubic-bezier(0.68, -0.6, 0.32, 1.6);
 }
 
 .ltr {

@@ -6,28 +6,11 @@
 .homeui {
   --home-width: min(1100px, 100%);
 
-  /*
-   * The image that used to sit only behind the hadith carousel now backs the
-   * whole page, so the home screen reads as one composition instead of a
-   * photograph wedged between two plain bands.
-   *
-   * The gradient above it is not decoration: over a photograph of a lit
-   * marble courtyard, text and card edges lose their footing, and the scrim
-   * is what holds the page's own colour underneath everything.
-   */
-  background-image:
-    linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--bg-color) 74%, transparent),
-      color-mix(in srgb, var(--bg-color) 86%, transparent)
-    ),
-    url("../images/slider3.avif");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-
+  position: relative;
   width: 100%;
+  /* The page's own colour is painted by the backdrop layer below, so the
+     wrapper stays clear rather than covering it. */
+  background: transparent;
   display: flex;
   flex-direction: column;
   gap: var(--sp-5);
@@ -521,10 +504,6 @@
 
 @media (max-width: 700px) {
   .homeui {
-    /* A fixed attachment repaints the whole backdrop on every scroll frame on
-       mobile Safari, and stutters; the image scrolls with the page instead. */
-    background-attachment: scroll;
-
     --home-width: 100%;
     gap: var(--sp-4);
     padding-inline: var(--sp-2);
@@ -547,8 +526,54 @@
 }
 
 
-/* The photographic theme already dresses the body, so the home page does not
-   lay a second picture over it. */
-body.image .homeui {
-  background-image: none;
+/*
+ * The page's backdrop.
+ *
+ * Painted by a fixed layer sized to the viewport rather than as a background
+ * on .homeui itself. `cover` on the element scales the image to the height of
+ * the whole document — several screens tall here — so all that showed at the
+ * top was a thin crop of it, washed out. Pinned to the viewport, the picture
+ * is composed the same way whatever the page's length, and it does not
+ * repaint on every scroll frame the way background-attachment: fixed does.
+ *
+ * The scrim over it is not decoration: over a photograph of lit marble, text
+ * and card edges lose their footing, and this is what keeps the page's own
+ * colour underneath everything.
+ */
+.homeui::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  /*
+   * Zero, not negative. `body` carries an opaque background colour of its own,
+   * and a negative-z-index descendant paints behind its ancestor's background
+   * — which is why the picture was there in the DOM and invisible on screen.
+   * At 0 it sits above that fill, and the bands below lift themselves over it.
+   */
+  z-index: 0;
+  pointer-events: none;
+
+  background-image:
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--bg-color) 34%, transparent),
+      color-mix(in srgb, var(--bg-color) 72%, transparent)
+    ),
+    url("../images/slider3.avif");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* The photographic theme already dresses the body; a second picture over it
+   would be two backdrops competing. */
+body.image .homeui::before {
+  display: none;
+}
+
+
+/* Every band of the page sits above the backdrop. */
+.homeui > * {
+  position: relative;
+  z-index: 1;
 }

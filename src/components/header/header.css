@@ -526,7 +526,7 @@
    * Without this it sits opaquely across whatever is underneath — on the home
    * page that was the middle of a card.
    */
-  opacity: 0.55;
+  opacity: 0.88;
 }
 
 .notch-nav:hover,

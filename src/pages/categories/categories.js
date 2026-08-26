@@ -191,17 +191,15 @@ const Categories = ({
           localStorage.setItem("last-category-position", categoryPosition);
         }
 
-        if (outletsRef.current) {
-          outletsRef.current.classList.add("active");
-          categoriesRef.current.classList.add("hide");
-          contentRef.current?.classList.add("hasOutlet");
-          if (contentRef.current) {
-            contentRef.current.scrollTo({
-              top: 0,
-              behavior: "smooth",
-            });
-          }
-        }
+        /*
+         * The open/closed classes come from the route during render, not from
+         * here. Setting them imperatively as well meant the container could
+         * say a section was open while the section itself still said it was
+         * closed — which left the section absolutely positioned inside a
+         * collapsed parent, so the footer rose into the middle of the page and
+         * there was nothing left to scroll.
+         */
+        contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
       }
     }
   };
@@ -216,10 +214,7 @@ const Categories = ({
 
   // Close outlet
   const closeOutlet = () => {
-    if (outletsRef.current) outletsRef.current.classList.remove("active");
-    contentRef.current?.classList.remove("hasOutlet");
     navigate("/categories");
-    categoriesRef.current.classList.remove("hide");
 
     // Delay scrolling to ensure the categories are visible
     if (contentRef.current) {
@@ -237,10 +232,6 @@ const Categories = ({
       location.pathname !== "/categories/";
 
     if (isOutlet) {
-      outletsRef.current?.classList.add("active");
-      categoriesRef.current?.classList.add("hide");
-      contentRef.current?.classList.add("hasOutlet");
-
       const categoryPath = location.pathname
         .replace("/categories/", "")
         .split("/")[0]
@@ -260,9 +251,6 @@ const Categories = ({
       scrollTop?.();
       scrollPageTo(0, "auto");
     } else {
-      outletsRef.current?.classList.remove("active");
-      categoriesRef.current?.classList.remove("hide");
-      contentRef.current?.classList.remove("hasOutlet");
       setCheckTitle(false);
 
       const saved = Number(
@@ -317,7 +305,11 @@ const Categories = ({
         className={`categories ${isOutletRoute ? "hasOutlet" : ""}`}
         style={{ marginTop: isRadio && isSmallScreen ? "0" : "1vh" }}
       >
-        <div className="card content" ref={contentRef} onScroll={handleScroll}>
+        <div
+          className={`card content ${isOutletRoute ? "hasOutlet" : ""}`}
+          ref={contentRef}
+          onScroll={handleScroll}
+        >
           <div className="card-header p-1 catHeader">
             <p className="w-100 text-center fw-bold mt-2 catHeaderTitle">
               {translations.prayerKnowledge}
@@ -339,7 +331,7 @@ const Categories = ({
           </div>
 
           <div className="card-body p-0">
-            <div ref={categoriesRef}>
+            <div ref={categoriesRef} className={isOutletRoute ? "hide" : ""}>
               {matches ? (
                 matches.length > 0 ? (
                   <div className="divisions">
@@ -400,7 +392,10 @@ const Categories = ({
             </div>
           </div>
 
-          <div className="outlets card" ref={outletsRef}>
+          <div
+            className={`outlets card ${isOutletRoute ? "active" : ""}`}
+            ref={outletsRef}
+          >
             <div
               className="card-header outlets-top"
               style={{ borderRadius: isSmallScreen ? "0" : undefined }}
